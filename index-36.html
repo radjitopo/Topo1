@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TOPO — Tudo vira ranking</title>
+<style>
+:root{--bg:#f3f0e9;--paper:#fffdfa;--ink:#191919;--muted:#706d67;--line:#dedad2;--accent:#657986;--up:#1d6a4c;--upbg:#e7f3ed;--down:#9d493f;--downbg:#f8e9e6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}button{font:inherit}.wrap{width:min(760px,calc(100% - 22px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(243,240,233,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}header{height:64px;display:flex;align-items:center;justify-content:space-between}.logo{font-family:Georgia,serif;font-size:34px;line-height:.9;font-weight:900;letter-spacing:-2px;color:var(--accent)}.tag{font-size:8px;text-transform:uppercase;letter-spacing:.17em;color:var(--muted);font-weight:900;margin-top:4px}.now{font-size:10px;color:var(--muted);font-weight:800}.groupsWrap{border-top:1px solid rgba(222,218,210,.75)}.groups{display:flex;gap:7px;overflow-x:auto;padding:9px 0 10px;scrollbar-width:none}.groups::-webkit-scrollbar{display:none}.groupBtn{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 11px;font-size:10px;font-weight:900;cursor:pointer}.groupBtn.active{background:var(--accent);border-color:var(--accent);color:#fff}.feed{padding:14px 0 80px}.feedMeta{display:flex;align-items:center;justify-content:space-between;padding:1px 3px 10px;color:var(--muted);font-size:9px;font-weight:800}.shuffleBtn{border:0;background:transparent;color:var(--accent);font-weight:900;padding:0;cursor:pointer}.rank{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}.rankHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.category{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:var(--accent)}.total{font-size:10px;color:var(--muted);white-space:nowrap}h2{font-family:Georgia,serif;font-size:32px;line-height:.98;letter-spacing:-1.3px;margin:0 0 14px}.options{border-top:1px solid var(--line)}.option{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.option:last-child{border-bottom:0}.pos{font-family:Georgia,serif;color:var(--accent);font-size:23px;font-weight:900}.name{font-size:14px;font-weight:900;line-height:1.15}.score{font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}.actions{display:flex;gap:5px}.react{width:36px;height:36px;border:0;border-radius:999px;display:grid;place-items:center;font-size:16px;cursor:pointer;transition:transform .08s ease}.react:active{transform:scale(.92)}.react:disabled{opacity:.55}.react.up{background:var(--upbg);color:var(--up)}.react.down{background:var(--downbg);color:var(--down)}.react.selected{outline:2px solid currentColor;outline-offset:1px}.rankFoot{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:9px;color:var(--muted)}.imageStrip{height:145px;border-radius:11px;overflow:hidden;margin:2px 0 13px;background:var(--accent)}.imageStrip img{width:100%;height:100%;object-fit:cover;display:block}.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,10px);background:#191919;color:white;padding:10px 13px;border-radius:999px;font-size:11px;font-weight:800;opacity:0;transition:.18s;z-index:30;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.end{text-align:center;color:var(--muted);font-size:11px;padding:20px 0 10px}.loading{padding:70px 0;text-align:center;color:var(--muted);font-size:12px}.retry{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:9px 14px;margin-top:12px;cursor:pointer}.empty{text-align:center;color:var(--muted);font-size:12px;padding:60px 0}
+@media(max-width:560px){.wrap{width:calc(100% - 16px)}header{height:58px}.logo{font-size:31px}.now{font-size:9px}.groups{padding:8px 0 9px}.groupBtn{padding:7px 10px}.rank{padding:14px;border-radius:14px}h2{font-size:28px}.option{grid-template-columns:25px 1fr auto;gap:8px;padding:11px 0}.react{width:34px;height:34px}.imageStrip{height:128px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="wrap"><header><div><div class="logo">TOPO</div><div class="tag">Tudo vira ranking.</div></div><div class="now">vote · veja · continue</div></header></div>
+  <div class="groupsWrap"><div class="wrap"><nav class="groups" id="groups"></nav></div></div>
+</div>
+<main class="wrap feed" id="feed"><div class="loading">carregando rankings…</div></main>
+<div class="toast" id="toast"></div>
+<script>
+const feed=document.getElementById('feed');
+const groupsEl=document.getElementById('groups');
+const storeKey='topo_device_id';
+let deviceId=localStorage.getItem(storeKey);
+if(!deviceId){deviceId=(crypto.randomUUID?crypto.randomUUID():('d-'+Date.now()+'-'+Math.random().toString(36).slice(2)));localStorage.setItem(storeKey,deviceId)}
+let rankings=[];
+let activeGroup='Todos';
+const groupNames=['Todos','Cultura','Comida','Lugares','Animais','Motores','Esporte','Diversão'];
+const fmt=n=>Number(n).toLocaleString('pt-BR');
+const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x};
+function groupOf(r){
+  if(['Cinema','Música','Livros','TV','Moda'].includes(r.cat))return 'Cultura';
+  if(['Comida','Café'].includes(r.cat))return 'Comida';
+  if(['Viagem','Brasil','Florianópolis'].includes(r.cat))return 'Lugares';
+  if(r.cat==='Animais')return 'Animais';
+  if(r.cat==='Carros')return 'Motores';
+  if(r.cat==='Esporte')return 'Esporte';
+  return 'Diversão';
+}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>e.classList.remove('show'),1400)}
+function renderGroups(){
+  groupsEl.innerHTML=groupNames.map(g=>`<button class="groupBtn ${g===activeGroup?'active':''}" data-g="${g}">${g}</button>`).join('');
+  groupsEl.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    activeGroup=b.dataset.g;renderGroups();render();window.scrollTo({top:0,behavior:'smooth'})
+  })
+}
+async function load(){
+  feed.innerHTML='<div class="loading">carregando rankings…</div>';
+  try{
+    const res=await fetch('/api?device_id='+encodeURIComponent(deviceId),{cache:'no-store'});
+    if(!res.ok)throw new Error('load');
+    rankings=shuffle(await res.json());
+    renderGroups();render();
+  }catch(e){feed.innerHTML='<div class="loading">Não consegui carregar os rankings.<br><button class="retry" onclick="load()">Tentar de novo</button></div>'}
+}
+function reshuffle(){rankings=shuffle(rankings);render();window.scrollTo({top:0,behavior:'smooth'})}
+function visibleRankings(){return activeGroup==='Todos'?rankings:rankings.filter(r=>groupOf(r)===activeGroup)}
+function render(){
+ const visible=visibleRankings();
+ if(!visible.length){feed.innerHTML='<div class="empty">Nenhum ranking neste grupo ainda.</div>';return}
+ feed.innerHTML=`<div class="feedMeta"><span>${visible.length} ranking${visible.length===1?'':'s'}</span><button class="shuffleBtn" onclick="reshuffle()">↻ embaralhar</button></div>`+visible.map(r=>`<article class="rank" data-r="${r.id}">
+   <div class="rankHead"><span class="category">${r.cat}</span><span class="total">${fmt(r.votes)} votos</span></div>
+   <h2>${r.q}</h2>
+   ${r.img?`<div class="imageStrip"><img src="${r.img}" alt=""></div>`:''}
+   <div class="options">${r.opts.map((o,i)=>`<div class="option">
+       <div class="pos">${i+1}</div>
+       <div><div class="name">${o.label}</div><div class="score"><span>${fmt(o.score)}</span> pontos</div></div>
+       <div class="actions">
+         <button class="react up ${o.mine===1?'selected':''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="Gostei">👍</button>
+         <button class="react down ${o.mine===-1?'selected':''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="Não gostei">👎</button>
+       </div>
+     </div>`).join('')}</div>
+   <div class="rankFoot"><span>Sem cadastro. Vote direto.</span><span>👍 sobe · 👎 desce</span></div>
+ </article>`).join('')+'<div class="end">TOPO · tudo vira ranking</div>';
+ document.querySelectorAll('.react').forEach(b=>b.onclick=()=>react(b));
+}
+async function react(b){
+ const optionId=Number(b.dataset.id),mine=Number(b.dataset.mine),clicked=Number(b.dataset.dir),next=mine===clicked?0:clicked;
+ const rankOrder=rankings.map(r=>r.id);
+ b.parentElement.querySelectorAll('button').forEach(x=>x.disabled=true);
+ try{
+   const res=await fetch('/api',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({device_id:deviceId,option_id:optionId,direction:next})});
+   if(!res.ok)throw new Error('vote');
+   toast(next===0?'Voto retirado':next===1?'👍 voto positivo':'👎 voto negativo');
+   const fresh=await fetch('/api?device_id='+encodeURIComponent(deviceId),{cache:'no-store'});
+   const data=await fresh.json();
+   const order=new Map(rankOrder.map((id,i)=>[id,i]));
+   rankings=data.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999));
+   render();
+ }catch(e){toast('Não consegui registrar. Tente novamente.');b.parentElement.querySelectorAll('button').forEach(x=>x.disabled=false)}
+}
+load();
+</script>
+</body>
+</html>
