@@ -41,7 +41,7 @@ for (const slug of expectedSlugs) {
   assert.equal(res.statusCode, 200, `${slug} must render successfully`);
   assert.equal(res.headers['Content-Type'], 'text/html; charset=utf-8');
   assert.match(res.body, new RegExp(`<link rel="canonical" href="https://somostopo\\.com\\.br/${slug}">`));
-  assert.ok(res.body.includes('/style.css?v=20260823-9'));
+  assert.ok(res.body.includes('/style.css?v=20260823-11'));
   assert.ok(res.body.includes('conta@somostopo.com.br') || !['contato', 'denuncie', 'privacidade'].includes(slug));
   assert.ok(res.body.length > 4000, `${slug} must contain substantive copy`);
   assert.doesNotMatch(res.body, /TODO|Lorem ipsum|undefined/);

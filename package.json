@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@clerk/backend": "^3.16.10",
-    "@neondatabase/serverless": "^1.0.0",
-    "ai": "^7.0.77"
+    "@neondatabase/serverless": "^1.0.0"
   }
 }
