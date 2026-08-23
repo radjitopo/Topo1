@@ -560,6 +560,7 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .suggestionStatus.pending{background:#f5f0df;border-color:#dfd09a;color:#806922}
 .suggestionStatus.approved,.suggestionStatus.published{background:var(--upbg);border-color:#b9d7cb;color:var(--up)}
 .suggestionStatus.rejected{background:var(--downbg);border-color:#e8c1bd;color:var(--down)}
+.suggestionStatus.duplicate{background:#edf1f2;border-color:#c8d2d7;color:#465e6d}
 .moderationProfileLink{margin:-2px 0 12px;padding:13px 15px;border:1px solid #465e6d;border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#465e6d;color:#fff;text-decoration:none;font-size:9px}
 .moderationProfileLink strong{font-size:10px}
 .suggestionRetry{border:0;background:transparent;color:var(--accent);padding:0;font:inherit;font-weight:950;text-decoration:underline;cursor:pointer}
@@ -583,6 +584,12 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .moderationKind{color:var(--accent);font-size:7px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
 .moderationCard h3{margin:4px 0 4px;font:900 22px/1.08 Georgia,serif}
 .moderationCardHead p{margin:0;color:var(--muted);font-size:9px;line-height:1.4}
+.moderationOptionReview{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.55fr);gap:11px 12px;margin:13px 0;padding:13px;border:1px solid #c8d2d7;border-radius:12px;background:#f7f9f9}
+.moderationOptionReview>.suggestionField:first-child{grid-column:1/-1}
+.moderationDuplicateHint{display:grid;align-content:center;gap:3px;padding:10px 11px;border-left:3px solid #b28a22;border-radius:0 9px 9px 0;background:#f5f0df;color:#6f5a1e;font-size:8px;line-height:1.4}
+.moderationDuplicateHint strong{font-size:8px;text-transform:uppercase;letter-spacing:.07em}
+.moderationDuplicateClear{align-self:center;margin:0;color:var(--muted);font-size:8px;line-height:1.45}
+.moderationDuplicateTarget{min-width:0}
 .moderationExamples{margin:11px 0;padding:10px 12px;border-radius:10px;background:#f5f3ee}
 .moderationExamples>strong{display:block;margin-bottom:5px;color:var(--muted);font-size:7px;letter-spacing:.08em;text-transform:uppercase}
 .moderationExamples ol{columns:2;margin:0;padding-left:20px;color:var(--ink);font-size:9px;line-height:1.65}
@@ -590,9 +597,10 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .moderationMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;color:var(--muted);font-size:8px;line-height:1.4}
 .moderationMeta time{white-space:nowrap}
 .moderationNote{margin-top:9px;color:#6e5045;font-size:8px;line-height:1.45}
-.moderationActions{display:flex;gap:8px;margin-top:13px}
+.moderationActions{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-top:13px}
 .moderationActions button{border-radius:10px;padding:9px 13px;font-size:9px;font-weight:950;cursor:pointer}
 .moderationActions .approve{border:1px solid var(--up);background:var(--up);color:#fff}
+.moderationActions .duplicate{border:1px solid #718692;background:#edf1f2;color:#465e6d}
 .moderationActions .reject{border:1px solid #d4aaa5;background:#fff;color:var(--down)}
 .moderationCard.preparing{margin:9px -3px;padding:18px 14px;border:1px solid #b9d7cb;border-radius:14px;background:#fbfdfc}
 .moderationPrepareForm{display:grid;gap:13px;margin-top:15px;padding-top:15px;border-top:2px solid var(--ink)}
@@ -634,9 +642,11 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
   .moderationSection{padding:13px}
   .moderationCardHead{grid-template-columns:1fr}
   .moderationCardHead .suggestionStatus{justify-self:start}
+  .moderationOptionReview{grid-template-columns:1fr;padding:11px}
+  .moderationOptionReview>.suggestionField:first-child{grid-column:auto}
   .moderationExamples ol{columns:1}
   .moderationMeta{align-items:flex-start;flex-direction:column;gap:4px}
-  .moderationActions{display:grid;grid-template-columns:1fr 1fr}
+  .moderationActions{grid-template-columns:1fr}
   .moderationCard.preparing{margin:8px -4px;padding:15px 11px}
   .moderationPrepareGrid{grid-template-columns:1fr}
   .moderationPrepareTitle,.moderationPrepareOptions,.moderationPrepareImage{grid-column:auto}

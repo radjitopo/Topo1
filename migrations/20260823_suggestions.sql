@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS ranking_option_suggestions (
   status text NOT NULL DEFAULT 'pending',
   flag_reason text,
   approved_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
+  duplicate_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
   reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
   moderation_note text,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -14,8 +15,41 @@ CREATE TABLE IF NOT EXISTS ranking_option_suggestions (
   CONSTRAINT ranking_option_suggestions_label_length
     CHECK (char_length(btrim(label)) BETWEEN 2 AND 80),
   CONSTRAINT ranking_option_suggestions_status
-    CHECK (status IN ('pending', 'approved', 'rejected'))
+    CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'))
 );
+
+ALTER TABLE ranking_option_suggestions
+  ADD COLUMN IF NOT EXISTS duplicate_option_id bigint
+    REFERENCES ranking_options(id) ON DELETE SET NULL;
+
+DO $$
+DECLARE
+  current_definition text;
+BEGIN
+  SELECT pg_get_constraintdef(oid)
+  INTO current_definition
+  FROM pg_constraint
+  WHERE conrelid = 'ranking_option_suggestions'::regclass
+    AND conname = 'ranking_option_suggestions_status';
+
+  IF current_definition IS NOT NULL
+     AND position('duplicate' in current_definition) = 0 THEN
+    ALTER TABLE ranking_option_suggestions
+      DROP CONSTRAINT ranking_option_suggestions_status;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conrelid = 'ranking_option_suggestions'::regclass
+      AND conname = 'ranking_option_suggestions_status'
+  ) THEN
+    ALTER TABLE ranking_option_suggestions
+      ADD CONSTRAINT ranking_option_suggestions_status
+      CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'));
+  END IF;
+END
+$$;
 
 CREATE UNIQUE INDEX IF NOT EXISTS ranking_option_suggestions_pending_unique
   ON ranking_option_suggestions (ranking_id, normalized_label)

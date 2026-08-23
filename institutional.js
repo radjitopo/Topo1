@@ -481,7 +481,7 @@ function renderPage(slug, page) {
 <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo.png">
 <meta name="theme-color" content="#f3f0e9">
-<link rel="stylesheet" href="/style.css?v=20260823-8">
+<link rel="stylesheet" href="/style.css?v=20260823-9">
 </head>
 <body class="legalShell">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="Voltar ao TOPO">TOPO</a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>

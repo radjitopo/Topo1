@@ -7,6 +7,7 @@ import {
 } from 'node:crypto';
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { neon } from '@neondatabase/serverless';
+import { possibleOptionDuplicate } from './option-similarity.js';
 
 const sql = neon(process.env.DATABASE_URL);
 const CLERK_SECRET_KEY = String(process.env.CLERK_SECRET_KEY || '');
@@ -221,6 +222,7 @@ function ensureSuggestionSchema() {
           status text NOT NULL DEFAULT 'pending',
           flag_reason text,
           approved_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
+          duplicate_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
           reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
           moderation_note text,
           created_at timestamptz NOT NULL DEFAULT now(),
@@ -228,8 +230,43 @@ function ensureSuggestionSchema() {
           CONSTRAINT ranking_option_suggestions_label_length
             CHECK (char_length(btrim(label)) BETWEEN 2 AND 80),
           CONSTRAINT ranking_option_suggestions_status
-            CHECK (status IN ('pending', 'approved', 'rejected'))
+            CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'))
         )
+      `),
+      sql.query(`
+        ALTER TABLE ranking_option_suggestions
+        ADD COLUMN IF NOT EXISTS duplicate_option_id bigint
+          REFERENCES ranking_options(id) ON DELETE SET NULL
+      `),
+      sql.query(`
+        DO $$
+        DECLARE
+          current_definition text;
+        BEGIN
+          SELECT pg_get_constraintdef(oid)
+          INTO current_definition
+          FROM pg_constraint
+          WHERE conrelid = 'ranking_option_suggestions'::regclass
+            AND conname = 'ranking_option_suggestions_status';
+
+          IF current_definition IS NOT NULL
+             AND position('duplicate' in current_definition) = 0 THEN
+            ALTER TABLE ranking_option_suggestions
+              DROP CONSTRAINT ranking_option_suggestions_status;
+          END IF;
+
+          IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conrelid = 'ranking_option_suggestions'::regclass
+              AND conname = 'ranking_option_suggestions_status'
+          ) THEN
+            ALTER TABLE ranking_option_suggestions
+              ADD CONSTRAINT ranking_option_suggestions_status
+              CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'));
+          END IF;
+        END
+        $$
       `),
       sql.query(`
         CREATE UNIQUE INDEX IF NOT EXISTS ranking_option_suggestions_pending_unique
@@ -1745,7 +1782,7 @@ async function sendSuggestionModerationEmail(req, suggestion) {
           ${detail}
           <p><strong>Enviada por:</strong> ${emailHtml(suggestion.userName)} (${emailHtml(suggestion.userEmail)})</p>
           ${flag}
-          <p style="margin:26px 0"><a href="${emailHtml(link.toString())}" style="background:#657986;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:700">Abrir para aprovar ou recusar</a></p>
+          <p style="margin:26px 0"><a href="${emailHtml(link.toString())}" style="background:#657986;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:700">Abrir para revisar</a></p>
           <p style="font-size:13px;color:#706d67">Por segurança, o clique abre o painel privado. Nenhuma decisão é tomada diretamente pelo e-mail.</p>
         </div>
       `
@@ -1811,6 +1848,7 @@ async function createSuggestion(req, res, body) {
     if (existingOptionRows.some((option) => normalizeSuggestion(option.label) === normalized)) {
       return json(res, 409, { error: 'option_already_exists' });
     }
+    const possibleDuplicate = possibleOptionDuplicate(label, existingOptionRows);
     if (Number(recentRows[0]?.total || 0) >= OPTION_SUGGESTION_DAILY_LIMIT) {
       return json(res, 429, {
         error: 'option_suggestion_limit',
@@ -1843,7 +1881,12 @@ async function createSuggestion(req, res, body) {
       userName: user.display_name,
       userEmail: user.email
     });
-    return json(res, 201, { ok: true, id, status: 'pending' });
+    return json(res, 201, {
+      ok: true,
+      id,
+      status: 'pending',
+      possibleDuplicate
+    });
   }
 
   if (kind === 'ranking') {
@@ -2005,7 +2048,7 @@ async function moderationQueue(req, res) {
   if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
   await ensureSuggestionSchema();
 
-  const [optionRows, rankingRows] = await Promise.all([
+  const [optionRows, rankingRows, rankingOptionRows] = await Promise.all([
     sql.query(`
       SELECT
         s.id,
@@ -2014,6 +2057,7 @@ async function moderationQueue(req, res) {
         r.question,
         s.label,
         s.status,
+        s.duplicate_option_id AS "duplicateOptionId",
         s.flag_reason AS "flagReason",
         s.moderation_note AS "moderationNote",
         s.created_at AS "createdAt",
@@ -2045,12 +2089,39 @@ async function moderationQueue(req, res) {
       JOIN users u ON u.id = s.user_id
       ORDER BY (s.status = 'pending') DESC, s.created_at DESC
       LIMIT 100
+    `),
+    sql.query(`
+      SELECT
+        id AS "optionId",
+        ranking_id AS "rankingId",
+        label,
+        position
+      FROM ranking_options
+      ORDER BY ranking_id, position, id
     `)
   ]);
 
+  const optionsByRanking = new Map();
+  for (const option of rankingOptionRows) {
+    const options = optionsByRanking.get(option.rankingId) || [];
+    options.push({ optionId: option.optionId, label: option.label });
+    optionsByRanking.set(option.rankingId, options);
+  }
+
+  const optionSuggestions = optionRows.map((suggestion) => {
+    const existingOptions = optionsByRanking.get(suggestion.rankingId) || [];
+    return {
+      ...suggestion,
+      existingOptions,
+      possibleDuplicate: suggestion.status === 'pending'
+        ? possibleOptionDuplicate(suggestion.label, existingOptions)
+        : null
+    };
+  });
+
   return json(res, 200, {
     moderator: { name: user.display_name, email: user.email },
-    options: optionRows,
+    options: optionSuggestions,
     rankings: rankingRows
   });
 }
@@ -2193,8 +2264,20 @@ async function moderateSuggestion(req, res, body) {
   const decision = String(body.decision || '');
   const moderationNote = suggestionText(String(body.note || ''), 1, 300) || null;
   const validDecision = ['approve', 'reject'].includes(decision) ||
-    (kind === 'ranking' && decision === 'publish');
-  if (!/^[0-9a-f-]{36}$/i.test(id) || !['option', 'ranking'].includes(kind) || !validDecision) {
+    (kind === 'ranking' && decision === 'publish') ||
+    (kind === 'option' && decision === 'duplicate');
+  const duplicateOptionId = String(body.duplicateOptionId || '');
+  const hasCorrectedLabel = Object.prototype.hasOwnProperty.call(body, 'label');
+  const correctedLabel = hasCorrectedLabel
+    ? suggestionText(body.label, 2, SUGGESTION_OPTION_LIMIT)
+    : null;
+  if (
+    !/^[0-9a-f-]{36}$/i.test(id) ||
+    !['option', 'ranking'].includes(kind) ||
+    !validDecision ||
+    (kind === 'option' && decision === 'duplicate' && !/^\d+$/.test(duplicateOptionId)) ||
+    (kind === 'option' && decision === 'approve' && hasCorrectedLabel && !correctedLabel)
+  ) {
     return json(res, 400, { error: 'invalid_moderation' });
   }
 
@@ -2204,9 +2287,38 @@ async function moderateSuggestion(req, res, body) {
 
   let rows;
   if (kind === 'option' && decision === 'approve') {
-    rows = await sql.query(`
+    const [suggestion] = await sql.query(`
+      SELECT id, ranking_id AS "rankingId", label, status
+      FROM ranking_option_suggestions
+      WHERE id = $1::uuid
+      LIMIT 1
+    `, [id]);
+    if (!suggestion || suggestion.status !== 'pending') {
+      return json(res, 409, { error: 'suggestion_already_reviewed' });
+    }
+
+    const finalLabel = correctedLabel || suggestion.label;
+    const normalizedLabel = normalizeSuggestion(finalLabel);
+    const existingOptions = await sql.query(`
+      SELECT id, label
+      FROM ranking_options
+      WHERE ranking_id = $1
+      ORDER BY position, id
+    `, [suggestion.rankingId]);
+    const exactMatch = existingOptions.find((option) =>
+      normalizeSuggestion(option.label) === normalizedLabel
+    );
+    if (exactMatch) {
+      return json(res, 409, {
+        error: 'option_already_exists',
+        option: { optionId: exactMatch.id, label: exactMatch.label }
+      });
+    }
+
+    try {
+      rows = await sql.query(`
       WITH selected AS (
-        SELECT id, ranking_id, label
+        SELECT id, ranking_id
         FROM ranking_option_suggestions
         WHERE id = $1::uuid AND status = 'pending'
         FOR UPDATE
@@ -2215,45 +2327,89 @@ async function moderateSuggestion(req, res, body) {
         SELECT
           selected.id,
           selected.ranking_id,
-          selected.label,
           COALESCE(MAX(ranking_options.position), 0) + 1 AS next_position
         FROM selected
         LEFT JOIN ranking_options
           ON ranking_options.ranking_id = selected.ranking_id
-        GROUP BY selected.id, selected.ranking_id, selected.label
+        GROUP BY selected.id, selected.ranking_id
       ),
       existing AS (
         SELECT ranking_options.id
         FROM ranking_options
         JOIN selected ON selected.ranking_id = ranking_options.ranking_id
         WHERE lower(regexp_replace(btrim(ranking_options.label), '\\s+', ' ', 'g')) =
-              lower(regexp_replace(btrim(selected.label), '\\s+', ' ', 'g'))
-        ORDER BY ranking_options.position
+              lower(regexp_replace(btrim($4::text), '\\s+', ' ', 'g'))
+        ORDER BY ranking_options.position, ranking_options.id
         LIMIT 1
       ),
       inserted AS (
         INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
-        SELECT ranking_id, label, next_position, 0
+        SELECT ranking_id, $4, next_position, 0
         FROM positioned
         WHERE NOT EXISTS (SELECT 1 FROM existing)
         RETURNING id
-      ),
-      resolved AS (
-        SELECT id FROM existing
-        UNION ALL
-        SELECT id FROM inserted
-        LIMIT 1
       )
       UPDATE ranking_option_suggestions suggestion
-      SET status = 'approved',
-          approved_option_id = (SELECT id FROM resolved),
+      SET label = $4,
+          normalized_label = $5,
+          status = 'approved',
+          approved_option_id = (SELECT id FROM inserted),
           reviewed_by = $2,
           moderation_note = $3,
           reviewed_at = now()
       FROM selected
       WHERE suggestion.id = selected.id
-      RETURNING suggestion.id, suggestion.status, suggestion.approved_option_id AS "optionId"
-    `, [id, user.id, moderationNote]);
+        AND EXISTS (SELECT 1 FROM inserted)
+      RETURNING
+        suggestion.id,
+        suggestion.label,
+        suggestion.status,
+        suggestion.approved_option_id AS "optionId"
+      `, [id, user.id, moderationNote, finalLabel, normalizedLabel]);
+    } catch (error) {
+      if (error?.code === '23505') {
+        return json(res, 409, { error: 'suggestion_already_pending' });
+      }
+      throw error;
+    }
+    if (!rows[0]) {
+      const refreshedOptions = await sql.query(`
+        SELECT id, label
+        FROM ranking_options
+        WHERE ranking_id = $1
+      `, [suggestion.rankingId]);
+      const refreshedMatch = refreshedOptions.find((option) =>
+        normalizeSuggestion(option.label) === normalizedLabel
+      );
+      if (refreshedMatch) {
+        return json(res, 409, {
+          error: 'option_already_exists',
+          option: { optionId: refreshedMatch.id, label: refreshedMatch.label }
+        });
+      }
+    }
+  } else if (kind === 'option' && decision === 'duplicate') {
+    rows = await sql.query(`
+      UPDATE ranking_option_suggestions suggestion
+      SET status = 'duplicate',
+          duplicate_option_id = existing.id,
+          reviewed_by = $2,
+          moderation_note = COALESCE(
+            $4,
+            'Já existe no ranking como “' || existing.label || '”.'
+          ),
+          reviewed_at = now()
+      FROM ranking_options existing
+      WHERE suggestion.id = $1::uuid
+        AND suggestion.status = 'pending'
+        AND existing.id = $3::bigint
+        AND existing.ranking_id = suggestion.ranking_id
+      RETURNING
+        suggestion.id,
+        suggestion.status,
+        suggestion.duplicate_option_id AS "duplicateOptionId",
+        existing.label AS "duplicateOptionLabel"
+    `, [id, user.id, duplicateOptionId, moderationNote]);
   } else if (kind === 'option') {
     rows = await sql.query(`
       UPDATE ranking_option_suggestions

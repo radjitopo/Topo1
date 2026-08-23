@@ -12,6 +12,8 @@ const [api, app, style, migration, migrationScript] = await Promise.all([
 assert.match(migration, /CREATE TABLE IF NOT EXISTS ranking_option_suggestions/, 'option suggestions need a durable table');
 assert.match(migration, /CREATE TABLE IF NOT EXISTS ranking_topic_suggestions/, 'ranking ideas need a durable table');
 assert.match(migration, /WHERE status = 'pending'/, 'duplicate pending suggestions must be prevented');
+assert.match(migration, /duplicate_option_id bigint/, 'duplicate reviews must point to the existing ranking option');
+assert.match(migration, /'duplicate'/, 'option suggestions need a distinct already-exists status');
 assert.match(migration, /jsonb_array_length\(example_options\) BETWEEN 3 AND 20/, 'approved ranking ideas must support up to 20 reviewed options');
 assert.match(migrationScript, /20260823_suggestions\.sql/, 'the suggestion migration must have an application script');
 
@@ -23,9 +25,13 @@ assert.match(api, /function isModerator\(user\)/, 'moderation routes must verify
 assert.match(api, /async function mySuggestions\(req, res\)/, 'people must be able to retrieve their suggestion history');
 assert.match(api, /async function moderationQueue\(req, res\)/, 'moderators need a central queue');
 assert.match(api, /async function moderateSuggestion\(req, res, body\)/, 'moderators need an approval route');
+assert.match(api, /possibleOptionDuplicate\(label, existingOptionRows\)/, 'similar option names must be flagged for review');
+assert.match(api, /decision === 'duplicate'/, 'moderators must be able to mark an option as already existing');
+assert.match(api, /duplicate_option_id = existing\.id/, 'already-existing decisions must retain their target option');
+assert.match(api, /SET label = \$4,[\s\S]*normalized_label = \$5/, 'moderators must be able to correct an option before approval');
 assert.match(api, /async function publishRankingSuggestion\(res, user, body, id, moderationNote\)/, 'approved ideas need a separate publication route');
 assert.match(api, /INSERT INTO ranking_options \(ranking_id, label, position, baseline_score\)/, 'approved options must enter the ranking');
-assert.match(api, /SELECT ranking_id, label, next_position, 0/, 'approved options must start at the bottom with zero points');
+assert.match(api, /SELECT ranking_id, \$4, next_position, 0/, 'approved options must start at the bottom with zero points');
 assert.match(api, /const PUBLISHED_RANKING_OPTION_LIMIT = 20;/, 'published rankings must support up to 20 reviewed options');
 assert.match(api, /INSERT INTO rankings \([\s\S]*FROM ranking_topic_suggestions[\s\S]*status = 'approved'/, 'publication must only create a ranking from an approved idea');
 assert.match(api, /status = 'published',[\s\S]*published_ranking_id = \$7/, 'publication must connect the idea to its new ranking');
@@ -39,6 +45,9 @@ assert.match(app, /function profileSuggestionCenterHTML\(data=/, 'the profile mu
 assert.match(app, /Minhas sugestões/, 'the profile must expose suggestion statuses');
 assert.match(app, /Em preparação/, 'approved ranking ideas must show that publication is still pending');
 assert.match(app, /function renderModeration\(\)/, 'the private moderation page must render');
+assert.match(app, /data-option-label/, 'pending option names must be editable before approval');
+assert.match(app, /data-duplicate-target/, 'moderators must choose the existing option for duplicate reviews');
+assert.match(app, /Já existe/, 'duplicate decisions must be explained in the interface and profile');
 assert.match(app, /Preparar para publicar/, 'approved ideas need a preparation section before publication');
 assert.match(app, /data-publish-form/, 'the preparation section must provide an editable publication form');
 assert.match(app, /decision:'publish'/, 'the final button must explicitly request publication');
@@ -50,6 +59,7 @@ assert.match(app, /fetch\('\/api\?action=moderation'/, 'the panel must use the p
 assert.match(style, /\.rankingSuggestion\{/, 'the ranking suggestion form must be styled');
 assert.match(style, /\.profileSuggestionCenter\{/, 'the profile suggestion center must be styled');
 assert.match(style, /\.moderationCard\{/, 'moderation cards must be styled');
+assert.match(style, /\.moderationDuplicateHint\{/, 'possible duplicate warnings must be styled');
 assert.match(style, /\.moderationPrepareForm\{/, 'the publication preparation form must be styled');
 assert.match(style, /\.moderationImagePreview\{/, 'the cover preview must be styled');
 assert.match(style, /\.moderationHero\{[^}]*display:block;[^}]*height:auto/, 'the moderation hero must not inherit the compact global header layout');
