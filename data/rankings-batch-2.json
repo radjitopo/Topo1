@@ -1,0 +1,3443 @@
+[
+  {
+    "id": "desculpas-atraso",
+    "category": "Diversão",
+    "question": "As desculpas mais esfarrapadas para chegar atrasado",
+    "image_url": "https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "O trânsito estava impossível",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "O despertador não tocou",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Perdi o ônibus",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "O carro não pegou",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Choveu demais",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "O cachorro passou mal",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiquei preso no elevador",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acabou a bateria do celular",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "A reunião anterior atrasou",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Errei o caminho",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Não achei estacionamento",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minha internet caiu",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tive que voltar para buscar a carteira",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "A fila estava enorme",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "O aplicativo cancelou a corrida",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Houve um acidente na estrada",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Confundi o horário",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "O portão eletrônico travou",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "O pneu furou",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eu achei que era amanhã",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "reuniao-email",
+    "category": "Diversão",
+    "question": "Os maiores sinais de que a reunião podia ser um e-mail",
+    "image_url": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Ninguém sabe por que foi chamado",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "O convite não tem pauta",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Uma pessoa fala o tempo todo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os slides só têm texto",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "A decisão já estava tomada",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "O assunto dura cinco minutos",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "É uma reunião para marcar outra reunião",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vinte pessoas entram e duas participam",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Todo mundo está com a câmera fechada",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "A conversa vira leitura de relatório",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alguém diz “só um rápido alinhamento”",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Metade está respondendo e-mail",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "O resumo cabe em três linhas",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Começa atrasada e termina sem decisão",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ninguém anota nada",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alguém pergunta “qual é o objetivo?”",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O apresentador compartilha a tela errada",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Todo mundo concorda sem discutir",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "A conclusão é “vamos pensar”",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ninguém sabe qual é o próximo passo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "gambiarras-brasileiras",
+    "category": "Diversão",
+    "question": "As gambiarras brasileiras mais geniais",
+    "image_url": "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Fita isolante resolvendo tudo",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arame no lugar do parafuso",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa PET virando funil",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chinelo segurando a porta",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pregador fechando pacote",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cabo de vassoura como suporte",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Papelão nivelando o móvel",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tijolo segurando o portão",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elástico prendendo a tampa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ventilador com garrafa congelada",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pote de sorvete guardando feijão",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Controle remoto embrulhado em plástico",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sacola protegendo o banco da chuva",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colher de pau travando a janela",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carregador preso na posição certa",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fita adesiva salvando o retrovisor",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Talher sustentando a tampa da panela",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Balde aparando a goteira",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cadeira virando escada",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Extensão atravessando a casa inteira",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "barulhos-irritantes",
+    "category": "Diversão",
+    "question": "Os barulhos mais irritantes do cotidiano",
+    "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Obra às sete da manhã",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mosquito zunindo no ouvido",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garfo raspando no prato",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alarme de carro sem dono",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Notificação repetida do celular",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Torneira pingando à noite",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moto com escapamento barulhento",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Áudio no viva-voz em público",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Furadeira no apartamento vizinho",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Microfone dando microfonia",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gente mastigando de boca aberta",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Isopor esfregando",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Despertador insistente",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Criança chorando no avião",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sapato rangendo no chão",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caneta clicando sem parar",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Balão sendo esfregado",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Teclado digitado com violência",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aspirador cedo no domingo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Freio de ônibus chiando",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "elevador-constrangedor",
+    "category": "Diversão",
+    "question": "As situações mais constrangedoras no elevador",
+    "image_url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Silêncio total com um desconhecido",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apertar o andar errado",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fechar a porta vendo alguém chegar",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Entrar e perceber que ele vai para o outro lado",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O estômago roncar no silêncio",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cruzar olhares pelo espelho",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fingir que está mexendo no celular",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "A porta reabrir no mesmo andar",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ficar espremido numa lotação",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alguém soltar um pum e ninguém assumir",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Puxar conversa sobre o tempo",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Entrar com comida de cheiro forte",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Uma criança fazer pergunta pessoal",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "O elevador parar entre andares",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ouvir “segura!” quando a porta já fechou",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ser pego dançando sozinho",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Esquecer em qual andar vai descer",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tentar entrar com um objeto enorme",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dar tchau e depois seguir pelo mesmo caminho",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apertar todos os botões sem querer",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "vitorias-adultas",
+    "category": "Diversão",
+    "question": "As pequenas vitórias mais satisfatórias da vida adulta",
+    "image_url": "https://images.unsplash.com/photo-1523289333742-be1143f6b766?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Pagar todos os boletos do mês",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Encontrar dinheiro num bolso antigo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pegar todos os sinais verdes",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Conectar no Wi-Fi de primeira",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Achar vaga perto da entrada",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cancelar uma assinatura sem dificuldade",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tirar uma mancha da roupa",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Deixar a pia limpa antes de dormir",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Receber um reembolso esquecido",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chegar antes de a cozinha fechar",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abrir um abacate perfeitamente maduro",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Receber a encomenda antes do prazo",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "A bateria durar até o fim do dia",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acertar a música ideal no aleatório",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lembrar a senha sem redefinir",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zerar a caixa de entrada",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Receber o troco certinho",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "A chuva parar na hora de sair",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acordar descansado antes do alarme",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dobrar o lençol de elástico direito",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "linguagens-influentes",
+    "category": "Tecnologia",
+    "question": "As linguagens de programação mais influentes",
+    "image_url": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Assembly",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fortran",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "COBOL",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lisp",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "BASIC",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "C",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Smalltalk",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pascal",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "SQL",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "C++",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Objective-C",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Python",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Java",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "JavaScript",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "PHP",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ruby",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "C#",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "R",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Go",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rust",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "algoritmos-computacao",
+    "category": "Tecnologia",
+    "question": "Os algoritmos que mais mudaram a computação",
+    "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Algoritmo de Euclides",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Busca binária",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Merge sort",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quicksort",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Algoritmo de Dijkstra",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "A*",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Transformada rápida de Fourier",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Codificação de Huffman",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lempel–Ziv",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "RSA",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "AES (Rijndael)",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "PageRank",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Backpropagation",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gradiente descendente",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "K-means",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Programação dinâmica",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Método de Monte Carlo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Algoritmo de Viterbi",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "MapReduce",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paxos",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "tecnologias-internet",
+    "category": "Tecnologia",
+    "question": "As tecnologias que construíram a internet",
+    "image_url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Comutação de pacotes",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCP/IP",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "DNS",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "HTTP",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "HTML",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "URL e URI",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ethernet",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wi-Fi",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "TLS e SSL",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "SMTP",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "BGP",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Unix",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fibra óptica",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roteadores",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Criptografia de chave pública",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Navegadores web",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "JavaScript",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mecanismos de busca",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "CDNs",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Computação em nuvem",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "obras-engenharia",
+    "category": "Tecnologia",
+    "question": "As maiores obras de engenharia do mundo",
+    "image_url": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Canal do Panamá",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canal de Suez",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eurotúnel",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barragem das Três Gargantas",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Burj Khalifa",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ponte Golden Gate",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Represa Hoover",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estação Espacial Internacional",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Colisor de Hádrons",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Túnel de Base de São Gotardo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ponte Akashi Kaikyō",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Obras do Plano Delta",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Usina de Itaipu",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viaduto de Millau",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ponte de Øresund",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Pirâmide de Gizé",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aquedutos romanos",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Muralha da China",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palm Jumeirah",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tokyo Skytree",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "missoes-espaciais",
+    "category": "Tecnologia",
+    "question": "As missões espaciais mais importantes",
+    "image_url": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Sputnik 1",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Luna 2",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vostok 1",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mariner 2",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apollo 8",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apollo 11",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salyut 1",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viking 1",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Voyager 1",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "STS-1 Columbia",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hubble (STS-31)",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estação Espacial Internacional",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mars Pathfinder",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cassini-Huygens",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rosetta e Philae",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "New Horizons",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hayabusa2",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curiosity",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Telescópio James Webb",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chandrayaan-3",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "materiais-revolucionarios",
+    "category": "Tecnologia",
+    "question": "Os materiais mais revolucionários da história",
+    "image_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Pedra talhada",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Madeira",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bronze",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferro",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aço",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cobre",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vidro",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Papel",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Concreto armado",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alumínio",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Borracha vulcanizada",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aço inoxidável",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Silício semicondutor",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polietileno",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nylon",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Titânio",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kevlar",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fibra de carbono",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grafeno",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bioplásticos",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "bugs-irritantes",
+    "category": "Tecnologia",
+    "question": "Os bugs que mais enlouquecem desenvolvedores",
+    "image_url": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Erro de off-by-one",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bug intermitente",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O clássico “funciona na minha máquina”",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Condição de corrida",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Null pointer",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vazamento de memória",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Loop infinito",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Erro de fuso horário",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Texto com caracteres quebrados",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cache servindo versão antiga",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guerra de z-index no CSS",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Teste que falha aleatoriamente",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Conflito de dependências",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Permissão que muda por ambiente",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Erro de CORS",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "API que muda sem aviso",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Imprecisão de ponto flutuante",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bug que só aparece em produção",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Problema exclusivo do navegador móvel",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Variável de ambiente com nome errado",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "frases-programador",
+    "category": "Tecnologia",
+    "question": "As frases de programador que ninguém aguenta mais",
+    "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "“Na minha máquina funciona”",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "“É só uma correção rápida”",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Depois a gente refatora”",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Não é bug, é funcionalidade”",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Você limpou o cache?”",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Isso deve ser simples”",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Ninguém vai usar desse jeito”",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Vamos publicar na sexta”",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "“É só aumentar o timeout”",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Eu mudei uma linha só”",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Esse código é legado”",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "“O código é a documentação”",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Os testes entram depois”",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "“O banco aguenta”",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Foi a IA que escreveu”",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Não consigo reproduzir”",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "“É erro do usuário”",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Já tentou reiniciar?”",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "“É um contorno temporário”",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "“Agora vai, versão final mesmo”",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "gambiarras-tecnologicas",
+    "category": "Tecnologia",
+    "question": "As maiores gambiarras tecnológicas do cotidiano",
+    "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Reiniciar o roteador até a internet voltar",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Prender o cabo na posição em que carrega",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Assoprar o cartucho para fazê-lo funcionar",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Virar o USB três vezes antes de acertar",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Usar fita num cabo descascado",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colocar o roteador no ponto mais alto da casa",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Resfriar o notebook com um ventilador",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dar tapinha no controle remoto",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Empilhar adaptadores e extensões",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mandar arquivo por e-mail para si mesmo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Usar captura de tela como arquivo",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fotografar a tela em vez de exportar",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guardar senha num post-it",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Usar o celular como lanterna para o monitor",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trocar pilhas entre controles",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Segurar a antena para pegar sinal",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fechar e abrir o aplicativo até funcionar",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trocar o nome do arquivo para “final_agora_vai”",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colocar o celular molhado no arroz",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Usar o roteador velho como apoio do novo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "chocolates-brasil",
+    "category": "Produtos",
+    "question": "Qual chocolate você nunca consegue recusar?",
+    "image_url": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Lindt Lindor Ao Leite",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lindt Excellence 70%",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milka Alpine Milk",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toblerone Ao Leite",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferrero Rocher",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kinder Bueno",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "KitKat Ao Leite",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nestlé Alpino",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nestlé Suflair",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nestlé Chokito",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lacta Diamante Negro",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lacta Laka",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lacta Shot",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sonho de Valsa",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garoto Talento Avelãs",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garoto Baton Ao Leite",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cacau Show LaCreme Ao Leite",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cacau Show Bendito Cacao 70%",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Neugebauer Stikadinho",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hershey’s Cookies ’n’ Creme",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marcas-chocolate",
+    "category": "Produtos",
+    "question": "As marcas de chocolate mais queridas",
+    "image_url": "https://images.unsplash.com/photo-1575377427642-087cf684f29d?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Lindt",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cacau Show",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nestlé",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lacta",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garoto",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kopenhagen",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil Cacau",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milka",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hershey’s",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferrero Rocher",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kinder",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toblerone",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Neugebauer",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arcor",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dengo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nugali",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "AMMA Chocolate",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Callebaut",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Divine",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trento",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "cafes-supermercado",
+    "category": "Produtos",
+    "question": "Qual café de supermercado salva sua manhã?",
+    "image_url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "3 Corações",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Melitta",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pilão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orfeu",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "L’OR",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santa Monica",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Baggio",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Café do Ponto",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caboclo",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "União",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasileiro",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pelé",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pimpinela",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bom Jesus",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canecão",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fazenda Pessegueiro",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Latitude 13",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dutra",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Octavio Café",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Native",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "refrigerantes",
+    "category": "Produtos",
+    "question": "Os refrigerantes mais irresistíveis",
+    "image_url": "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Coca-Cola Original",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coca-Cola Sem Açúcar",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guaraná Antarctica",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pepsi",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pepsi Black",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fanta Laranja",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fanta Uva",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sprite",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sprite Sem Açúcar",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Schweppes Citrus",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Schweppes Tônica",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guaraná Jesus",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mineirinho",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Itubaína Original",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sukita Laranja",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dolly Guaraná",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kuat",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "H2OH! Limão",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wewi Guaraná",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fruki Guaraná",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "biscoitos-recheados",
+    "category": "Produtos",
+    "question": "Os biscoitos recheados mais viciantes",
+    "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Oreo Original",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oreo Chocolate",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Negresco",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bono Chocolate",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bono Doce de Leite",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trakinas Chocolate",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trakinas Morango",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Passatempo Chocolate",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chocolícia Chocolate",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bauducco Recheadinho Chocolate",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bauducco Recheadinho Morango",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Piraquê Chocolate",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Piraquê Limão",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adria Plugados Chocolate",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adria Mousse Morango",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marilan Teens Chocolate",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Isabela Tortinhas Chocolate",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Renata Amori Chocolate",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Visconti Recheado Chocolate",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Richester Amori Chocolate",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "salgadinhos",
+    "category": "Produtos",
+    "question": "Os salgadinhos mais difíceis de parar de comer",
+    "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Doritos Queijo Nacho",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ruffles Original",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ruffles Cebola e Salsa",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cheetos Requeijão",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cheetos Lua Parmesão",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fandangos Presunto",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fandangos Queijo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Baconzitos",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Torcida Churrasco",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Torcida Pimenta Mexicana",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yokitos Conchinha Presunto",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sensações Peito de Peru",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pringles Original",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pringles Sour Cream & Onion",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Stax Original",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pingo d’Ouro Bacon",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cebolitos",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fofura Queijo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yoki Pipoca Manteiga",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sensações Frango Grelhado",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "sorvetes-mercado",
+    "category": "Produtos",
+    "question": "Qual sorvete de mercado merece um lugar fixo no seu freezer?",
+    "image_url": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Magnum Clássico",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Magnum Amêndoas",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cornetto Crocante",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tablito",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chicabon",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fruttare Limão",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fruttare Uva",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eskibon",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mega Trufa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mega Amêndoas",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moça Brigadeiro",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "KitKat Cone",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Häagen-Dazs Belgian Chocolate",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Häagen-Dazs Strawberry Cheesecake",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ben & Jerry’s Cookie Dough",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ben & Jerry’s Chocolate Fudge Brownie",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bacio di Latte Pistacchio",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bacio di Latte Doce de Leite",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rochinha Coco",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "La Basque Chocolate Belga",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "molhos-pimenta",
+    "category": "Produtos",
+    "question": "Os molhos de pimenta mais saborosos",
+    "image_url": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Tabasco Original Red",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tabasco Chipotle",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cholula Original",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Huy Fong Sriracha",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Flying Goose Sriracha",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frank’s RedHot Original",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nando’s Peri-Peri Medium",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "El Yucateco Salsa Picante Roja",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Valentina Salsa Picante",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tapatío Hot Sauce",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gota Molho de Pimenta",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cepêra Pimenta Vermelha",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hemmer Pimenta Habanero",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bombay Jalapeño",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maratá Molho de Pimenta",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabor das Índias Bhut Jolokia",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Queensberry Habanero",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bravo Pimenta Defumada",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "De Cabrón Fuego",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dedo de Moça Artesanal",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pizzas-congeladas",
+    "category": "Produtos",
+    "question": "As melhores pizzas congeladas",
+    "image_url": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Sadia Calabresa",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sadia Mussarela",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sadia Frango com Requeijão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seara Calabresa",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seara Quatro Queijos",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seara Frango com Catupiry",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Perdigão Calabresa",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Perdigão Mussarela",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Forno de Minas Margherita",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Forno de Minas Frango com Requeijão",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dr. Oetker Ristorante Mozzarella",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dr. Oetker Ristorante Quattro Formaggi",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dr. Oetker Ristorante Pepperoni",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pif Paf Calabresa",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pif Paf Muçarela",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aurora Calabresa",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aurora Muçarela",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Swift Calabresa",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Swift Marguerita",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rezende Calabresa",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "paes-queijo-congelados",
+    "category": "Produtos",
+    "question": "Os melhores pães de queijo congelados",
+    "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Forno de Minas Tradicional",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Forno de Minas Lanche",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Forno de Minas Multigrãos",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Catupiry Tradicional",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Catupiry Recheado",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pif Paf Tradicional",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sadia Tradicional",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seara Tradicional",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aurora Tradicional",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Qualitá Tradicional",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Swift Tradicional",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Itambé Tradicional",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maricota Tradicional",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dona Benta Tradicional",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vovó Nair Tradicional",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mineirão Tradicional",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Geraldo Tradicional",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Serra Verde Tradicional",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasa Tradicional",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "D’Viez Tradicional",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "celulares-custo-beneficio-2026",
+    "category": "Produtos",
+    "question": "Os melhores celulares custo-benefício de 2026",
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Samsung Galaxy A57 5G",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy A37 5G",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy A56 5G",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy A36 5G",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Edge 70 Fusion",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Edge 70",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Edge 70 Pro",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Moto G Max 5G",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi Redmi Note 15",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi Redmi Note 15 5G",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi Redmi Note 15 Pro 5G",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "POCO X8 Pro",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple iPhone 17e",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple iPhone 17",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "realme 16 5G",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "realme 16 Pro+ 5G",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "HONOR 600 Lite",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "HONOR X8d",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Infinix Note 50 Pro",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "HONOR Magic7 Lite",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "fones-sem-fio-2026",
+    "category": "Produtos",
+    "question": "Os melhores fones sem fio de 2026",
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Apple AirPods Pro 3",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple AirPods 4 com ANC",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Buds4 Pro",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Buds4",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Buds3 FE",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Buds Core",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony WF-1000XM6",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony LinkBuds Fit",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "JBL Live Buds 3",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "JBL Wave Buds 2",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "JBL Wave Beam 2",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "JBL Endurance Race 2",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bose QuietComfort Ultra Earbuds",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sennheiser Momentum True Wireless 4",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Soundcore Liberty 4 NC",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Edifier NeoBuds Pro 2",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi Buds 5 Pro",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Redmi Buds 6 Pro",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Huawei FreeBuds Pro 4",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nothing Ear",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "air-fryers-2026",
+    "category": "Produtos",
+    "question": "As melhores air fryers de 2026",
+    "image_url": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Philips Walita Série 1000 6,2L NA130",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Philips Walita Série 1000 Dual Basket NA150",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Philips Walita Série 5000 Oven AI551",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Philips Walita Série 3000 XL RI9270",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mondial AFN-40-DI 4L",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mondial AFN-50-BI 5L",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mondial AFN-80 8L",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mondial Oven AFON-12L-BI",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mondial Oven AFON-14L",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Electrolux EAF20",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Electrolux EAF50",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Electrolux EAF90",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Electrolux EAF91",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oster Oven Fryer 12L OFRT780",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oster Super Fryer 4,6L OFRT660",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Midea Air Fryer 4L FRA41",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Midea Dual Cyclone 7,6L",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Britânia BFR50",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Britânia Oven BFR2100P",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arno Airfry Ultra 4,2L",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "notebooks-trabalho-2026",
+    "category": "Produtos",
+    "question": "Os melhores notebooks para trabalhar em 2026",
+    "image_url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "Apple MacBook Neo",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple MacBook Air 13",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple MacBook Air 15",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple MacBook Pro 14",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dell 15",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dell Pro 14",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dell XPS 13",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dell Inspiron 14 2 em 1",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenovo ThinkPad E14 Gen 7",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenovo Yoga Slim 7i",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenovo IdeaPad Slim 3",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenovo LOQ 15",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Book4",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Book4 Pro",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Book4 360",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Book Go",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "ASUS Vivobook 15",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "ASUS Zenbook 14 OLED",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acer Aspire 5",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acer Swift Go 14",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "smart-tvs-2026",
+    "category": "Produtos",
+    "question": "As melhores smart TVs de 2026",
+    "image_url": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T17:17:00.000Z",
+    "opts": [
+      {
+        "label": "LG OLED evo C6",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG OLED evo G6",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG OLED B6",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG QNED80 2026",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG QNED70 2026",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Neo QLED QN90F",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung OLED S95F",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung OLED S90F",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung The Frame Pro",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Crystal UHD U8600F",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL C7L SQD-Mini LED",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL X11L SQD-Mini LED",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL A400M QD-Mini LED",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL C7K QD-Mini LED",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL C6KS QD-Mini LED",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "TCL P8K QLED",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony BRAVIA 9 Mini LED",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony BRAVIA 8 OLED",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony BRAVIA 7 Mini LED",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony BRAVIA 5 Mini LED",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pequenas-tragedias-domesticas",
+    "category": "Diversão",
+    "question": "As piores pequenas tragédias dentro de casa",
+    "image_url": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-21T12:00:00.000Z",
+    "opts": [
+      {
+        "label": "Pisar em um Lego descalço",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bater o dedinho no canto do móvel",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Perceber tarde demais que acabou o papel higiênico",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Encontrar uma barata voadora",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pisar no chão molhado usando meia",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Encontrar uma toalha molhada em cima da cama",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "O chuveiro ficar gelado no meio do banho",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Derrubar o celular na privada",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ficar trancado para fora de casa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Entupir o vaso sanitário",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quebrar um copo e encontrar cacos por vários dias",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Wi-Fi cair no melhor momento",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ter um mosquito zumbindo no ouvido durante a noite",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "O vizinho começar uma obra cedo",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Derrubar comida com o lado gostoso virado para o chão",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abrir o armário e alguma coisa cair na cabeça",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O lençol escapar do colchão durante a noite",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pisar no xixi do cachorro",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Esquecer a porta da geladeira aberta",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colocar roupa no varal e começar a chover",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  }
+]

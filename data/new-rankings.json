@@ -1,0 +1,1889 @@
+[
+  {
+    "id": "acompanhamentos",
+    "category": "Comida",
+    "question": "Os acompanhamentos mais irresistíveis",
+    "image_url": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Batata frita",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Farofa",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Purê de batata",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mandioca frita",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arroz soltinho",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Feijão tropeiro",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polenta frita",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Legumes assados",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Onion rings",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cuscuz",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salada de batata",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guacamole",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coleslaw",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arroz à grega",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Batata rústica",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mac and cheese",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão de alho",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milho na manteiga",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cebola caramelizada",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vinagrete",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "atores-acao",
+    "category": "Cinema",
+    "question": "Quem é a maior estrela do cinema de ação?",
+    "image_url": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Arnold Schwarzenegger",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sylvester Stallone",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bruce Willis",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jackie Chan",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Keanu Reeves",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Cruise",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jason Statham",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Denzel Washington",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Charlize Theron",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Michelle Yeoh",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jet Li",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Donnie Yen",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harrison Ford",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kurt Russell",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Liam Neeson",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Linda Hamilton",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Uma Thurman",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chow Yun-fat",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vin Diesel",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sigourney Weaver",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "bandas-pagode",
+    "category": "Música",
+    "question": "As maiores bandas de pagode",
+    "image_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Raça Negra",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Exaltasamba",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Só Pra Contrariar",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grupo Revelação",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sorriso Maroto",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pixote",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Molejo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Art Popular",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Katinguelê",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Negritude Júnior",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Soweto",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Turma do Pagode",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Menos é Mais",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jeito Moleque",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Travessos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pique Novo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nosso Sentimento",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kamisa 10",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grupo Clareou",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fundo de Quintal",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "celebridades-fofas",
+    "category": "Diversão",
+    "question": "Qual é a celebridade mais fofa?",
+    "image_url": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Keanu Reeves",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pedro Pascal",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zendaya",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Holland",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Selena Gomez",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Emma Stone",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jennifer Lawrence",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ryan Gosling",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dolly Parton",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bruna Marquezine",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernanda Torres",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabrina Carpenter",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paul Rudd",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Andrew Garfield",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anne Hathaway",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dev Patel",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lupita Nyong'o",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jack Black",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ayo Edebiri",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Terry Crews",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "celebridades-sexy",
+    "category": "Diversão",
+    "question": "As celebridades mais sexy do mundo",
+    "image_url": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Idris Elba",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zendaya",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Michael B. Jordan",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ana de Armas",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Henry Cavill",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rihanna",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pedro Pascal",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dua Lipa",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chris Hemsworth",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Margot Robbie",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Regé-Jean Page",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dev Patel",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Beyoncé",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oscar Isaac",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zoë Kravitz",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jason Momoa",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tessa Thompson",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Theo James",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Janelle Monáe",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bad Bunny",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "comidas-apimentadas",
+    "category": "Comida",
+    "question": "Qual comida apimentada exige mais coragem?",
+    "image_url": "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Phaal curry",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sichuan hot pot",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vindaloo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Som tam",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mapo tofu",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Buldak",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kimchi jjigae",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jerk chicken",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Laal maas",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sambal",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom yum",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tteokbokki",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pad kra pao",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Buffalo wings",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harissa stew",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chili con carne",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arrabbiata",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camarão piri-piri",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curry verde tailandês",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Laksa",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "guitarristas",
+    "category": "Música",
+    "question": "Os maiores guitarristas de todos os tempos",
+    "image_url": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Jimi Hendrix",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jimmy Page",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "David Gilmour",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eric Clapton",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eddie Van Halen",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Stevie Ray Vaughan",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "B.B. King",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jeff Beck",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carlos Santana",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Prince",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brian May",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mark Knopfler",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Slash",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Morello",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Django Reinhardt",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wes Montgomery",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paco de Lucía",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "George Harrison",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tony Iommi",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ritchie Blackmore",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marcas-esportivas",
+    "category": "Esporte",
+    "question": "As marcas esportivas mais cool",
+    "image_url": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Nike",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adidas",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "New Balance",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Puma",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Asics",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salomon",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "On",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hoka",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Reebok",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jordan",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Under Armour",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mizuno",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fila",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Umbro",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kappa",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lululemon",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Patagonia",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "The North Face",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oakley",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Converse",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "padarias-floripa",
+    "category": "Florianópolis",
+    "question": "As padarias mais incríveis de Florianópolis",
+    "image_url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "O Padeiro de Sevilha",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria Café François",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Floripão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria e Confeitaria Estrela",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Família Lorenzi Pães Artesanais",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria Sabor & Pão",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria do Alemão",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Panificadora Padoka",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paní Vida Sem Glúten",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pães & Papos",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vero Pães Artesanais",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão a Mão",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria Vó Flor",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria Pão e Sonhos",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Benvenuta Pães Especiais",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paneteria Catarina",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Padaria Trindade",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ingleses Panificadora",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kompaan Padaria Artesanal",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santo Trigo Padaria & Cafeteria",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "paes",
+    "category": "Comida",
+    "question": "Os pães mais irresistíveis do mundo",
+    "image_url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Baguete",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sourdough",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ciabatta",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Focaccia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brioche",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão francês",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão de queijo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Challah",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Naan",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pita",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bagel",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shokupan",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão de centeio",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pretzel",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Broa de milho",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão australiano",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão de leite",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão integral",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão sírio",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pão italiano",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pintores",
+    "category": "Cultura",
+    "question": "Os maiores pintores de todos os tempos",
+    "image_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Vincent van Gogh",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leonardo da Vinci",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pablo Picasso",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rembrandt",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Claude Monet",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Johannes Vermeer",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caravaggio",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frida Kahlo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gustav Klimt",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Henri Matisse",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salvador Dalí",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Edward Hopper",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jean-Michel Basquiat",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mark Rothko",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jackson Pollock",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Candido Portinari",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tarsila do Amaral",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Francisco Goya",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Diego Velázquez",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "J. M. W. Turner",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pizza-sp",
+    "category": "São Paulo",
+    "question": "Qual pizzaria é a cara de São Paulo?",
+    "image_url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Leggera Pizza Napoletana",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carlos Pizza",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Castelões",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Speranza",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bráz Pizzaria",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camelo",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gattofiga Pizza Bar",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paul's Boutique Pizza Shop",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bráz Elettrica",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Napoli Centrale",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "La Braciera",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Pizza da Mooca",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "1900 Pizzeria",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Veridiana",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quintal do Bráz",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Divina Encrenca",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vila Napoli",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "La Crosta",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nonna d'Amore",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Deveras Pizza",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pizzarias-floripa",
+    "category": "Florianópolis",
+    "question": "Qual pizzaria de Florianópolis você defenderia até o fim?",
+    "image_url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Bere Birra Forneria",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bibi Pizza",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pizzaria Bel Mangio",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Forno Milano",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leone's Forneria",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Artesano Pizza Bar",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Feito Pizzas e Massas",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "El Padre Pizzaria",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Juca Pato Pizzaria",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Massa da Vila",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pizzeria Elba D'Italia",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Don Zarichta Pizzaria Artesanal",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Heróis da Pizza",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pizzeria Il Cantuccio",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Feito Pizzas e Massas Coqueiros",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bere Birra Santa Mônica",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Parma Pizza",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenha & Oliva",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Basilico",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nave Mãe Pizzaria",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "sushi-floripa",
+    "category": "Florianópolis",
+    "question": "Onde está o melhor sushi de Florianópolis?",
+    "image_url": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Nipô Sushi - Beiramar",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nipô Sushi - Passeio Primavera",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jun Kappô Sushi SC 401",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jun Kappô Sushi Coqueiros",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Noma Sushi Rooftop",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Noma Sushi Jurerê",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sattoru Sushi",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Casa Entre Mares",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arquipélago Sushi Lounge",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gatae Restaurante Japonês",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nakaixa Sushi",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Black Sheep on The Roof",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "SushiNami",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gringo Sushi Bar",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Koniko",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Casa do Sushi",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kikoni Japafood",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sushi Yama",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Okko Floripa",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Muramaki",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "sushi-sp",
+    "category": "São Paulo",
+    "question": "Onde está o sushi imbatível de São Paulo?",
+    "image_url": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Ryo Gastronomia",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jun Sakamoto",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kuro",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kinoshita",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aizomê",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shin-Zushi",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aoyama",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nagayama",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Huto",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kosushi",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kan Suke",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mori Ohta Sushi",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sushi Kenzo",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nakka Jardins",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Murakami",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sushi Kiyo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Manihi Sushi",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Makoto",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jam Jardins",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kinoshita Omakase",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "temperos",
+    "category": "Comida",
+    "question": "Os temperos que deixam tudo melhor",
+    "image_url": "https://images.unsplash.com/photo-1532336414038-cf19250c5757?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Alho",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Páprica defumada",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cominho",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pimenta-do-reino",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curry",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garam masala",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Za'atar",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sumac",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chimichurri",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alecrim",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tomilho",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Manjericão",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coentro",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orégano",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gengibre",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Açafrão",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Noz-moscada",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canela",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pimenta calabresa",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cardamomo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "times-mundo",
+    "category": "Esporte",
+    "question": "Qual é o melhor time de futebol do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-20T15:24:52.006Z",
+    "opts": [
+      {
+        "label": "Real Madrid",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barcelona",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Manchester United",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Liverpool",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bayern de Munique",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milan",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Inter de Milão",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Juventus",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ajax",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Benfica",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Manchester City",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arsenal",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paris Saint-Germain",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boca Juniors",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "River Plate",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Flamengo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corinthians",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Paulo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santos",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peñarol",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  }
+]

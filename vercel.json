@@ -1,11 +1,37 @@
 {
   "version": 2,
+  "alias": ["somostopo.com.br"],
   "builds": [
     { "src": "api.js", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" }
+    { "src": "page.js", "use": "@vercel/node", "config": { "includeFiles": ["index.html"] } },
+    { "src": "institutional.js", "use": "@vercel/node" },
+    { "src": "sitemap.js", "use": "@vercel/node" },
+    { "src": "og-topo.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "robots.txt", "use": "@vercel/static" },
+    { "src": "style.css", "use": "@vercel/static" },
+    { "src": "app.js", "use": "@vercel/static" },
+    { "src": "editorial-*.js", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api", "dest": "/api.js" },
+    { "src": "/sitemap.xml", "dest": "/sitemap.js" },
+    { "src": "/og-topo.png", "dest": "/og-topo.js" },
+    { "src": "/ranking/([^/]+)", "dest": "/page.js?id=$1" },
+    { "src": "/(sobre|como-funciona|imprensa|anuncie|contato|denuncie|regras|seguranca|privacidade|termos|cookies|direitos-autorais)/?", "dest": "/institutional.js?slug=$1" },
+    { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+      ]
+    }
   ]
 }

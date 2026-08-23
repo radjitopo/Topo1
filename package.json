@@ -2,7 +2,22 @@
   "name": "topo-beta",
   "private": true,
   "type": "module",
+  "scripts": {
+    "check": "node --check api.js && node --check app.js",
+    "audit:images": "node scripts/audit-ranking-images.mjs --site https://somostopo.com.br",
+    "audit:images:local": "node scripts/audit-ranking-images.mjs --strict",
+    "dev": "node test/dev-server.mjs",
+    "test:engagement": "node test/engagement-flow.test.mjs",
+    "test:image-audit": "node test/image-audit.test.mjs",
+    "db:comments": "node scripts/apply-comments.mjs",
+    "db:password-reset": "node scripts/apply-password-reset.mjs",
+    "test:api": "node test/api.integration.mjs",
+    "test:comments": "node test/comments.integration.mjs",
+    "test:password-reset": "node test/password-reset.integration.mjs",
+    "test:priority": "node test/priority.test.mjs"
+  },
   "dependencies": {
+    "@clerk/backend": "^3.16.10",
     "@neondatabase/serverless": "^1.0.0"
   }
 }

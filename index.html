@@ -3,93 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- SEO_START -->
 <title>TOPO — Tudo vira ranking</title>
-<style>
-:root{--bg:#f3f0e9;--paper:#fffdfa;--ink:#191919;--muted:#706d67;--line:#dedad2;--accent:#657986;--up:#1d6a4c;--upbg:#e7f3ed;--down:#9d493f;--downbg:#f8e9e6}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}button{font:inherit}.wrap{width:min(760px,calc(100% - 22px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(243,240,233,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}header{height:64px;display:flex;align-items:center;justify-content:space-between}.logo{font-family:Georgia,serif;font-size:34px;line-height:.9;font-weight:900;letter-spacing:-2px;color:var(--accent)}.tag{font-size:8px;text-transform:uppercase;letter-spacing:.17em;color:var(--muted);font-weight:900;margin-top:4px}.now{font-size:10px;color:var(--muted);font-weight:800}.groupsWrap{border-top:1px solid rgba(222,218,210,.75)}.groups{display:flex;gap:7px;overflow-x:auto;padding:9px 0 10px;scrollbar-width:none}.groups::-webkit-scrollbar{display:none}.groupBtn{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 11px;font-size:10px;font-weight:900;cursor:pointer}.groupBtn.active{background:var(--accent);border-color:var(--accent);color:#fff}.feed{padding:14px 0 80px}.feedMeta{display:flex;align-items:center;justify-content:space-between;padding:1px 3px 10px;color:var(--muted);font-size:9px;font-weight:800}.shuffleBtn{border:0;background:transparent;color:var(--accent);font-weight:900;padding:0;cursor:pointer}.rank{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}.rankHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.category{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:var(--accent)}.total{font-size:10px;color:var(--muted);white-space:nowrap}h2{font-family:Georgia,serif;font-size:32px;line-height:.98;letter-spacing:-1.3px;margin:0 0 14px}.options{border-top:1px solid var(--line)}.option{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.option:last-child{border-bottom:0}.pos{font-family:Georgia,serif;color:var(--accent);font-size:23px;font-weight:900}.name{font-size:14px;font-weight:900;line-height:1.15}.score{font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}.actions{display:flex;gap:5px}.react{width:36px;height:36px;border:0;border-radius:999px;display:grid;place-items:center;font-size:16px;cursor:pointer;transition:transform .08s ease}.react:active{transform:scale(.92)}.react:disabled{opacity:.55}.react.up{background:var(--upbg);color:var(--up)}.react.down{background:var(--downbg);color:var(--down)}.react.selected{outline:2px solid currentColor;outline-offset:1px}.rankFoot{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:9px;color:var(--muted)}.imageStrip{height:145px;border-radius:11px;overflow:hidden;margin:2px 0 13px;background:var(--accent)}.imageStrip img{width:100%;height:100%;object-fit:cover;display:block}.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,10px);background:#191919;color:white;padding:10px 13px;border-radius:999px;font-size:11px;font-weight:800;opacity:0;transition:.18s;z-index:30;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.end{text-align:center;color:var(--muted);font-size:11px;padding:20px 0 10px}.loading{padding:70px 0;text-align:center;color:var(--muted);font-size:12px}.retry{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:9px 14px;margin-top:12px;cursor:pointer}.empty{text-align:center;color:var(--muted);font-size:12px;padding:60px 0}
-@media(max-width:560px){.wrap{width:calc(100% - 16px)}header{height:58px}.logo{font-size:31px}.now{font-size:9px}.groups{padding:8px 0 9px}.groupBtn{padding:7px 10px}.rank{padding:14px;border-radius:14px}h2{font-size:28px}.option{grid-template-columns:25px 1fr auto;gap:8px;padding:11px 0}.react{width:34px;height:34px}.imageStrip{height:128px}}
-</style>
+<meta name="description" content="Vote, compare e descubra os rankings que estão movimentando o TOPO. Cultura, comida, lugares, esportes, produtos e muito mais.">
+<link rel="canonical" href="https://somostopo.com.br/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TOPO">
+<meta property="og:title" content="TOPO — Tudo vira ranking">
+<meta property="og:description" content="Vote, compare e descubra os rankings que estão movimentando o TOPO.">
+<meta property="og:url" content="https://somostopo.com.br/">
+<meta property="og:image" content="https://somostopo.com.br/og-topo.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TOPO — Tudo vira ranking">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TOPO — Tudo vira ranking">
+<meta name="twitter:description" content="Vote, compare e descubra os rankings que estão movimentando o TOPO.">
+<meta name="twitter:image" content="https://somostopo.com.br/og-topo.png">
+<!-- SEO_END -->
+<meta name="theme-color" content="#f3f0e9">
+<link rel="stylesheet" href="/style.css?v=20260823-3">
 </head>
 <body>
-<div class="top">
-  <div class="wrap"><header><div><div class="logo">TOPO</div><div class="tag">Tudo vira ranking.</div></div><div class="now">vote · veja · continue</div></header></div>
-  <div class="groupsWrap"><div class="wrap"><nav class="groups" id="groups"></nav></div></div>
-</div>
-<main class="wrap feed" id="feed"><div class="loading">carregando rankings…</div></main>
-<div class="toast" id="toast"></div>
-<script>
-const feed=document.getElementById('feed');
-const groupsEl=document.getElementById('groups');
-const storeKey='topo_device_id';
-let deviceId=localStorage.getItem(storeKey);
-if(!deviceId){deviceId=(crypto.randomUUID?crypto.randomUUID():('d-'+Date.now()+'-'+Math.random().toString(36).slice(2)));localStorage.setItem(storeKey,deviceId)}
-let rankings=[];
-let activeGroup='Todos';
-const groupNames=['Todos','Cultura','Comida','Lugares','Animais','Motores','Esporte','Diversão'];
-const fmt=n=>Number(n).toLocaleString('pt-BR');
-const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x};
-function groupOf(r){
-  if(['Cinema','Música','Livros','TV','Moda'].includes(r.cat))return 'Cultura';
-  if(['Comida','Café'].includes(r.cat))return 'Comida';
-  if(['Viagem','Brasil','Florianópolis'].includes(r.cat))return 'Lugares';
-  if(r.cat==='Animais')return 'Animais';
-  if(r.cat==='Carros')return 'Motores';
-  if(r.cat==='Esporte')return 'Esporte';
-  return 'Diversão';
-}
-function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>e.classList.remove('show'),1400)}
-function renderGroups(){
-  groupsEl.innerHTML=groupNames.map(g=>`<button class="groupBtn ${g===activeGroup?'active':''}" data-g="${g}">${g}</button>`).join('');
-  groupsEl.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    activeGroup=b.dataset.g;renderGroups();render();window.scrollTo({top:0,behavior:'smooth'})
-  })
-}
-async function load(){
-  feed.innerHTML='<div class="loading">carregando rankings…</div>';
-  try{
-    const res=await fetch('/api?device_id='+encodeURIComponent(deviceId),{cache:'no-store'});
-    if(!res.ok)throw new Error('load');
-    rankings=shuffle(await res.json());
-    renderGroups();render();
-  }catch(e){feed.innerHTML='<div class="loading">Não consegui carregar os rankings.<br><button class="retry" onclick="load()">Tentar de novo</button></div>'}
-}
-function reshuffle(){rankings=shuffle(rankings);render();window.scrollTo({top:0,behavior:'smooth'})}
-function visibleRankings(){return activeGroup==='Todos'?rankings:rankings.filter(r=>groupOf(r)===activeGroup)}
-function render(){
- const visible=visibleRankings();
- if(!visible.length){feed.innerHTML='<div class="empty">Nenhum ranking neste grupo ainda.</div>';return}
- feed.innerHTML=`<div class="feedMeta"><span>${visible.length} ranking${visible.length===1?'':'s'}</span><button class="shuffleBtn" onclick="reshuffle()">↻ embaralhar</button></div>`+visible.map(r=>`<article class="rank" data-r="${r.id}">
-   <div class="rankHead"><span class="category">${r.cat}</span><span class="total">${fmt(r.votes)} votos</span></div>
-   <h2>${r.q}</h2>
-   ${r.img?`<div class="imageStrip"><img src="${r.img}" alt=""></div>`:''}
-   <div class="options">${r.opts.map((o,i)=>`<div class="option">
-       <div class="pos">${i+1}</div>
-       <div><div class="name">${o.label}</div><div class="score"><span>${fmt(o.score)}</span> pontos</div></div>
-       <div class="actions">
-         <button class="react up ${o.mine===1?'selected':''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="Gostei">👍</button>
-         <button class="react down ${o.mine===-1?'selected':''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="Não gostei">👎</button>
-       </div>
-     </div>`).join('')}</div>
-   <div class="rankFoot"><span>Sem cadastro. Vote direto.</span><span>👍 sobe · 👎 desce</span></div>
- </article>`).join('')+'<div class="end">TOPO · tudo vira ranking</div>';
- document.querySelectorAll('.react').forEach(b=>b.onclick=()=>react(b));
-}
-async function react(b){
- const optionId=Number(b.dataset.id),mine=Number(b.dataset.mine),clicked=Number(b.dataset.dir),next=mine===clicked?0:clicked;
- const rankOrder=rankings.map(r=>r.id);
- b.parentElement.querySelectorAll('button').forEach(x=>x.disabled=true);
- try{
-   const res=await fetch('/api',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({device_id:deviceId,option_id:optionId,direction:next})});
-   if(!res.ok)throw new Error('vote');
-   toast(next===0?'Voto retirado':next===1?'👍 voto positivo':'👎 voto negativo');
-   const fresh=await fetch('/api?device_id='+encodeURIComponent(deviceId),{cache:'no-store'});
-   const data=await fresh.json();
-   const order=new Map(rankOrder.map((id,i)=>[id,i]));
-   rankings=data.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999));
-   render();
- }catch(e){toast('Não consegui registrar. Tente novamente.');b.parentElement.querySelectorAll('button').forEach(x=>x.disabled=false)}
-}
-load();
-</script>
-</body>
-</html>
+<div class="top"><div class="wrap"><header><div class="brandBlock"><a class="logo" href="/" aria-label="Voltar ao topo">TOPO</a><div class="tag">Tudo vira ranking.</div><div class="sitePulse" id="sitePulse" aria-label="Números da comunidade"></div></div><form class="siteSearch" id="siteSearchForm" action="/" method="get" role="search"><button class="siteSearchSubmit" type="submit" aria-label="Buscar"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg></button><input id="rankingSearch" name="busca" type="search" autocomplete="off" placeholder="Buscar rankings, temas ou itens" aria-label="Buscar rankings"></form><div class="account" id="account"><span class="now">vote · veja · continue</span></div></header></div><div class="groupsWrap"><div class="wrap"><nav class="groups" id="groups" aria-label="Categorias de rankings"></nav></div></div></div>
+<main class="wrap feed" id="feed"><div class="loading">carregando rankings…</div></main><div class="toast" id="toast"></div>
+<footer class="siteFooter"><div class="wrap siteFooterGrid"><div class="siteFooterIntro"><span class="siteFooterBrand">TOPO</span><p>Tudo vira ranking. Vote, descubra e mude a ordem.</p></div><nav class="siteFooterColumn" aria-label="Sobre o TOPO"><strong>Sobre o TOPO</strong><a href="/sobre">Sobre nós</a><a href="/como-funciona">Como funciona</a><a href="/imprensa">Imprensa</a><a href="/anuncie">Anuncie no TOPO</a></nav><nav class="siteFooterColumn" aria-label="Ajuda e segurança"><strong>Ajuda e segurança</strong><a href="/contato">Fale conosco</a><a href="/denuncie">Denuncie um conteúdo</a><a href="/regras">Regras da comunidade</a><a href="/seguranca">Segurança e privacidade</a></nav><nav class="siteFooterColumn" aria-label="Informações legais"><strong>Legal</strong><a href="/termos">Termos de uso</a><a href="/privacidade">Política de privacidade</a><a href="/cookies">Política de cookies</a><a href="/direitos-autorais">Direitos autorais</a></nav></div><div class="wrap siteFooterBottom"><span>© 2026 TOPO — Tudo vira ranking.</span><span>Feito no Brasil.</span></div></footer>
+<script src="/editorial-base.js"></script>
+<script src="/editorial-1.js"></script>
+<script src="/editorial-2.js"></script>
+<script src="/editorial-3.js"></script>
+<script src="/editorial-4.js"></script>
+<script src="/editorial-5.js"></script>
+<script src="/editorial-6.js"></script>
+<script src="/editorial-7.js"></script>
+<script src="/editorial-8.js"></script>
+<script src="/editorial-9.js"></script>
+<script src="/editorial-10.js"></script>
+<script src="/editorial-11.js"></script>
+<script src="/editorial-12.js"></script>
+<script src="/editorial-13.js"></script>
+<script>Object.assign(editorial,{"acompanhamentos":{"about":"Acompanhamento bom não fica no canto do prato: ele muda a refeição inteira. Crocância, acidez, cremosidade e aquele elemento que dá vontade de repetir fazem batata, farofa, purê, legumes e tantas outras guarnições disputarem protagonismo.","facts":["A função clássica do acompanhamento é complementar sabor, textura e equilíbrio do prato principal.","Muitas guarnições nasceram como formas simples de aproveitar ingredientes abundantes e hoje viraram ícones por conta própria."],"related":["comida","temperos","paes"]},"comidas-apimentadas":{"about":"Picância não é um sabor único. Pimentas diferentes entregam ardor, perfume, doçura, fumaça e até sensações que ficam na boca por minutos. Em várias cozinhas do mundo, o picante é parte central da identidade do prato.","facts":["A capsaicina é uma das substâncias responsáveis pela sensação de ardor das pimentas do gênero Capsicum.","A escala Scoville é usada para comparar a pungência de pimentas e produtos picantes."],"related":["culinarias","temperos","comidas-rua"]},"marcas-esportivas":{"about":"Marca esportiva hoje é performance, moda e cultura ao mesmo tempo. Tênis de corrida viram objeto de desejo, camisas entram no streetwear e colaborações aproximam esporte, música, design e comportamento.","facts":["O mercado esportivo mistura produtos técnicos de alto desempenho com linhas pensadas para uso cotidiano.","Modelos criados para quadras e pistas frequentemente acabam se tornando clássicos de moda urbana."],"related":["esportes-assistir","carros-eletricos","modelos-glamourosas"]},"bandas-pagode":{"about":"O pagode transformou rodas de samba em fenômeno de massa, especialmente a partir dos anos 1980 e 1990. Grupos com vozes marcantes, refrões gigantes e romantismo ajudaram a levar o gênero para rádios, estádios e festas do país inteiro.","facts":["O pagode ganhou enorme projeção nacional nas décadas de 1980 e 1990.","Tantã, repique de mão e banjo são instrumentos muito associados à sonoridade moderna do gênero."],"related":["generos-musicais","musica","albuns"]},"pizzarias-floripa":{"about":"Florianópolis mistura pizzaria de bairro, forno napolitano, massa de longa fermentação e casas que aproveitam o ritmo informal da ilha. Entre Centro, Coqueiros, Trindade, Lagoa e praias, pizza virou programa para todos os estilos.","facts":["A cena local reúne desde pizzas tradicionais brasileiras até estilos inspirados em Nápoles.","Forno muito quente e fermentação longa são marcas frequentes entre pizzarias artesanais contemporâneas."],"related":["pizza","comida","bairros-floripa"]},"times-mundo":{"about":"Alguns clubes ultrapassam fronteiras porque juntam títulos, torcida, grandes jogadores e gerações inteiras de memória. Europa e América do Sul concentram boa parte das camisas mais reconhecidas do futebol mundial.","facts":["Competições continentais ajudaram a transformar clubes locais em marcas globais.","Rivalidades históricas são uma parte central da identidade de muitos dos maiores clubes do mundo."],"related":["futebol","esportes-assistir","cidades"]},"celebridades-fofas":{"about":"Carisma não cabe em currículo. Às vezes vem de entrevistas, humor, gentileza pública, jeito desajeitado ou simplesmente de uma presença que parece próxima mesmo em alguém muito famoso.","facts":["A percepção de simpatia de uma celebridade costuma ser construída tanto por seus trabalhos quanto por aparições públicas e entrevistas.","Redes sociais tornaram momentos espontâneos parte importante da imagem pública de artistas."],"related":["atuacao-brasileira","modelos-glamourosas","series-tv"]},"celebridades-sexy":{"about":"Sexy pode ser beleza, presença, estilo, voz, humor, segurança ou tudo junto. O interessante é justamente como essa percepção muda entre épocas, culturas e gostos pessoais.","facts":["Padrões de beleza mudam bastante ao longo do tempo e entre diferentes culturas.","Cinema, música, moda e esporte têm enorme influência na construção de ícones de atração popular."],"related":["modelos-glamourosas","atuacao-brasileira","musica"]},"temperos":{"about":"Uma pitada pode mudar tudo. Ervas, especiarias, misturas e aromáticos são atalhos para criar profundidade, frescor, calor, perfume e identidade em qualquer cozinha.","facts":["Especiarias tiveram papel enorme em rotas comerciais e na história econômica mundial.","Misturas como garam masala, za'atar e curry variam bastante de região para região e até de casa para casa."],"related":["culinarias","comida","comidas-apimentadas"]},"pintores":{"about":"A história da pintura é uma sequência de rupturas. Perspectiva, luz, cor, abstração, gesto e cultura popular foram reinventados por artistas que mudaram não apenas a arte, mas a forma como aprendemos a olhar imagens.","facts":["A pintura a óleo ampliou possibilidades de transparência, textura e gradação de cor ao longo da história europeia.","Movimentos modernos romperam com a obrigação de representar o mundo de forma realista."],"related":["filmes","livros","albuns"]},"guitarristas":{"about":"A guitarra pode cantar, gritar, sustentar ritmo ou desaparecer em textura. Os grandes guitarristas não são apenas os mais rápidos: são aqueles que criaram um som reconhecível em poucos segundos.","facts":["Amplificação e efeitos eletrônicos transformaram radicalmente a linguagem da guitarra no século XX.","Jazz, blues, rock, metal, funk e música latina desenvolveram técnicas e timbres próprios para o instrumento."],"related":["bandas-rock","albuns","musica"]},"atores-acao":{"about":"Cinema de ação vive de presença física, timing, carisma e a capacidade de tornar o impossível convincente. De perseguições e artes marciais a espionagem e ficção científica, alguns atores acabaram definindo épocas inteiras do gênero.","facts":["Muitos astros de ação vieram de artes marciais, fisiculturismo, dança ou treinamento de dublês.","Franquias de ação ajudaram a transformar atores em marcas globais por décadas."],"related":["filmes-80","filmes-ficcao","super-herois"]},"padarias-floripa":{"about":"Padaria em Florianópolis vai do balcão de bairro ao pão de fermentação natural, passando por cafés, confeitarias e casas especializadas. É um pedaço cotidiano da cidade onde tradição e nova panificação se encontram.","facts":["Fermentação natural usa uma cultura viva de leveduras e bactérias presentes na farinha e no ambiente.","Pães artesanais costumam trabalhar tempo de fermentação como parte importante do desenvolvimento de sabor."],"related":["paes","cafe","sobremesas"]},"paes":{"about":"Poucos alimentos são tão universais quanto o pão. Farinha, água, sal e fermentação deram origem a milhares de formas, texturas e tradições — de cascas crocantes a miolos extremamente macios.","facts":["Fermentação produz gases que ajudam a criar a estrutura aerada de muitos pães.","Pães achatados existem em diversas culturas e podem ser assados em forno, chapa ou paredes quentes."],"related":["padarias-floripa","cafe","queijos"]},"sushi-floripa":{"about":"A cena japonesa de Florianópolis cresceu muito e hoje vai de combinados casuais a balcões mais autorais. Frescor do peixe, arroz bem temperado, técnica e ambiente fazem diferença em uma cidade tão ligada ao mar.","facts":["No sushi tradicional, o arroz temperado é tão importante quanto o peixe.","Omakase significa confiar ao chef a escolha da sequência servida."],"related":["sushi-sp","culinarias","comida"]},"sushi-sp":{"about":"São Paulo tem uma das cenas japonesas mais profundas fora do Japão, construída por décadas de imigração e renovada por balcões de sushi, omakases e restaurantes que vão do clássico ao contemporâneo.","facts":["A presença japonesa em São Paulo marcou profundamente bairros, mercados e a gastronomia da cidade.","Balcões de omakase valorizam sequência, temperatura, corte e o momento exato de servir cada peça."],"related":["sushi-floripa","culinarias","pizza-sp"]},"pizza-sp":{"about":"Pizza em São Paulo é quase uma instituição. A cidade juntou tradição italiana, estilo paulistano, casas centenárias e uma nova geração dedicada à pizza napolitana, romana e de fermentação longa.","facts":["São Paulo desenvolveu uma cultura de pizzaria muito própria, com enorme variedade de coberturas e estilos.","Nos últimos anos, pizzas individuais de inspiração napolitana ganharam ainda mais espaço na cidade."],"related":["pizza","pizzarias-floripa","sushi-sp"]}});</script>
+<script src="/app.js?v=20260823-3"></script>
+<div class="modalLayer" id="modalLayer"></div>
+</body></html>
