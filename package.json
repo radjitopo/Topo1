@@ -8,6 +8,7 @@
     "audit:images:local": "node scripts/audit-ranking-images.mjs --strict",
     "dev": "node test/dev-server.mjs",
     "test:engagement": "node test/engagement-flow.test.mjs",
+    "test:voting-flow": "node test/ranking-voting-flow.test.mjs",
     "test:image-audit": "node test/image-audit.test.mjs",
     "db:comments": "node scripts/apply-comments.mjs",
     "db:password-reset": "node scripts/apply-password-reset.mjs",

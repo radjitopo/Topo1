@@ -24,7 +24,7 @@ const clerkClient = CLERK_SECRET_KEY
 let clerkSchemaPromise;
 
 const ANONYMOUS_LIMIT = 30;
-const RANKING_LIMIT = 10;
+const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
 const PROFILE_AVATAR_MAX_LENGTH = 240000;
 const COMMENT_LIMIT = 200;

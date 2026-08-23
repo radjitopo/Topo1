@@ -79,6 +79,7 @@ try {
   assert.ok(bootstrap.body.community.users >= 0);
   assert.equal(bootstrap.body.viewer.registered, false);
   assert.equal(bootstrap.body.viewer.anonymousLimit, 30);
+  assert.equal(bootstrap.body.viewer.rankingLimit, 20);
   assert.ok(bootstrap.body.rankings.every((ranking) => ranking.opts.length === 20));
   assert.equal(
     bootstrap.body.rankings.find((ranking) => ranking.id === 'motos')?.q,
@@ -94,7 +95,7 @@ try {
     'Qual chocolate você nunca consegue recusar?'
   );
 
-  const [firstRanking, secondRanking, thirdRanking] = bootstrap.body.rankings;
+  const [firstRanking, secondRanking] = bootstrap.body.rankings;
   const firstOption = firstRanking.opts[0];
 
   const firstVote = await request({
@@ -111,7 +112,7 @@ try {
   assert.equal(removedVote.statusCode, 200);
   assert.equal(removedVote.body.viewer.anonymousUsed, 1);
 
-  for (const option of firstRanking.opts.slice(0, 10)) {
+  for (const option of firstRanking.opts.slice(0, 20)) {
     const result = await request({
       method: 'POST',
       body: { device_id: deviceId, option_id: option.id, direction: 1 }
@@ -119,29 +120,10 @@ try {
     assert.equal(result.statusCode, 200);
   }
 
-  const rankingLimit = await request({
-    method: 'POST',
-    body: {
-      device_id: deviceId,
-      option_id: firstRanking.opts[10].id,
-      direction: 1
-    }
-  });
-  assert.equal(rankingLimit.statusCode, 409);
-  assert.equal(rankingLimit.body.error, 'ranking_vote_limit');
-
-  for (const option of secondRanking.opts.slice(0, 10)) {
+  for (const option of secondRanking.opts.slice(0, 9)) {
     const result = await request({
       method: 'POST',
       body: { device_id: deviceId, option_id: option.id, direction: -1 }
-    });
-    assert.equal(result.statusCode, 200);
-  }
-
-  for (const option of thirdRanking.opts.slice(0, 9)) {
-    const result = await request({
-      method: 'POST',
-      body: { device_id: deviceId, option_id: option.id, direction: 1 }
     });
     assert.equal(result.statusCode, 200);
   }
@@ -150,7 +132,7 @@ try {
     method: 'POST',
     body: {
       device_id: deviceId,
-      option_id: thirdRanking.opts[9].id,
+      option_id: secondRanking.opts[9].id,
       direction: 1
     }
   });
@@ -177,25 +159,13 @@ try {
     cookie,
     body: {
       device_id: deviceId,
-      option_id: thirdRanking.opts[9].id,
-      direction: 1
+      option_id: secondRanking.opts[9].id,
+      direction: -1
     }
   });
   assert.equal(registeredVote.statusCode, 200);
   assert.equal(registeredVote.body.viewer.registered, true);
   assert.equal(registeredVote.body.viewer.anonymousUsed, 30);
-
-  const registeredRankingLimit = await request({
-    method: 'POST',
-    cookie,
-    body: {
-      device_id: deviceId,
-      option_id: thirdRanking.opts[10].id,
-      direction: 1
-    }
-  });
-  assert.equal(registeredRankingLimit.statusCode, 409);
-  assert.equal(registeredRankingLimit.body.error, 'ranking_vote_limit');
 
   const profile = await request({
     action: 'profile',
@@ -205,7 +175,7 @@ try {
   assert.equal(profile.statusCode, 200);
   assert.equal(profile.body.user.email, email);
   assert.equal(profile.body.stats.votes, 30);
-  assert.equal(profile.body.stats.rankings, 3);
+  assert.equal(profile.body.stats.rankings, 2);
   assert.equal(profile.body.stats.upVotes, 20);
   assert.equal(profile.body.stats.downVotes, 10);
   assert.ok(profile.body.recent.length > 0);

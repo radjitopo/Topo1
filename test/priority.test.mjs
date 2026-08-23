@@ -20,7 +20,7 @@ assert.equal(selected.length, 8, 'priority functions must remain testable');
 const context = vm.createContext({
   Date,
   Math,
-  viewer: { rankingLimit: 10 }
+  viewer: { rankingLimit: 20 }
 });
 vm.runInContext(
   `${selected.join('\n')}\nglobalThis.smartShuffleForTest=smartShuffle;globalThis.priorityBucketForTest=priorityBucket;globalThis.isFirstShowCandidateForTest=isFirstShowCandidate;globalThis.categoryPriorityRankingsForTest=categoryPriorityRankings;`,
@@ -40,7 +40,7 @@ const oldRanking = (id, voted = 0) => ({
 });
 
 const input = [
-  oldRanking('complete', 10),
+  oldRanking('complete', 20),
   newRanking('new'),
   oldRanking('partial', 3),
   oldRanking('unvoted', 0)
@@ -50,7 +50,7 @@ const result = context.smartShuffleForTest(input);
 assert.equal(context.priorityBucketForTest(newRanking('new')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('unvoted')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('partial', 3)), 1);
-assert.equal(context.priorityBucketForTest(oldRanking('complete', 10)), 2);
+assert.equal(context.priorityBucketForTest(oldRanking('complete', 20)), 2);
 assert.equal(context.isFirstShowCandidateForTest(newRanking('new')), true);
 assert.equal(context.isFirstShowCandidateForTest(oldRanking('old')), false);
 assert.deepEqual(new Set(result.slice(0, 2).map((ranking) => ranking.id)), new Set(['new', 'unvoted']));

@@ -12,6 +12,7 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .internalHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}.backLink{border:0;background:transparent;color:var(--accent);font-size:11px;font-weight:900;padding:0;cursor:pointer;text-decoration:none}.internalMeta{font-size:10px;color:var(--muted)}
 .highlights{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.highlight{display:block;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0}.highlightKicker{display:block;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:900;margin-bottom:6px}.highlightTitle{font-family:Georgia,serif;font-size:17px;line-height:1.12;font-weight:900;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;padding-bottom:.1em}.highlightMeta{display:block;font-size:9px;color:var(--muted);font-weight:800;margin-top:7px}
 .statsRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 13px}.statBox{border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:10px}.statLabel{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900}.statValue{font-family:Georgia,serif;font-size:20px;font-weight:900;margin-top:2px}
+.rankingEvaluationProgress{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:11px 12px;margin:0 0 13px}.rankingEvaluationCopy{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:8px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}.rankingEvaluationCopy strong{color:var(--ink);font-size:10px}.rankingEvaluationTrack{height:5px;border-radius:999px;background:var(--line);overflow:hidden;margin:8px 0 6px}.rankingEvaluationTrack span{display:block;height:100%;border-radius:inherit;background:var(--up)}.rankingEvaluationProgress small{display:block;color:var(--muted);font-size:9px;font-weight:750}
 .rankingResultHead{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--ink);padding:10px 0 8px;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.rankingResultHead strong{color:var(--ink);font-size:10px}
 .allItemsExplorer{border-top:1px solid var(--ink);margin-top:16px;padding-top:12px}
 .allItemsToggle{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:13px 14px;text-align:left;cursor:pointer}
@@ -86,7 +87,6 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .rankingShareRow .whatsappShare svg{width:14px;height:14px}
 .rankingShareRow .whatsappShare:hover{background:#e1efe8}
 .portalQuickOption{display:grid;grid-template-columns:20px minmax(0,1fr) auto auto;gap:8px;align-items:center;min-height:38px;border-bottom:1px solid var(--line)}
-.portalQuickVotes.previewOnly .portalQuickOption{grid-template-columns:20px minmax(0,1fr) auto}
 .portalQuickOption:last-child{border-bottom:0}
 .portalQuickPos{font:900 17px/1 Georgia,serif;color:var(--accent)}
 .portalQuickName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);text-decoration:none;font-size:11px;font-weight:900}
@@ -175,7 +175,7 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .categoryRankLinks .whatsappShare.compact{width:25px;height:25px;padding:0}
 .categoryRankLinks .whatsappShare.compact svg{width:14px;height:14px}
 .categoryVoteList{border-top:1px solid var(--line);padding:2px 12px 5px}
-.categoryVoteOption{display:grid;grid-template-columns:20px minmax(0,1fr);gap:7px;align-items:center;min-height:40px;border-bottom:1px solid var(--line)}
+.categoryVoteOption{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:40px;border-bottom:1px solid var(--line)}
 .categoryVoteOption:last-child{border-bottom:0}
 .categoryVotePos{font:900 17px/1 Georgia,serif;color:var(--accent)}
 .categoryVoteName{display:flex;align-items:baseline;gap:5px;min-width:0;color:var(--ink);text-decoration:none}
@@ -270,7 +270,7 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
   .portalHeroLink{min-height:315px}
   .portalHeroCopy{width:86%;padding:11px 12px}
   .portalHeroCopy h1{font-size:27px;letter-spacing:-.9px}
-  .portalQuickOption{grid-template-columns:18px minmax(0,1fr) auto}
+  .portalQuickOption{grid-template-columns:18px minmax(0,1fr) auto auto}
   .rankingShareRow{margin:6px 0 14px}
   .portalQuickScore{display:none}
   .portalSideMedia{height:108px}
