@@ -35,6 +35,8 @@ const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;
 const SUGGESTION_OPTION_LIMIT = 80;
 const SUGGESTION_TITLE_LIMIT = 120;
 const SUGGESTION_EXAMPLE_LIMIT = 10;
+const PUBLISHED_RANKING_OPTION_LIMIT = 20;
+const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794'
 ]);
@@ -264,11 +266,44 @@ function ensureSuggestionSchema() {
           CONSTRAINT ranking_topic_suggestions_examples
             CHECK (
               jsonb_typeof(example_options) = 'array'
-              AND jsonb_array_length(example_options) BETWEEN 3 AND 10
+              AND jsonb_array_length(example_options) BETWEEN 3 AND 20
             ),
           CONSTRAINT ranking_topic_suggestions_status
             CHECK (status IN ('pending', 'approved', 'rejected', 'published'))
         )
+      `),
+      sql.query(`
+        DO $$
+        DECLARE
+          current_definition text;
+        BEGIN
+          SELECT pg_get_constraintdef(oid)
+          INTO current_definition
+          FROM pg_constraint
+          WHERE conrelid = 'ranking_topic_suggestions'::regclass
+            AND conname = 'ranking_topic_suggestions_examples';
+
+          IF current_definition IS NOT NULL
+             AND position('20' in current_definition) = 0 THEN
+            ALTER TABLE ranking_topic_suggestions
+              DROP CONSTRAINT ranking_topic_suggestions_examples;
+          END IF;
+
+          IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conrelid = 'ranking_topic_suggestions'::regclass
+              AND conname = 'ranking_topic_suggestions_examples'
+          ) THEN
+            ALTER TABLE ranking_topic_suggestions
+              ADD CONSTRAINT ranking_topic_suggestions_examples
+              CHECK (
+                jsonb_typeof(example_options) = 'array'
+                AND jsonb_array_length(example_options) BETWEEN 3 AND 20
+              );
+          END IF;
+        END
+        $$
       `),
       sql.query(`
         CREATE UNIQUE INDEX IF NOT EXISTS ranking_topic_suggestions_pending_unique
@@ -460,6 +495,54 @@ function normalizeSuggestion(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+function publishedRankingOptions(value) {
+  const rawOptions = Array.isArray(value)
+    ? value
+    : String(value || '').split(/\r?\n/);
+  const providedOptions = rawOptions
+    .map((option) => String(option || '').trim())
+    .filter(Boolean);
+  if (
+    providedOptions.length < 3 ||
+    providedOptions.length > PUBLISHED_RANKING_OPTION_LIMIT
+  ) {
+    return null;
+  }
+
+  const uniqueOptions = new Map();
+  for (const value of providedOptions) {
+    const option = suggestionText(value, 2, SUGGESTION_OPTION_LIMIT);
+    const normalized = normalizeSuggestion(option);
+    if (!option || !normalized) return null;
+    if (!uniqueOptions.has(normalized)) uniqueOptions.set(normalized, option);
+  }
+
+  const options = [...uniqueOptions.values()];
+  return options.length >= 3 && options.length <= PUBLISHED_RANKING_OPTION_LIMIT
+    ? options
+    : null;
+}
+
+function publishedRankingImage(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if ([...raw].length > PUBLISHED_RANKING_IMAGE_LIMIT) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== 'https:' || url.username || url.password) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+function publishedRankingSlug(value) {
+  return normalizeSuggestion(value)
+    .replace(/\s+/g, '-')
+    .slice(0, 80)
+    .replace(/-+$/g, '');
 }
 
 function suggestionFlag(value) {
@@ -1972,6 +2055,133 @@ async function moderationQueue(req, res) {
   });
 }
 
+async function publishRankingSuggestion(res, user, body, id, moderationNote) {
+  const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
+  const normalizedTitle = normalizeSuggestion(title);
+  const category = suggestionText(body.category, 2, 50);
+  const options = publishedRankingOptions(body.options);
+  const imageUrl = publishedRankingImage(body.imageUrl);
+  if (
+    !title ||
+    !normalizedTitle ||
+    !category ||
+    !SUGGESTION_CATEGORIES.has(category) ||
+    !options
+  ) {
+    return json(res, 400, { error: 'invalid_published_ranking' });
+  }
+  if (imageUrl === null) {
+    return json(res, 400, { error: 'invalid_image_url' });
+  }
+
+  const [suggestion] = await sql.query(`
+    SELECT id, status
+    FROM ranking_topic_suggestions
+    WHERE id = $1::uuid
+    LIMIT 1
+  `, [id]);
+  if (!suggestion) return json(res, 404, { error: 'suggestion_not_found' });
+  if (suggestion.status !== 'approved') {
+    return json(res, 409, { error: 'suggestion_already_reviewed' });
+  }
+
+  const existingRankings = await sql.query(`
+    SELECT id, question
+    FROM rankings
+  `);
+  if (existingRankings.some((ranking) => normalizeSuggestion(ranking.question) === normalizedTitle)) {
+    return json(res, 409, { error: 'ranking_already_exists' });
+  }
+
+  const baseSlug = publishedRankingSlug(title);
+  if (!baseSlug) return json(res, 400, { error: 'invalid_published_ranking' });
+  const matchingIds = new Set((await sql.query(`
+    SELECT id
+    FROM rankings
+    WHERE id = $1 OR id LIKE $2
+  `, [baseSlug, `${baseSlug}-%`])).map((row) => row.id));
+  let rankingId = baseSlug;
+  for (let suffix = 2; matchingIds.has(rankingId); suffix += 1) {
+    rankingId = `${baseSlug}-${suffix}`;
+  }
+
+  const optionsJson = JSON.stringify(options);
+  let transactionResults;
+  try {
+    transactionResults = await sql.transaction([
+      sql.query(`
+        INSERT INTO rankings (
+          id,
+          category,
+          question,
+          image_url,
+          baseline_votes,
+          is_active,
+          created_at
+        )
+        SELECT $2, $3, $4, $5, 0, true, now()
+        FROM ranking_topic_suggestions
+        WHERE id = $1::uuid AND status = 'approved'
+        RETURNING id
+      `, [id, rankingId, category, title, imageUrl || null]),
+      sql.query(`
+        INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
+        SELECT
+          $2,
+          option.value,
+          option.ordinality::int,
+          0
+        FROM jsonb_array_elements_text($3::jsonb)
+          WITH ORDINALITY AS option(value, ordinality)
+        WHERE EXISTS (
+          SELECT 1
+          FROM ranking_topic_suggestions
+          WHERE id = $1::uuid AND status = 'approved'
+        )
+        RETURNING id
+      `, [id, rankingId, optionsJson]),
+      sql.query(`
+        UPDATE ranking_topic_suggestions
+        SET title = $3,
+            normalized_title = $4,
+            category = $5,
+            example_options = $6::jsonb,
+            status = 'published',
+            published_ranking_id = $7,
+            reviewed_by = $2,
+            moderation_note = COALESCE($8, moderation_note),
+            reviewed_at = now()
+        WHERE id = $1::uuid AND status = 'approved'
+        RETURNING id, status, published_ranking_id AS "publishedRankingId"
+      `, [
+        id,
+        user.id,
+        title,
+        normalizedTitle,
+        category,
+        optionsJson,
+        rankingId,
+        moderationNote
+      ])
+    ], { isolationLevel: 'Serializable' });
+  } catch (error) {
+    if (error?.code === '23505') {
+      return json(res, 409, { error: 'ranking_already_exists' });
+    }
+    throw error;
+  }
+
+  const published = transactionResults?.[2]?.[0];
+  if (!published) {
+    return json(res, 409, { error: 'suggestion_already_reviewed' });
+  }
+  return json(res, 200, {
+    ok: true,
+    rankingId,
+    suggestion: published
+  });
+}
+
 async function moderateSuggestion(req, res, body) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
@@ -1982,8 +2192,14 @@ async function moderateSuggestion(req, res, body) {
   const kind = String(body.kind || '');
   const decision = String(body.decision || '');
   const moderationNote = suggestionText(String(body.note || ''), 1, 300) || null;
-  if (!/^[0-9a-f-]{36}$/i.test(id) || !['option', 'ranking'].includes(kind) || !['approve', 'reject'].includes(decision)) {
+  const validDecision = ['approve', 'reject'].includes(decision) ||
+    (kind === 'ranking' && decision === 'publish');
+  if (!/^[0-9a-f-]{36}$/i.test(id) || !['option', 'ranking'].includes(kind) || !validDecision) {
     return json(res, 400, { error: 'invalid_moderation' });
+  }
+
+  if (kind === 'ranking' && decision === 'publish') {
+    return publishRankingSuggestion(res, user, body, id, moderationNote);
   }
 
   let rows;
