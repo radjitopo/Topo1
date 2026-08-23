@@ -693,6 +693,7 @@ async function viewerFor(user, deviceId) {
 
   return {
     registered: Boolean(user),
+    isModerator: isModerator(user),
     anonymousUsed: used,
     anonymousLimit: ANONYMOUS_LIMIT,
     rankingLimit: RANKING_LIMIT,
@@ -1005,6 +1006,7 @@ async function signup(req, res, body) {
     user: { id: userId, name: displayName, email },
     viewer: {
       registered: true,
+      isModerator: isModerator({ email }),
       anonymousUsed: await anonymousUsed(deviceId),
       anonymousLimit: ANONYMOUS_LIMIT,
       rankingLimit: RANKING_LIMIT
@@ -1060,6 +1062,7 @@ async function login(req, res, body) {
     user: { id: user.id, name: user.display_name, email: user.email },
     viewer: {
       registered: true,
+      isModerator: isModerator(user),
       anonymousUsed: await anonymousUsed(deviceId),
       anonymousLimit: ANONYMOUS_LIMIT,
       rankingLimit: RANKING_LIMIT
@@ -1853,7 +1856,7 @@ async function createSuggestion(req, res, body) {
       return json(res, 409, { error: 'option_already_exists' });
     }
     const possibleDuplicate = possibleOptionDuplicate(label, existingOptionRows);
-    if (Number(recentRows[0]?.total || 0) >= OPTION_SUGGESTION_DAILY_LIMIT) {
+    if (!isModerator(user) && Number(recentRows[0]?.total || 0) >= OPTION_SUGGESTION_DAILY_LIMIT) {
       return json(res, 429, {
         error: 'option_suggestion_limit',
         limit: OPTION_SUGGESTION_DAILY_LIMIT

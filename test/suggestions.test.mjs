@@ -18,6 +18,7 @@ assert.match(migration, /jsonb_array_length\(example_options\) BETWEEN 3 AND 20/
 assert.match(migrationScript, /20260823_suggestions\.sql/, 'the suggestion migration must have an application script');
 
 assert.match(api, /const OPTION_SUGGESTION_DAILY_LIMIT = 3;/, 'option suggestions must be limited to three per day');
+assert.match(api, /!isModerator\(user\)[\s\S]*OPTION_SUGGESTION_DAILY_LIMIT/, 'moderators must be exempt from the option suggestion limit during testing');
 assert.match(api, /const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;/, 'ranking ideas must be limited to one per week');
 assert.match(api, /const PENDING_RANKING_CATEGORY = 'A definir';/, 'people must not choose a category while suggesting a ranking');
 assert.match(api, /const category = PENDING_RANKING_CATEGORY;/, 'the server must assign ranking preparation to the editorial team');
@@ -44,6 +45,7 @@ assert.match(api, /idempotency-key': `topo-suggestion-/, 'moderation emails must
 assert.match(api, /Nenhuma decisão é tomada diretamente pelo e-mail/, 'email scanners must not be able to approve suggestions');
 
 assert.match(app, /function rankingOptionSuggestionHTML\(r\)/, 'each ranking must offer an option suggestion form');
+assert.match(app, /Sugestões ilimitadas durante o teste\./, 'moderators must see that their test suggestions are unlimited');
 assert.match(app, /function profileSuggestionCenterHTML\(data=/, 'the profile must offer ranking ideas and history');
 const rankingForm = app.slice(app.indexOf('function profileSuggestionCenterHTML'), app.indexOf('function bindProfileSuggestionForm'));
 assert.doesNotMatch(rankingForm, /name="category"/, 'people must not choose the ranking category');
