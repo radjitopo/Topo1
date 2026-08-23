@@ -18,6 +18,7 @@ assert.match(migrationScript, /20260823_suggestions\.sql/, 'the suggestion migra
 assert.match(api, /const OPTION_SUGGESTION_DAILY_LIMIT = 3;/, 'option suggestions must be limited to three per day');
 assert.match(api, /const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;/, 'ranking ideas must be limited to one per week');
 assert.match(api, /TOPO_MODERATOR_EMAILS/, 'moderator access must use an explicit email allowlist');
+assert.match(api, /BUILT_IN_MODERATOR_EMAIL_HASHES/, 'the preview moderator must be enabled without exposing the email address');
 assert.match(api, /function isModerator\(user\)/, 'moderation routes must verify the signed-in user');
 assert.match(api, /async function mySuggestions\(req, res\)/, 'people must be able to retrieve their suggestion history');
 assert.match(api, /async function moderationQueue\(req, res\)/, 'moderators need a central queue');
