@@ -565,7 +565,7 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .suggestionRetry{border:0;background:transparent;color:var(--accent);padding:0;font:inherit;font-weight:950;text-decoration:underline;cursor:pointer}
 .moderationPage{background:#f5f3ee}
 .moderationPage .groupsWrap{display:none}
-.moderationHero{margin-bottom:14px;padding:24px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.moderationHero{display:block;height:auto;min-height:0;margin-bottom:14px;padding:24px;border:1px solid var(--line);border-radius:18px;background:#fff}
 .moderationHero h1,.moderationAccessDenied h1{max-width:660px;margin:6px 0 8px;font:900 42px/.98 Georgia,serif;letter-spacing:-1.4px}
 .moderationHero>p,.moderationAccessDenied p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
 .moderationCounts{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}

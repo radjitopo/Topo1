@@ -40,5 +40,6 @@ assert.match(app, /fetch\('\/api\?action=moderation'/, 'the panel must use the p
 assert.match(style, /\.rankingSuggestion\{/, 'the ranking suggestion form must be styled');
 assert.match(style, /\.profileSuggestionCenter\{/, 'the profile suggestion center must be styled');
 assert.match(style, /\.moderationCard\{/, 'moderation cards must be styled');
+assert.match(style, /\.moderationHero\{[^}]*display:block;[^}]*height:auto/, 'the moderation hero must not inherit the compact global header layout');
 
 console.log('Suggestion and moderation checks passed.');
