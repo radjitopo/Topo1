@@ -19,6 +19,9 @@ assert.match(migrationScript, /20260823_suggestions\.sql/, 'the suggestion migra
 
 assert.match(api, /const OPTION_SUGGESTION_DAILY_LIMIT = 3;/, 'option suggestions must be limited to three per day');
 assert.match(api, /const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;/, 'ranking ideas must be limited to one per week');
+assert.match(api, /const PENDING_RANKING_CATEGORY = 'A definir';/, 'people must not choose a category while suggesting a ranking');
+assert.match(api, /const category = PENDING_RANKING_CATEGORY;/, 'the server must assign ranking preparation to the editorial team');
+assert.match(api, /const exampleOptions = \[\.\.\.PENDING_RANKING_EXAMPLES\];/, 'the server must ignore user-supplied ranking options');
 assert.match(api, /TOPO_MODERATOR_EMAILS/, 'moderator access must use an explicit email allowlist');
 assert.match(api, /BUILT_IN_MODERATOR_EMAIL_HASHES/, 'the preview moderator must be enabled without exposing the email address');
 assert.match(api, /function isModerator\(user\)/, 'moderation routes must verify the signed-in user');
@@ -42,6 +45,11 @@ assert.match(api, /Nenhuma decisão é tomada diretamente pelo e-mail/, 'email s
 
 assert.match(app, /function rankingOptionSuggestionHTML\(r\)/, 'each ranking must offer an option suggestion form');
 assert.match(app, /function profileSuggestionCenterHTML\(data=/, 'the profile must offer ranking ideas and history');
+const rankingForm = app.slice(app.indexOf('function profileSuggestionCenterHTML'), app.indexOf('function bindProfileSuggestionForm'));
+assert.doesNotMatch(rankingForm, /name="category"/, 'people must not choose the ranking category');
+assert.doesNotMatch(rankingForm, /name="options"/, 'people must not create the ranking options');
+assert.match(rankingForm, /O restante fica por nossa conta/, 'the form must explain the editorial workflow');
+assert.match(app, /JSON\.stringify\(\{kind:'ranking',title:/, 'ranking suggestions must send only the title');
 assert.match(app, /Minhas sugestões/, 'the profile must expose suggestion statuses');
 assert.match(app, /Em preparação/, 'approved ranking ideas must show that publication is still pending');
 assert.match(app, /function renderModeration\(\)/, 'the private moderation page must render');

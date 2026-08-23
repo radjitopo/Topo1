@@ -35,7 +35,12 @@ const OPTION_SUGGESTION_DAILY_LIMIT = 3;
 const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;
 const SUGGESTION_OPTION_LIMIT = 80;
 const SUGGESTION_TITLE_LIMIT = 120;
-const SUGGESTION_EXAMPLE_LIMIT = 10;
+const PENDING_RANKING_CATEGORY = 'A definir';
+const PENDING_RANKING_EXAMPLES = Object.freeze([
+  'A definir 1',
+  'A definir 2',
+  'A definir 3'
+]);
 const PUBLISHED_RANKING_OPTION_LIMIT = 20;
 const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
@@ -1757,9 +1762,8 @@ async function sendSuggestionModerationEmail(req, suggestion) {
   const detail = isOption
     ? `<p><strong>Ranking:</strong> ${emailHtml(suggestion.question)}</p>
        <p><strong>Opção:</strong> ${emailHtml(suggestion.label)}</p>`
-    : `<p><strong>Título:</strong> ${emailHtml(suggestion.title)}</p>
-       <p><strong>Categoria:</strong> ${emailHtml(suggestion.category)}</p>
-       <p><strong>Exemplos:</strong> ${suggestion.exampleOptions.map(emailHtml).join(' · ')}</p>`;
+    : `<p><strong>Ideia:</strong> ${emailHtml(suggestion.title)}</p>
+       <p>A categoria, as opções e a foto serão definidas pela equipe na moderação.</p>`;
   const flag = suggestion.flagReason
     ? `<p style="background:#f8e9e6;color:#8b3f36;border-radius:8px;padding:9px 11px"><strong>Atenção:</strong> ${emailHtml(suggestion.flagReason)}</p>`
     : '';
@@ -1891,36 +1895,10 @@ async function createSuggestion(req, res, body) {
 
   if (kind === 'ranking') {
     const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
-    const category = suggestionText(body.category, 2, 50);
-    const rawOptions = Array.isArray(body.options)
-      ? body.options
-      : String(body.options || '').split(/\r?\n/);
-    const providedOptions = rawOptions
-      .map((value) => String(value || '').trim())
-      .filter(Boolean);
-    const uniqueOptions = new Map();
-    let invalidOption = false;
-    for (const value of providedOptions) {
-      const option = suggestionText(String(value || ''), 2, SUGGESTION_OPTION_LIMIT);
-      const normalizedOption = normalizeSuggestion(option);
-      if (option && normalizedOption && !uniqueOptions.has(normalizedOption)) {
-        uniqueOptions.set(normalizedOption, option);
-      } else if (!option || !normalizedOption) {
-        invalidOption = true;
-      }
-    }
-    const exampleOptions = [...uniqueOptions.values()];
+    const category = PENDING_RANKING_CATEGORY;
+    const exampleOptions = [...PENDING_RANKING_EXAMPLES];
     const normalized = normalizeSuggestion(title);
-    if (
-      !title ||
-      !normalized ||
-      !category ||
-      !SUGGESTION_CATEGORIES.has(category) ||
-      invalidOption ||
-      providedOptions.length > SUGGESTION_EXAMPLE_LIMIT ||
-      exampleOptions.length < 3 ||
-      exampleOptions.length > SUGGESTION_EXAMPLE_LIMIT
-    ) {
+    if (!title || !normalized) {
       return json(res, 400, { error: 'invalid_ranking_suggestion' });
     }
 
@@ -1948,7 +1926,7 @@ async function createSuggestion(req, res, body) {
     }
 
     const id = randomUUID();
-    const flagReason = suggestionFlag([title, ...exampleOptions].join(' '));
+    const flagReason = suggestionFlag(title);
     try {
       await sql.query(`
         INSERT INTO ranking_topic_suggestions (
@@ -1981,8 +1959,6 @@ async function createSuggestion(req, res, body) {
       id,
       kind,
       title,
-      category,
-      exampleOptions,
       flagReason,
       userName: user.display_name,
       userEmail: user.email
