@@ -37,6 +37,11 @@ assert.match(api, /async function publishRankingSuggestion\(res, user, body, id,
 assert.match(api, /INSERT INTO ranking_options \(ranking_id, label, position, baseline_score\)/, 'approved options must enter the ranking');
 assert.match(api, /SELECT ranking_id, \$4, next_position, 0/, 'approved options must start at the bottom with zero points');
 assert.match(api, /const PUBLISHED_RANKING_OPTION_LIMIT = 20;/, 'published rankings must support up to 20 reviewed options');
+assert.match(api, /const RANKING_DRAFT_MODEL = 'openai\/gpt-5\.4-mini';/, 'automatic drafts must use a current compact model');
+assert.match(api, /async function createAutomaticRankingDraft\(title\)/, 'approved ideas need automatic Top 20 generation');
+assert.match(api, /minItems: PUBLISHED_RANKING_OPTION_LIMIT,[\s\S]*maxItems: PUBLISHED_RANKING_OPTION_LIMIT/, 'automatic drafts must contain exactly 20 items');
+assert.match(api, /kind === 'ranking' && decision === 'generate'/, 'only the protected ranking moderation flow may request generation');
+assert.match(api, /WHERE id = \$1::uuid AND status = 'approved'/, 'automatic drafts must only be saved on approved ideas');
 assert.match(api, /INSERT INTO rankings \([\s\S]*FROM ranking_topic_suggestions[\s\S]*status = 'approved'/, 'publication must only create a ranking from an approved idea');
 assert.match(api, /status = 'published',[\s\S]*published_ranking_id = \$7/, 'publication must connect the idea to its new ranking');
 assert.match(api, /\], \{ isolationLevel: 'Serializable' \}\);/, 'ranking and options must be published in one serializable transaction');
@@ -60,6 +65,10 @@ assert.match(app, /data-duplicate-target/, 'moderators must choose the existing 
 assert.match(app, /Já existe/, 'duplicate decisions must be explained in the interface and profile');
 assert.match(app, /Preparar para publicar/, 'approved ideas need a preparation section before publication');
 assert.match(app, /data-publish-form/, 'the preparation section must provide an editable publication form');
+assert.match(app, /function bindModerationDrafts\(\)/, 'approved ideas must start automatic draft generation in the moderation panel');
+assert.match(app, /decision:'generate'/, 'the panel must request an automatic Top 20 draft');
+assert.match(app, /draft\.options\.length!==20/, 'the panel must reject incomplete automatic drafts');
+assert.match(app, /Gerar outra lista/, 'moderators must be able to replace an automatic list');
 assert.match(app, /decision:'publish'/, 'the final button must explicitly request publication');
 assert.match(app, /Foto carregada\. Confira o corte\./, 'the cover photo must be previewed before publication');
 assert.match(app, /portalIdeaCalloutHTML/, 'the home page must invite ranking ideas');
@@ -71,6 +80,7 @@ assert.match(style, /\.profileSuggestionCenter\{/, 'the profile suggestion cente
 assert.match(style, /\.moderationCard\{/, 'moderation cards must be styled');
 assert.match(style, /\.moderationDuplicateHint\{/, 'possible duplicate warnings must be styled');
 assert.match(style, /\.moderationPrepareForm\{/, 'the publication preparation form must be styled');
+assert.match(style, /\.moderationDraftTools\{/, 'automatic draft controls must be styled');
 assert.match(style, /\.moderationImagePreview\{/, 'the cover preview must be styled');
 assert.match(style, /\.moderationHero\{[^}]*display:block;[^}]*height:auto/, 'the moderation hero must not inherit the compact global header layout');
 

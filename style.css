@@ -610,6 +610,12 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .moderationPrepareTitle{grid-column:auto}
 .moderationPrepareOptions,.moderationPrepareImage{grid-column:1/-1}
 .moderationPrepareForm .suggestionField textarea{min-height:185px}
+.moderationDraftTools{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border:1px solid #c8d2d7;border-radius:10px;background:#f7f9f9}
+.moderationDraftTools small{color:var(--muted);font-size:8px;line-height:1.4}
+.moderationDraftTools small.success{color:var(--up);font-weight:850}
+.moderationDraftTools small.error{color:var(--down);font-weight:850}
+.moderationDraftTools button{flex:0 0 auto;border:1px solid #718692;border-radius:999px;background:#fff;color:#465e6d;padding:7px 10px;font-size:8px;font-weight:950;cursor:pointer}
+.moderationDraftTools button:disabled{opacity:.55;cursor:wait}
 .moderationImagePreview{position:relative;min-height:190px;overflow:hidden;border:1px solid var(--line);border-radius:13px;display:grid;place-items:center;background:#edf1f2}
 .moderationImagePreview[hidden]{display:none}
 .moderationImagePreview img{width:100%;height:230px;display:block;object-fit:cover}
@@ -650,6 +656,8 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
   .moderationCard.preparing{margin:8px -4px;padding:15px 11px}
   .moderationPrepareGrid{grid-template-columns:1fr}
   .moderationPrepareTitle,.moderationPrepareOptions,.moderationPrepareImage{grid-column:auto}
+  .moderationDraftTools{align-items:stretch;flex-direction:column}
+  .moderationDraftTools button{width:100%}
   .moderationImagePreview{min-height:150px}
   .moderationImagePreview img{height:190px}
   .moderationPublishBar{align-items:stretch;flex-direction:column}
