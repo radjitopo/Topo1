@@ -22,6 +22,7 @@ const clerkClient = CLERK_SECRET_KEY
     })
   : null;
 let clerkSchemaPromise;
+let suggestionSchemaPromise;
 
 const ANONYMOUS_LIMIT = 30;
 const RANKING_LIMIT = 20;
@@ -29,10 +30,33 @@ const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
 const PROFILE_AVATAR_MAX_LENGTH = 240000;
 const COMMENT_LIMIT = 200;
 const COMMENTS_PAGE_SIZE = 20;
+const OPTION_SUGGESTION_DAILY_LIMIT = 3;
+const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;
+const SUGGESTION_OPTION_LIMIT = 80;
+const SUGGESTION_TITLE_LIMIT = 120;
+const SUGGESTION_EXAMPLE_LIMIT = 10;
 const PASSWORD_RESET_MINUTES = 30;
 const SESSION_DAYS = 30;
 const SESSION_COOKIE = 'topo_session';
 const DEVICE_PATTERN = /^[a-zA-Z0-9-]{16,100}$/;
+const SUGGESTION_CATEGORIES = new Set([
+  'Cinema',
+  'Música',
+  'TV & Séries',
+  'Livros',
+  'Arte',
+  'Moda',
+  'Comida',
+  'Lugares',
+  'Famosos',
+  'Natureza',
+  'Motores',
+  'Esporte',
+  'Jogos',
+  'Tecnologia',
+  'Produtos',
+  'Vida'
+]);
 
 function json(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -179,6 +203,91 @@ function ensureClerkSchema() {
   return clerkSchemaPromise;
 }
 
+function ensureSuggestionSchema() {
+  if (!suggestionSchemaPromise) {
+    suggestionSchemaPromise = sql.transaction([
+      sql.query(`
+        CREATE TABLE IF NOT EXISTS ranking_option_suggestions (
+          id uuid PRIMARY KEY,
+          ranking_id text NOT NULL REFERENCES rankings(id) ON DELETE CASCADE,
+          user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          label text NOT NULL,
+          normalized_label text NOT NULL,
+          status text NOT NULL DEFAULT 'pending',
+          flag_reason text,
+          approved_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
+          reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
+          moderation_note text,
+          created_at timestamptz NOT NULL DEFAULT now(),
+          reviewed_at timestamptz,
+          CONSTRAINT ranking_option_suggestions_label_length
+            CHECK (char_length(btrim(label)) BETWEEN 2 AND 80),
+          CONSTRAINT ranking_option_suggestions_status
+            CHECK (status IN ('pending', 'approved', 'rejected'))
+        )
+      `),
+      sql.query(`
+        CREATE UNIQUE INDEX IF NOT EXISTS ranking_option_suggestions_pending_unique
+        ON ranking_option_suggestions (ranking_id, normalized_label)
+        WHERE status = 'pending'
+      `),
+      sql.query(`
+        CREATE INDEX IF NOT EXISTS ranking_option_suggestions_user_recent_idx
+        ON ranking_option_suggestions (user_id, created_at DESC)
+      `),
+      sql.query(`
+        CREATE INDEX IF NOT EXISTS ranking_option_suggestions_queue_idx
+        ON ranking_option_suggestions (status, created_at)
+      `),
+      sql.query(`
+        CREATE TABLE IF NOT EXISTS ranking_topic_suggestions (
+          id uuid PRIMARY KEY,
+          user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          title text NOT NULL,
+          normalized_title text NOT NULL,
+          category text NOT NULL,
+          example_options jsonb NOT NULL,
+          status text NOT NULL DEFAULT 'pending',
+          flag_reason text,
+          published_ranking_id text REFERENCES rankings(id) ON DELETE SET NULL,
+          reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
+          moderation_note text,
+          created_at timestamptz NOT NULL DEFAULT now(),
+          reviewed_at timestamptz,
+          CONSTRAINT ranking_topic_suggestions_title_length
+            CHECK (char_length(btrim(title)) BETWEEN 8 AND 120),
+          CONSTRAINT ranking_topic_suggestions_category_length
+            CHECK (char_length(btrim(category)) BETWEEN 2 AND 50),
+          CONSTRAINT ranking_topic_suggestions_examples
+            CHECK (
+              jsonb_typeof(example_options) = 'array'
+              AND jsonb_array_length(example_options) BETWEEN 3 AND 10
+            ),
+          CONSTRAINT ranking_topic_suggestions_status
+            CHECK (status IN ('pending', 'approved', 'rejected', 'published'))
+        )
+      `),
+      sql.query(`
+        CREATE UNIQUE INDEX IF NOT EXISTS ranking_topic_suggestions_pending_unique
+        ON ranking_topic_suggestions (normalized_title)
+        WHERE status = 'pending'
+      `),
+      sql.query(`
+        CREATE INDEX IF NOT EXISTS ranking_topic_suggestions_user_recent_idx
+        ON ranking_topic_suggestions (user_id, created_at DESC)
+      `),
+      sql.query(`
+        CREATE INDEX IF NOT EXISTS ranking_topic_suggestions_queue_idx
+        ON ranking_topic_suggestions (status, created_at)
+      `)
+    ], { isolationLevel: 'Serializable' }).catch((error) => {
+      suggestionSchemaPromise = null;
+      throw error;
+    });
+  }
+  return suggestionSchemaPromise;
+}
+
 async function clerkUserForRequest(req) {
   const token = clerkSessionToken(req);
   if (!token || !clerkClient || !CLERK_SECRET_KEY) return null;
@@ -309,6 +418,58 @@ async function sessionUser(req) {
   // Password authentication is disabled. Never fall back to a stale legacy
   // cookie while a different Clerk identity is active on the same browser.
   return clerkUserForRequest(req);
+}
+
+function moderatorEmails() {
+  return [...new Set(
+    String(
+      process.env.TOPO_MODERATOR_EMAILS ||
+      process.env.TOPO_MODERATION_TO ||
+      ''
+    )
+      .split(',')
+      .map(normalizeEmail)
+      .filter(isValidEmail)
+  )];
+}
+
+function isModerator(user) {
+  return Boolean(
+    user && moderatorEmails().includes(normalizeEmail(user.email))
+  );
+}
+
+function suggestionText(value, minimum, maximum) {
+  if (typeof value !== 'string') return null;
+  const clean = value.replace(/\s+/g, ' ').trim();
+  const length = [...clean].length;
+  return length >= minimum && length <= maximum ? clean : null;
+}
+
+function normalizeSuggestion(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function suggestionFlag(value) {
+  const text = String(value || '');
+  if (/https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org|br)\b/i.test(text)) {
+    return 'contém link';
+  }
+  if (/(.)\1{6,}/i.test(text)) return 'caracteres repetidos';
+  const configured = String(process.env.TOPO_SUGGESTION_BLOCKLIST || '')
+    .split(',')
+    .map(normalizeSuggestion)
+    .filter(Boolean);
+  const normalized = normalizeSuggestion(text);
+  if (configured.some((term) => normalized.includes(term))) {
+    return 'termo sinalizado';
+  }
+  return null;
 }
 
 function sessionData(userId) {
@@ -803,6 +964,7 @@ function currentVoteStreak(rows) {
 async function profile(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
+  await ensureSuggestionSchema();
 
   const deviceId = queryValue(req, 'device_id').slice(0, 100);
   if (
@@ -822,7 +984,9 @@ async function profile(req, res) {
     profileRows,
     streakRows,
     assignmentRows,
-    doubleVotes
+    doubleVotes,
+    optionSuggestionRows,
+    topicSuggestionRows
   ] = await Promise.all([
     sql.query(`
       WITH latest AS (
@@ -916,7 +1080,39 @@ async function profile(req, res) {
       WHERE dv.user_id = $1
       ORDER BY dv.slot
     `, [user.id]),
-    doubleVoteState(user, deviceId, deviceIds)
+    doubleVoteState(user, deviceId, deviceIds),
+    sql.query(`
+      SELECT
+        s.id,
+        s.ranking_id AS "rankingId",
+        r.question,
+        s.label,
+        s.status,
+        s.moderation_note AS "moderationNote",
+        s.created_at AS "createdAt",
+        s.reviewed_at AS "reviewedAt"
+      FROM ranking_option_suggestions s
+      JOIN rankings r ON r.id = s.ranking_id
+      WHERE s.user_id = $1
+      ORDER BY s.created_at DESC
+      LIMIT 20
+    `, [user.id]),
+    sql.query(`
+      SELECT
+        id,
+        title,
+        category,
+        example_options AS "exampleOptions",
+        status,
+        moderation_note AS "moderationNote",
+        published_ranking_id AS "publishedRankingId",
+        created_at AS "createdAt",
+        reviewed_at AS "reviewedAt"
+      FROM ranking_topic_suggestions
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 20
+    `, [user.id])
   ]);
 
   const stats = statsRows[0] || {};
@@ -928,6 +1124,7 @@ async function profile(req, res) {
       email: user.email,
       createdAt: user.created_at
     },
+    isModerator: isModerator(user),
     profile: {
       avatarData: savedProfile.avatarData || null,
       showAvatarOnLeaderboard:
@@ -963,7 +1160,11 @@ async function profile(req, res) {
       direction: Number(row.direction),
       weight: Number(row.weight || 1),
       updatedAt: row.updatedAt
-    }))
+    })),
+    suggestions: {
+      options: optionSuggestionRows,
+      rankings: topicSuggestionRows
+    }
   });
 }
 
@@ -1346,6 +1547,20 @@ function passwordResetFrom() {
   ).trim();
 }
 
+function moderationOrigin(req) {
+  const host = String(
+    req.headers?.['x-forwarded-host'] || req.headers?.host || ''
+  ).trim().toLowerCase();
+  if (
+    host === 'somostopo.com.br' ||
+    host === 'www.somostopo.com.br' ||
+    /^[a-z0-9-]+\.vercel\.app$/.test(host)
+  ) {
+    return `https://${host}`;
+  }
+  return resetOrigin(req);
+}
+
 async function sendPasswordResetEmail({ email, name, link, tokenHash }) {
   const apiKey = resendApiKey();
   const from = passwordResetFrom();
@@ -1396,6 +1611,450 @@ async function sendPasswordResetEmail({ email, name, link, tokenHash }) {
   }
 
   return { configured: true };
+}
+
+async function sendSuggestionModerationEmail(req, suggestion) {
+  const apiKey = resendApiKey();
+  const recipients = moderatorEmails();
+  const from = passwordResetFrom();
+  if (!apiKey || !from || !recipients.length) return { configured: false };
+
+  const link = new URL('/moderacao', moderationOrigin(req));
+  link.searchParams.set('tipo', suggestion.kind);
+  link.searchParams.set('id', suggestion.id);
+  const isOption = suggestion.kind === 'option';
+  const subject = isOption
+    ? `Nova opção sugerida: ${suggestion.label}`
+    : `Nova ideia de ranking: ${suggestion.title}`;
+  const heading = isOption ? 'Nova opção para analisar' : 'Nova ideia de ranking';
+  const detail = isOption
+    ? `<p><strong>Ranking:</strong> ${emailHtml(suggestion.question)}</p>
+       <p><strong>Opção:</strong> ${emailHtml(suggestion.label)}</p>`
+    : `<p><strong>Título:</strong> ${emailHtml(suggestion.title)}</p>
+       <p><strong>Categoria:</strong> ${emailHtml(suggestion.category)}</p>
+       <p><strong>Exemplos:</strong> ${suggestion.exampleOptions.map(emailHtml).join(' · ')}</p>`;
+  const flag = suggestion.flagReason
+    ? `<p style="background:#f8e9e6;color:#8b3f36;border-radius:8px;padding:9px 11px"><strong>Atenção:</strong> ${emailHtml(suggestion.flagReason)}</p>`
+    : '';
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${apiKey}`,
+      'content-type': 'application/json',
+      'idempotency-key': `topo-suggestion-${suggestion.kind}-${suggestion.id}`
+    },
+    body: JSON.stringify({
+      from,
+      to: recipients,
+      subject,
+      html: `
+        <div style="font-family:Arial,sans-serif;color:#191919;line-height:1.5;max-width:560px;margin:auto;padding:28px">
+          <div style="font-family:Georgia,serif;font-size:34px;font-weight:700;color:#657986">TOPO</div>
+          <h1 style="font-family:Georgia,serif;font-size:28px;line-height:1.1;margin:24px 0 12px">${heading}</h1>
+          ${detail}
+          <p><strong>Enviada por:</strong> ${emailHtml(suggestion.userName)} (${emailHtml(suggestion.userEmail)})</p>
+          ${flag}
+          <p style="margin:26px 0"><a href="${emailHtml(link.toString())}" style="background:#657986;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:700">Abrir para aprovar ou recusar</a></p>
+          <p style="font-size:13px;color:#706d67">Por segurança, o clique abre o painel privado. Nenhuma decisão é tomada diretamente pelo e-mail.</p>
+        </div>
+      `
+    })
+  });
+
+  if (!response.ok) {
+    const error = new Error(`Resend failed with status ${response.status}`);
+    error.code = 'suggestion_email_failed';
+    throw error;
+  }
+  return { configured: true };
+}
+
+async function notifySuggestionModerators(req, suggestion) {
+  try {
+    await sendSuggestionModerationEmail(req, suggestion);
+  } catch (error) {
+    console.error(JSON.stringify({
+      level: 'error',
+      message: 'suggestion_email_failed',
+      kind: suggestion.kind,
+      suggestionId: suggestion.id,
+      detail: String(error?.message || '').slice(0, 240)
+    }));
+  }
+}
+
+async function createSuggestion(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  await ensureSuggestionSchema();
+
+  const kind = String(body.kind || '');
+  if (kind === 'option') {
+    const rankingId = String(body.rankingId || '').trim().slice(0, 100);
+    const label = suggestionText(body.label, 2, SUGGESTION_OPTION_LIMIT);
+    const normalized = normalizeSuggestion(label);
+    if (!rankingId || !label || !normalized) {
+      return json(res, 400, { error: 'invalid_option_suggestion' });
+    }
+    const [ranking] = await sql.query(`
+      SELECT id, question
+      FROM rankings
+      WHERE id = $1 AND is_active = true
+      LIMIT 1
+    `, [rankingId]);
+    if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
+
+    const [existingOptionRows, recentRows] = await Promise.all([
+      sql.query(`
+        SELECT id, label
+        FROM ranking_options
+        WHERE ranking_id = $1
+      `, [rankingId]),
+      sql.query(`
+        SELECT COUNT(*)::int AS total
+        FROM ranking_option_suggestions
+        WHERE user_id = $1
+          AND created_at >= now() - interval '24 hours'
+      `, [user.id])
+    ]);
+    if (existingOptionRows.some((option) => normalizeSuggestion(option.label) === normalized)) {
+      return json(res, 409, { error: 'option_already_exists' });
+    }
+    if (Number(recentRows[0]?.total || 0) >= OPTION_SUGGESTION_DAILY_LIMIT) {
+      return json(res, 429, {
+        error: 'option_suggestion_limit',
+        limit: OPTION_SUGGESTION_DAILY_LIMIT
+      });
+    }
+
+    const id = randomUUID();
+    const flagReason = suggestionFlag(label);
+    try {
+      await sql.query(`
+        INSERT INTO ranking_option_suggestions (
+          id, ranking_id, user_id, label, normalized_label, flag_reason
+        )
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [id, rankingId, user.id, label, normalized, flagReason]);
+    } catch (error) {
+      if (error?.code === '23505') {
+        return json(res, 409, { error: 'suggestion_already_pending' });
+      }
+      throw error;
+    }
+
+    await notifySuggestionModerators(req, {
+      id,
+      kind,
+      label,
+      question: ranking.question,
+      flagReason,
+      userName: user.display_name,
+      userEmail: user.email
+    });
+    return json(res, 201, { ok: true, id, status: 'pending' });
+  }
+
+  if (kind === 'ranking') {
+    const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
+    const category = suggestionText(body.category, 2, 50);
+    const rawOptions = Array.isArray(body.options)
+      ? body.options
+      : String(body.options || '').split(/\r?\n/);
+    const providedOptions = rawOptions
+      .map((value) => String(value || '').trim())
+      .filter(Boolean);
+    const uniqueOptions = new Map();
+    let invalidOption = false;
+    for (const value of providedOptions) {
+      const option = suggestionText(String(value || ''), 2, SUGGESTION_OPTION_LIMIT);
+      const normalizedOption = normalizeSuggestion(option);
+      if (option && normalizedOption && !uniqueOptions.has(normalizedOption)) {
+        uniqueOptions.set(normalizedOption, option);
+      } else if (!option || !normalizedOption) {
+        invalidOption = true;
+      }
+    }
+    const exampleOptions = [...uniqueOptions.values()];
+    const normalized = normalizeSuggestion(title);
+    if (
+      !title ||
+      !normalized ||
+      !category ||
+      !SUGGESTION_CATEGORIES.has(category) ||
+      invalidOption ||
+      providedOptions.length > SUGGESTION_EXAMPLE_LIMIT ||
+      exampleOptions.length < 3 ||
+      exampleOptions.length > SUGGESTION_EXAMPLE_LIMIT
+    ) {
+      return json(res, 400, { error: 'invalid_ranking_suggestion' });
+    }
+
+    const [existingRankingRows, recentRows] = await Promise.all([
+      sql.query(`
+        SELECT id, question
+        FROM rankings
+        WHERE is_active = true
+      `),
+      sql.query(`
+        SELECT COUNT(*)::int AS total
+        FROM ranking_topic_suggestions
+        WHERE user_id = $1
+          AND created_at >= now() - interval '7 days'
+      `, [user.id])
+    ]);
+    if (existingRankingRows.some((ranking) => normalizeSuggestion(ranking.question) === normalized)) {
+      return json(res, 409, { error: 'ranking_already_exists' });
+    }
+    if (Number(recentRows[0]?.total || 0) >= TOPIC_SUGGESTION_WEEKLY_LIMIT) {
+      return json(res, 429, {
+        error: 'ranking_suggestion_limit',
+        limit: TOPIC_SUGGESTION_WEEKLY_LIMIT
+      });
+    }
+
+    const id = randomUUID();
+    const flagReason = suggestionFlag([title, ...exampleOptions].join(' '));
+    try {
+      await sql.query(`
+        INSERT INTO ranking_topic_suggestions (
+          id,
+          user_id,
+          title,
+          normalized_title,
+          category,
+          example_options,
+          flag_reason
+        )
+        VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)
+      `, [
+        id,
+        user.id,
+        title,
+        normalized,
+        category,
+        JSON.stringify(exampleOptions),
+        flagReason
+      ]);
+    } catch (error) {
+      if (error?.code === '23505') {
+        return json(res, 409, { error: 'suggestion_already_pending' });
+      }
+      throw error;
+    }
+
+    await notifySuggestionModerators(req, {
+      id,
+      kind,
+      title,
+      category,
+      exampleOptions,
+      flagReason,
+      userName: user.display_name,
+      userEmail: user.email
+    });
+    return json(res, 201, { ok: true, id, status: 'pending' });
+  }
+
+  return json(res, 400, { error: 'invalid_suggestion_kind' });
+}
+
+async function mySuggestions(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  await ensureSuggestionSchema();
+
+  const [optionRows, rankingRows] = await Promise.all([
+    sql.query(`
+      SELECT
+        s.id,
+        s.ranking_id AS "rankingId",
+        r.question,
+        s.label,
+        s.status,
+        s.moderation_note AS "moderationNote",
+        s.created_at AS "createdAt",
+        s.reviewed_at AS "reviewedAt"
+      FROM ranking_option_suggestions s
+      JOIN rankings r ON r.id = s.ranking_id
+      WHERE s.user_id = $1
+      ORDER BY s.created_at DESC
+      LIMIT 20
+    `, [user.id]),
+    sql.query(`
+      SELECT
+        id,
+        title,
+        category,
+        example_options AS "exampleOptions",
+        status,
+        moderation_note AS "moderationNote",
+        published_ranking_id AS "publishedRankingId",
+        created_at AS "createdAt",
+        reviewed_at AS "reviewedAt"
+      FROM ranking_topic_suggestions
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 20
+    `, [user.id])
+  ]);
+
+  return json(res, 200, {
+    isModerator: isModerator(user),
+    suggestions: {
+      options: optionRows,
+      rankings: rankingRows
+    }
+  });
+}
+
+async function moderationQueue(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
+  await ensureSuggestionSchema();
+
+  const [optionRows, rankingRows] = await Promise.all([
+    sql.query(`
+      SELECT
+        s.id,
+        'option'::text AS kind,
+        s.ranking_id AS "rankingId",
+        r.question,
+        s.label,
+        s.status,
+        s.flag_reason AS "flagReason",
+        s.moderation_note AS "moderationNote",
+        s.created_at AS "createdAt",
+        s.reviewed_at AS "reviewedAt",
+        u.display_name AS "userName",
+        u.email AS "userEmail"
+      FROM ranking_option_suggestions s
+      JOIN rankings r ON r.id = s.ranking_id
+      JOIN users u ON u.id = s.user_id
+      ORDER BY (s.status = 'pending') DESC, s.created_at DESC
+      LIMIT 100
+    `),
+    sql.query(`
+      SELECT
+        s.id,
+        'ranking'::text AS kind,
+        s.title,
+        s.category,
+        s.example_options AS "exampleOptions",
+        s.status,
+        s.flag_reason AS "flagReason",
+        s.moderation_note AS "moderationNote",
+        s.created_at AS "createdAt",
+        s.reviewed_at AS "reviewedAt",
+        s.published_ranking_id AS "publishedRankingId",
+        u.display_name AS "userName",
+        u.email AS "userEmail"
+      FROM ranking_topic_suggestions s
+      JOIN users u ON u.id = s.user_id
+      ORDER BY (s.status = 'pending') DESC, s.created_at DESC
+      LIMIT 100
+    `)
+  ]);
+
+  return json(res, 200, {
+    moderator: { name: user.display_name, email: user.email },
+    options: optionRows,
+    rankings: rankingRows
+  });
+}
+
+async function moderateSuggestion(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
+  await ensureSuggestionSchema();
+
+  const id = String(body.id || '');
+  const kind = String(body.kind || '');
+  const decision = String(body.decision || '');
+  const moderationNote = suggestionText(String(body.note || ''), 1, 300) || null;
+  if (!/^[0-9a-f-]{36}$/i.test(id) || !['option', 'ranking'].includes(kind) || !['approve', 'reject'].includes(decision)) {
+    return json(res, 400, { error: 'invalid_moderation' });
+  }
+
+  let rows;
+  if (kind === 'option' && decision === 'approve') {
+    rows = await sql.query(`
+      WITH selected AS (
+        SELECT id, ranking_id, label
+        FROM ranking_option_suggestions
+        WHERE id = $1::uuid AND status = 'pending'
+        FOR UPDATE
+      ),
+      positioned AS (
+        SELECT
+          selected.id,
+          selected.ranking_id,
+          selected.label,
+          COALESCE(MAX(ranking_options.position), 0) + 1 AS next_position
+        FROM selected
+        LEFT JOIN ranking_options
+          ON ranking_options.ranking_id = selected.ranking_id
+        GROUP BY selected.id, selected.ranking_id, selected.label
+      ),
+      existing AS (
+        SELECT ranking_options.id
+        FROM ranking_options
+        JOIN selected ON selected.ranking_id = ranking_options.ranking_id
+        WHERE lower(regexp_replace(btrim(ranking_options.label), '\\s+', ' ', 'g')) =
+              lower(regexp_replace(btrim(selected.label), '\\s+', ' ', 'g'))
+        ORDER BY ranking_options.position
+        LIMIT 1
+      ),
+      inserted AS (
+        INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
+        SELECT ranking_id, label, next_position, 0
+        FROM positioned
+        WHERE NOT EXISTS (SELECT 1 FROM existing)
+        RETURNING id
+      ),
+      resolved AS (
+        SELECT id FROM existing
+        UNION ALL
+        SELECT id FROM inserted
+        LIMIT 1
+      )
+      UPDATE ranking_option_suggestions suggestion
+      SET status = 'approved',
+          approved_option_id = (SELECT id FROM resolved),
+          reviewed_by = $2,
+          moderation_note = $3,
+          reviewed_at = now()
+      FROM selected
+      WHERE suggestion.id = selected.id
+      RETURNING suggestion.id, suggestion.status, suggestion.approved_option_id AS "optionId"
+    `, [id, user.id, moderationNote]);
+  } else if (kind === 'option') {
+    rows = await sql.query(`
+      UPDATE ranking_option_suggestions
+      SET status = 'rejected',
+          reviewed_by = $2,
+          moderation_note = $3,
+          reviewed_at = now()
+      WHERE id = $1::uuid AND status = 'pending'
+      RETURNING id, status
+    `, [id, user.id, moderationNote]);
+  } else {
+    rows = await sql.query(`
+      UPDATE ranking_topic_suggestions
+      SET status = $3,
+          reviewed_by = $2,
+          moderation_note = $4,
+          reviewed_at = now()
+      WHERE id = $1::uuid AND status = 'pending'
+      RETURNING id, status
+    `, [id, user.id, decision === 'approve' ? 'approved' : 'rejected', moderationNote]);
+  }
+
+  if (!rows[0]) return json(res, 409, { error: 'suggestion_already_reviewed' });
+  return json(res, 200, { ok: true, suggestion: rows[0] });
 }
 
 async function requestPasswordReset(req, res, body) {
@@ -1780,6 +2439,8 @@ export default async function handler(req, res) {
       if (action === 'profile') return profile(req, res);
       if (action === 'leaderboard') return leaderboard(req, res);
       if (action === 'comments') return comments(req, res);
+      if (action === 'suggestions') return mySuggestions(req, res);
+      if (action === 'moderation') return moderationQueue(req, res);
       return json(res, 404, { error: 'action_not_found' });
     }
 
@@ -1798,6 +2459,7 @@ export default async function handler(req, res) {
         }
         if (action === 'logout') return logout(req, res);
         if (action === 'comments') return writeComment(req, res, body);
+        if (action === 'suggestions') return createSuggestion(req, res, body);
         if (
           action === 'request-password-reset' ||
           action === 'reset-password'
@@ -1810,6 +2472,9 @@ export default async function handler(req, res) {
       }
       if (method === 'PATCH' && action === 'profile') {
         return updateProfile(req, res, body);
+      }
+      if (method === 'PATCH' && action === 'moderation') {
+        return moderateSuggestion(req, res, body);
       }
       return json(res, 404, { error: 'action_not_found' });
     }

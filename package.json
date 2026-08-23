@@ -12,10 +12,12 @@
     "test:image-audit": "node test/image-audit.test.mjs",
     "db:comments": "node scripts/apply-comments.mjs",
     "db:password-reset": "node scripts/apply-password-reset.mjs",
+    "db:suggestions": "node scripts/apply-suggestions.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",
     "test:password-reset": "node test/password-reset.integration.mjs",
-    "test:priority": "node test/priority.test.mjs"
+    "test:priority": "node test/priority.test.mjs",
+    "test:suggestions": "node test/suggestions.test.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^3.16.10",
