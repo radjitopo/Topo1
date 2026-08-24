@@ -58,7 +58,7 @@ for (const slug of expectedSlugs) {
     res.body,
     new RegExp(`<link rel="canonical" href="https://somostopo\\.com\\.br/${slug}">`),
   );
-  assert.ok(res.body.includes('/style.css?v=20260824-5'));
+  assert.ok(res.body.includes('/style.css?v=20260824-6'));
   assert.ok(
     res.body.includes('conta@somostopo.com.br') ||
       !['contato', 'denuncie', 'privacidade'].includes(slug),

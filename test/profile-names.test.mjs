@@ -58,7 +58,11 @@ test('profile name API, reporting and moderation stay wired', async () => {
   assert.match(api, /display_name_cooldown/);
   assert.match(api, /async function createNameReport/);
   assert.match(api, /user_name_reports/);
-  assert.match(app, /Como você quer aparecer\?/);
+  assert.match(app, /Escolha seu nome no TOPO/);
+  assert.ok(
+    app.indexOf('${profileNameEditorHTML(p.user)}') < app.indexOf('profileBadges'),
+    'the public name editor should appear near the top of the profile',
+  );
   assert.match(app, /data-report-name/);
   assert.match(migration, /user_name_reports_pending_unique_idx/);
 });
