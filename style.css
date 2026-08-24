@@ -471,8 +471,11 @@ header{height:64px;display:flex;align-items:center;justify-content:space-between
 .profileRecentSection .recentVote{padding:11px 0}
 .profileRecentSection .recentOption,.profileRecentSection .recentQuestion{display:block}
 .doubleVoteBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:14px;margin-left:3px;padding:0 4px;border-radius:999px;background:#465e6d;color:#fff;font-size:7px;font-style:normal;font-weight:950;line-height:1;vertical-align:1px;white-space:nowrap}
-.react.double,.homeReact.double{position:relative;box-shadow:0 0 0 3px rgba(70,94,109,.18)}
-.react.double::after,.homeReact.double::after{content:"2×";position:absolute;top:-7px;right:-8px;min-width:18px;height:16px;padding:0 3px;border:2px solid #fff;border-radius:999px;display:grid;place-items:center;background:#465e6d;color:#fff;font-size:7px;font-weight:950;line-height:1}
+.doubleVoteAction{width:29px;height:29px;border:1px solid #718692;border-radius:999px;display:grid;place-items:center;background:#edf1f2;color:#465e6d;font-size:8px;font-weight:950;line-height:1;cursor:pointer;transition:transform .08s ease,background .15s ease,color .15s ease}
+.doubleVoteAction.active{border-color:#465e6d;background:#465e6d;color:#fff;box-shadow:0 0 0 3px rgba(70,94,109,.16)}
+.doubleVoteAction:active{transform:scale(.92)}
+.doubleVoteAction:disabled{opacity:.55}
+@media(max-width:560px){.doubleVoteAction{width:27px;height:27px}}
 .howIcon.double{background:#465e6d;color:#fff;font-size:11px}
 .profilePowerStatus.available{color:var(--up)}
 .profilePowerStatus.inUse{color:#c9562f}

@@ -12,7 +12,7 @@ assert.match(app, /rankingLimit:20/, 'the interface fallback must match the API 
 assert.match(app, /function previewVoteActionsHTML\(r,o,wrapperClass=/, 'ranking previews must render vote arrows');
 assert.match(app, /data-preview-ranking=/, 'preview arrows must retain the ranking destination');
 assert.match(app, /function previewReact\(b\)/, 'preview arrows must have a dedicated open-and-highlight flow');
-const previewFlow = app.match(/function previewReact\(b\)\{([\s\S]*?)\}\nasync function react/);
+const previewFlow = app.match(/function previewReact\(b\)\{([\s\S]*?)\}\nasync function refreshVoteState/);
 assert.ok(previewFlow, 'the preview navigation flow must be identifiable');
 assert.doesNotMatch(previewFlow[1], /fetch\(/, 'preview arrows must not send a vote');
 assert.match(previewFlow[1], /openPreviewRanking\(rankingId,optionId,direction,label\)/, 'preview arrows must open the full ranking with the selected option');
