@@ -246,6 +246,10 @@ function experienceRankings() {
     isLocalExperience() ? topoLocal.isLocalRanking(ranking) : !topoLocal.isLocalRanking(ranking),
   );
 }
+function localRankingsForSelectedCity(list = experienceRankings()) {
+  if (!isLocalExperience()) return list;
+  return topoLocal.rankingsForCity(list, selectedCity);
+}
 const groupOverrides = {
   'lugares-date': 'Lugares',
   'coisas-fora-moda': 'Moda',
@@ -336,7 +340,7 @@ function renderCityPicker() {
         `<option value="${escapeHTML(city)}" ${city === selectedCity ? 'selected' : ''}>${escapeHTML(city)}</option>`,
     )
     .join('');
-  citySelectEl.title = `Cidade prioritária: ${selectedCity}`;
+  citySelectEl.title = `Cidade do TOPO LOCAL: ${selectedCity}`;
 }
 function syncExperienceNavigation() {
   const local = isLocalExperience();
@@ -377,13 +381,18 @@ function changeSelectedCity(city) {
   } catch {}
   sessionHeroId = '';
   categoryVisibleCount = CATEGORY_PAGE_SIZE;
+  if (
+    activeGroup !== 'Todos' &&
+    !localRankingsForSelectedCity().some((ranking) => belongsToGroup(ranking, activeGroup))
+  )
+    activeGroup = 'Todos';
   syncExperienceNavigation();
   renderGroups();
   renderHome();
 }
 citySelectEl?.addEventListener('change', () => changeSelectedCity(citySelectEl.value));
 function availableGroupNames() {
-  const source = experienceRankings();
+  const source = localRankingsForSelectedCity();
   return experienceGroupNames().filter(
     (group) => group === 'Todos' || source.some((r) => belongsToGroup(r, group)),
   );
@@ -504,7 +513,7 @@ function reshuffle() {
 }
 function visibleRankings() {
   const hasSearch = searchTerms(homeSearch).length > 0,
-    experienceSource = experienceRankings(),
+    experienceSource = localRankingsForSelectedCity(),
     source = hasSearch
       ? experienceSource
       : activeGroup === 'Todos'
@@ -513,7 +522,7 @@ function visibleRankings() {
     visible = hasSearch
       ? source.filter((r) => searchMatches(rankingSearchText(r), homeSearch))
       : source;
-  return isLocalExperience() ? topoLocal.prioritizeRankings(visible, selectedCity) : visible;
+  return visible;
 }
 function firstShowSeen() {
   try {
@@ -657,26 +666,10 @@ function categoryRailHTML(label) {
 function portalIdeaCalloutHTML() {
   return `<section class="portalIdeaCallout"><div><span class="portalKicker">A comunidade também cria</span><h2>Tem uma ideia de ranking?</h2><p>Sugira um tema no seu perfil e acompanhe a análise.</p></div><a href="/perfil#sugerir-ranking">Sugerir novo ranking →</a></section>`;
 }
-function localCitiesHTML(list) {
-  if (!isLocalExperience()) return '';
-  const cities = topoLocal
-    .availableCities(list)
-    .filter((city) => city !== selectedCity)
-    .map((city) => {
-      const cityRankings = list.filter((ranking) => topoLocal.cityMatches(ranking, city)),
-        lead = [...cityRankings].sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0))[0];
-      return `<button class="localCityCard" type="button" data-local-city="${escapeHTML(city)}"><span>${escapeHTML(city)}</span><strong>${escapeHTML(lead?.q || 'Descubra os rankings desta cidade')}</strong><small>${fmt(cityRankings.length)} ranking${cityRankings.length === 1 ? '' : 's'} · ver primeiro →</small></button>`;
-    });
-  if (!cities.length) return '';
-  return `<section class="localCities"><div class="localCitiesHead"><span class="portalKicker">Outras cidades</span><h2>Mude a cidade quando quiser</h2></div><div class="localCitiesGrid">${cities.join('')}</div></section>`;
-}
 function bindCategoryRails() {
   document
     .querySelectorAll('[data-home-group]')
     .forEach((button) => (button.onclick = () => selectGroup(button.dataset.homeGroup)));
-  document
-    .querySelectorAll('[data-local-city]')
-    .forEach((button) => (button.onclick = () => changeSelectedCity(button.dataset.localCity)));
 }
 function clearHomeSearch() {
   homeSearch = '';
@@ -721,19 +714,38 @@ function categoryRankCardHTML(r) {
     voteHref = `${rankingPath(r.id)}#votar`;
   return `<article class="categoryRankCard"><div class="categoryRankTop"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">Ver ranking completo →</a></div></div></div><div class="categoryVoteList" aria-label="Top 3 atual">${options.map((o, i) => `<div class="categoryVoteOption"><span class="categoryVotePos">${i + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${escapeHTML(o.label)}</strong><small>${fmt(o.score)} pt ${doubleVoteBadgeHTML(o)}</small></a>${previewVoteActionsHTML(r, o, 'categoryVoteActions')}</div>`).join('')}</div></article>`;
 }
-function categoryRankCardsHTML(list, local) {
-  let otherCitiesStarted = false;
-  return list
-    .map((ranking) => {
-      const preferredCity = local && topoLocal.cityMatches(ranking, selectedCity),
-        divider =
-          local && !preferredCity && !otherCitiesStarted
-            ? `<div class="categoryCityDivider"><span>Outras cidades</span><small>Continue explorando além de ${escapeHTML(selectedCity)}</small></div>`
-            : '';
-      if (local && !preferredCity) otherCitiesStarted = true;
-      return divider + categoryRankCardHTML(ranking);
+function categoryRankCardsHTML(list) {
+  return list.map(categoryRankCardHTML).join('');
+}
+function localCityExplorerHTML() {
+  if (!isLocalExperience()) return '';
+  const cities = topoLocal.availableCities(rankings).filter((city) => city !== selectedCity);
+  if (!cities.length) return '';
+  return `<section class="localCatalogFooter"><div class="localCatalogFooterCopy"><span class="portalKicker">Trocar de lugar</span><h2>Quer explorar outra cidade?</h2><p>Escolha uma cidade para ver somente os rankings de lá.</p></div><button id="toggleLocalCityExplorer" class="localExploreButton" type="button" aria-expanded="false" aria-controls="localCityOptions">Explorar outra cidade</button><div class="localCityOptions" id="localCityOptions" hidden>${cities
+    .map((city) => {
+      const total = topoLocal.rankingsForCity(rankings, city).length;
+      return `<button type="button" data-local-city="${escapeHTML(city)}"><strong>${escapeHTML(city)}</strong><span>${fmt(total)} ranking${total === 1 ? '' : 's'}</span></button>`;
     })
-    .join('');
+    .join('')}</div></section>`;
+}
+function bindLocalCityExplorer() {
+  const toggle = document.getElementById('toggleLocalCityExplorer'),
+    options = document.getElementById('localCityOptions');
+  if (toggle && options)
+    toggle.onclick = () => {
+      const opening = options.hidden;
+      options.hidden = !opening;
+      toggle.setAttribute('aria-expanded', String(opening));
+      toggle.textContent = opening ? 'Fechar cidades' : 'Explorar outra cidade';
+      if (opening) options.querySelector('button')?.focus();
+    };
+  document.querySelectorAll('[data-local-city]').forEach(
+    (button) =>
+      (button.onclick = () => {
+        changeSelectedCity(button.dataset.localCity);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }),
+  );
 }
 function bindCategoryControls() {
   document.querySelectorAll('[data-category-sort]').forEach(
@@ -749,6 +761,7 @@ function bindCategoryControls() {
     renderHome();
     document.getElementById('loadMoreRankings')?.focus();
   });
+  bindLocalCityExplorer();
 }
 function renderCategoryHome(visible) {
   const sorted = categorySortedRankings(visible),
@@ -756,17 +769,15 @@ function renderCategoryHome(visible) {
     remaining = Math.max(0, sorted.length - shown.length),
     isAll = activeGroup === 'Todos',
     local = isLocalExperience(),
-    preferredCount = local
-      ? sorted.filter((ranking) => topoLocal.cityMatches(ranking, selectedCity)).length
-      : visible.length,
+    preferredCount = visible.length,
     heading = local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
     kicker = local
-      ? `${selectedCity} aparece primeiro`
+      ? `${selectedCity} no TOPO`
       : isAll
         ? 'Explore o TOPO inteiro'
         : 'Escolha um tema e entre na disputa',
     description = local
-      ? `Os rankings de ${selectedCity} vêm primeiro. Depois, você continua pelas outras cidades sem trocar de página.`
+      ? `Aqui aparecem somente os rankings de ${selectedCity}. Para explorar outro lugar, troque a cidade.`
       : isAll
         ? 'Todos os rankings em uma lista. Os novos e os que você ainda não votou aparecem primeiro.'
         : 'Todos os rankings deste tema reunidos em um só lugar. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.';
@@ -785,7 +796,7 @@ function renderCategoryHome(visible) {
     )
     .join(
       '',
-    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-pressed="${categorySort === 'random'}">↻ ${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown, local)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-pressed="${categorySort === 'random'}">↻ ${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }
@@ -808,7 +819,7 @@ function renderSearchResults(visible) {
         searchRelevance(b) - searchRelevance(a) || Number(b.votes || 0) - Number(a.votes || 0),
     );
   document.title = `Busca: ${homeSearch} — ${local ? 'TOPO LOCAL' : 'TOPO'}`;
-  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">${local ? `Busca no TOPO LOCAL · ${escapeHTML(selectedCity)} primeiro` : 'Busca em todo o TOPO'}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'}, em todas as categorias ${local ? 'locais' : ''}. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">${local ? `Busca no TOPO LOCAL · ${escapeHTML(selectedCity)}` : 'Busca em todo o TOPO'}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'}${local ? ` em ${escapeHTML(selectedCity)}` : ', em todas as categorias'}. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   document.getElementById('clearHomeSearch')?.addEventListener('click', clearHomeSearch);
   bindVotes();
 }
@@ -847,7 +858,7 @@ renderHome = function () {
     remaining = visible.filter((r) => !used.has(r.id)),
     stories = (remaining.length ? remaining : visible.filter((r) => r.id !== hero.id)).slice(0, 10),
     more = remaining.slice(10, 16);
-  feed.innerHTML = `${portalTrendingHTML(visible, local ? `Em alta em ${selectedCity}` : 'Em alta')}<section class="portalLeadGrid">${portalHeroHTML(hero)}<div class="portalSideColumn">${support.map(portalSideStoryHTML).join('')}</div>${portalListHTML(local ? `Mais votados em ${selectedCity}` : 'Mais votados', topVoted, 'voted')}</section>${categoryRailHTML(local ? 'Explore por tipo' : 'Explore por tema')}<div class="portalSectionHead"><div><span>${local ? 'Perto de você' : 'Novos para descobrir'}</span><h2>${local ? 'Rankings locais para descobrir' : 'Rankings que estão movimentando o TOPO'}</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML(local ? 'Mais disputados' : 'Mais polêmicos', disputed, 'disputed')}</aside></section>${localCitiesHTML(visible)}${categoryRailHTML(local ? 'Continue por tipo' : 'Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+  feed.innerHTML = `${portalTrendingHTML(visible, 'Em alta')}<section class="portalLeadGrid">${portalHeroHTML(hero)}<div class="portalSideColumn">${support.map(portalSideStoryHTML).join('')}</div>${portalListHTML('Mais votados', topVoted, 'voted')}</section>${categoryRailHTML('Explore por tema')}<div class="portalSectionHead"><div><span>Novos para descobrir</span><h2>Rankings que estão movimentando o TOPO</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${categoryRailHTML('Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
   bindCategoryRails();
@@ -951,7 +962,11 @@ function relatedScore(r, candidate, explicitIds) {
 }
 function rankingsInSameExperience(r) {
   const local = topoLocal.isLocalRanking(r);
-  return rankings.filter((candidate) => topoLocal.isLocalRanking(candidate) === local);
+  if (!local) return rankings.filter((candidate) => !topoLocal.isLocalRanking(candidate));
+  const city = topoLocal.cityForRanking(r);
+  return rankings.filter(
+    (candidate) => topoLocal.isLocalRanking(candidate) && topoLocal.cityMatches(candidate, city),
+  );
 }
 function relatedFor(r) {
   const explicitIds = editorialFor(r.id).related || [],

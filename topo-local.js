@@ -102,6 +102,12 @@
       .map(({ ranking }) => ranking);
   }
 
+  function rankingsForCity(rankings, city) {
+    const selected = normalizeCity(city);
+    if (!selected) return [];
+    return (rankings || []).filter((ranking) => cityForRanking(ranking) === selected);
+  }
+
   root.TopoLocal = Object.freeze({
     availableCities,
     cityForRanking,
@@ -113,6 +119,7 @@
     isLocalRanking,
     normalizeCity,
     prioritizeRankings,
+    rankingsForCity,
     resolvePreferredCity,
   });
 })(globalThis);

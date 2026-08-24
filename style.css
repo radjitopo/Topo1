@@ -2188,66 +2188,6 @@ h2 {
 .portalMoreGrid .portalSideMedia {
   height: 170px;
 }
-.localCities {
-  border-top: 1px solid var(--ink);
-  margin-top: 38px;
-  padding-top: 12px;
-}
-.localCitiesHead h2 {
-  font:
-    900 27px/1 Georgia,
-    serif;
-  letter-spacing: -0.8px;
-  margin: 5px 0 14px;
-}
-.localCitiesGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.localCityCard {
-  min-width: 0;
-  min-height: 126px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
-  color: var(--ink);
-  padding: 13px;
-  text-align: left;
-  cursor: pointer;
-}
-.localCityCard:hover,
-.localCityCard:focus-visible {
-  border-color: #c9562f;
-  outline: 0;
-}
-.localCityCard > span {
-  color: #c9562f;
-  font-size: 9px;
-  font-weight: 950;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.localCityCard strong {
-  display: -webkit-box;
-  margin-top: 8px;
-  overflow: hidden;
-  font:
-    900 16px/1.08 Georgia,
-    serif;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.localCityCard small {
-  margin-top: auto;
-  padding-top: 9px;
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 850;
-}
 .portalEmpty {
   max-width: 720px;
   margin: 50px auto;
@@ -2426,28 +2366,6 @@ h2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-}
-.categoryCityDivider {
-  grid-column: 1/-1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 14px;
-  border-top: 1px solid var(--ink);
-  margin-top: 6px;
-  padding: 11px 2px 0;
-}
-.categoryCityDivider span {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 950;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.categoryCityDivider small {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
 }
 .categoryRankCard {
   min-width: 0;
@@ -2904,17 +2822,6 @@ h2 {
   .categoryRankTitle h2 {
     font-size: 22px;
   }
-  .localCitiesGrid {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(210px, 74%);
-    grid-template-columns: none;
-    overflow-x: auto;
-    padding-bottom: 3px;
-    scrollbar-width: none;
-  }
-  .localCitiesGrid::-webkit-scrollbar {
-    display: none;
-  }
 }
 @media (max-width: 420px) {
   .homePage .voteMeter {
@@ -3000,11 +2907,6 @@ h2 {
   .localCatalogHead h1 {
     font-size: 32px;
     letter-spacing: -1.1px;
-  }
-  .categoryCityDivider {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
   }
   .categoryLandingCount {
     min-width: 60px;
@@ -3350,6 +3252,105 @@ h2 {
   color: var(--muted);
   font-size: 10px;
   font-weight: 800;
+}
+.localCatalogFooter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 24px;
+  border: 1px solid var(--line);
+  border-top: 4px solid #c9562f;
+  margin-top: 28px;
+  padding: 18px 20px;
+  background: var(--paper);
+}
+.localCatalogFooterCopy h2 {
+  margin: 4px 0 5px;
+  font:
+    900 24px/1 Georgia,
+    serif;
+  letter-spacing: -0.7px;
+}
+.localCatalogFooterCopy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+.localExploreButton {
+  border: 1px solid #c9562f;
+  border-radius: 999px;
+  background: #c9562f;
+  color: white;
+  padding: 11px 16px;
+  font-size: 10px;
+  font-weight: 950;
+  cursor: pointer;
+}
+.localExploreButton:hover,
+.localExploreButton:focus-visible {
+  background: #a94627;
+  outline: 0;
+}
+.localCityOptions {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.localCityOptions[hidden] {
+  display: none;
+}
+.localCityOptions button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #f7f4ee;
+  color: var(--ink);
+  padding: 11px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.localCityOptions button:hover,
+.localCityOptions button:focus-visible {
+  border-color: #c9562f;
+  outline: 0;
+}
+.localCityOptions strong {
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.localCityOptions span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+@media (max-width: 700px) {
+  .localCatalogFooter {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    padding: 16px;
+  }
+  .localExploreButton {
+    justify-self: start;
+  }
+  .localCityOptions {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 420px) {
+  .localExploreButton {
+    width: 100%;
+  }
 }
 .authPreload {
   display: grid;

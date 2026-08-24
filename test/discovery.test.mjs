@@ -29,6 +29,7 @@ const wanted = [
   'groupOf',
   'experienceGroupOf',
   'experienceRankings',
+  'localRankingsForSelectedCity',
   'belongsToGroup',
   'visibleRankings',
   'cityPriorityDelta',
@@ -39,6 +40,7 @@ const wanted = [
   'relatedTokens',
   'relatedPlace',
   'relatedScore',
+  'rankingsInSameExperience',
 ];
 const selected = wanted.map((name) => extractTopLevelDeclaration(source, name));
 
@@ -60,6 +62,7 @@ globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.ac
 globalThis.visibleRankingsForTest=visibleRankings;
 globalThis.groupOfForTest=groupOf;
 globalThis.relatedScoreForTest=relatedScore;
+globalThis.rankingsInSameExperienceForTest=rankingsInSameExperience;
 globalThis.categorySortedRankingsForTest=categorySortedRankings;
 `,
   context,
@@ -131,6 +134,7 @@ context.setDiscoveryState({
   activeGroup: 'Todos',
   homeSearch: 'padarias',
   localExperience: true,
+  selectedCity: 'Florianópolis',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
@@ -142,6 +146,7 @@ context.setDiscoveryState({
   activeGroup: 'Todos',
   homeSearch: 'padaria',
   localExperience: true,
+  selectedCity: 'São Paulo',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
@@ -153,6 +158,7 @@ context.setDiscoveryState({
   activeGroup: 'Todos',
   homeSearch: 'hotel',
   localExperience: true,
+  selectedCity: 'Rio de Janeiro',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
@@ -182,6 +188,25 @@ const bakeryFloripa = {
   votes: 0,
 };
 const unrelated = { id: 'piores-empregos', cat: 'Diversão', q: 'Os piores empregos', votes: 1000 };
+
+context.setDiscoveryState({
+  rankings: [sushi, sushiSp, bakeryFloripa, unrelated],
+  activeGroup: 'Todos',
+  homeSearch: 'sushi',
+  localExperience: true,
+  selectedCity: 'Florianópolis',
+});
+assert.deepEqual(
+  context.visibleRankingsForTest().map((ranking) => ranking.id),
+  ['sushi-floripa'],
+  'Topo Local search must stay inside the chosen city',
+);
+assert.deepEqual(
+  context.rankingsInSameExperienceForTest(sushi).map((ranking) => ranking.id),
+  ['sushi-floripa', 'padarias-floripa'],
+  'related local rankings must stay inside the ranking city',
+);
+
 assert.ok(
   context.relatedScoreForTest(sushi, sushiSp, []) >
     context.relatedScoreForTest(sushi, unrelated, []),
