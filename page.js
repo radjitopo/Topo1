@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     const html = withSeo(template, {
       title: 'TOPO LOCAL — rankings da sua cidade',
       description:
-        'Descubra e vote nos melhores restaurantes, cafés, padarias, pizzarias, hotéis e serviços da sua cidade.',
+        'Vote nos melhores restaurantes, pizzarias, cafés, salões, academias, pet shops e muito mais nas maiores cidades brasileiras.',
       canonical: `${BASE_URL}/local`,
       image: `${BASE_URL}/og-topo.png`,
     });
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
     const canonical = `${BASE_URL}/ranking/${encodeURIComponent(ranking.id)}`;
     const question = rankingQuestion(ranking.id, ranking.question);
     const title = `${question} — TOPO`;
-    const description = `Veja o resultado atual de “${question}”, conheça o Top 20 e vote para mudar a ordem.`;
+    const description = `Veja o resultado atual de “${question}”, conheça a lista completa e vote para mudar a ordem.`;
     const html = withSeo(template, {
       title,
       description,

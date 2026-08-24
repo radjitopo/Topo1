@@ -304,17 +304,7 @@ function groupOf(r) {
   if (['Pessoas', 'Famosos'].includes(r.cat)) return 'Famosos';
   if (r.cat === 'Cultura') return 'Arte';
   if (['Comida', 'Café'].includes(r.cat)) return 'Comida';
-  if (
-    [
-      'Viagem',
-      'Brasil',
-      'Florianópolis',
-      'Balneário Camboriú',
-      'São Paulo',
-      'Rio de Janeiro',
-    ].includes(r.cat)
-  )
-    return 'Lugares';
+  if (['Viagem', 'Brasil'].includes(r.cat) || topoLocal.normalizeCity(r.cat)) return 'Lugares';
   if (['Animais', 'Plantas'].includes(r.cat)) return 'Natureza';
   if (r.cat === 'Carros') return 'Motores';
   if (r.cat === 'Esporte') return 'Esporte';
@@ -904,7 +894,7 @@ function localCityExplorerHTML() {
   if (!isLocalExperience()) return '';
   const cities = topoLocal.availableCities(rankings).filter((city) => city !== selectedCity);
   if (!cities.length) return '';
-  return `<section class="localCatalogFooter"><div class="localCatalogFooterCopy"><span class="portalKicker">Trocar de lugar</span><h2>Quer explorar outra cidade?</h2><p>Escolha uma cidade para ver somente os rankings de lá.</p></div><button id="toggleLocalCityExplorer" class="localExploreButton" type="button" aria-expanded="false" aria-controls="localCityOptions">Explorar outra cidade</button><div class="localCityOptions" id="localCityOptions" hidden>${cities
+  return `<section class="localCatalogFooter"><div class="localCatalogFooterCopy"><span class="portalKicker">Trocar de lugar</span><h2>Quer explorar outra cidade?</h2><p>Escolha uma cidade para ver somente os rankings de lá.</p></div><button id="toggleLocalCityExplorer" class="localExploreButton" type="button" aria-expanded="false" aria-controls="localCityOptions">Explorar outra cidade</button><p class="localDataCredit">Dados iniciais: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noreferrer">Overture Maps Foundation</a> e diretórios públicos locais. A ordem é definida pelos votos da comunidade.</p><div class="localCityOptions" id="localCityOptions" hidden>${cities
     .map((city) => {
       const total = topoLocal.rankingsForCity(rankings, city).length;
       return `<button type="button" data-local-city="${escapeHTML(city)}"><strong>${escapeHTML(city)}</strong><span>${fmt(total)} ranking${total === 1 ? '' : 's'}</span></button>`;

@@ -3435,6 +3435,19 @@ h2 {
   font-size: 10px;
   line-height: 1.45;
 }
+.localDataCredit {
+  grid-column: 1/-1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+.localDataCredit a {
+  color: inherit;
+  font-weight: 850;
+  text-decoration-color: #c9562f;
+  text-underline-offset: 2px;
+}
 .localExploreButton {
   border: 1px solid #c9562f;
   border-radius: 999px;

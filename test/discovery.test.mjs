@@ -161,13 +161,12 @@ context.setDiscoveryState({
   rankings: [bakeryPlural, hotelPlural],
   activeGroup: 'Todos',
   homeSearch: 'hotel',
-  localExperience: true,
-  selectedCity: 'Rio de Janeiro',
+  localExperience: false,
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
   ['hoteis-rio'],
-  'accented irregular plurals must be normalized',
+  'accented irregular plurals must be normalized in the main TOPO',
 );
 
 assert.equal(context.groupOfForTest({ id: 'influencers-brasil', cat: 'Diversão' }), 'Famosos');
