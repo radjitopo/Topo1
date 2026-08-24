@@ -71,6 +71,28 @@ const groupNames = [
     'Vida',
   ],
   fmt = (n) => Number(n).toLocaleString('pt-BR');
+const homeContextOnlyRankingIds = new Set([
+  'melhores-jogadores-flamengo',
+  'melhores-jogadores-corinthians',
+  'melhores-jogadores-palmeiras',
+  'melhores-jogadores-sao-paulo',
+  'melhores-jogadores-santos',
+  'melhores-jogadores-vasco',
+  'melhores-jogadores-botafogo',
+  'melhores-jogadores-gremio',
+  'melhores-jogadores-internacional',
+  'melhores-jogadores-atletico-mg',
+  'melhores-jogadores-cruzeiro',
+  'melhores-jogadores-bahia',
+  'melhores-jogadores-sport',
+  'melhores-jogadores-athletico-pr',
+  'melhores-jogadores-coritiba',
+  'melhores-jogadores-fortaleza',
+  'melhores-jogadores-ceara',
+  'melhores-jogadores-goias',
+  'melhores-jogadores-vitoria',
+  'melhores-jogadores-fluminense',
+]);
 const voteCountText = (n) => `${fmt(n)} voto${Number(n) === 1 ? '' : 's'}`;
 const pointCountText = (n) => `${fmt(n)} ponto${Number(n) === 1 ? '' : 's'}`;
 function communityFrom(data = {}) {
@@ -524,6 +546,9 @@ function visibleRankings() {
       : source;
   return visible;
 }
+function homeEligibleRankings(list) {
+  return list.filter((ranking) => !homeContextOnlyRankingIds.has(ranking.id));
+}
 function firstShowSeen() {
   try {
     const ids = JSON.parse(localStorage.getItem(firstShowKey) || '[]');
@@ -841,24 +866,28 @@ renderHome = function () {
     renderCategoryHome(visible);
     return;
   }
-  const hero = choosePortalHero(visible),
+  const portalVisible = homeEligibleRankings(visible),
+    hero = choosePortalHero(portalVisible),
     support = [
-      ...visible.filter((r) => r.id !== hero.id && r.img),
-      ...visible.filter((r) => r.id !== hero.id && !r.img),
+      ...portalVisible.filter((r) => r.id !== hero.id && r.img),
+      ...portalVisible.filter((r) => r.id !== hero.id && !r.img),
     ].slice(0, 2),
     used = new Set([hero.id, ...support.map((r) => r.id)]),
     topVoted = sortForExperience(
-      visible,
+      portalVisible,
       (a, b) => Number(b.votes || 0) - Number(a.votes || 0),
     ).slice(0, 5),
     disputed = sortForExperience(
-      visible.filter((r) => r.opts?.length > 1),
+      portalVisible.filter((r) => r.opts?.length > 1),
       (a, b) => topGap(a) - topGap(b) || Number(b.votes || 0) - Number(a.votes || 0),
     ).slice(0, 5),
-    remaining = visible.filter((r) => !used.has(r.id)),
-    stories = (remaining.length ? remaining : visible.filter((r) => r.id !== hero.id)).slice(0, 10),
+    remaining = portalVisible.filter((r) => !used.has(r.id)),
+    stories = (remaining.length ? remaining : portalVisible.filter((r) => r.id !== hero.id)).slice(
+      0,
+      10,
+    ),
     more = remaining.slice(10, 16);
-  feed.innerHTML = `${portalTrendingHTML(visible, 'Em alta')}<section class="portalLeadGrid">${portalHeroHTML(hero)}<div class="portalSideColumn">${support.map(portalSideStoryHTML).join('')}</div>${portalListHTML('Mais votados', topVoted, 'voted')}</section>${categoryRailHTML('Explore por tema')}<div class="portalSectionHead"><div><span>Novos para descobrir</span><h2>Rankings que estão movimentando o TOPO</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${categoryRailHTML('Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
+  feed.innerHTML = `${portalTrendingHTML(portalVisible, 'Em alta')}<section class="portalLeadGrid">${portalHeroHTML(hero)}<div class="portalSideColumn">${support.map(portalSideStoryHTML).join('')}</div>${portalListHTML('Mais votados', topVoted, 'voted')}</section>${categoryRailHTML('Explore por tema')}<div class="portalSectionHead"><div><span>Novos para descobrir</span><h2>Rankings que estão movimentando o TOPO</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${categoryRailHTML('Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
   bindCategoryRails();

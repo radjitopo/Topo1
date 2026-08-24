@@ -20,6 +20,7 @@ assert.doesNotMatch(
 assert.match(source, /Top 3 agora/, 'the dedicated Top 3 preview must remain visible');
 
 const wanted = [
+  'homeContextOnlyRankingIds',
   'foldText',
   'searchSingular',
   'searchTerms',
@@ -32,6 +33,7 @@ const wanted = [
   'localRankingsForSelectedCity',
   'belongsToGroup',
   'visibleRankings',
+  'homeEligibleRankings',
   'cityPriorityDelta',
   'sortForExperience',
   'categorySortedRankings',
@@ -60,6 +62,8 @@ function categoryPriorityRankings(list){return [...list]}
 ${selected.join('\n')}
 globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.activeGroup;homeSearch=next.homeSearch;categorySort=next.categorySort||'priority';localExperience=Boolean(next.localExperience);selectedCity=next.selectedCity||''};
 globalThis.visibleRankingsForTest=visibleRankings;
+globalThis.homeEligibleRankingsForTest=homeEligibleRankings;
+globalThis.homeContextOnlyCountForTest=homeContextOnlyRankingIds.size;
 globalThis.groupOfForTest=groupOf;
 globalThis.relatedScoreForTest=relatedScore;
 globalThis.rankingsInSameExperienceForTest=rankingsInSameExperience;
@@ -188,6 +192,47 @@ const bakeryFloripa = {
   votes: 0,
 };
 const unrelated = { id: 'piores-empregos', cat: 'Diversão', q: 'Os piores empregos', votes: 1000 };
+const fluminensePlayers = {
+  id: 'melhores-jogadores-fluminense',
+  cat: 'Esporte',
+  q: 'Quais foram os melhores jogadores do Fluminense de todos os tempos?',
+  votes: 0,
+};
+const biggestBrazilianClub = {
+  id: 'maiores-times-brasil',
+  cat: 'Esporte',
+  q: 'Qual é o maior time de futebol do Brasil?',
+  votes: 0,
+};
+
+assert.equal(context.homeContextOnlyCountForTest, 20);
+assert.deepEqual(
+  context
+    .homeEligibleRankingsForTest([fluminensePlayers, biggestBrazilianClub])
+    .map((ranking) => ranking.id),
+  ['maiores-times-brasil'],
+  'team-specific rankings must stay out of the random Home pool',
+);
+context.setDiscoveryState({
+  rankings: [fluminensePlayers, biggestBrazilianClub],
+  activeGroup: 'Esporte',
+  homeSearch: '',
+});
+assert.deepEqual(
+  context.visibleRankingsForTest().map((ranking) => ranking.id),
+  ['melhores-jogadores-fluminense', 'maiores-times-brasil'],
+  'team-specific rankings must remain visible inside the Esporte category',
+);
+context.setDiscoveryState({
+  rankings: [fluminensePlayers, biggestBrazilianClub],
+  activeGroup: 'Todos',
+  homeSearch: 'Fluminense',
+});
+assert.deepEqual(
+  context.visibleRankingsForTest().map((ranking) => ranking.id),
+  ['melhores-jogadores-fluminense'],
+  'team-specific rankings must remain searchable',
+);
 
 context.setDiscoveryState({
   rankings: [sushi, sushiSp, bakeryFloripa, unrelated],
