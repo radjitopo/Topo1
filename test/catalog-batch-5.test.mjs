@@ -63,7 +63,7 @@ test('catalog importer, categories and editorial include the fifth batch', async
   assert.match(importer, /newRankings\.length !== 100/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 140/);
   assert.match(index, /editorial-13\.js/);
-  assert.match(index, /app\.js\?v=20260824-22/);
+  assert.match(index, /app\.js\?v=20260824-23/);
   assert.match(compactSource(app), /'Jogos','Natureza'/);
 
   for (const id of expectedTitles.keys()) {

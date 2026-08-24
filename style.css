@@ -565,47 +565,6 @@ h2 {
   font-weight: 900;
   margin-top: 2px;
 }
-.rankingEvaluationProgress {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
-  padding: 11px 12px;
-  margin: 0 0 13px;
-}
-.rankingEvaluationCopy {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 950;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.rankingEvaluationCopy strong {
-  color: var(--ink);
-  font-size: 11px;
-}
-.rankingEvaluationTrack {
-  height: 5px;
-  border-radius: 999px;
-  background: var(--line);
-  overflow: hidden;
-  margin: 8px 0 6px;
-}
-.rankingEvaluationTrack span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--up);
-}
-.rankingEvaluationProgress small {
-  display: block;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 750;
-}
 .rankingResultHead {
   display: flex;
   align-items: center;

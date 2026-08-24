@@ -64,10 +64,10 @@ assert.match(
   /constvisibleLimit=allItemsOpen\?r\.opts\.length:Math\.min\(10,r\.opts\.length\)/,
   'the full view must not impose a display-only cap',
 );
-assert.match(
+assert.doesNotMatch(
   compactApp,
-  /functionrankingEvaluationProgressHTML\(r\)/,
-  'the ranking must show progress through its options',
+  /rankingEvaluationProgress/,
+  'the ranking must not pressure people with completion progress',
 );
 
 assert.match(
@@ -75,6 +75,12 @@ assert.match(
   /\.categoryVoteOption\{[^}]*grid-template-columns:20pxminmax\(0,1fr\)auto/,
   'category cards must leave room for quick-vote arrows',
 );
-assert.match(compactStyle, /\.rankingEvaluationProgress\{/, 'evaluation progress must be styled');
+assert.doesNotMatch(
+  compactStyle,
+  /\.rankingEvaluationProgress\{/,
+  'the removed evaluation progress must not leave stale styles',
+);
 
-console.log('Ranking voting flow passed: 20 evaluations, preview intent and complete list.');
+console.log(
+  'Ranking voting flow passed: no completion pressure, preview intent and complete list.',
+);
