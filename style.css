@@ -1647,13 +1647,26 @@ h2 {
 }
 .portalTrendingLabel {
   display: grid;
+  min-width: 0;
   place-items: center;
+  padding: 8px 6px;
+  overflow: hidden;
   background: var(--accent);
   color: white;
   font-size: 10px;
   font-weight: 950;
+  line-height: 1.25;
   letter-spacing: 0.14em;
+  text-align: center;
   text-transform: uppercase;
+}
+.localMode .portalTrending {
+  grid-template-columns: 124px minmax(0, 1fr);
+  gap: 14px;
+}
+.localMode .portalTrendingLabel {
+  font-size: 9px;
+  letter-spacing: 0.1em;
 }
 .portalTrending > div {
   display: flex;
@@ -2673,6 +2686,16 @@ h2 {
   .portalTrending {
     grid-template-columns: 74px 1fr;
     margin-bottom: 12px;
+  }
+  .localMode .portalTrending {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .localMode .portalTrendingLabel {
+    padding-inline: 5px;
+    font-size: 8px;
+    line-height: 1.3;
+    letter-spacing: 0.07em;
   }
   .portalTrending a {
     width: 220px;

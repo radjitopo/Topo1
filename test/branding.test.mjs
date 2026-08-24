@@ -31,8 +31,23 @@ assert.doesNotMatch(
   'the Home and ranking pages must share the same logo sizing rules',
 );
 assert.ok(
-  pages.every((page) => page.includes('/style.css?v=20260824-2')),
+  pages.every((page) => page.includes('/style.css?v=20260824-3')),
   'every public page must load the current brand stylesheet',
+);
+assert.match(
+  compactCss,
+  /\.portalTrendingLabel\{[^}]*min-width:0[^}]*overflow:hidden/,
+  'long trending labels must stay inside their colored band',
+);
+assert.match(
+  compactCss,
+  /\.localMode\.portalTrending\{[^}]*grid-template-columns:124pxminmax\(0,1fr\)/,
+  'Topo Local must reserve enough room for long city names',
+);
+assert.match(
+  compactCss,
+  /@media\(max-width:700px\)[\s\S]*\.localMode\.portalTrending\{[^}]*grid-template-columns:104pxminmax\(0,1fr\)/,
+  'the mobile Topo Local band must remain compact without clipping the city',
 );
 
 console.log('Branding test passed: darker blue wordmark and orange dot are consistent.');
