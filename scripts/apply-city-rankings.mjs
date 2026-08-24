@@ -1,3 +1,5 @@
+import { rankingQuestion } from '../ranking-titles.js';
+
 const images = {
   sushi:
     'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82',
@@ -134,7 +136,7 @@ const legacyEditorialIds = [
 const ranking = (id, category, title, image, options) => ({
   id,
   category,
-  title,
+  title: rankingQuestion(id, title),
   image: editorialImages[id] || images[image],
   options,
 });

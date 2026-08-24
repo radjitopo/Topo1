@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
+import { rankingQuestion } from './ranking-titles.js';
 
 const templatePromise = readFile(new URL('./index.html', import.meta.url), 'utf8');
 const sql = neon(process.env.DATABASE_URL);
@@ -112,8 +113,9 @@ export default async function handler(req, res) {
     }
 
     const canonical = `${BASE_URL}/ranking/${encodeURIComponent(ranking.id)}`;
-    const title = `${ranking.question} — TOPO`;
-    const description = `Veja o resultado atual de “${ranking.question}”, conheça o Top 20 e vote para mudar a ordem.`;
+    const question = rankingQuestion(ranking.id, ranking.question);
+    const title = `${question} — TOPO`;
+    const description = `Veja o resultado atual de “${question}”, conheça o Top 20 e vote para mudar a ordem.`;
     const html = withSeo(template, {
       title,
       description,

@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
+import { rankingTitleOverrides } from '../ranking-titles.js';
 import { auditRankingImages } from './audit-ranking-images.mjs';
 
 if (!process.env.DATABASE_URL) {
@@ -32,13 +33,19 @@ const newRankings = [
   ...fifthBatchRankings,
   ...sixthBatchRankings,
 ];
-const allTitles = {
+const catalogTitles = {
   ...titles,
   ...Object.fromEntries(batchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(thirdBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(fourthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(fifthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(sixthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
+};
+const allTitles = {
+  ...catalogTitles,
+  ...Object.fromEntries(
+    Object.entries(rankingTitleOverrides).filter(([id]) => Object.hasOwn(catalogTitles, id)),
+  ),
 };
 
 if (
@@ -204,8 +211,13 @@ const [validation] = await sql.query(
   [titlesJson, JSON.stringify(newRankings.map((ranking) => ranking.id))],
 );
 
-if (Number(validation?.valid_titles) !== 140 || Number(validation?.valid_new_rankings) !== 100) {
+if (
+  Number(validation?.valid_titles) !== Object.keys(allTitles).length ||
+  Number(validation?.valid_new_rankings) !== 100
+) {
   throw new Error(`Catalog validation failed: ${JSON.stringify(validation)}`);
 }
 
-console.log('Catalog applied: 140 titles and 100 new rankings validated.');
+console.log(
+  `Catalog applied: ${Object.keys(allTitles).length} titles and 100 new rankings validated.`,
+);

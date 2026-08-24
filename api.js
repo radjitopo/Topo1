@@ -2,6 +2,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { neon } from '@neondatabase/serverless';
 import { possibleOptionDuplicate } from './option-similarity.js';
+import { rankingQuestion } from './ranking-titles.js';
 
 const sql = neon(process.env.DATABASE_URL);
 const CLERK_SECRET_KEY = String(process.env.CLERK_SECRET_KEY || '');
@@ -647,7 +648,7 @@ async function catalog(req, res) {
       byId.set(row.ranking_id, {
         id: row.ranking_id,
         cat: row.category,
-        q: row.question,
+        q: rankingQuestion(row.ranking_id, row.question),
         img: row.image_url || null,
         votes: Number(row.baseline_votes || 0),
         todayVotes: 0,
@@ -924,7 +925,7 @@ async function profile(req, res) {
         direction: Number(row.direction),
         updatedAt: row.updatedAt,
         rankingId: row.rankingId,
-        question: row.question,
+        question: rankingQuestion(row.rankingId, row.question),
         option: row.option,
       })),
     },
@@ -934,14 +935,17 @@ async function profile(req, res) {
     })),
     recent: recentRows.map((row) => ({
       rankingId: row.rankingId,
-      question: row.question,
+      question: rankingQuestion(row.rankingId, row.question),
       option: row.option,
       direction: Number(row.direction),
       weight: Number(row.weight || 1),
       updatedAt: row.updatedAt,
     })),
     suggestions: {
-      options: optionSuggestionRows,
+      options: optionSuggestionRows.map((row) => ({
+        ...row,
+        question: rankingQuestion(row.rankingId, row.question),
+      })),
       rankings: topicSuggestionRows,
     },
   });
@@ -1510,7 +1514,7 @@ async function createSuggestion(req, res, body) {
       id,
       kind,
       label,
-      question: ranking.question,
+      question: rankingQuestion(ranking.id, ranking.question),
       flagReason,
       userName: user.display_name,
       userEmail: user.email,
@@ -1549,7 +1553,10 @@ async function createSuggestion(req, res, body) {
       ),
     ]);
     if (
-      existingRankingRows.some((ranking) => normalizeSuggestion(ranking.question) === normalized)
+      existingRankingRows.some(
+        (ranking) =>
+          normalizeSuggestion(rankingQuestion(ranking.id, ranking.question)) === normalized,
+      )
     ) {
       return json(res, 409, { error: 'ranking_already_exists' });
     }
@@ -1646,7 +1653,10 @@ async function mySuggestions(req, res) {
   return json(res, 200, {
     isModerator: isModerator(user),
     suggestions: {
-      options: optionRows,
+      options: optionRows.map((row) => ({
+        ...row,
+        question: rankingQuestion(row.rankingId, row.question),
+      })),
       rankings: rankingRows,
     },
   });
@@ -1720,6 +1730,7 @@ async function moderationQueue(req, res) {
     const existingOptions = optionsByRanking.get(suggestion.rankingId) || [];
     return {
       ...suggestion,
+      question: rankingQuestion(suggestion.rankingId, suggestion.question),
       existingOptions,
       possibleDuplicate:
         suggestion.status === 'pending'
@@ -1767,7 +1778,10 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
     FROM rankings
   `);
   if (
-    existingRankings.some((ranking) => normalizeSuggestion(ranking.question) === normalizedTitle)
+    existingRankings.some(
+      (ranking) =>
+        normalizeSuggestion(rankingQuestion(ranking.id, ranking.question)) === normalizedTitle,
+    )
   ) {
     return json(res, 409, { error: 'ranking_already_exists' });
   }
@@ -1935,7 +1949,8 @@ async function moderateSuggestion(req, res, body) {
     ]);
     if (
       existingRanking.some(
-        (ranking) => normalizeSuggestion(ranking.question) === normalizedTitle,
+        (ranking) =>
+          normalizeSuggestion(rankingQuestion(ranking.id, ranking.question)) === normalizedTitle,
       ) ||
       existingSuggestion.length
     ) {
