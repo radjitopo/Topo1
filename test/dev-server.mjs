@@ -23,12 +23,12 @@ const staticFiles = new Set([
   '/editorial-6.js',
   '/editorial-7.js',
   '/editorial-8.js',
-  '/editorial-9.js'
+  '/editorial-9.js',
 ]);
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8'
+  '.js': 'text/javascript; charset=utf-8',
 };
 
 async function bodyOf(req) {
@@ -50,7 +50,7 @@ function apiResponse(res) {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.end(JSON.stringify(value));
       return value;
-    }
+    },
   };
 }
 
@@ -62,12 +62,15 @@ export const server = createServer(async (req, res) => {
       const body = ['POST', 'PUT', 'PATCH'].includes(req.method || '')
         ? await bodyOf(req)
         : undefined;
-      await handler({
-        method: req.method,
-        query: Object.fromEntries(url.searchParams),
-        headers: req.headers,
-        body
-      }, apiResponse(res));
+      await handler(
+        {
+          method: req.method,
+          query: Object.fromEntries(url.searchParams),
+          headers: req.headers,
+          body,
+        },
+        apiResponse(res),
+      );
       return;
     }
 

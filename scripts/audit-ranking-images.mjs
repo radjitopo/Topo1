@@ -21,7 +21,7 @@ function normalizeRanking(ranking) {
   return {
     id: String(ranking?.id || ''),
     question: String(ranking?.question || ranking?.title || ''),
-    image: String(rankingImage(ranking) || '')
+    image: String(rankingImage(ranking) || ''),
   };
 }
 
@@ -29,7 +29,7 @@ async function rankingsFromSite(siteUrl) {
   const base = String(siteUrl || DEFAULT_SITE).replace(/\/$/, '');
   const response = await fetch(`${base}/api?device_id=topo-image-audit`, {
     headers: { 'user-agent': 'TOPO image audit/1.0' },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error(`Catálogo remoto respondeu ${response.status}.`);
   const payload = await response.json();
@@ -78,14 +78,21 @@ function staticQualityIssues(ranking) {
 async function probeImage(ranking) {
   const qualityIssues = staticQualityIssues(ranking);
   if (!ranking.image) {
-    return { ...ranking, ok: false, status: 0, contentType: '', error: 'sem imagem', qualityIssues };
+    return {
+      ...ranking,
+      ok: false,
+      status: 0,
+      contentType: '',
+      error: 'sem imagem',
+      qualityIssues,
+    };
   }
   try {
     const response = await fetch(ranking.image, {
       method: 'HEAD',
       redirect: 'follow',
       headers: { 'user-agent': 'TOPO image audit/1.0' },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
     const contentType = response.headers.get('content-type') || '';
     const ok = response.ok && contentType.toLowerCase().startsWith('image/');
@@ -94,8 +101,12 @@ async function probeImage(ranking) {
       ok,
       status: response.status,
       contentType,
-      error: ok ? '' : response.ok ? `conteúdo inesperado: ${contentType || 'desconhecido'}` : `HTTP ${response.status}`,
-      qualityIssues
+      error: ok
+        ? ''
+        : response.ok
+          ? `conteúdo inesperado: ${contentType || 'desconhecido'}`
+          : `HTTP ${response.status}`,
+      qualityIssues,
     };
   } catch (error) {
     return {
@@ -104,7 +115,7 @@ async function probeImage(ranking) {
       status: 0,
       contentType: '',
       error: error?.name === 'TimeoutError' ? 'tempo esgotado' : String(error?.message || error),
-      qualityIssues
+      qualityIssues,
     };
   }
 }
@@ -143,13 +154,17 @@ function duplicatePhotoGroups(rankings) {
 
 export async function auditRankingImages(rankings, options = {}) {
   const normalized = rankings.map(normalizeRanking).filter((ranking) => ranking.id);
-  const results = await mapConcurrent(normalized, probeImage, options.concurrency || MAX_CONCURRENCY);
+  const results = await mapConcurrent(
+    normalized,
+    probeImage,
+    options.concurrency || MAX_CONCURRENCY,
+  );
   return {
     checked: results.length,
     broken: results.filter((result) => !result.ok),
     quality: results.filter((result) => result.qualityIssues.length),
     duplicates: duplicatePhotoGroups(normalized),
-    results
+    results,
   };
 }
 
@@ -161,13 +176,15 @@ function printReport(report, sourceLabel) {
   }
   if (report.quality.length) {
     console.log('\nAlertas de qualidade técnica:');
-    for (const item of report.quality) console.log(`- ${item.id}: ${item.qualityIssues.join(', ')} — ${item.image}`);
+    for (const item of report.quality)
+      console.log(`- ${item.id}: ${item.qualityIssues.join(', ')} — ${item.image}`);
   }
   if (report.duplicates.length) {
     console.log('\nFotos repetidas (revisão editorial):');
     for (const group of report.duplicates) console.log(`- ${group.ids.join(', ')}`);
   }
-  if (!report.broken.length && !report.quality.length) console.log('Nenhuma falha técnica encontrada.');
+  if (!report.broken.length && !report.quality.length)
+    console.log('Nenhuma falha técnica encontrada.');
 }
 
 async function main() {
@@ -175,7 +192,8 @@ async function main() {
   const rankings = site ? await rankingsFromSite(site) : await rankingsFromLocalData();
   const report = await auditRankingImages(rankings);
   printReport(report, site || 'arquivos locais');
-  if (report.broken.length || (process.argv.includes('--strict') && report.quality.length)) process.exitCode = 1;
+  if (report.broken.length || (process.argv.includes('--strict') && report.quality.length))
+    process.exitCode = 1;
 }
 
 if (resolve(process.argv[1] || '') === fileURLToPath(import.meta.url)) {

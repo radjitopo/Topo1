@@ -6,22 +6,39 @@ if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is required');
 }
 
-const [recoveredRankings, batchRankings, thirdBatchRankings, fourthBatchRankings, fifthBatchRankings, titles] = await Promise.all([
+const [
+  recoveredRankings,
+  batchRankings,
+  thirdBatchRankings,
+  fourthBatchRankings,
+  fifthBatchRankings,
+  sixthBatchRankings,
+  titles,
+] = await Promise.all([
   readFile(new URL('../data/new-rankings.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-2.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-3.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-4.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-5.json', import.meta.url), 'utf8').then(JSON.parse),
-  readFile(new URL('../data/titles.json', import.meta.url), 'utf8').then(JSON.parse)
+  readFile(new URL('../data/rankings-batch-6.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../data/titles.json', import.meta.url), 'utf8').then(JSON.parse),
 ]);
 
-const newRankings = [...recoveredRankings, ...batchRankings, ...thirdBatchRankings, ...fourthBatchRankings, ...fifthBatchRankings];
+const newRankings = [
+  ...recoveredRankings,
+  ...batchRankings,
+  ...thirdBatchRankings,
+  ...fourthBatchRankings,
+  ...fifthBatchRankings,
+  ...sixthBatchRankings,
+];
 const allTitles = {
   ...titles,
   ...Object.fromEntries(batchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(thirdBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(fourthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
-  ...Object.fromEntries(fifthBatchRankings.map((ranking) => [ranking.id, ranking.question]))
+  ...Object.fromEntries(fifthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
+  ...Object.fromEntries(sixthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
 };
 
 if (
@@ -30,8 +47,9 @@ if (
   thirdBatchRankings.length !== 3 ||
   fourthBatchRankings.length !== 9 ||
   fifthBatchRankings.length !== 20 ||
-  newRankings.length !== 80 ||
-  Object.keys(allTitles).length !== 120 ||
+  sixthBatchRankings.length !== 20 ||
+  newRankings.length !== 100 ||
+  Object.keys(allTitles).length !== 140 ||
   new Set(newRankings.map((ranking) => ranking.id)).size !== newRankings.length
 ) {
   throw new Error('Unexpected catalog data');
@@ -47,12 +65,14 @@ const imageAudit = await auditRankingImages(newRankings);
 if (imageAudit.broken.length || imageAudit.quality.length) {
   const problems = [
     ...imageAudit.broken.map((item) => `${item.id}: ${item.error}`),
-    ...imageAudit.quality.map((item) => `${item.id}: ${item.qualityIssues.join(', ')}`)
+    ...imageAudit.quality.map((item) => `${item.id}: ${item.qualityIssues.join(', ')}`),
   ];
   throw new Error(`Catalog image audit failed:\n${problems.join('\n')}`);
 }
 if (imageAudit.duplicates.length) {
-  console.warn(`Catalog image audit warning: repeated covers in ${imageAudit.duplicates.map((group) => group.ids.join(' + ')).join('; ')}.`);
+  console.warn(
+    `Catalog image audit warning: repeated covers in ${imageAudit.duplicates.map((group) => group.ids.join(' + ')).join('; ')}.`,
+  );
 }
 console.log(`Catalog image audit passed: ${imageAudit.checked} covers checked.`);
 
@@ -60,8 +80,10 @@ const sql = neon(process.env.DATABASE_URL);
 const rankingsJson = JSON.stringify(newRankings);
 const titlesJson = JSON.stringify(allTitles);
 
-await sql.transaction([
-  sql.query(`
+await sql.transaction(
+  [
+    sql.query(
+      `
     WITH incoming AS (
       SELECT *
       FROM jsonb_to_recordset($1::jsonb) AS ranking(
@@ -99,8 +121,11 @@ await sql.transaction([
       image_url = EXCLUDED.image_url,
       baseline_votes = EXCLUDED.baseline_votes,
       is_active = true
-  `, [rankingsJson]),
-  sql.query(`
+  `,
+      [rankingsJson],
+    ),
+    sql.query(
+      `
     WITH ranking_rows AS (
       SELECT *
       FROM jsonb_to_recordset($1::jsonb) AS ranking(id text, opts jsonb)
@@ -125,8 +150,11 @@ await sql.transaction([
     DO UPDATE SET
       label = EXCLUDED.label,
       baseline_score = EXCLUDED.baseline_score
-  `, [rankingsJson]),
-  sql.query(`
+  `,
+      [rankingsJson],
+    ),
+    sql.query(
+      `
     WITH incoming AS (
       SELECT key AS id, value AS question
       FROM jsonb_each_text($1::jsonb)
@@ -135,10 +163,15 @@ await sql.transaction([
     SET question = incoming.question
     FROM incoming
     WHERE ranking.id = incoming.id
-  `, [titlesJson])
-], { isolationLevel: 'Serializable' });
+  `,
+      [titlesJson],
+    ),
+  ],
+  { isolationLevel: 'Serializable' },
+);
 
-const [validation] = await sql.query(`
+const [validation] = await sql.query(
+  `
   WITH expected_titles AS (
     SELECT key AS id, value AS question
     FROM jsonb_each_text($1::jsonb)
@@ -167,13 +200,12 @@ const [validation] = await sql.query(`
     ) AS valid_new_rankings
   FROM expected_titles expected
   LEFT JOIN rankings ranking ON ranking.id = expected.id
-`, [titlesJson, JSON.stringify(newRankings.map((ranking) => ranking.id))]);
+`,
+  [titlesJson, JSON.stringify(newRankings.map((ranking) => ranking.id))],
+);
 
-if (
-  Number(validation?.valid_titles) !== 120 ||
-  Number(validation?.valid_new_rankings) !== 80
-) {
+if (Number(validation?.valid_titles) !== 140 || Number(validation?.valid_new_rankings) !== 100) {
   throw new Error(`Catalog validation failed: ${JSON.stringify(validation)}`);
 }
 
-console.log('Catalog applied: 120 titles and 80 new rankings validated.');
+console.log('Catalog applied: 140 titles and 100 new rankings validated.');

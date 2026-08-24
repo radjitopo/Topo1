@@ -1,10 +1,4 @@
-import {
-  createHash,
-  randomBytes,
-  randomUUID,
-  scryptSync,
-  timingSafeEqual
-} from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { neon } from '@neondatabase/serverless';
 import { possibleOptionDuplicate } from './option-similarity.js';
@@ -12,19 +6,14 @@ import { possibleOptionDuplicate } from './option-similarity.js';
 const sql = neon(process.env.DATABASE_URL);
 const CLERK_SECRET_KEY = String(process.env.CLERK_SECRET_KEY || '');
 const CLERK_PUBLISHABLE_KEY = String(
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-  process.env.CLERK_PUBLISHABLE_KEY ||
-  ''
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY || '',
 );
 const clerkClient = CLERK_SECRET_KEY
   ? createClerkClient({
       secretKey: CLERK_SECRET_KEY,
-      publishableKey: CLERK_PUBLISHABLE_KEY
+      publishableKey: CLERK_PUBLISHABLE_KEY,
     })
   : null;
-let clerkSchemaPromise;
-let suggestionSchemaPromise;
-
 const ANONYMOUS_LIMIT = 30;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
@@ -36,18 +25,12 @@ const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;
 const SUGGESTION_OPTION_LIMIT = 80;
 const SUGGESTION_TITLE_LIMIT = 120;
 const PENDING_RANKING_CATEGORY = 'A definir';
-const PENDING_RANKING_EXAMPLES = Object.freeze([
-  'A definir 1',
-  'A definir 2',
-  'A definir 3'
-]);
+const PENDING_RANKING_EXAMPLES = Object.freeze(['A definir 1', 'A definir 2', 'A definir 3']);
 const PUBLISHED_RANKING_OPTION_LIMIT = 20;
 const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
-  '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794'
+  '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
 ]);
-const PASSWORD_RESET_MINUTES = 30;
-const SESSION_DAYS = 30;
 const SESSION_COOKIE = 'topo_session';
 const DEVICE_PATTERN = /^[a-zA-Z0-9-]{16,100}$/;
 const SUGGESTION_CATEGORY_VALUES = Object.freeze([
@@ -66,7 +49,7 @@ const SUGGESTION_CATEGORY_VALUES = Object.freeze([
   'Jogos',
   'Tecnologia',
   'Produtos',
-  'Vida'
+  'Vida',
 ]);
 const SUGGESTION_CATEGORIES = new Set(SUGGESTION_CATEGORY_VALUES);
 
@@ -92,50 +75,35 @@ function queryValue(req, key) {
   return Array.isArray(value) ? String(value[0] || '') : String(value || '');
 }
 
+function geolocationCity(req) {
+  const value = req.headers?.['x-vercel-ip-city'],
+    encoded = Array.isArray(value) ? value[0] : value;
+  if (!encoded) return '';
+  try {
+    return decodeURIComponent(String(encoded).replace(/\+/g, '%20'))
+      .replace(/[\u0000-\u001f\u007f]/g, '')
+      .trim()
+      .slice(0, 80);
+  } catch {
+    return String(encoded)
+      .replace(/[\u0000-\u001f\u007f]/g, '')
+      .trim()
+      .slice(0, 80);
+  }
+}
+
 function isValidDevice(deviceId) {
   return DEVICE_PATTERN.test(deviceId);
 }
 
 function normalizeEmail(value) {
-  return String(value || '').trim().toLowerCase();
+  return String(value || '')
+    .trim()
+    .toLowerCase();
 }
 
 function isValidEmail(email) {
-  return (
-    email.length <= 160 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  );
-}
-
-function hashToken(token) {
-  return createHash('sha256').update(token).digest('hex');
-}
-
-function hashPassword(password) {
-  const salt = randomBytes(16).toString('hex');
-  const derived = scryptSync(password, salt, 64).toString('hex');
-  return `scrypt$${salt}$${derived}`;
-}
-
-function verifyPassword(password, encoded) {
-  try {
-    const [algorithm, salt, expectedHex, extra] = String(encoded || '').split('$');
-
-    if (
-      algorithm !== 'scrypt' ||
-      !/^[a-f0-9]{32}$/i.test(salt) ||
-      !/^[a-f0-9]{128}$/i.test(expectedHex) ||
-      extra !== undefined
-    ) {
-      return false;
-    }
-
-    const expected = Buffer.from(expectedHex, 'hex');
-    const actual = scryptSync(password, salt, expected.length);
-    return timingSafeEqual(actual, expected);
-  } catch {
-    return false;
-  }
+  return email.length <= 160 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function cookies(req) {
@@ -160,9 +128,9 @@ function cookies(req) {
 }
 
 function requestOrigin(req) {
-  const host = String(
-    req.headers?.['x-forwarded-host'] || req.headers?.host || ''
-  ).trim().toLowerCase();
+  const host = String(req.headers?.['x-forwarded-host'] || req.headers?.host || '')
+    .trim()
+    .toLowerCase();
   if (!/^[a-z0-9.-]+(?::\d+)?$/.test(host)) return '';
   return `https://${host}`;
 }
@@ -188,187 +156,6 @@ function clerkSessionToken(req) {
   return match?.[1] || cookies(req).__session || '';
 }
 
-function ensureClerkSchema() {
-  if (!clerkSchemaPromise) {
-    clerkSchemaPromise = (async () => {
-      await sql.query(`
-        CREATE TABLE IF NOT EXISTS clerk_user_links (
-          clerk_user_id text PRIMARY KEY,
-          user_id uuid NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-          created_at timestamptz NOT NULL DEFAULT now()
-        )
-      `);
-      await sql.query(`
-        CREATE TABLE IF NOT EXISTS clerk_device_links (
-          device_id text PRIMARY KEY,
-          clerk_user_id text NOT NULL,
-          user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-          created_at timestamptz NOT NULL DEFAULT now(),
-          UNIQUE (clerk_user_id, device_id)
-        )
-      `);
-    })().catch((error) => {
-      clerkSchemaPromise = null;
-      throw error;
-    });
-  }
-  return clerkSchemaPromise;
-}
-
-function ensureSuggestionSchema() {
-  if (!suggestionSchemaPromise) {
-    suggestionSchemaPromise = sql.transaction([
-      sql.query(`
-        CREATE TABLE IF NOT EXISTS ranking_option_suggestions (
-          id uuid PRIMARY KEY,
-          ranking_id text NOT NULL REFERENCES rankings(id) ON DELETE CASCADE,
-          user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-          label text NOT NULL,
-          normalized_label text NOT NULL,
-          status text NOT NULL DEFAULT 'pending',
-          flag_reason text,
-          approved_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
-          duplicate_option_id bigint REFERENCES ranking_options(id) ON DELETE SET NULL,
-          reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
-          moderation_note text,
-          created_at timestamptz NOT NULL DEFAULT now(),
-          reviewed_at timestamptz,
-          CONSTRAINT ranking_option_suggestions_label_length
-            CHECK (char_length(btrim(label)) BETWEEN 2 AND 80),
-          CONSTRAINT ranking_option_suggestions_status
-            CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'))
-        )
-      `),
-      sql.query(`
-        ALTER TABLE ranking_option_suggestions
-        ADD COLUMN IF NOT EXISTS duplicate_option_id bigint
-          REFERENCES ranking_options(id) ON DELETE SET NULL
-      `),
-      sql.query(`
-        DO $$
-        DECLARE
-          current_definition text;
-        BEGIN
-          SELECT pg_get_constraintdef(oid)
-          INTO current_definition
-          FROM pg_constraint
-          WHERE conrelid = 'ranking_option_suggestions'::regclass
-            AND conname = 'ranking_option_suggestions_status';
-
-          IF current_definition IS NOT NULL
-             AND position('duplicate' in current_definition) = 0 THEN
-            ALTER TABLE ranking_option_suggestions
-              DROP CONSTRAINT ranking_option_suggestions_status;
-          END IF;
-
-          IF NOT EXISTS (
-            SELECT 1
-            FROM pg_constraint
-            WHERE conrelid = 'ranking_option_suggestions'::regclass
-              AND conname = 'ranking_option_suggestions_status'
-          ) THEN
-            ALTER TABLE ranking_option_suggestions
-              ADD CONSTRAINT ranking_option_suggestions_status
-              CHECK (status IN ('pending', 'approved', 'rejected', 'duplicate'));
-          END IF;
-        END
-        $$
-      `),
-      sql.query(`
-        CREATE UNIQUE INDEX IF NOT EXISTS ranking_option_suggestions_pending_unique
-        ON ranking_option_suggestions (ranking_id, normalized_label)
-        WHERE status = 'pending'
-      `),
-      sql.query(`
-        CREATE INDEX IF NOT EXISTS ranking_option_suggestions_user_recent_idx
-        ON ranking_option_suggestions (user_id, created_at DESC)
-      `),
-      sql.query(`
-        CREATE INDEX IF NOT EXISTS ranking_option_suggestions_queue_idx
-        ON ranking_option_suggestions (status, created_at)
-      `),
-      sql.query(`
-        CREATE TABLE IF NOT EXISTS ranking_topic_suggestions (
-          id uuid PRIMARY KEY,
-          user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-          title text NOT NULL,
-          normalized_title text NOT NULL,
-          category text NOT NULL,
-          example_options jsonb NOT NULL,
-          status text NOT NULL DEFAULT 'pending',
-          flag_reason text,
-          published_ranking_id text REFERENCES rankings(id) ON DELETE SET NULL,
-          reviewed_by uuid REFERENCES users(id) ON DELETE SET NULL,
-          moderation_note text,
-          created_at timestamptz NOT NULL DEFAULT now(),
-          reviewed_at timestamptz,
-          CONSTRAINT ranking_topic_suggestions_title_length
-            CHECK (char_length(btrim(title)) BETWEEN 8 AND 120),
-          CONSTRAINT ranking_topic_suggestions_category_length
-            CHECK (char_length(btrim(category)) BETWEEN 2 AND 50),
-          CONSTRAINT ranking_topic_suggestions_examples
-            CHECK (
-              jsonb_typeof(example_options) = 'array'
-              AND jsonb_array_length(example_options) BETWEEN 3 AND 20
-            ),
-          CONSTRAINT ranking_topic_suggestions_status
-            CHECK (status IN ('pending', 'approved', 'rejected', 'published'))
-        )
-      `),
-      sql.query(`
-        DO $$
-        DECLARE
-          current_definition text;
-        BEGIN
-          SELECT pg_get_constraintdef(oid)
-          INTO current_definition
-          FROM pg_constraint
-          WHERE conrelid = 'ranking_topic_suggestions'::regclass
-            AND conname = 'ranking_topic_suggestions_examples';
-
-          IF current_definition IS NOT NULL
-             AND position('20' in current_definition) = 0 THEN
-            ALTER TABLE ranking_topic_suggestions
-              DROP CONSTRAINT ranking_topic_suggestions_examples;
-          END IF;
-
-          IF NOT EXISTS (
-            SELECT 1
-            FROM pg_constraint
-            WHERE conrelid = 'ranking_topic_suggestions'::regclass
-              AND conname = 'ranking_topic_suggestions_examples'
-          ) THEN
-            ALTER TABLE ranking_topic_suggestions
-              ADD CONSTRAINT ranking_topic_suggestions_examples
-              CHECK (
-                jsonb_typeof(example_options) = 'array'
-                AND jsonb_array_length(example_options) BETWEEN 3 AND 20
-              );
-          END IF;
-        END
-        $$
-      `),
-      sql.query(`
-        CREATE UNIQUE INDEX IF NOT EXISTS ranking_topic_suggestions_pending_unique
-        ON ranking_topic_suggestions (normalized_title)
-        WHERE status = 'pending'
-      `),
-      sql.query(`
-        CREATE INDEX IF NOT EXISTS ranking_topic_suggestions_user_recent_idx
-        ON ranking_topic_suggestions (user_id, created_at DESC)
-      `),
-      sql.query(`
-        CREATE INDEX IF NOT EXISTS ranking_topic_suggestions_queue_idx
-        ON ranking_topic_suggestions (status, created_at)
-      `)
-    ], { isolationLevel: 'Serializable' }).catch((error) => {
-      suggestionSchemaPromise = null;
-      throw error;
-    });
-  }
-  return suggestionSchemaPromise;
-}
-
 async function clerkUserForRequest(req) {
   const token = clerkSessionToken(req);
   if (!token || !clerkClient || !CLERK_SECRET_KEY) return null;
@@ -378,7 +165,7 @@ async function clerkUserForRequest(req) {
     const origin = requestOrigin(req);
     payload = await verifyToken(token, {
       secretKey: CLERK_SECRET_KEY,
-      ...(origin ? { authorizedParties: [origin] } : {})
+      ...(origin ? { authorizedParties: [origin] } : {}),
     });
   } catch {
     return null;
@@ -386,16 +173,17 @@ async function clerkUserForRequest(req) {
 
   const clerkUserId = String(payload?.sub || '');
   if (!clerkUserId) return null;
-  await ensureClerkSchema();
-
-  const [linked] = await sql.query(`
+  const [linked] = await sql.query(
+    `
     SELECT u.id, u.email, u.display_name, u.created_at,
            l.clerk_user_id
     FROM clerk_user_links l
     JOIN users u ON u.id = l.user_id
     WHERE l.clerk_user_id = $1
     LIMIT 1
-  `, [clerkUserId]);
+  `,
+    [clerkUserId],
+  );
   if (linked) return linked;
 
   const identity = await clerkClient.users.getUser(clerkUserId);
@@ -403,56 +191,67 @@ async function clerkUserForRequest(req) {
   const email = normalizeEmail(primaryEmail?.emailAddress);
   if (primaryEmail?.verification?.status !== 'verified') return null;
   if (!isValidEmail(email)) return null;
-  const displayName = String(
-    identity.fullName || identity.firstName || email.split('@')[0] || 'Pessoa no TOPO'
-  ).trim().slice(0, 50) || 'Pessoa no TOPO';
+  const displayName =
+    String(identity.fullName || identity.firstName || email.split('@')[0] || 'Pessoa no TOPO')
+      .trim()
+      .slice(0, 50) || 'Pessoa no TOPO';
 
-  let [user] = await sql.query(`
+  let [user] = await sql.query(
+    `
     SELECT id, email, display_name, created_at
     FROM users
     WHERE lower(email) = lower($1)
     LIMIT 1
-  `, [email]);
+  `,
+    [email],
+  );
 
   if (!user) {
     const userId = randomUUID();
     try {
-      [user] = await sql.query(`
+      [user] = await sql.query(
+        `
         INSERT INTO users (id, email, display_name, password_hash)
         VALUES ($1, $2, $3, $4)
         RETURNING id, email, display_name, created_at
-      `, [
-        userId,
-        email,
-        displayName,
-        `clerk$${randomBytes(32).toString('hex')}`
-      ]);
+      `,
+        [userId, email, displayName, `clerk$${randomBytes(32).toString('hex')}`],
+      );
     } catch (error) {
       if (error?.code !== '23505') throw error;
-      [user] = await sql.query(`
+      [user] = await sql.query(
+        `
         SELECT id, email, display_name, created_at
         FROM users
         WHERE lower(email) = lower($1)
         LIMIT 1
-      `, [email]);
+      `,
+        [email],
+      );
     }
   }
 
   if (!user) return null;
-  await sql.query(`
+  await sql.query(
+    `
     INSERT INTO clerk_user_links (clerk_user_id, user_id)
     VALUES ($1, $2)
     ON CONFLICT DO NOTHING
-  `, [clerkUserId, user.id]);
+  `,
+    [clerkUserId, user.id],
+  );
 
-  const [resolved] = await sql.query(`
+  const [resolved] = await sql.query(
+    `
     SELECT u.id, u.email, u.display_name, u.created_at,
            l.clerk_user_id
     FROM clerk_user_links l
     JOIN users u ON u.id = l.user_id
     WHERE l.clerk_user_id = $1
     LIMIT 1
-  `, [clerkUserId]);
+  `,
+    [clerkUserId],
+  );
 
   if (resolved) {
     return normalizeEmail(resolved.email) === email ? resolved : null;
@@ -464,35 +263,11 @@ async function clerkUserForRequest(req) {
   return { ...user, clerk_user_id: clerkUserId };
 }
 
-function setSessionCookie(res, token) {
-  const maxAge = SESSION_DAYS * 24 * 60 * 60;
-  res.setHeader(
-    'Set-Cookie',
-    `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
-  );
-}
-
 function clearSessionCookie(res) {
   res.setHeader(
     'Set-Cookie',
-    `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
+    `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
   );
-}
-
-async function legacySessionUser(req) {
-  const token = cookies(req)[SESSION_COOKIE];
-  if (!token) return null;
-
-  const [user] = await sql.query(`
-    SELECT u.id, u.email, u.display_name, u.created_at
-    FROM user_sessions s
-    JOIN users u ON u.id = s.user_id
-    WHERE s.token_hash = $1
-      AND s.expires_at > now()
-    LIMIT 1
-  `, [hashToken(token)]);
-
-  return user || null;
 }
 
 async function sessionUser(req) {
@@ -502,26 +277,21 @@ async function sessionUser(req) {
 }
 
 function moderatorEmails() {
-  return [...new Set(
-    String(
-      process.env.TOPO_MODERATOR_EMAILS ||
-      process.env.TOPO_MODERATION_TO ||
-      ''
-    )
-      .split(',')
-      .map(normalizeEmail)
-      .filter(isValidEmail)
-  )];
+  return [
+    ...new Set(
+      String(process.env.TOPO_MODERATOR_EMAILS || process.env.TOPO_MODERATION_TO || '')
+        .split(',')
+        .map(normalizeEmail)
+        .filter(isValidEmail),
+    ),
+  ];
 }
 
 function isModerator(user) {
   if (!user) return false;
   const email = normalizeEmail(user.email);
-  const fingerprint = createHash('sha256')
-    .update(`topo-moderator-v1:${email}`)
-    .digest('hex');
-  return moderatorEmails().includes(email) ||
-    BUILT_IN_MODERATOR_EMAIL_HASHES.has(fingerprint);
+  const fingerprint = createHash('sha256').update(`topo-moderator-v1:${email}`).digest('hex');
+  return moderatorEmails().includes(email) || BUILT_IN_MODERATOR_EMAIL_HASHES.has(fingerprint);
 }
 
 function suggestionText(value, minimum, maximum) {
@@ -541,16 +311,9 @@ function normalizeSuggestion(value) {
 }
 
 function publishedRankingOptions(value) {
-  const rawOptions = Array.isArray(value)
-    ? value
-    : String(value || '').split(/\r?\n/);
-  const providedOptions = rawOptions
-    .map((option) => String(option || '').trim())
-    .filter(Boolean);
-  if (
-    providedOptions.length < 3 ||
-    providedOptions.length > PUBLISHED_RANKING_OPTION_LIMIT
-  ) {
+  const rawOptions = Array.isArray(value) ? value : String(value || '').split(/\r?\n/);
+  const providedOptions = rawOptions.map((option) => String(option || '').trim()).filter(Boolean);
+  if (providedOptions.length < 3 || providedOptions.length > PUBLISHED_RANKING_OPTION_LIMIT) {
     return null;
   }
 
@@ -563,9 +326,7 @@ function publishedRankingOptions(value) {
   }
 
   const options = [...uniqueOptions.values()];
-  return options.length >= 3 && options.length <= PUBLISHED_RANKING_OPTION_LIMIT
-    ? options
-    : null;
+  return options.length >= 3 && options.length <= PUBLISHED_RANKING_OPTION_LIMIT ? options : null;
 }
 
 function publishedRankingImage(value) {
@@ -582,10 +343,7 @@ function publishedRankingImage(value) {
 }
 
 function publishedRankingSlug(value) {
-  return normalizeSuggestion(value)
-    .replace(/\s+/g, '-')
-    .slice(0, 80)
-    .replace(/-+$/g, '');
+  return normalizeSuggestion(value).replace(/\s+/g, '-').slice(0, 80).replace(/-+$/g, '');
 }
 
 function suggestionFlag(value) {
@@ -605,22 +363,12 @@ function suggestionFlag(value) {
   return null;
 }
 
-function sessionData(userId) {
-  const token = randomBytes(32).toString('base64url');
-  return {
-    token,
-    tokenHash: hashToken(token),
-    userId
-  };
-}
-
 async function anonymousUsed(deviceId) {
   if (!isValidDevice(deviceId)) return 0;
 
-  const [row] = await sql.query(
-    'SELECT votes_used FROM anonymous_usage WHERE device_id = $1',
-    [deviceId]
-  );
+  const [row] = await sql.query('SELECT votes_used FROM anonymous_usage WHERE device_id = $1', [
+    deviceId,
+  ]);
 
   return Number(row?.votes_used || 0);
 }
@@ -633,14 +381,17 @@ function unlockedDoubleVoteCount(totalVotes) {
 async function syncUserVoteHistory(userId, deviceIds) {
   if (!userId || !deviceIds.length) return;
 
-  await sql.query(`
+  await sql.query(
+    `
     INSERT INTO user_vote_history (user_id, option_id, first_voted_at)
     SELECT $1, v.option_id, MIN(v.updated_at)
     FROM votes v
     WHERE v.device_id = ANY($2::text[])
     GROUP BY v.option_id
     ON CONFLICT (user_id, option_id) DO NOTHING
-  `, [userId, deviceIds]);
+  `,
+    [userId, deviceIds],
+  );
 }
 
 async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
@@ -651,24 +402,30 @@ async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
       active: 0,
       available: 0,
       nextAt: DOUBLE_VOTE_THRESHOLDS[0],
-      remaining: DOUBLE_VOTE_THRESHOLDS[0]
+      remaining: DOUBLE_VOTE_THRESHOLDS[0],
     };
   }
 
-  const deviceIds = knownDeviceIds || await devicesFor(user, deviceId);
+  const deviceIds = knownDeviceIds || (await devicesFor(user, deviceId));
   await syncUserVoteHistory(user.id, deviceIds);
 
   const [historyRows, activeRows] = await Promise.all([
-    sql.query(`
+    sql.query(
+      `
       SELECT COUNT(*)::int AS total
       FROM user_vote_history
       WHERE user_id = $1
-    `, [user.id]),
-    sql.query(`
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
       SELECT COUNT(*)::int AS total
       FROM user_double_votes
       WHERE user_id = $1
-    `, [user.id])
+    `,
+      [user.id],
+    ),
   ]);
 
   const totalVotes = Number(historyRows[0]?.total || 0);
@@ -682,14 +439,14 @@ async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
     active,
     available: Math.max(0, unlocked - active),
     nextAt,
-    remaining: nextAt ? Math.max(0, nextAt - totalVotes) : 0
+    remaining: nextAt ? Math.max(0, nextAt - totalVotes) : 0,
   };
 }
 
 async function viewerFor(user, deviceId) {
   const [used, doubleVotes] = await Promise.all([
     anonymousUsed(deviceId),
-    doubleVoteState(user, deviceId)
+    doubleVoteState(user, deviceId),
   ]);
 
   return {
@@ -698,7 +455,7 @@ async function viewerFor(user, deviceId) {
     anonymousUsed: used,
     anonymousLimit: ANONYMOUS_LIMIT,
     rankingLimit: RANKING_LIMIT,
-    doubleVotes
+    doubleVotes,
   };
 }
 
@@ -708,61 +465,69 @@ async function devicesFor(user, deviceId) {
   }
 
   if (user.clerk_user_id) {
-    const rows = await sql.query(`
+    const rows = await sql.query(
+      `
       SELECT device_id
       FROM clerk_device_links
       WHERE clerk_user_id = $1
         AND user_id = $2
       ORDER BY created_at
-    `, [user.clerk_user_id, user.id]);
+    `,
+      [user.clerk_user_id, user.id],
+    );
     return rows.map((row) => row.device_id);
   }
 
   const rows = await sql.query(
     'SELECT device_id FROM user_devices WHERE user_id = $1 ORDER BY linked_at',
-    [user.id]
+    [user.id],
   );
 
   return rows.map((row) => row.device_id);
 }
 
 async function ensureUserDevice(userId, deviceId) {
-  const [existing] = await sql.query(
-    'SELECT user_id FROM user_devices WHERE device_id = $1',
-    [deviceId]
-  );
+  const [existing] = await sql.query('SELECT user_id FROM user_devices WHERE device_id = $1', [
+    deviceId,
+  ]);
 
   if (existing && existing.user_id !== userId) {
     return false;
   }
   if (existing) return true;
 
-  await sql.query(`
+  await sql.query(
+    `
     INSERT INTO user_devices (device_id, user_id)
     VALUES ($1, $2)
     ON CONFLICT (device_id) DO NOTHING
-  `, [deviceId, userId]);
-
-  const [linked] = await sql.query(
-    'SELECT user_id FROM user_devices WHERE device_id = $1',
-    [deviceId]
+  `,
+    [deviceId, userId],
   );
+
+  const [linked] = await sql.query('SELECT user_id FROM user_devices WHERE device_id = $1', [
+    deviceId,
+  ]);
 
   return linked?.user_id === userId;
 }
 
 async function ensureClerkDevice(user, deviceId) {
-  const [trusted] = await sql.query(`
+  const [trusted] = await sql.query(
+    `
     SELECT device_id
     FROM clerk_device_links
     WHERE device_id = $1
       AND clerk_user_id = $2
       AND user_id = $3
     LIMIT 1
-  `, [deviceId, user.clerk_user_id, user.id]);
+  `,
+    [deviceId, user.clerk_user_id, user.id],
+  );
   if (trusted) return true;
 
-  const [created] = await sql.query(`
+  const [created] = await sql.query(
+    `
     WITH new_device AS (
       INSERT INTO user_devices (device_id, user_id)
       VALUES ($1, $3)
@@ -774,18 +539,23 @@ async function ensureClerkDevice(user, deviceId) {
     FROM new_device
     ON CONFLICT DO NOTHING
     RETURNING device_id
-  `, [deviceId, user.clerk_user_id, user.id]);
+  `,
+    [deviceId, user.clerk_user_id, user.id],
+  );
 
   if (created) return true;
 
-  const [linkedAfterRace] = await sql.query(`
+  const [linkedAfterRace] = await sql.query(
+    `
     SELECT device_id
     FROM clerk_device_links
     WHERE device_id = $1
       AND clerk_user_id = $2
       AND user_id = $3
     LIMIT 1
-  `, [deviceId, user.clerk_user_id, user.id]);
+  `,
+    [deviceId, user.clerk_user_id, user.id],
+  );
   return Boolean(linkedAfterRace);
 }
 
@@ -797,16 +567,14 @@ async function ensureSessionDevice(user, deviceId) {
 async function catalog(req, res) {
   const deviceId = queryValue(req, 'device_id').slice(0, 100);
   const user = await sessionUser(req);
-  if (
-    user &&
-    isValidDevice(deviceId) &&
-    !(await ensureSessionDevice(user, deviceId))
-  ) {
+  if (user && isValidDevice(deviceId) && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
   const deviceIds = await devicesFor(user, deviceId);
 
-  const [rows, userCountRows] = await Promise.all([sql.query(`
+  const [rows, userCountRows] = await Promise.all([
+    sql.query(
+      `
     WITH vote_totals AS (
       SELECT
         option_id,
@@ -866,7 +634,11 @@ async function catalog(req, res) {
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
     WHERE r.is_active = true
     ORDER BY r.created_at, r.id, o.position
-  `, [deviceIds, user?.id || null]), sql.query('SELECT COUNT(*)::int AS total FROM users')]);
+  `,
+      [deviceIds, user?.id || null],
+    ),
+    sql.query('SELECT COUNT(*)::int AS total FROM users'),
+  ]);
 
   const byId = new Map();
 
@@ -880,7 +652,7 @@ async function catalog(req, res) {
         votes: Number(row.baseline_votes || 0),
         todayVotes: 0,
         createdAt: row.created_at,
-        opts: []
+        opts: [],
       });
     }
 
@@ -893,28 +665,24 @@ async function catalog(req, res) {
       score: Number(row.score || 0),
       originalPosition: Number(row.position),
       mine: Number(row.my_direction || 0),
-      mineWeight: Number(row.my_weight || 1)
+      mineWeight: Number(row.my_weight || 1),
     });
   }
 
   const rankings = [...byId.values()].map((ranking) => ({
     ...ranking,
-    opts: ranking.opts.sort(
-      (a, b) => b.score - a.score || a.originalPosition - b.originalPosition
-    )
+    opts: ranking.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition),
   }));
 
   return json(res, 200, {
     rankings,
     community: {
       rankings: rankings.length,
-      votes: rankings.reduce(
-        (total, ranking) => total + Number(ranking.votes || 0),
-        0
-      ),
-      users: Number(userCountRows[0]?.total || 0)
+      votes: rankings.reduce((total, ranking) => total + Number(ranking.votes || 0), 0),
+      users: Number(userCountRows[0]?.total || 0),
     },
-    viewer: await viewerFor(user, deviceId)
+    location: { city: geolocationCity(req) },
+    viewer: await viewerFor(user, deviceId),
   });
 }
 
@@ -926,160 +694,17 @@ function clerkConfig(req, res) {
       missing: [
         !CLERK_PUBLISHABLE_KEY && 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
         !CLERK_SECRET_KEY && 'CLERK_SECRET_KEY',
-        CLERK_PUBLISHABLE_KEY && !frontendApi && 'valid_publishable_key'
-      ].filter(Boolean)
+        CLERK_PUBLISHABLE_KEY && !frontendApi && 'valid_publishable_key',
+      ].filter(Boolean),
     });
   }
   return json(res, 200, {
     publishableKey: CLERK_PUBLISHABLE_KEY,
-    frontendApi
+    frontendApi,
   });
 }
 
-async function signup(req, res, body) {
-  const displayName = String(body.display_name || '').trim();
-  const email = normalizeEmail(body.email);
-  const password = String(body.password || '');
-  const deviceId = String(body.device_id || '');
-
-  if (displayName.length < 2 || displayName.length > 50) {
-    return json(res, 400, { error: 'invalid_name' });
-  }
-  if (!isValidEmail(email)) {
-    return json(res, 400, { error: 'invalid_email' });
-  }
-  if (password.length < 8 || password.length > 128) {
-    return json(res, 400, { error: 'weak_password' });
-  }
-  if (!isValidDevice(deviceId)) {
-    return json(res, 400, { error: 'invalid_device' });
-  }
-
-  const [deviceOwner, existingUser] = await Promise.all([
-    sql.query(
-      'SELECT user_id FROM user_devices WHERE device_id = $1 LIMIT 1',
-      [deviceId]
-    ),
-    sql.query(
-      'SELECT id FROM users WHERE lower(email) = lower($1) LIMIT 1',
-      [email]
-    )
-  ]);
-
-  if (deviceOwner[0]) {
-    return json(res, 409, { error: 'device_conflict' });
-  }
-  if (existingUser[0]) {
-    return json(res, 409, { error: 'email_exists' });
-  }
-
-  const userId = randomUUID();
-  const session = sessionData(userId);
-
-  try {
-    await sql.transaction([
-      sql.query(`
-        INSERT INTO users (id, email, display_name, password_hash)
-        VALUES ($1, $2, $3, $4)
-      `, [userId, email, displayName, hashPassword(password)]),
-      sql.query(`
-        INSERT INTO user_devices (device_id, user_id)
-        VALUES ($1, $2)
-      `, [deviceId, userId]),
-      sql.query(`
-        INSERT INTO user_sessions (token_hash, user_id, expires_at)
-        VALUES ($1, $2, now() + interval '30 days')
-      `, [session.tokenHash, userId])
-    ]);
-  } catch (error) {
-    if (error?.code === '23505') {
-      const conflict = String(error.constraint || '');
-      return json(res, 409, {
-        error: conflict.includes('device') ? 'device_conflict' : 'email_exists'
-      });
-    }
-    throw error;
-  }
-
-  setSessionCookie(res, session.token);
-  return json(res, 201, {
-    ok: true,
-    user: { id: userId, name: displayName, email },
-    viewer: {
-      registered: true,
-      isModerator: isModerator({ email }),
-      anonymousUsed: await anonymousUsed(deviceId),
-      anonymousLimit: ANONYMOUS_LIMIT,
-      rankingLimit: RANKING_LIMIT
-    }
-  });
-}
-
-async function login(req, res, body) {
-  const email = normalizeEmail(body.email);
-  const password = String(body.password || '');
-  const deviceId = String(body.device_id || '');
-
-  if (!isValidEmail(email) || !password || !isValidDevice(deviceId)) {
-    return json(res, 401, { error: 'invalid_credentials' });
-  }
-
-  const [user] = await sql.query(`
-    SELECT id, email, display_name, password_hash
-    FROM users
-    WHERE lower(email) = lower($1)
-    LIMIT 1
-  `, [email]);
-
-  if (!user || !verifyPassword(password, user.password_hash)) {
-    return json(res, 401, { error: 'invalid_credentials' });
-  }
-
-  const [deviceOwner] = await sql.query(
-    'SELECT user_id FROM user_devices WHERE device_id = $1 LIMIT 1',
-    [deviceId]
-  );
-
-  if (deviceOwner && deviceOwner.user_id !== user.id) {
-    return json(res, 409, { error: 'device_conflict' });
-  }
-
-  const session = sessionData(user.id);
-  await sql.transaction([
-    sql.query(`
-      INSERT INTO user_devices (device_id, user_id)
-      VALUES ($1, $2)
-      ON CONFLICT (device_id) DO NOTHING
-    `, [deviceId, user.id]),
-    sql.query(`
-      INSERT INTO user_sessions (token_hash, user_id, expires_at)
-      VALUES ($1, $2, now() + interval '30 days')
-    `, [session.tokenHash, user.id])
-  ]);
-
-  setSessionCookie(res, session.token);
-  return json(res, 200, {
-    ok: true,
-    user: { id: user.id, name: user.display_name, email: user.email },
-    viewer: {
-      registered: true,
-      isModerator: isModerator(user),
-      anonymousUsed: await anonymousUsed(deviceId),
-      anonymousLimit: ANONYMOUS_LIMIT,
-      rankingLimit: RANKING_LIMIT
-    }
-  });
-}
-
-async function logout(req, res) {
-  const token = cookies(req)[SESSION_COOKIE];
-  if (token) {
-    await sql.query(
-      'DELETE FROM user_sessions WHERE token_hash = $1',
-      [hashToken(token)]
-    );
-  }
-
+function logout(req, res) {
   clearSessionCookie(res);
   return json(res, 200, { ok: true });
 }
@@ -1100,13 +725,8 @@ function currentVoteStreak(rows) {
 async function profile(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
-  await ensureSuggestionSchema();
-
   const deviceId = queryValue(req, 'device_id').slice(0, 100);
-  if (
-    isValidDevice(deviceId) &&
-    !(await ensureSessionDevice(user, deviceId))
-  ) {
+  if (isValidDevice(deviceId) && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
 
@@ -1122,9 +742,10 @@ async function profile(req, res) {
     assignmentRows,
     doubleVotes,
     optionSuggestionRows,
-    topicSuggestionRows
+    topicSuggestionRows,
   ] = await Promise.all([
-    sql.query(`
+    sql.query(
+      `
       WITH latest AS (
         SELECT DISTINCT ON (v.option_id)
           v.option_id,
@@ -1140,8 +761,11 @@ async function profile(req, res) {
         COUNT(*) FILTER (WHERE l.direction = -1)::int AS down_votes
       FROM latest l
       JOIN ranking_options o ON o.id = l.option_id
-    `, [deviceIds]),
-    sql.query(`
+    `,
+      [deviceIds],
+    ),
+    sql.query(
+      `
       WITH latest AS (
         SELECT DISTINCT ON (v.option_id)
           v.option_id,
@@ -1167,8 +791,11 @@ async function profile(req, res) {
        AND dv.direction = l.direction
       ORDER BY l.updated_at DESC
       LIMIT 20
-    `, [deviceIds, user.id]),
-    sql.query(`
+    `,
+      [deviceIds, user.id],
+    ),
+    sql.query(
+      `
       WITH latest AS (
         SELECT DISTINCT ON (v.option_id)
           v.option_id
@@ -1182,16 +809,22 @@ async function profile(req, res) {
       JOIN rankings r ON r.id = o.ranking_id
       GROUP BY r.category
       ORDER BY votes DESC, r.category
-    `, [deviceIds]),
-    sql.query(`
+    `,
+      [deviceIds],
+    ),
+    sql.query(
+      `
       SELECT
         avatar_data AS "avatarData",
         show_avatar_on_leaderboard AS "showAvatarOnLeaderboard"
       FROM user_profiles
       WHERE user_id = $1
       LIMIT 1
-    `, [user.id]),
-    sql.query(`
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
       SELECT DISTINCT (
         (now() AT TIME ZONE 'America/Sao_Paulo')::date
         - (first_voted_at AT TIME ZONE 'America/Sao_Paulo')::date
@@ -1200,8 +833,11 @@ async function profile(req, res) {
       WHERE user_id = $1
         AND first_voted_at >= now() - interval '400 days'
       ORDER BY "daysAgo"
-    `, [user.id]),
-    sql.query(`
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
       SELECT
         dv.slot,
         dv.option_id AS "optionId",
@@ -1215,9 +851,12 @@ async function profile(req, res) {
       JOIN rankings r ON r.id = o.ranking_id
       WHERE dv.user_id = $1
       ORDER BY dv.slot
-    `, [user.id]),
+    `,
+      [user.id],
+    ),
     doubleVoteState(user, deviceId, deviceIds),
-    sql.query(`
+    sql.query(
+      `
       SELECT
         s.id,
         s.ranking_id AS "rankingId",
@@ -1232,8 +871,11 @@ async function profile(req, res) {
       WHERE s.user_id = $1
       ORDER BY s.created_at DESC
       LIMIT 20
-    `, [user.id]),
-    sql.query(`
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
       SELECT
         id,
         title,
@@ -1248,7 +890,9 @@ async function profile(req, res) {
       WHERE user_id = $1
       ORDER BY created_at DESC
       LIMIT 20
-    `, [user.id])
+    `,
+      [user.id],
+    ),
   ]);
 
   const stats = statsRows[0] || {};
@@ -1258,20 +902,19 @@ async function profile(req, res) {
       id: user.id,
       name: user.display_name,
       email: user.email,
-      createdAt: user.created_at
+      createdAt: user.created_at,
     },
     isModerator: isModerator(user),
     profile: {
       avatarData: savedProfile.avatarData || null,
-      showAvatarOnLeaderboard:
-        savedProfile.showAvatarOnLeaderboard !== false
+      showAvatarOnLeaderboard: savedProfile.showAvatarOnLeaderboard !== false,
     },
     stats: {
       votes: Number(stats.votes || 0),
       rankings: Number(stats.rankings || 0),
       upVotes: Number(stats.up_votes || 0),
       downVotes: Number(stats.down_votes || 0),
-      streak: currentVoteStreak(streakRows)
+      streak: currentVoteStreak(streakRows),
     },
     doubleVotes: {
       ...doubleVotes,
@@ -1282,12 +925,12 @@ async function profile(req, res) {
         updatedAt: row.updatedAt,
         rankingId: row.rankingId,
         question: row.question,
-        option: row.option
-      }))
+        option: row.option,
+      })),
     },
     categories: categoryRows.map((row) => ({
       name: row.name,
-      votes: Number(row.votes || 0)
+      votes: Number(row.votes || 0),
     })),
     recent: recentRows.map((row) => ({
       rankingId: row.rankingId,
@@ -1295,12 +938,12 @@ async function profile(req, res) {
       option: row.option,
       direction: Number(row.direction),
       weight: Number(row.weight || 1),
-      updatedAt: row.updatedAt
+      updatedAt: row.updatedAt,
     })),
     suggestions: {
       options: optionSuggestionRows,
-      rankings: topicSuggestionRows
-    }
+      rankings: topicSuggestionRows,
+    },
   });
 }
 
@@ -1308,7 +951,8 @@ async function leaderboard(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
 
-  const rows = await sql.query(`
+  const rows = await sql.query(
+    `
     WITH ranked AS (
       SELECT
         u.id AS "userId",
@@ -1346,7 +990,9 @@ async function leaderboard(req, res) {
     FROM ranked
     WHERE position <= 10 OR "userId" = $1
     ORDER BY position, name
-  `, [user.id]);
+  `,
+    [user.id],
+  );
 
   return json(res, 200, {
     leaderboard: rows.map((row) => ({
@@ -1356,8 +1002,8 @@ async function leaderboard(req, res) {
       rankings: Number(row.rankings || 0),
       position: Number(row.position || 0),
       avatarData: row.avatarData || null,
-      isCurrent: row.isCurrent === true
-    }))
+      isCurrent: row.isCurrent === true,
+    })),
   });
 }
 
@@ -1366,10 +1012,7 @@ async function updateProfile(req, res, body) {
   if (!user) return json(res, 401, { error: 'authentication_required' });
 
   const hasAvatar = Object.prototype.hasOwnProperty.call(body, 'avatarData');
-  const hasVisibility = Object.prototype.hasOwnProperty.call(
-    body,
-    'showAvatarOnLeaderboard'
-  );
+  const hasVisibility = Object.prototype.hasOwnProperty.call(body, 'showAvatarOnLeaderboard');
   if (!hasAvatar && !hasVisibility) {
     return json(res, 400, { error: 'invalid_profile' });
   }
@@ -1377,13 +1020,9 @@ async function updateProfile(req, res, body) {
   if (
     hasAvatar &&
     body.avatarData !== null &&
-    (
-      typeof body.avatarData !== 'string' ||
+    (typeof body.avatarData !== 'string' ||
       body.avatarData.length > PROFILE_AVATAR_MAX_LENGTH ||
-      !/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/]+={0,2}$/.test(
-        body.avatarData
-      )
-    )
+      !/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/]+={0,2}$/.test(body.avatarData))
   ) {
     return json(res, 400, { error: 'invalid_profile_image' });
   }
@@ -1392,22 +1031,24 @@ async function updateProfile(req, res, body) {
     return json(res, 400, { error: 'invalid_profile_visibility' });
   }
 
-  const [current] = await sql.query(`
+  const [current] = await sql.query(
+    `
     SELECT
       avatar_data AS "avatarData",
       show_avatar_on_leaderboard AS "showAvatarOnLeaderboard"
     FROM user_profiles
     WHERE user_id = $1
     LIMIT 1
-  `, [user.id]);
-  const avatarData = hasAvatar
-    ? body.avatarData
-    : current?.avatarData || null;
+  `,
+    [user.id],
+  );
+  const avatarData = hasAvatar ? body.avatarData : current?.avatarData || null;
   const showAvatarOnLeaderboard = hasVisibility
     ? body.showAvatarOnLeaderboard
     : current?.showAvatarOnLeaderboard !== false;
 
-  const [saved] = await sql.query(`
+  const [saved] = await sql.query(
+    `
     INSERT INTO user_profiles (
       user_id,
       avatar_data,
@@ -1423,14 +1064,16 @@ async function updateProfile(req, res, body) {
     RETURNING
       avatar_data AS "avatarData",
       show_avatar_on_leaderboard AS "showAvatarOnLeaderboard"
-  `, [user.id, avatarData, showAvatarOnLeaderboard]);
+  `,
+    [user.id, avatarData, showAvatarOnLeaderboard],
+  );
 
   return json(res, 200, {
     ok: true,
     profile: {
       avatarData: saved?.avatarData || null,
-      showAvatarOnLeaderboard: saved?.showAvatarOnLeaderboard !== false
-    }
+      showAvatarOnLeaderboard: saved?.showAvatarOnLeaderboard !== false,
+    },
   });
 }
 
@@ -1451,18 +1094,21 @@ function commentPayload(row) {
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     edited: Boolean(row.edited),
-    isMine: Boolean(row.isMine)
+    isMine: Boolean(row.isMine),
   };
 }
 
 async function activeRanking(rankingId) {
-  const [ranking] = await sql.query(`
+  const [ranking] = await sql.query(
+    `
     SELECT id
     FROM rankings
     WHERE id = $1
       AND is_active = true
     LIMIT 1
-  `, [rankingId]);
+  `,
+    [rankingId],
+  );
   return ranking || null;
 }
 
@@ -1470,9 +1116,10 @@ async function comments(req, res) {
   const rankingId = queryValue(req, 'ranking_id').slice(0, 100);
   const all = queryValue(req, 'view') === 'all';
   const requestedPage = Number(queryValue(req, 'page'));
-  const page = all && Number.isSafeInteger(requestedPage) && requestedPage > 0
-    ? Math.min(requestedPage, 10000)
-    : 0;
+  const page =
+    all && Number.isSafeInteger(requestedPage) && requestedPage > 0
+      ? Math.min(requestedPage, 10000)
+      : 0;
   const pageSize = all ? COMMENTS_PAGE_SIZE : 2;
   const offset = all ? page * pageSize : 0;
   if (!rankingId) return json(res, 400, { error: 'invalid_ranking' });
@@ -1481,7 +1128,8 @@ async function comments(req, res) {
   }
 
   const user = await sessionUser(req);
-  const recentQuery = sql.query(`
+  const recentQuery = sql.query(
+    `
     SELECT
       c.id,
       u.display_name AS name,
@@ -1502,14 +1150,21 @@ async function comments(req, res) {
     ORDER BY c.created_at DESC, c.id DESC
     LIMIT $3
     OFFSET $4
-  `, [rankingId, user?.id || null, pageSize, offset]);
-  const countQuery = sql.query(`
+  `,
+    [rankingId, user?.id || null, pageSize, offset],
+  );
+  const countQuery = sql.query(
+    `
     SELECT COUNT(*)::int AS total
     FROM ranking_comments
     WHERE ranking_id = $1
       AND status = 'published'
-  `, [rankingId]);
-  const mineQuery = user ? sql.query(`
+  `,
+    [rankingId],
+  );
+  const mineQuery = user
+    ? sql.query(
+        `
     SELECT
       c.id,
       u.display_name AS name,
@@ -1529,13 +1184,12 @@ async function comments(req, res) {
       AND c.user_id = $2
       AND c.status = 'published'
     LIMIT 1
-  `, [rankingId, user.id]) : Promise.resolve([]);
+  `,
+        [rankingId, user.id],
+      )
+    : Promise.resolve([]);
 
-  const [recentRows, countRows, mineRows] = await Promise.all([
-    recentQuery,
-    countQuery,
-    mineQuery
-  ]);
+  const [recentRows, countRows, mineRows] = await Promise.all([recentQuery, countQuery, mineQuery]);
 
   const total = Number(countRows[0]?.total || 0);
   return json(res, 200, {
@@ -1545,7 +1199,7 @@ async function comments(req, res) {
     limit: COMMENT_LIMIT,
     page,
     pageSize,
-    hasMore: offset + recentRows.length < total
+    hasMore: offset + recentRows.length < total,
   });
 }
 
@@ -1553,19 +1207,17 @@ async function writeComment(req, res, body, editing = false) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
 
-  const rankingId = String(body.ranking_id || '').trim().slice(0, 100);
+  const rankingId = String(body.ranking_id || '')
+    .trim()
+    .slice(0, 100);
   const optionId = Number(body.option_id);
   const commentBody = validCommentBody(body.body);
-  if (
-    !rankingId ||
-    !Number.isSafeInteger(optionId) ||
-    optionId <= 0 ||
-    !commentBody
-  ) {
+  if (!rankingId || !Number.isSafeInteger(optionId) || optionId <= 0 || !commentBody) {
     return json(res, 400, { error: 'invalid_comment', limit: COMMENT_LIMIT });
   }
 
-  const [option] = await sql.query(`
+  const [option] = await sql.query(
+    `
     SELECT o.id
     FROM ranking_options o
     JOIN rankings r ON r.id = o.ranking_id
@@ -1573,11 +1225,14 @@ async function writeComment(req, res, body, editing = false) {
       AND o.id = $2
       AND r.is_active = true
     LIMIT 1
-  `, [rankingId, optionId]);
+  `,
+    [rankingId, optionId],
+  );
   if (!option) return json(res, 404, { error: 'option_not_found' });
 
   if (editing) {
-    const updated = await sql.query(`
+    const updated = await sql.query(
+      `
       UPDATE ranking_comments
       SET option_id = $3,
           body = $4,
@@ -1586,16 +1241,21 @@ async function writeComment(req, res, body, editing = false) {
         AND user_id = $2
         AND status = 'published'
       RETURNING id
-    `, [rankingId, user.id, optionId, commentBody]);
+    `,
+      [rankingId, user.id, optionId, commentBody],
+    );
     if (!updated[0]) {
       return json(res, 404, { error: 'comment_not_found' });
     }
   } else {
     try {
-      await sql.query(`
+      await sql.query(
+        `
         INSERT INTO ranking_comments (ranking_id, user_id, option_id, body)
         VALUES ($1, $2, $3, $4)
-      `, [rankingId, user.id, optionId, commentBody]);
+      `,
+        [rankingId, user.id, optionId, commentBody],
+      );
     } catch (error) {
       if (
         error?.code === '23505' &&
@@ -1607,7 +1267,8 @@ async function writeComment(req, res, body, editing = false) {
     }
   }
 
-  const [row] = await sql.query(`
+  const [row] = await sql.query(
+    `
     SELECT
       c.id,
       u.display_name AS name,
@@ -1626,33 +1287,39 @@ async function writeComment(req, res, body, editing = false) {
     WHERE c.ranking_id = $1
       AND c.user_id = $2
     LIMIT 1
-  `, [rankingId, user.id]);
+  `,
+    [rankingId, user.id],
+  );
 
   return json(res, editing ? 200 : 201, {
     ok: true,
-    comment: commentPayload(row)
+    comment: commentPayload(row),
   });
 }
 
 function emailHtml(value) {
-  return String(value || '').replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[character]);
+  return String(value || '').replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character],
+  );
 }
 
-function resetOrigin(req) {
+function siteOrigin(req) {
   const configured = String(process.env.TOPO_SITE_URL || '').trim();
   if (/^https:\/\/[a-z0-9.-]+(?::\d+)?$/i.test(configured)) {
     return configured.replace(/\/$/, '');
   }
 
-  const host = String(
-    req.headers?.['x-forwarded-host'] || req.headers?.host || ''
-  ).trim().toLowerCase();
+  const host = String(req.headers?.['x-forwarded-host'] || req.headers?.host || '')
+    .trim()
+    .toLowerCase();
   if (
     host === 'somostopo.com.br' ||
     host === 'www.somostopo.com.br' ||
@@ -1668,25 +1335,22 @@ function resendApiKey() {
   const configured = String(process.env.RESEND_API_KEY || '').trim();
   if (configured) return configured;
 
-  const marketplaceKey = Object.entries(process.env).find(([name, value]) =>
-    name.startsWith('RESEND_') &&
-    typeof value === 'string' &&
-    value.trim().startsWith('re_')
+  const marketplaceKey = Object.entries(process.env).find(
+    ([name, value]) =>
+      name.startsWith('RESEND_') && typeof value === 'string' && value.trim().startsWith('re_'),
   );
 
   return String(marketplaceKey?.[1] || '').trim();
 }
 
-function passwordResetFrom() {
-  return String(
-    process.env.TOPO_EMAIL_FROM || 'TOPO <conta@somostopo.com.br>'
-  ).trim();
+function notificationFrom() {
+  return String(process.env.TOPO_EMAIL_FROM || 'TOPO <conta@somostopo.com.br>').trim();
 }
 
 function moderationOrigin(req) {
-  const host = String(
-    req.headers?.['x-forwarded-host'] || req.headers?.host || ''
-  ).trim().toLowerCase();
+  const host = String(req.headers?.['x-forwarded-host'] || req.headers?.host || '')
+    .trim()
+    .toLowerCase();
   if (
     host === 'somostopo.com.br' ||
     host === 'www.somostopo.com.br' ||
@@ -1694,65 +1358,13 @@ function moderationOrigin(req) {
   ) {
     return `https://${host}`;
   }
-  return resetOrigin(req);
-}
-
-async function sendPasswordResetEmail({ email, name, link, tokenHash }) {
-  const apiKey = resendApiKey();
-  const from = passwordResetFrom();
-  if (!apiKey || !from) return { configured: false };
-
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      'content-type': 'application/json',
-      'idempotency-key': `topo-password-reset-${tokenHash}`
-    },
-    body: JSON.stringify({
-      from,
-      to: [email],
-      subject: 'Redefina sua senha no TOPO',
-      html: `
-        <div style="font-family:Arial,sans-serif;color:#191919;line-height:1.5;max-width:560px;margin:auto;padding:28px">
-          <div style="font-family:Georgia,serif;font-size:34px;font-weight:700;color:#657986">TOPO</div>
-          <h1 style="font-family:Georgia,serif;font-size:28px;line-height:1.1;margin:24px 0 12px">Crie uma nova senha</h1>
-          <p>Olá, ${emailHtml(name)}.</p>
-          <p>Recebemos um pedido para redefinir a senha da sua conta.</p>
-          <p style="margin:26px 0"><a href="${emailHtml(link)}" style="background:#657986;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:700">Redefinir minha senha</a></p>
-          <p style="font-size:13px;color:#706d67">Este link vale por ${PASSWORD_RESET_MINUTES} minutos. Se você não pediu a troca, ignore este e-mail.</p>
-        </div>
-      `
-    })
-  });
-
-  if (!response.ok) {
-    let providerError = {};
-    try {
-      providerError = await response.json();
-    } catch {
-      providerError = {};
-    }
-    console.error(JSON.stringify({
-      level: 'error',
-      message: 'password_reset_email_rejected',
-      provider: 'resend',
-      status: response.status,
-      code: String(providerError?.name || providerError?.code || '').slice(0, 80),
-      detail: String(providerError?.message || '').slice(0, 300)
-    }));
-    const error = new Error(`Resend failed with status ${response.status}`);
-    error.code = 'email_send_failed';
-    throw error;
-  }
-
-  return { configured: true };
+  return siteOrigin(req);
 }
 
 async function sendSuggestionModerationEmail(req, suggestion) {
   const apiKey = resendApiKey();
   const recipients = moderatorEmails();
-  const from = passwordResetFrom();
+  const from = notificationFrom();
   if (!apiKey || !from || !recipients.length) return { configured: false };
 
   const link = new URL('/moderacao', moderationOrigin(req));
@@ -1777,7 +1389,7 @@ async function sendSuggestionModerationEmail(req, suggestion) {
     headers: {
       authorization: `Bearer ${apiKey}`,
       'content-type': 'application/json',
-      'idempotency-key': `topo-suggestion-${suggestion.kind}-${suggestion.id}`
+      'idempotency-key': `topo-suggestion-${suggestion.kind}-${suggestion.id}`,
     },
     body: JSON.stringify({
       from,
@@ -1793,8 +1405,8 @@ async function sendSuggestionModerationEmail(req, suggestion) {
           <p style="margin:26px 0"><a href="${emailHtml(link.toString())}" style="background:#657986;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:700">Abrir para revisar</a></p>
           <p style="font-size:13px;color:#706d67">Por segurança, o clique abre o painel privado. Nenhuma decisão é tomada diretamente pelo e-mail.</p>
         </div>
-      `
-    })
+      `,
+    }),
   });
 
   if (!response.ok) {
@@ -1809,49 +1421,60 @@ async function notifySuggestionModerators(req, suggestion) {
   try {
     await sendSuggestionModerationEmail(req, suggestion);
   } catch (error) {
-    console.error(JSON.stringify({
-      level: 'error',
-      message: 'suggestion_email_failed',
-      kind: suggestion.kind,
-      suggestionId: suggestion.id,
-      detail: String(error?.message || '').slice(0, 240)
-    }));
+    console.error(
+      JSON.stringify({
+        level: 'error',
+        message: 'suggestion_email_failed',
+        kind: suggestion.kind,
+        suggestionId: suggestion.id,
+        detail: String(error?.message || '').slice(0, 240),
+      }),
+    );
   }
 }
 
 async function createSuggestion(req, res, body) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
-  await ensureSuggestionSchema();
-
   const kind = String(body.kind || '');
   if (kind === 'option') {
-    const rankingId = String(body.rankingId || '').trim().slice(0, 100);
+    const rankingId = String(body.rankingId || '')
+      .trim()
+      .slice(0, 100);
     const label = suggestionText(body.label, 2, SUGGESTION_OPTION_LIMIT);
     const normalized = normalizeSuggestion(label);
     if (!rankingId || !label || !normalized) {
       return json(res, 400, { error: 'invalid_option_suggestion' });
     }
-    const [ranking] = await sql.query(`
+    const [ranking] = await sql.query(
+      `
       SELECT id, question
       FROM rankings
       WHERE id = $1 AND is_active = true
       LIMIT 1
-    `, [rankingId]);
+    `,
+      [rankingId],
+    );
     if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
 
     const [existingOptionRows, recentRows] = await Promise.all([
-      sql.query(`
+      sql.query(
+        `
         SELECT id, label
         FROM ranking_options
         WHERE ranking_id = $1
-      `, [rankingId]),
-      sql.query(`
+      `,
+        [rankingId],
+      ),
+      sql.query(
+        `
         SELECT COUNT(*)::int AS total
         FROM ranking_option_suggestions
         WHERE user_id = $1
           AND created_at >= now() - interval '24 hours'
-      `, [user.id])
+      `,
+        [user.id],
+      ),
     ]);
     if (existingOptionRows.some((option) => normalizeSuggestion(option.label) === normalized)) {
       return json(res, 409, { error: 'option_already_exists' });
@@ -1860,19 +1483,22 @@ async function createSuggestion(req, res, body) {
     if (!isModerator(user) && Number(recentRows[0]?.total || 0) >= OPTION_SUGGESTION_DAILY_LIMIT) {
       return json(res, 429, {
         error: 'option_suggestion_limit',
-        limit: OPTION_SUGGESTION_DAILY_LIMIT
+        limit: OPTION_SUGGESTION_DAILY_LIMIT,
       });
     }
 
     const id = randomUUID();
     const flagReason = suggestionFlag(label);
     try {
-      await sql.query(`
+      await sql.query(
+        `
         INSERT INTO ranking_option_suggestions (
           id, ranking_id, user_id, label, normalized_label, flag_reason
         )
         VALUES ($1, $2, $3, $4, $5, $6)
-      `, [id, rankingId, user.id, label, normalized, flagReason]);
+      `,
+        [id, rankingId, user.id, label, normalized, flagReason],
+      );
     } catch (error) {
       if (error?.code === '23505') {
         return json(res, 409, { error: 'suggestion_already_pending' });
@@ -1887,13 +1513,13 @@ async function createSuggestion(req, res, body) {
       question: ranking.question,
       flagReason,
       userName: user.display_name,
-      userEmail: user.email
+      userEmail: user.email,
     });
     return json(res, 201, {
       ok: true,
       id,
       status: 'pending',
-      possibleDuplicate
+      possibleDuplicate,
     });
   }
 
@@ -1912,27 +1538,33 @@ async function createSuggestion(req, res, body) {
         FROM rankings
         WHERE is_active = true
       `),
-      sql.query(`
+      sql.query(
+        `
         SELECT COUNT(*)::int AS total
         FROM ranking_topic_suggestions
         WHERE user_id = $1
           AND created_at >= now() - interval '7 days'
-      `, [user.id])
+      `,
+        [user.id],
+      ),
     ]);
-    if (existingRankingRows.some((ranking) => normalizeSuggestion(ranking.question) === normalized)) {
+    if (
+      existingRankingRows.some((ranking) => normalizeSuggestion(ranking.question) === normalized)
+    ) {
       return json(res, 409, { error: 'ranking_already_exists' });
     }
     if (Number(recentRows[0]?.total || 0) >= TOPIC_SUGGESTION_WEEKLY_LIMIT) {
       return json(res, 429, {
         error: 'ranking_suggestion_limit',
-        limit: TOPIC_SUGGESTION_WEEKLY_LIMIT
+        limit: TOPIC_SUGGESTION_WEEKLY_LIMIT,
       });
     }
 
     const id = randomUUID();
     const flagReason = suggestionFlag(title);
     try {
-      await sql.query(`
+      await sql.query(
+        `
         INSERT INTO ranking_topic_suggestions (
           id,
           user_id,
@@ -1943,15 +1575,9 @@ async function createSuggestion(req, res, body) {
           flag_reason
         )
         VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)
-      `, [
-        id,
-        user.id,
-        title,
-        normalized,
-        category,
-        JSON.stringify(exampleOptions),
-        flagReason
-      ]);
+      `,
+        [id, user.id, title, normalized, category, JSON.stringify(exampleOptions), flagReason],
+      );
     } catch (error) {
       if (error?.code === '23505') {
         return json(res, 409, { error: 'suggestion_already_pending' });
@@ -1965,7 +1591,7 @@ async function createSuggestion(req, res, body) {
       title,
       flagReason,
       userName: user.display_name,
-      userEmail: user.email
+      userEmail: user.email,
     });
     return json(res, 201, { ok: true, id, status: 'pending' });
   }
@@ -1976,10 +1602,9 @@ async function createSuggestion(req, res, body) {
 async function mySuggestions(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
-  await ensureSuggestionSchema();
-
   const [optionRows, rankingRows] = await Promise.all([
-    sql.query(`
+    sql.query(
+      `
       SELECT
         s.id,
         s.ranking_id AS "rankingId",
@@ -1994,8 +1619,11 @@ async function mySuggestions(req, res) {
       WHERE s.user_id = $1
       ORDER BY s.created_at DESC
       LIMIT 20
-    `, [user.id]),
-    sql.query(`
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
       SELECT
         id,
         title,
@@ -2010,15 +1638,17 @@ async function mySuggestions(req, res) {
       WHERE user_id = $1
       ORDER BY created_at DESC
       LIMIT 20
-    `, [user.id])
+    `,
+      [user.id],
+    ),
   ]);
 
   return json(res, 200, {
     isModerator: isModerator(user),
     suggestions: {
       options: optionRows,
-      rankings: rankingRows
-    }
+      rankings: rankingRows,
+    },
   });
 }
 
@@ -2026,8 +1656,6 @@ async function moderationQueue(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
   if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
-  await ensureSuggestionSchema();
-
   const [optionRows, rankingRows, rankingOptionRows] = await Promise.all([
     sql.query(`
       SELECT
@@ -2078,7 +1706,7 @@ async function moderationQueue(req, res) {
         position
       FROM ranking_options
       ORDER BY ranking_id, position, id
-    `)
+    `),
   ]);
 
   const optionsByRanking = new Map();
@@ -2093,16 +1721,17 @@ async function moderationQueue(req, res) {
     return {
       ...suggestion,
       existingOptions,
-      possibleDuplicate: suggestion.status === 'pending'
-        ? possibleOptionDuplicate(suggestion.label, existingOptions)
-        : null
+      possibleDuplicate:
+        suggestion.status === 'pending'
+          ? possibleOptionDuplicate(suggestion.label, existingOptions)
+          : null,
     };
   });
 
   return json(res, 200, {
     moderator: { name: user.display_name, email: user.email },
     options: optionSuggestions,
-    rankings: rankingRows
+    rankings: rankingRows,
   });
 }
 
@@ -2112,25 +1741,22 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
   const category = suggestionText(body.category, 2, 50);
   const options = publishedRankingOptions(body.options);
   const imageUrl = publishedRankingImage(body.imageUrl);
-  if (
-    !title ||
-    !normalizedTitle ||
-    !category ||
-    !SUGGESTION_CATEGORIES.has(category) ||
-    !options
-  ) {
+  if (!title || !normalizedTitle || !category || !SUGGESTION_CATEGORIES.has(category) || !options) {
     return json(res, 400, { error: 'invalid_published_ranking' });
   }
   if (imageUrl === null) {
     return json(res, 400, { error: 'invalid_image_url' });
   }
 
-  const [suggestion] = await sql.query(`
+  const [suggestion] = await sql.query(
+    `
     SELECT id, status
     FROM ranking_topic_suggestions
     WHERE id = $1::uuid
     LIMIT 1
-  `, [id]);
+  `,
+    [id],
+  );
   if (!suggestion) return json(res, 404, { error: 'suggestion_not_found' });
   if (suggestion.status !== 'approved') {
     return json(res, 409, { error: 'suggestion_already_reviewed' });
@@ -2140,17 +1766,26 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
     SELECT id, question
     FROM rankings
   `);
-  if (existingRankings.some((ranking) => normalizeSuggestion(ranking.question) === normalizedTitle)) {
+  if (
+    existingRankings.some((ranking) => normalizeSuggestion(ranking.question) === normalizedTitle)
+  ) {
     return json(res, 409, { error: 'ranking_already_exists' });
   }
 
   const baseSlug = publishedRankingSlug(title);
   if (!baseSlug) return json(res, 400, { error: 'invalid_published_ranking' });
-  const matchingIds = new Set((await sql.query(`
+  const matchingIds = new Set(
+    (
+      await sql.query(
+        `
     SELECT id
     FROM rankings
     WHERE id = $1 OR id LIKE $2
-  `, [baseSlug, `${baseSlug}-%`])).map((row) => row.id));
+  `,
+        [baseSlug, `${baseSlug}-%`],
+      )
+    ).map((row) => row.id),
+  );
   let rankingId = baseSlug;
   for (let suffix = 2; matchingIds.has(rankingId); suffix += 1) {
     rankingId = `${baseSlug}-${suffix}`;
@@ -2159,8 +1794,10 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
   const optionsJson = JSON.stringify(options);
   let transactionResults;
   try {
-    transactionResults = await sql.transaction([
-      sql.query(`
+    transactionResults = await sql.transaction(
+      [
+        sql.query(
+          `
         INSERT INTO rankings (
           id,
           category,
@@ -2174,8 +1811,11 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
         FROM ranking_topic_suggestions
         WHERE id = $1::uuid AND status = 'approved'
         RETURNING id
-      `, [id, rankingId, category, title, imageUrl || null]),
-      sql.query(`
+      `,
+          [id, rankingId, category, title, imageUrl || null],
+        ),
+        sql.query(
+          `
         INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
         SELECT
           $2,
@@ -2190,8 +1830,11 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
           WHERE id = $1::uuid AND status = 'approved'
         )
         RETURNING id
-      `, [id, rankingId, optionsJson]),
-      sql.query(`
+      `,
+          [id, rankingId, optionsJson],
+        ),
+        sql.query(
+          `
         UPDATE ranking_topic_suggestions
         SET title = $3,
             normalized_title = $4,
@@ -2204,17 +1847,12 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
             reviewed_at = now()
         WHERE id = $1::uuid AND status = 'approved'
         RETURNING id, status, published_ranking_id AS "publishedRankingId"
-      `, [
-        id,
-        user.id,
-        title,
-        normalizedTitle,
-        category,
-        optionsJson,
-        rankingId,
-        moderationNote
-      ])
-    ], { isolationLevel: 'Serializable' });
+      `,
+          [id, user.id, title, normalizedTitle, category, optionsJson, rankingId, moderationNote],
+        ),
+      ],
+      { isolationLevel: 'Serializable' },
+    );
   } catch (error) {
     if (error?.code === '23505') {
       return json(res, 409, { error: 'ranking_already_exists' });
@@ -2229,7 +1867,7 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
   return json(res, 200, {
     ok: true,
     rankingId,
-    suggestion: published
+    suggestion: published,
   });
 }
 
@@ -2237,13 +1875,12 @@ async function moderateSuggestion(req, res, body) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
   if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
-  await ensureSuggestionSchema();
-
   const id = String(body.id || '');
   const kind = String(body.kind || '');
   const decision = String(body.decision || '');
   const moderationNote = suggestionText(String(body.note || ''), 1, 300) || null;
-  const validDecision = ['approve', 'reject'].includes(decision) ||
+  const validDecision =
+    ['approve', 'reject'].includes(decision) ||
     (kind === 'ranking' && decision === 'publish') ||
     (kind === 'option' && decision === 'duplicate');
   const duplicateOptionId = String(body.duplicateOptionId || '');
@@ -2251,23 +1888,23 @@ async function moderateSuggestion(req, res, body) {
   const correctedLabel = hasCorrectedLabel
     ? suggestionText(body.label, 2, SUGGESTION_OPTION_LIMIT)
     : null;
-  const approvedRankingTitle = kind === 'ranking' && decision === 'approve'
-    ? suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT)
-    : null;
-  const approvedRankingCategory = kind === 'ranking' && decision === 'approve'
-    ? suggestionText(body.category, 2, 50)
-    : null;
+  const approvedRankingTitle =
+    kind === 'ranking' && decision === 'approve'
+      ? suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT)
+      : null;
+  const approvedRankingCategory =
+    kind === 'ranking' && decision === 'approve' ? suggestionText(body.category, 2, 50) : null;
   if (
     !/^[0-9a-f-]{36}$/i.test(id) ||
     !['option', 'ranking'].includes(kind) ||
     !validDecision ||
     (kind === 'option' && decision === 'duplicate' && !/^\d+$/.test(duplicateOptionId)) ||
     (kind === 'option' && decision === 'approve' && hasCorrectedLabel && !correctedLabel) ||
-    (kind === 'ranking' && decision === 'approve' && (
-      !approvedRankingTitle ||
-      !approvedRankingCategory ||
-      !SUGGESTION_CATEGORIES.has(approvedRankingCategory)
-    ))
+    (kind === 'ranking' &&
+      decision === 'approve' &&
+      (!approvedRankingTitle ||
+        !approvedRankingCategory ||
+        !SUGGESTION_CATEGORIES.has(approvedRankingCategory)))
   ) {
     return json(res, 400, { error: 'invalid_moderation' });
   }
@@ -2284,24 +1921,28 @@ async function moderateSuggestion(req, res, body) {
         SELECT id, question
         FROM rankings
       `),
-      sql.query(`
+      sql.query(
+        `
         SELECT id, title, status
         FROM ranking_topic_suggestions
         WHERE id <> $1::uuid
           AND normalized_title = $2
           AND status IN ('pending', 'approved', 'published')
         LIMIT 1
-      `, [id, normalizedTitle])
+      `,
+        [id, normalizedTitle],
+      ),
     ]);
     if (
-      existingRanking.some((ranking) =>
-        normalizeSuggestion(ranking.question) === normalizedTitle
+      existingRanking.some(
+        (ranking) => normalizeSuggestion(ranking.question) === normalizedTitle,
       ) ||
       existingSuggestion.length
     ) {
       return json(res, 409, { error: 'ranking_already_exists' });
     }
-    rows = await sql.query(`
+    rows = await sql.query(
+      `
       UPDATE ranking_topic_suggestions
       SET title = $3,
           normalized_title = $4,
@@ -2312,45 +1953,47 @@ async function moderateSuggestion(req, res, body) {
           reviewed_at = now()
       WHERE id = $1::uuid AND status = 'pending'
       RETURNING id, title, category, status
-    `, [
-      id,
-      user.id,
-      approvedRankingTitle,
-      normalizedTitle,
-      approvedRankingCategory,
-      moderationNote
-    ]);
+    `,
+      [id, user.id, approvedRankingTitle, normalizedTitle, approvedRankingCategory, moderationNote],
+    );
   } else if (kind === 'option' && decision === 'approve') {
-    const [suggestion] = await sql.query(`
+    const [suggestion] = await sql.query(
+      `
       SELECT id, ranking_id AS "rankingId", label, status
       FROM ranking_option_suggestions
       WHERE id = $1::uuid
       LIMIT 1
-    `, [id]);
+    `,
+      [id],
+    );
     if (!suggestion || suggestion.status !== 'pending') {
       return json(res, 409, { error: 'suggestion_already_reviewed' });
     }
 
     const finalLabel = correctedLabel || suggestion.label;
     const normalizedLabel = normalizeSuggestion(finalLabel);
-    const existingOptions = await sql.query(`
+    const existingOptions = await sql.query(
+      `
       SELECT id, label
       FROM ranking_options
       WHERE ranking_id = $1
       ORDER BY position, id
-    `, [suggestion.rankingId]);
-    const exactMatch = existingOptions.find((option) =>
-      normalizeSuggestion(option.label) === normalizedLabel
+    `,
+      [suggestion.rankingId],
+    );
+    const exactMatch = existingOptions.find(
+      (option) => normalizeSuggestion(option.label) === normalizedLabel,
     );
     if (exactMatch) {
       return json(res, 409, {
         error: 'option_already_exists',
-        option: { optionId: exactMatch.id, label: exactMatch.label }
+        option: { optionId: exactMatch.id, label: exactMatch.label },
       });
     }
 
     try {
-      rows = await sql.query(`
+      rows = await sql.query(
+        `
       WITH selected AS (
         SELECT id, ranking_id
         FROM ranking_option_suggestions
@@ -2399,7 +2042,9 @@ async function moderateSuggestion(req, res, body) {
         suggestion.label,
         suggestion.status,
         suggestion.approved_option_id AS "optionId"
-      `, [id, user.id, moderationNote, finalLabel, normalizedLabel]);
+      `,
+        [id, user.id, moderationNote, finalLabel, normalizedLabel],
+      );
     } catch (error) {
       if (error?.code === '23505') {
         return json(res, 409, { error: 'suggestion_already_pending' });
@@ -2407,23 +2052,27 @@ async function moderateSuggestion(req, res, body) {
       throw error;
     }
     if (!rows[0]) {
-      const refreshedOptions = await sql.query(`
+      const refreshedOptions = await sql.query(
+        `
         SELECT id, label
         FROM ranking_options
         WHERE ranking_id = $1
-      `, [suggestion.rankingId]);
-      const refreshedMatch = refreshedOptions.find((option) =>
-        normalizeSuggestion(option.label) === normalizedLabel
+      `,
+        [suggestion.rankingId],
+      );
+      const refreshedMatch = refreshedOptions.find(
+        (option) => normalizeSuggestion(option.label) === normalizedLabel,
       );
       if (refreshedMatch) {
         return json(res, 409, {
           error: 'option_already_exists',
-          option: { optionId: refreshedMatch.id, label: refreshedMatch.label }
+          option: { optionId: refreshedMatch.id, label: refreshedMatch.label },
         });
       }
     }
   } else if (kind === 'option' && decision === 'duplicate') {
-    rows = await sql.query(`
+    rows = await sql.query(
+      `
       UPDATE ranking_option_suggestions suggestion
       SET status = 'duplicate',
           duplicate_option_id = existing.id,
@@ -2443,9 +2092,12 @@ async function moderateSuggestion(req, res, body) {
         suggestion.status,
         suggestion.duplicate_option_id AS "duplicateOptionId",
         existing.label AS "duplicateOptionLabel"
-    `, [id, user.id, duplicateOptionId, moderationNote]);
+    `,
+      [id, user.id, duplicateOptionId, moderationNote],
+    );
   } else if (kind === 'option') {
-    rows = await sql.query(`
+    rows = await sql.query(
+      `
       UPDATE ranking_option_suggestions
       SET status = 'rejected',
           reviewed_by = $2,
@@ -2453,9 +2105,12 @@ async function moderateSuggestion(req, res, body) {
           reviewed_at = now()
       WHERE id = $1::uuid AND status = 'pending'
       RETURNING id, status
-    `, [id, user.id, moderationNote]);
+    `,
+      [id, user.id, moderationNote],
+    );
   } else {
-    rows = await sql.query(`
+    rows = await sql.query(
+      `
       UPDATE ranking_topic_suggestions
       SET status = 'rejected',
           reviewed_by = $2,
@@ -2463,128 +2118,13 @@ async function moderateSuggestion(req, res, body) {
           reviewed_at = now()
       WHERE id = $1::uuid AND status = 'pending'
       RETURNING id, status
-    `, [id, user.id, moderationNote]);
+    `,
+      [id, user.id, moderationNote],
+    );
   }
 
   if (!rows[0]) return json(res, 409, { error: 'suggestion_already_reviewed' });
   return json(res, 200, { ok: true, suggestion: rows[0] });
-}
-
-async function requestPasswordReset(req, res, body) {
-  const email = normalizeEmail(body.email);
-  if (!isValidEmail(email)) {
-    return json(res, 400, { error: 'invalid_email' });
-  }
-  if (!resendApiKey()) {
-    return json(res, 503, { error: 'email_not_configured' });
-  }
-
-  const [user] = await sql.query(`
-    SELECT id, email, display_name
-    FROM users
-    WHERE lower(email) = lower($1)
-    LIMIT 1
-  `, [email]);
-
-  if (!user) {
-    return json(res, 202, { ok: true });
-  }
-
-  const [recent] = await sql.query(`
-    SELECT id
-    FROM password_reset_tokens
-    WHERE user_id = $1
-      AND created_at > now() - interval '60 seconds'
-    LIMIT 1
-  `, [user.id]);
-  if (recent) return json(res, 202, { ok: true });
-
-  const token = randomBytes(32).toString('base64url');
-  const tokenHash = hashToken(token);
-  const link = `${resetOrigin(req)}/redefinir-senha?token=${encodeURIComponent(token)}`;
-
-  await sql.transaction([
-    sql.query(`
-      DELETE FROM password_reset_tokens
-      WHERE user_id = $1
-        AND (used_at IS NOT NULL OR expires_at <= now())
-    `, [user.id]),
-    sql.query(`
-      INSERT INTO password_reset_tokens (token_hash, user_id, expires_at)
-      VALUES ($1, $2, now() + interval '30 minutes')
-    `, [tokenHash, user.id])
-  ]);
-
-  try {
-    await sendPasswordResetEmail({
-      email: user.email,
-      name: user.display_name,
-      link,
-      tokenHash
-    });
-  } catch (error) {
-    await sql.query(
-      'DELETE FROM password_reset_tokens WHERE token_hash = $1',
-      [tokenHash]
-    );
-    if (error?.code === 'email_send_failed') {
-      return json(res, 502, { error: 'email_send_failed' });
-    }
-    throw error;
-  }
-
-  return json(res, 202, { ok: true });
-}
-
-async function resetPassword(req, res, body) {
-  const token = String(body.token || '').trim();
-  const password = String(body.password || '');
-  if (!/^[a-zA-Z0-9_-]{43}$/.test(token)) {
-    return json(res, 400, { error: 'invalid_or_expired_token' });
-  }
-  if (password.length < 8 || password.length > 128) {
-    return json(res, 400, { error: 'weak_password' });
-  }
-
-  const tokenHash = hashToken(token);
-  const rows = await sql.query(`
-    WITH claimed AS (
-      UPDATE password_reset_tokens
-      SET used_at = now()
-      WHERE token_hash = $1
-        AND used_at IS NULL
-        AND expires_at > now()
-      RETURNING user_id
-    ),
-    updated_user AS (
-      UPDATE users u
-      SET password_hash = $2
-      FROM claimed c
-      WHERE u.id = c.user_id
-      RETURNING u.id
-    ),
-    invalidated_tokens AS (
-      UPDATE password_reset_tokens t
-      SET used_at = COALESCE(t.used_at, now())
-      FROM updated_user u
-      WHERE t.user_id = u.id
-      RETURNING t.id
-    ),
-    removed_sessions AS (
-      DELETE FROM user_sessions s
-      USING updated_user u
-      WHERE s.user_id = u.id
-      RETURNING s.token_hash
-    )
-    SELECT id FROM updated_user
-  `, [tokenHash, hashPassword(password)]);
-
-  if (!rows[0]) {
-    return json(res, 400, { error: 'invalid_or_expired_token' });
-  }
-
-  clearSessionCookie(res);
-  return json(res, 200, { ok: true });
 }
 
 async function vote(req, res, body) {
@@ -2606,21 +2146,21 @@ async function vote(req, res, body) {
 
   const user = await sessionUser(req);
 
-  if (
-    user &&
-    !(await ensureSessionDevice(user, deviceId))
-  ) {
+  if (user && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
 
-  const [option] = await sql.query(`
+  const [option] = await sql.query(
+    `
     SELECT o.id, o.ranking_id
     FROM ranking_options o
     JOIN rankings r ON r.id = o.ranking_id
     WHERE o.id = $1
       AND r.is_active = true
     LIMIT 1
-  `, [optionId]);
+  `,
+    [optionId],
+  );
 
   if (!option) {
     return json(res, 404, { error: 'option_not_found' });
@@ -2628,21 +2168,27 @@ async function vote(req, res, body) {
 
   const deviceIds = await devicesFor(user, deviceId);
   const [currentRows, countRows] = await Promise.all([
-    sql.query(`
+    sql.query(
+      `
       SELECT direction
       FROM votes
       WHERE option_id = $1
         AND device_id = ANY($2::text[])
       ORDER BY updated_at DESC, device_id
       LIMIT 1
-    `, [optionId, deviceIds]),
-    sql.query(`
+    `,
+      [optionId, deviceIds],
+    ),
+    sql.query(
+      `
       SELECT COUNT(DISTINCT v.option_id)::int AS count
       FROM votes v
       JOIN ranking_options o ON o.id = v.option_id
       WHERE v.device_id = ANY($1::text[])
         AND o.ranking_id = $2
-    `, [deviceIds, option.ranking_id])
+    `,
+      [deviceIds, option.ranking_id],
+    ),
   ]);
 
   const hasCurrentVote = Boolean(currentRows[0]);
@@ -2652,7 +2198,7 @@ async function vote(req, res, body) {
   if (direction !== 0 && !hasCurrentVote && rankingVoteCount >= RANKING_LIMIT) {
     return json(res, 409, {
       error: 'ranking_vote_limit',
-      limit: RANKING_LIMIT
+      limit: RANKING_LIMIT,
     });
   }
 
@@ -2661,7 +2207,7 @@ async function vote(req, res, body) {
   if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
     return json(res, 403, {
       error: 'registration_required',
-      limit: ANONYMOUS_LIMIT
+      limit: ANONYMOUS_LIMIT,
     });
   }
 
@@ -2675,13 +2221,16 @@ async function vote(req, res, body) {
       return json(res, 409, { error: 'double_vote_requires_vote' });
     }
 
-    const [existingDouble] = await sql.query(`
+    const [existingDouble] = await sql.query(
+      `
       SELECT slot, direction
       FROM user_double_votes
       WHERE user_id = $1
         AND option_id = $2
       LIMIT 1
-    `, [user.id, optionId]);
+    `,
+      [user.id, optionId],
+    );
 
     if (!existingDouble) {
       const state = await doubleVoteState(user, deviceId, deviceIds);
@@ -2689,18 +2238,19 @@ async function vote(req, res, body) {
         return json(res, 409, {
           error: 'double_vote_locked',
           nextAt: state.nextAt,
-          remaining: state.remaining
+          remaining: state.remaining,
         });
       }
       if (state.available === 0) {
         return json(res, 409, {
           error: 'double_vote_limit',
           unlocked: state.unlocked,
-          active: state.active
+          active: state.active,
         });
       }
 
-      const [created] = await sql.query(`
+      const [created] = await sql.query(
+        `
         WITH free_slot AS (
           SELECT candidate.slot
           FROM generate_series(1, $3::int) AS candidate(slot)
@@ -2724,120 +2274,197 @@ async function vote(req, res, body) {
         FROM free_slot
         ON CONFLICT DO NOTHING
         RETURNING slot
-      `, [user.id, optionId, state.unlocked, direction]);
+      `,
+        [user.id, optionId, state.unlocked, direction],
+      );
 
       if (!created) {
-        const [createdByRace] = await sql.query(`
+        const [createdByRace] = await sql.query(
+          `
           SELECT slot
           FROM user_double_votes
           WHERE user_id = $1
             AND option_id = $2
           LIMIT 1
-        `, [user.id, optionId]);
+        `,
+          [user.id, optionId],
+        );
         if (!createdByRace) {
           const currentState = await doubleVoteState(user, deviceId, deviceIds);
           return json(res, 409, {
             error: 'double_vote_limit',
             unlocked: currentState.unlocked,
-            active: currentState.active
+            active: currentState.active,
           });
         }
       }
     } else if (Number(existingDouble.direction) !== direction) {
-      await sql.query(`
+      await sql.query(
+        `
         UPDATE user_double_votes
         SET direction = $3, updated_at = now()
         WHERE user_id = $1
           AND option_id = $2
-      `, [user.id, optionId, direction]);
+      `,
+        [user.id, optionId, direction],
+      );
     }
 
     weight = 2;
   } else if (user) {
     const statements = [
-      sql.query(`
+      sql.query(
+        `
         DELETE FROM user_double_votes
         WHERE user_id = $1
           AND option_id = $2
-      `, [user.id, optionId]),
-      sql.query(`
+      `,
+        [user.id, optionId],
+      ),
+      sql.query(
+        `
         DELETE FROM votes
         WHERE option_id = $1
           AND device_id = ANY($2::text[])
-      `, [optionId, deviceIds])
+      `,
+        [optionId, deviceIds],
+      ),
     ];
 
     if (direction !== 0) {
-      statements.push(sql.query(`
+      statements.push(
+        sql.query(
+          `
         INSERT INTO votes (device_id, option_id, direction, updated_at)
         VALUES ($1, $2, $3, now())
-      `, [deviceId, optionId, direction]));
-      statements.push(sql.query(`
+      `,
+          [deviceId, optionId, direction],
+        ),
+      );
+      statements.push(
+        sql.query(
+          `
         INSERT INTO user_vote_history (user_id, option_id, first_voted_at)
         VALUES ($1, $2, now())
         ON CONFLICT (user_id, option_id) DO NOTHING
-      `, [user.id, optionId]));
+      `,
+          [user.id, optionId],
+        ),
+      );
     }
 
     await sql.transaction(statements);
   } else if (direction === 0) {
-    await sql.query(
-      'DELETE FROM votes WHERE device_id = $1 AND option_id = $2',
-      [deviceId, optionId]
-    );
+    await sql.query('DELETE FROM votes WHERE device_id = $1 AND option_id = $2', [
+      deviceId,
+      optionId,
+    ]);
   } else if (consumesAnonymousVote) {
     await sql.transaction([
-      sql.query(`
+      sql.query(
+        `
         INSERT INTO votes (device_id, option_id, direction, updated_at)
         VALUES ($1, $2, $3, now())
         ON CONFLICT (device_id, option_id)
         DO UPDATE SET direction = EXCLUDED.direction, updated_at = now()
-      `, [deviceId, optionId, direction]),
-      sql.query(`
+      `,
+        [deviceId, optionId, direction],
+      ),
+      sql.query(
+        `
         INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
         VALUES ($1, 1, now())
         ON CONFLICT (device_id)
         DO UPDATE SET
           votes_used = anonymous_usage.votes_used + 1,
           updated_at = now()
-      `, [deviceId])
+      `,
+        [deviceId],
+      ),
     ]);
   } else {
-    await sql.query(`
+    await sql.query(
+      `
       INSERT INTO votes (device_id, option_id, direction, updated_at)
       VALUES ($1, $2, $3, now())
       ON CONFLICT (device_id, option_id)
       DO UPDATE SET direction = EXCLUDED.direction, updated_at = now()
-    `, [deviceId, optionId, direction]);
+    `,
+      [deviceId, optionId, direction],
+    );
   }
 
-  const [scoreRow] = await sql.query(`
-    WITH vote_total AS (
-      SELECT COALESCE(SUM(direction), 0)::int AS score_delta
-      FROM votes
-      WHERE option_id = $1
+  const [stateRows, updatedViewer] = await Promise.all([
+    sql.query(
+      `
+      WITH option_state AS (
+        SELECT
+          o.id,
+          o.ranking_id,
+          o.baseline_score
+            + COALESCE((SELECT SUM(v.direction) FROM votes v WHERE v.option_id = o.id), 0)
+            + COALESCE((
+                SELECT SUM(dv.direction)
+                FROM user_double_votes dv
+                WHERE dv.option_id = o.id
+              ), 0) AS score
+        FROM ranking_options o
+        WHERE o.id = $1
+      ),
+      ranking_state AS (
+        SELECT
+          r.id,
+          r.baseline_votes + COUNT(v.*)::int AS votes,
+          COUNT(v.*) FILTER (
+            WHERE v.updated_at >= date_trunc('day', now())
+          )::int AS today_votes
+        FROM rankings r
+        JOIN ranking_options o ON o.ranking_id = r.id
+        LEFT JOIN votes v ON v.option_id = o.id
+        WHERE r.id = (SELECT ranking_id FROM option_state)
+        GROUP BY r.id, r.baseline_votes
+      ),
+      community_state AS (
+        SELECT
+          COALESCE((
+            SELECT SUM(r.baseline_votes)
+            FROM rankings r
+            WHERE r.is_active = true
+          ), 0)
+          + (
+            SELECT COUNT(*)
+            FROM votes v
+            JOIN ranking_options o ON o.id = v.option_id
+            JOIN rankings r ON r.id = o.ranking_id
+            WHERE r.is_active = true
+          ) AS votes
+      )
+      SELECT
+        os.ranking_id AS "rankingId",
+        os.score,
+        rs.votes AS "rankingVotes",
+        rs.today_votes AS "todayVotes",
+        cs.votes AS "communityVotes"
+      FROM option_state os
+      JOIN ranking_state rs ON rs.id = os.ranking_id
+      CROSS JOIN community_state cs
+    `,
+      [optionId],
     ),
-    double_vote_total AS (
-      SELECT COALESCE(SUM(direction), 0)::int AS score_delta
-      FROM user_double_votes
-      WHERE option_id = $1
-    )
-    SELECT
-      o.baseline_score
-        + vt.score_delta
-        + dvt.score_delta AS score
-    FROM ranking_options o
-    CROSS JOIN vote_total vt
-    CROSS JOIN double_vote_total dvt
-    WHERE o.id = $1
-  `, [optionId]);
+    viewerFor(user, deviceId),
+  ]);
+  const state = stateRows[0];
 
   return json(res, 200, {
     ok: true,
-    score: Number(scoreRow?.score || 0),
+    rankingId: state?.rankingId || option.ranking_id,
+    score: Number(state?.score || 0),
+    rankingVotes: Number(state?.rankingVotes || 0),
+    todayVotes: Number(state?.todayVotes || 0),
+    communityVotes: Number(state?.communityVotes || 0),
     direction,
     weight,
-    viewer: await viewerFor(user, deviceId)
+    viewer: updatedViewer,
   });
 }
 
@@ -2873,10 +2500,7 @@ export default async function handler(req, res) {
         if (action === 'logout') return logout(req, res);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'suggestions') return createSuggestion(req, res, body);
-        if (
-          action === 'request-password-reset' ||
-          action === 'reset-password'
-        ) {
+        if (action === 'request-password-reset' || action === 'reset-password') {
           return json(res, 410, { error: 'password_auth_disabled' });
         }
       }

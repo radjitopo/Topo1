@@ -5,7 +5,8 @@ const UPDATED_AT = '22 de agosto de 2026';
 const pages = {
   sobre: {
     title: 'Sobre o TOPO',
-    description: 'Conheça a proposta, os princípios e a história do TOPO, o site onde tudo vira ranking.',
+    description:
+      'Conheça a proposta, os princípios e a história do TOPO, o site onde tudo vira ranking.',
     kicker: 'Sobre o TOPO',
     headline: 'A internet já tem opinião. O TOPO dá forma a ela.',
     lead: 'O TOPO é um lugar para descobrir preferências, defender escolhas e acompanhar disputas que mudam com a participação da comunidade.',
@@ -35,7 +36,7 @@ const pages = {
         <h2>Quer falar com a gente?</h2>
         <p>Sugestões, críticas e boas ideias são bem-vindas.</p>
         <a class="legalAction" href="/contato">Fale com o TOPO →</a>
-      </section>`
+      </section>`,
   },
   'como-funciona': {
     title: 'Como funciona',
@@ -73,11 +74,12 @@ const pages = {
       <section class="legalSection wide">
         <h2>Erros e correções</h2>
         <p>Encontrou nome incorreto, opção repetida ou informação desatualizada? <a href="/contato">Avise a equipe</a>. Correções editoriais podem ser feitas sem alterar artificialmente a vontade da comunidade.</p>
-      </section>`
+      </section>`,
   },
   imprensa: {
     title: 'Imprensa',
-    description: 'Informações essenciais sobre o TOPO para imprensa, criadores e parceiros editoriais.',
+    description:
+      'Informações essenciais sobre o TOPO para imprensa, criadores e parceiros editoriais.',
     kicker: 'Imprensa',
     headline: 'O TOPO em poucas palavras.',
     lead: 'Informações para jornalistas, veículos, pesquisadores, criadores e parceiros que desejam conhecer ou citar o projeto.',
@@ -103,7 +105,7 @@ const pages = {
         <h2>Entrevistas e informações</h2>
         <p>Envie o nome do veículo ou projeto, assunto, formato e prazo. Responderemos conforme a disponibilidade da equipe.</p>
         <a class="legalAction" href="mailto:${CONTACT_EMAIL}?subject=Imprensa%20-%20TOPO">Contato de imprensa →</a>
-      </section>`
+      </section>`,
   },
   anuncie: {
     title: 'Anuncie no TOPO',
@@ -132,11 +134,12 @@ const pages = {
         <h2>Vamos conversar</h2>
         <p>Conte sobre sua empresa, cidade, público e ideia de parceria. As propostas serão avaliadas individualmente durante a fase beta.</p>
         <a class="legalAction" href="mailto:${CONTACT_EMAIL}?subject=Anuncie%20no%20TOPO">Apresentar uma proposta →</a>
-      </section>`
+      </section>`,
   },
   contato: {
     title: 'Fale conosco',
-    description: 'Entre em contato com a equipe do TOPO para dúvidas, sugestões, correções e parcerias.',
+    description:
+      'Entre em contato com a equipe do TOPO para dúvidas, sugestões, correções e parcerias.',
     kicker: 'Fale conosco',
     headline: 'Toda boa conversa pode mudar o TOPO.',
     lead: 'Use este canal para sugestões, dúvidas, correções editoriais, parcerias ou problemas com sua conta.',
@@ -165,7 +168,7 @@ const pages = {
       <section class="legalSection wide">
         <h2>Prazo de resposta</h2>
         <p>O TOPO ainda opera com uma equipe pequena. Lemos todas as mensagens, mas o tempo de resposta pode variar conforme o assunto e a quantidade de contatos.</p>
-      </section>`
+      </section>`,
   },
   denuncie: {
     title: 'Denuncie um conteúdo',
@@ -198,11 +201,12 @@ const pages = {
       <section class="legalSection wide">
         <h2>Privacidade da denúncia</h2>
         <p>Tratamos os dados recebidos de forma restrita e compatível com a análise. Informações poderão ser preservadas ou compartilhadas quando necessário para cumprir obrigação legal, proteger direitos ou cooperar com autoridades competentes.</p>
-      </section>`
+      </section>`,
   },
   regras: {
     title: 'Regras da comunidade',
-    description: 'Conheça as regras de participação, comentários e convivência da comunidade do TOPO.',
+    description:
+      'Conheça as regras de participação, comentários e convivência da comunidade do TOPO.',
     kicker: 'Comunidade',
     headline: 'Discorde à vontade. Ataque ideias, não pessoas.',
     lead: 'O TOPO existe para opiniões diferentes conviverem. A disputa pode ser divertida, intensa e até surpreendente — sem virar abuso.',
@@ -230,11 +234,12 @@ const pages = {
       <section class="legalSection wide">
         <h2>Viu algo fora das regras?</h2>
         <p>Não amplifique o problema. Copie o link e use o <a href="/denuncie">canal de denúncias</a>. Se a questão for apenas uma divergência de gosto, deixe seu voto falar.</p>
-      </section>`
+      </section>`,
   },
   seguranca: {
     title: 'Segurança e privacidade',
-    description: 'Conheça as práticas de segurança do TOPO e saiba como proteger sua conta e reportar problemas.',
+    description:
+      'Conheça as práticas de segurança do TOPO e saiba como proteger sua conta e reportar problemas.',
     kicker: 'Segurança',
     headline: 'Proteção também precisa estar no topo.',
     lead: 'Segurança é um processo contínuo. Esta página reúne cuidados para sua conta, seus dados e o reporte responsável de falhas.',
@@ -259,11 +264,12 @@ const pages = {
       <section class="legalSection wide">
         <h2>Dados pessoais</h2>
         <p>Para saber quais dados usamos, por que usamos e como exercer seus direitos, consulte a <a href="/privacidade">Política de Privacidade</a> e a <a href="/cookies">Política de Cookies</a>.</p>
-      </section>`
+      </section>`,
   },
   privacidade: {
     title: 'Política de Privacidade',
-    description: 'Saiba quais dados o TOPO utiliza, para quais finalidades e como exercer seus direitos de privacidade.',
+    description:
+      'Saiba quais dados o TOPO utiliza, para quais finalidades e como exercer seus direitos de privacidade.',
     kicker: 'Privacidade',
     headline: 'Seus dados não entram em disputa.',
     lead: 'Esta política explica, em linguagem simples, como o TOPO trata informações para manter votos, contas, comentários e segurança funcionando.',
@@ -316,7 +322,7 @@ const pages = {
         <h2>Como exercer seus direitos</h2>
         <p>Escreva para <a href="mailto:${CONTACT_EMAIL}?subject=Direitos%20de%20dados%20-%20TOPO">${CONTACT_EMAIL}</a> usando, quando possível, o mesmo e-mail da conta. Poderemos pedir informações mínimas para confirmar a identidade e proteger seus dados.</p>
         <p class="legalFine">Referências: <a href="https://www.gov.br/anpd/pt-br/assuntos/titular-de-dados-1/direito-dos-titulares" target="_blank" rel="noopener noreferrer">direitos dos titulares na ANPD</a> e <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm" target="_blank" rel="noopener noreferrer">Lei Geral de Proteção de Dados</a>.</p>
-      </section>`
+      </section>`,
   },
   termos: {
     title: 'Termos de Uso',
@@ -376,11 +382,12 @@ const pages = {
       <section class="legalSection wide">
         <h2>Contato e alterações</h2>
         <p>Dúvidas podem ser enviadas para <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>. Mudanças importantes serão publicadas nesta página com nova data de atualização.</p>
-      </section>`
+      </section>`,
   },
   cookies: {
     title: 'Política de Cookies',
-    description: 'Entenda quais cookies e tecnologias locais o TOPO utiliza e como gerenciar suas preferências.',
+    description:
+      'Entenda quais cookies e tecnologias locais o TOPO utiliza e como gerenciar suas preferências.',
     kicker: 'Cookies e armazenamento local',
     headline: 'Pequenos arquivos, explicação sem migalhas.',
     lead: 'Cookies e tecnologias semelhantes ajudam o TOPO a lembrar seu acesso, seus votos e algumas preferências do aparelho.',
@@ -409,11 +416,12 @@ const pages = {
         <h2>Dúvidas</h2>
         <p>Para informações sobre dados pessoais, consulte a <a href="/privacidade">Política de Privacidade</a> ou escreva para <a href="mailto:${CONTACT_EMAIL}?subject=Cookies%20e%20privacidade%20-%20TOPO">${CONTACT_EMAIL}</a>.</p>
         <p class="legalFine">Referência: <a href="https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia_orientativo_cookies_e_protecao_de_dados_pessoais" target="_blank" rel="noopener noreferrer">Guia de Cookies e Proteção de Dados Pessoais da ANPD</a>.</p>
-      </section>`
+      </section>`,
   },
   'direitos-autorais': {
     title: 'Direitos autorais',
-    description: 'Entenda como o TOPO trata propriedade intelectual e pedidos de crédito ou remoção de conteúdo.',
+    description:
+      'Entenda como o TOPO trata propriedade intelectual e pedidos de crédito ou remoção de conteúdo.',
     kicker: 'Propriedade intelectual',
     headline: 'Criação merece crédito e respeito.',
     lead: 'O TOPO respeita direitos autorais, marcas, imagem e outros direitos de propriedade intelectual e oferece um canal para análise de pedidos.',
@@ -443,14 +451,22 @@ const pages = {
         <h2>Compartilhar rankings</h2>
         <p>Você pode compartilhar links e pequenos trechos com crédito e sem alterar o sentido. Para reprodução comercial ampla, banco de dados, uso de marca ou republicação sistemática, solicite autorização.</p>
         <p class="legalFine">Referência: <a href="https://www.planalto.gov.br/ccivil_03/leis/l9610.htm" target="_blank" rel="noopener noreferrer">Lei nº 9.610/1998</a>.</p>
-      </section>`
-  }
+      </section>`,
+  },
 };
 
 function escapeHtml(value) {
-  return String(value || '').replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[character]);
+  return String(value || '').replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character],
+  );
 }
 
 function footerHtml() {
@@ -481,7 +497,7 @@ function renderPage(slug, page) {
 <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo.png">
 <meta name="theme-color" content="#f3f0e9">
-<link rel="stylesheet" href="/style.css?v=20260823-12">
+<link rel="stylesheet" href="/style.css?v=20260824-2">
 </head>
 <body class="legalShell">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="Voltar ao TOPO">TOPO</a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
@@ -500,7 +516,9 @@ ${footerHtml()}
 
 export default function handler(req, res) {
   const rawSlug = Array.isArray(req.query?.slug) ? req.query.slug[0] : req.query?.slug;
-  const slug = String(rawSlug || '').replace(/^\/+|\/+$/g, '').toLowerCase();
+  const slug = String(rawSlug || '')
+    .replace(/^\/+|\/+$/g, '')
+    .toLowerCase();
   const page = pages[slug];
   if (!page) {
     res.setHeader('Location', '/');

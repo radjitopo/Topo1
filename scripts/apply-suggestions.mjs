@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
+import { splitSqlStatements } from './sql-statements.mjs';
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is required');
@@ -8,12 +9,16 @@ if (!process.env.DATABASE_URL) {
 const sql = neon(process.env.DATABASE_URL);
 const migration = await readFile(
   new URL('../migrations/20260823_suggestions.sql', import.meta.url),
-  'utf8'
+  'utf8',
 );
 
-for (const statement of migration.split(/;\s*(?:\n|$)/).map((value) => value.trim()).filter(Boolean)) {
-  await sql.query(statement);
-}
+const statements = splitSqlStatements(migration);
+await sql.transaction(
+  statements.map((statement) => sql.query(statement)),
+  {
+    isolationLevel: 'Serializable',
+  },
+);
 
 const [validation] = await sql.query(`
   SELECT

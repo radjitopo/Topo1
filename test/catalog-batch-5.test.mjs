@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { compactSource } from './source-helpers.mjs';
 
 const root = new URL('../', import.meta.url);
 const batch = JSON.parse(await readFile(new URL('data/rankings-batch-5.json', root), 'utf8'));
@@ -24,7 +25,7 @@ const expectedTitles = new Map([
   ['misterios-do-espaco', 'Os maiores mistérios do espaço'],
   ['frases-adultos-irritantes', 'Frases dos adultos que mais irritam'],
   ['presentes-aniversario', 'Qual presente você mais gostaria de ganhar?'],
-  ['hobbies-para-comecar', 'Qual hobby você mais admira?']
+  ['hobbies-para-comecar', 'Qual hobby você mais admira?'],
 ]);
 
 test('fifth ranking batch has 20 complete rankings', () => {
@@ -35,8 +36,15 @@ test('fifth ranking batch has 20 complete rankings', () => {
   for (const ranking of batch) {
     assert.equal(ranking.question, expectedTitles.get(ranking.id));
     assert.equal(ranking.opts.length, 20, `${ranking.id} should have 20 options`);
-    assert.equal(new Set(ranking.opts.map((option) => option.label)).size, 20, `${ranking.id} should not repeat options`);
-    assert.deepEqual(ranking.opts.map((option) => option.position), Array.from({ length: 20 }, (_, index) => index + 1));
+    assert.equal(
+      new Set(ranking.opts.map((option) => option.label)).size,
+      20,
+      `${ranking.id} should not repeat options`,
+    );
+    assert.deepEqual(
+      ranking.opts.map((option) => option.position),
+      Array.from({ length: 20 }, (_, index) => index + 1),
+    );
     assert.ok(ranking.opts.every((option) => option.baseline_score === 0));
     assert.match(ranking.image_url, /^https:\/\/images\.unsplash\.com\/photo-/);
   }
@@ -47,16 +55,16 @@ test('catalog importer, categories and editorial include the fifth batch', async
     readFile(new URL('scripts/apply-catalog.mjs', root), 'utf8'),
     readFile(new URL('editorial-13.js', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
-    readFile(new URL('app.js', root), 'utf8')
+    readFile(new URL('app.js', root), 'utf8'),
   ]);
 
   assert.match(importer, /rankings-batch-5\.json/);
   assert.match(importer, /fifthBatchRankings\.length !== 20/);
-  assert.match(importer, /newRankings\.length !== 80/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 120/);
+  assert.match(importer, /newRankings\.length !== 100/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 140/);
   assert.match(index, /editorial-13\.js/);
-  assert.match(index, /app\.js\?v=20260823-14/);
-  assert.match(app, /'Jogos','Natureza'/);
+  assert.match(index, /app\.js\?v=20260824-17/);
+  assert.match(compactSource(app), /'Jogos','Natureza'/);
 
   for (const id of expectedTitles.keys()) {
     assert.match(editorial, new RegExp(`"${id}"`));

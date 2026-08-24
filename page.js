@@ -6,13 +6,17 @@ const sql = neon(process.env.DATABASE_URL);
 const BASE_URL = 'https://somostopo.com.br';
 
 function escapeAttribute(value) {
-  return String(value || '').replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[character]);
+  return String(value || '').replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character],
+  );
 }
 
 function seoBlock({ title, description, canonical, image, index = true }) {
@@ -65,17 +69,34 @@ function socialImageUrl(value) {
 
 export default async function handler(req, res) {
   const rawId = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id;
+  const rawView = Array.isArray(req.query?.view) ? req.query.view[0] : req.query?.view;
   const id = String(rawId || '').slice(0, 120);
   const template = await templatePromise;
 
+  if (rawView === 'local') {
+    const html = withSeo(template, {
+      title: 'TOPO LOCAL — rankings da sua cidade',
+      description:
+        'Descubra e vote nos melhores restaurantes, cafés, padarias, pizzarias, hotéis e serviços da sua cidade.',
+      canonical: `${BASE_URL}/local`,
+      image: `${BASE_URL}/og-topo.png`,
+    });
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
+    return res.status(200).send(html);
+  }
+
   try {
-    const [ranking] = await sql.query(`
+    const [ranking] = await sql.query(
+      `
       SELECT id, question, image_url
       FROM rankings
       WHERE id = $1
         AND is_active = true
       LIMIT 1
-    `, [id]);
+    `,
+      [id],
+    );
 
     if (!ranking) {
       const html = withSeo(template, {
@@ -83,7 +104,7 @@ export default async function handler(req, res) {
         description: 'Este ranking não está disponível. Descubra outros temas no TOPO.',
         canonical: BASE_URL,
         image: `${BASE_URL}/og-topo.png`,
-        index: false
+        index: false,
       });
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
@@ -97,7 +118,7 @@ export default async function handler(req, res) {
       title,
       description,
       canonical,
-      image: socialImageUrl(ranking.image_url)
+      image: socialImageUrl(ranking.image_url),
     });
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

@@ -10,10 +10,7 @@ function normalizeOptionLabel(value) {
 function damerauLevenshtein(left, right) {
   const a = [...left];
   const b = [...right];
-  const matrix = Array.from(
-    { length: a.length + 1 },
-    () => Array(b.length + 1).fill(0)
-  );
+  const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 
   for (let row = 0; row <= a.length; row += 1) matrix[row][0] = row;
   for (let column = 0; column <= b.length; column += 1) matrix[0][column] = column;
@@ -24,19 +21,11 @@ function damerauLevenshtein(left, right) {
       matrix[row][column] = Math.min(
         matrix[row - 1][column] + 1,
         matrix[row][column - 1] + 1,
-        matrix[row - 1][column - 1] + cost
+        matrix[row - 1][column - 1] + cost,
       );
 
-      if (
-        row > 1 &&
-        column > 1 &&
-        a[row - 1] === b[column - 2] &&
-        a[row - 2] === b[column - 1]
-      ) {
-        matrix[row][column] = Math.min(
-          matrix[row][column],
-          matrix[row - 2][column - 2] + cost
-        );
+      if (row > 1 && column > 1 && a[row - 1] === b[column - 2] && a[row - 2] === b[column - 1]) {
+        matrix[row][column] = Math.min(matrix[row][column], matrix[row - 2][column - 2] + cost);
       }
     }
   }
@@ -79,9 +68,10 @@ export function possibleOptionDuplicate(label, options = []) {
     const similarity = optionSimilarity(label, option.label);
     const distance = damerauLevenshtein(compactLabel, compactOption);
     const shortest = Math.min(compactLabel.length, compactOption.length);
-    const sameWords = normalizedLabel.split(' ').sort().join(' ') ===
-      normalizedOption.split(' ').sort().join(' ');
-    const likely = normalizedLabel === normalizedOption ||
+    const sameWords =
+      normalizedLabel.split(' ').sort().join(' ') === normalizedOption.split(' ').sort().join(' ');
+    const likely =
+      normalizedLabel === normalizedOption ||
       sameWords ||
       (distance === 1 && shortest >= 4) ||
       (distance === 2 && shortest >= 8 && similarity >= 0.8);
@@ -90,10 +80,9 @@ export function possibleOptionDuplicate(label, options = []) {
     closest = {
       optionId: option.optionId ?? option.id,
       label: option.label,
-      similarity: Number(similarity.toFixed(2))
+      similarity: Number(similarity.toFixed(2)),
     };
   }
 
   return closest;
 }
-
