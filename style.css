@@ -2349,6 +2349,14 @@ h2 {
   line-height: 1.45;
   margin: 0;
 }
+.localCatalogHead {
+  border-top-color: var(--accent);
+  padding-block: 18px;
+}
+.localCatalogHead h1 {
+  font-size: 44px;
+  line-height: 0.96;
+}
 .categoryLandingCount {
   flex: 0 0 auto;
   min-width: 92px;
@@ -2418,6 +2426,28 @@ h2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+}
+.categoryCityDivider {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  border-top: 1px solid var(--ink);
+  margin-top: 6px;
+  padding: 11px 2px 0;
+}
+.categoryCityDivider span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.categoryCityDivider small {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
 }
 .categoryRankCard {
   min-width: 0;
@@ -2842,6 +2872,9 @@ h2 {
   .categoryLandingHead h1 {
     font-size: 43px;
   }
+  .localCatalogHead h1 {
+    font-size: 38px;
+  }
   .categoryLandingHead p {
     font-size: 11px;
   }
@@ -2963,6 +2996,15 @@ h2 {
   .categoryLandingHead h1 {
     font-size: 38px;
     letter-spacing: -1.5px;
+  }
+  .localCatalogHead h1 {
+    font-size: 32px;
+    letter-spacing: -1.1px;
+  }
+  .categoryCityDivider {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
   }
   .categoryLandingCount {
     min-width: 60px;

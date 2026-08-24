@@ -77,19 +77,26 @@ test('the chosen city is prioritized without hiding other cities', () => {
 });
 
 test('the public shell, API and routes expose the complete local experience', async () => {
-  const [index, api, page, vercel, sitemap, css] = await Promise.all(
-    ['index.html', 'api.js', 'page.js', 'vercel.json', 'sitemap.js', 'style.css'].map((file) =>
-      readFile(new URL(`../${file}`, import.meta.url), 'utf8'),
+  const [index, app, api, page, vercel, sitemap, css] = await Promise.all(
+    ['index.html', 'app.js', 'api.js', 'page.js', 'vercel.json', 'sitemap.js', 'style.css'].map(
+      (file) => readFile(new URL(`../${file}`, import.meta.url), 'utf8'),
     ),
   );
   assert.match(index, /data-experience="topo"/);
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
   assert.match(index, /topo-local\.js\?v=20260824-1/);
+  assert.match(index, /app\.js\?v=20260824-18/);
   assert.match(api, /x-vercel-ip-city/);
   assert.match(api, /location: \{ city: geolocationCity\(req\) \}/);
   assert.match(page, /TOPO LOCAL — rankings da sua cidade/);
   assert.match(vercel, /"src": "\/local\/\?"/);
   assert.match(sitemap, /'\/local'/);
   assert.match(css, /\.homePage \.accountEnter\s*\{[^}]*font-size: 13px/s);
+  assert.match(app, /homePortal = !isLocalRoute\(\)/);
+  assert.match(app, /if \(local \|\| !homePortal\) \{\s*renderCategoryHome\(visible\)/);
+  assert.match(app, /Rankings em \$\{selectedCity\}/);
+  assert.match(app, /class="categoryCityDivider"/);
+  assert.match(css, /\.localCatalogHead\s*\{/);
+  assert.match(css, /\.categoryCityDivider\s*\{/);
 });

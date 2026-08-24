@@ -31,7 +31,7 @@ assert.doesNotMatch(
   'the Home and ranking pages must share the same logo sizing rules',
 );
 assert.ok(
-  pages.every((page) => page.includes('/style.css?v=20260824-3')),
+  pages.every((page) => page.includes('/style.css?v=20260824-4')),
   'every public page must load the current brand stylesheet',
 );
 assert.match(

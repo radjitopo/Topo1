@@ -33,7 +33,7 @@ const CATEGORY_PAGE_SIZE = 12;
 let renderHome;
 let rankings = [],
   activeGroup = 'Todos',
-  homePortal = true,
+  homePortal = !isLocalRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
   categorySort = 'priority',
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
@@ -721,6 +721,20 @@ function categoryRankCardHTML(r) {
     voteHref = `${rankingPath(r.id)}#votar`;
   return `<article class="categoryRankCard"><div class="categoryRankTop"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">Ver ranking completo →</a></div></div></div><div class="categoryVoteList" aria-label="Top 3 atual">${options.map((o, i) => `<div class="categoryVoteOption"><span class="categoryVotePos">${i + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${escapeHTML(o.label)}</strong><small>${fmt(o.score)} pt ${doubleVoteBadgeHTML(o)}</small></a>${previewVoteActionsHTML(r, o, 'categoryVoteActions')}</div>`).join('')}</div></article>`;
 }
+function categoryRankCardsHTML(list, local) {
+  let otherCitiesStarted = false;
+  return list
+    .map((ranking) => {
+      const preferredCity = local && topoLocal.cityMatches(ranking, selectedCity),
+        divider =
+          local && !preferredCity && !otherCitiesStarted
+            ? `<div class="categoryCityDivider"><span>Outras cidades</span><small>Continue explorando além de ${escapeHTML(selectedCity)}</small></div>`
+            : '';
+      if (local && !preferredCity) otherCitiesStarted = true;
+      return divider + categoryRankCardHTML(ranking);
+    })
+    .join('');
+}
 function bindCategoryControls() {
   document.querySelectorAll('[data-category-sort]').forEach(
     (button) =>
@@ -742,20 +756,24 @@ function renderCategoryHome(visible) {
     remaining = Math.max(0, sorted.length - shown.length),
     isAll = activeGroup === 'Todos',
     local = isLocalExperience(),
+    preferredCount = local
+      ? sorted.filter((ranking) => topoLocal.cityMatches(ranking, selectedCity)).length
+      : visible.length,
+    heading = local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
     kicker = local
       ? `${selectedCity} aparece primeiro`
       : isAll
         ? 'Explore o TOPO inteiro'
         : 'Escolha um tema e entre na disputa',
     description = local
-      ? `Os rankings de ${selectedCity} vêm primeiro, sem esconder as outras cidades. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.`
+      ? `Os rankings de ${selectedCity} vêm primeiro. Depois, você continua pelas outras cidades sem trocar de página.`
       : isAll
         ? 'Todos os rankings em uma lista. Os novos e os que você ainda não votou aparecem primeiro.'
         : 'Todos os rankings deste tema reunidos em um só lugar. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.';
   document.title = local
-    ? `${activeGroup} em ${selectedCity} — TOPO LOCAL`
+    ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : `${activeGroup} — rankings no TOPO`;
-  feed.innerHTML = `<section class="categoryLandingHead"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(activeGroup)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(visible.length)}</strong><span>ranking${visible.length === 1 ? '' : 's'}</span></div></section><div class="categoryListBar"><div class="categorySorts" aria-label="Ordenar rankings">${[
+  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section><div class="categoryListBar"><div class="categorySorts" aria-label="Ordenar rankings">${[
     ['priority', isAll ? 'Recomendados' : 'Para votar'],
     ['hot', 'Em alta'],
     ['new', 'Novos'],
@@ -767,7 +785,7 @@ function renderCategoryHome(visible) {
     )
     .join(
       '',
-    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-pressed="${categorySort === 'random'}">↻ ${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</button></div><section class="categoryRankGrid">${shown.map(categoryRankCardHTML).join('')}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-pressed="${categorySort === 'random'}">↻ ${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown, local)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }
@@ -808,7 +826,7 @@ renderHome = function () {
     renderSearchResults(visible);
     return;
   }
-  if (!homePortal) {
+  if (local || !homePortal) {
     renderCategoryHome(visible);
     return;
   }
