@@ -16,6 +16,7 @@
     "test:image-audit": "node test/image-audit.test.mjs",
     "db:comments": "node scripts/apply-comments.mjs",
     "db:clerk": "node scripts/apply-clerk.mjs",
+    "db:profile-names": "node scripts/apply-profile-names.mjs",
     "db:suggestions": "node scripts/apply-suggestions.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",

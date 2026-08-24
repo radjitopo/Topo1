@@ -2,6 +2,11 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { neon } from '@neondatabase/serverless';
 import { possibleOptionDuplicate } from './option-similarity.js';
+import {
+  defaultDisplayName,
+  displayNameChangeState,
+  validateDisplayName,
+} from './profile-names.js';
 import { rankingQuestion } from './ranking-titles.js';
 
 const sql = neon(process.env.DATABASE_URL);
@@ -23,6 +28,7 @@ const COMMENT_LIMIT = 200;
 const COMMENTS_PAGE_SIZE = 20;
 const OPTION_SUGGESTION_DAILY_LIMIT = 3;
 const TOPIC_SUGGESTION_WEEKLY_LIMIT = 1;
+const NAME_REPORT_DAILY_LIMIT = 5;
 const SUGGESTION_OPTION_LIMIT = 80;
 const SUGGESTION_TITLE_LIMIT = 120;
 const PENDING_RANKING_CATEGORY = 'A definir';
@@ -107,6 +113,17 @@ function isValidEmail(email) {
   return email.length <= 160 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function profileNamePayload(user) {
+  const state = displayNameChangeState(user?.display_name_updated_at);
+  return {
+    name: user?.display_name || 'Pessoa no TOPO',
+    displayNameUpdatedAt: user?.display_name_updated_at || null,
+    canChangeName: state.canChange,
+    nameChangeAvailableAt: state.availableAt,
+    hasChosenName: Boolean(user?.display_name_updated_at),
+  };
+}
+
 function cookies(req) {
   const header = String(req.headers?.cookie || req.headers?.Cookie || '');
   const result = {};
@@ -176,7 +193,7 @@ async function clerkUserForRequest(req) {
   if (!clerkUserId) return null;
   const [linked] = await sql.query(
     `
-    SELECT u.id, u.email, u.display_name, u.created_at,
+    SELECT u.id, u.email, u.display_name, u.display_name_updated_at, u.created_at,
            l.clerk_user_id
     FROM clerk_user_links l
     JOIN users u ON u.id = l.user_id
@@ -192,14 +209,9 @@ async function clerkUserForRequest(req) {
   const email = normalizeEmail(primaryEmail?.emailAddress);
   if (primaryEmail?.verification?.status !== 'verified') return null;
   if (!isValidEmail(email)) return null;
-  const displayName =
-    String(identity.fullName || identity.firstName || email.split('@')[0] || 'Pessoa no TOPO')
-      .trim()
-      .slice(0, 50) || 'Pessoa no TOPO';
-
   let [user] = await sql.query(
     `
-    SELECT id, email, display_name, created_at
+    SELECT id, email, display_name, display_name_updated_at, created_at
     FROM users
     WHERE lower(email) = lower($1)
     LIMIT 1
@@ -209,12 +221,13 @@ async function clerkUserForRequest(req) {
 
   if (!user) {
     const userId = randomUUID();
+    const displayName = defaultDisplayName(userId);
     try {
       [user] = await sql.query(
         `
         INSERT INTO users (id, email, display_name, password_hash)
         VALUES ($1, $2, $3, $4)
-        RETURNING id, email, display_name, created_at
+        RETURNING id, email, display_name, display_name_updated_at, created_at
       `,
         [userId, email, displayName, `clerk$${randomBytes(32).toString('hex')}`],
       );
@@ -222,7 +235,7 @@ async function clerkUserForRequest(req) {
       if (error?.code !== '23505') throw error;
       [user] = await sql.query(
         `
-        SELECT id, email, display_name, created_at
+        SELECT id, email, display_name, display_name_updated_at, created_at
         FROM users
         WHERE lower(email) = lower($1)
         LIMIT 1
@@ -244,7 +257,7 @@ async function clerkUserForRequest(req) {
 
   const [resolved] = await sql.query(
     `
-    SELECT u.id, u.email, u.display_name, u.created_at,
+    SELECT u.id, u.email, u.display_name, u.display_name_updated_at, u.created_at,
            l.clerk_user_id
     FROM clerk_user_links l
     JOIN users u ON u.id = l.user_id
@@ -901,9 +914,9 @@ async function profile(req, res) {
   return json(res, 200, {
     user: {
       id: user.id,
-      name: user.display_name,
       email: user.email,
       createdAt: user.created_at,
+      ...profileNamePayload(user),
     },
     isModerator: isModerator(user),
     profile: {
@@ -990,7 +1003,14 @@ async function leaderboard(req, res) {
       rankings,
       position,
       "avatarData",
-      ("userId" = $1) AS "isCurrent"
+      ("userId" = $1) AS "isCurrent",
+      EXISTS (
+        SELECT 1
+        FROM user_name_reports report
+        WHERE report.reporter_user_id = $1
+          AND report.reported_user_id = "userId"
+          AND report.status = 'pending'
+      ) AS "reportedByCurrent"
     FROM ranked
     WHERE position <= 10 OR "userId" = $1
     ORDER BY position, name
@@ -1007,8 +1027,62 @@ async function leaderboard(req, res) {
       position: Number(row.position || 0),
       avatarData: row.avatarData || null,
       isCurrent: row.isCurrent === true,
+      reportedByCurrent: row.reportedByCurrent === true,
     })),
   });
+}
+
+async function createNameReport(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  const reportedUserId = String(body.userId || '');
+  if (!/^[0-9a-f-]{36}$/i.test(reportedUserId) || reportedUserId === user.id) {
+    return json(res, 400, { error: 'invalid_name_report' });
+  }
+
+  const [target, dailyRows] = await Promise.all([
+    sql.query(
+      `
+      SELECT id, display_name
+      FROM users
+      WHERE id = $1::uuid
+      LIMIT 1
+    `,
+      [reportedUserId],
+    ),
+    sql.query(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM user_name_reports
+      WHERE reporter_user_id = $1
+        AND created_at >= now() - interval '24 hours'
+    `,
+      [user.id],
+    ),
+  ]);
+  if (!target[0]) return json(res, 404, { error: 'reported_user_not_found' });
+  if (Number(dailyRows[0]?.total || 0) >= NAME_REPORT_DAILY_LIMIT) {
+    return json(res, 429, { error: 'name_report_limit' });
+  }
+
+  const rows = await sql.query(
+    `
+    INSERT INTO user_name_reports (
+      id,
+      reporter_user_id,
+      reported_user_id,
+      reported_name
+    )
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (reporter_user_id, reported_user_id)
+      WHERE status = 'pending'
+    DO NOTHING
+    RETURNING id
+  `,
+    [randomUUID(), user.id, reportedUserId, target[0].display_name],
+  );
+
+  return json(res, 200, { ok: true, alreadyReported: !rows[0] });
 }
 
 async function updateProfile(req, res, body) {
@@ -1017,7 +1091,8 @@ async function updateProfile(req, res, body) {
 
   const hasAvatar = Object.prototype.hasOwnProperty.call(body, 'avatarData');
   const hasVisibility = Object.prototype.hasOwnProperty.call(body, 'showAvatarOnLeaderboard');
-  if (!hasAvatar && !hasVisibility) {
+  const hasDisplayName = Object.prototype.hasOwnProperty.call(body, 'displayName');
+  if (!hasAvatar && !hasVisibility && !hasDisplayName) {
     return json(res, 400, { error: 'invalid_profile' });
   }
 
@@ -1033,6 +1108,52 @@ async function updateProfile(req, res, body) {
 
   if (hasVisibility && typeof body.showAvatarOnLeaderboard !== 'boolean') {
     return json(res, 400, { error: 'invalid_profile_visibility' });
+  }
+
+  let savedUser = user;
+  if (hasDisplayName) {
+    const validation = validateDisplayName(
+      body.displayName,
+      process.env.TOPO_PROFILE_NAME_BLOCKLIST,
+    );
+    if (!validation.value) {
+      return json(res, 400, {
+        error: 'invalid_display_name',
+        reason: validation.error || 'invalid',
+      });
+    }
+
+    const [updatedUser] = await sql.query(
+      `
+      UPDATE users
+      SET display_name = $2,
+          display_name_updated_at = now()
+      WHERE id = $1
+        AND (
+          display_name_updated_at IS NULL
+          OR display_name_updated_at <= now() - interval '30 days'
+        )
+      RETURNING id, email, display_name, display_name_updated_at, created_at
+    `,
+      [user.id, validation.value],
+    );
+    if (!updatedUser) {
+      const [currentUser] = await sql.query(
+        `
+        SELECT id, email, display_name, display_name_updated_at, created_at
+        FROM users
+        WHERE id = $1
+        LIMIT 1
+      `,
+        [user.id],
+      );
+      const state = displayNameChangeState(currentUser?.display_name_updated_at);
+      return json(res, 409, {
+        error: 'display_name_cooldown',
+        availableAt: state.availableAt,
+      });
+    }
+    savedUser = { ...updatedUser, clerk_user_id: user.clerk_user_id };
   }
 
   const [current] = await sql.query(
@@ -1074,6 +1195,7 @@ async function updateProfile(req, res, body) {
 
   return json(res, 200, {
     ok: true,
+    user: profileNamePayload(savedUser),
     profile: {
       avatarData: saved?.avatarData || null,
       showAvatarOnLeaderboard: saved?.showAvatarOnLeaderboard !== false,
@@ -1666,7 +1788,7 @@ async function moderationQueue(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
   if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
-  const [optionRows, rankingRows, rankingOptionRows] = await Promise.all([
+  const [optionRows, rankingRows, rankingOptionRows, nameReportRows] = await Promise.all([
     sql.query(`
       SELECT
         s.id,
@@ -1717,6 +1839,30 @@ async function moderationQueue(req, res) {
       FROM ranking_options
       ORDER BY ranking_id, position, id
     `),
+    sql.query(`
+      SELECT
+        report.id,
+        'name'::text AS kind,
+        report.reported_user_id AS "reportedUserId",
+        report.reported_name AS "reportedName",
+        target.display_name AS "currentName",
+        report.status,
+        report.moderation_note AS "moderationNote",
+        report.created_at AS "createdAt",
+        report.reviewed_at AS "reviewedAt",
+        reporter.display_name AS "userName",
+        reporter.email AS "userEmail",
+        COUNT(*) FILTER (WHERE related.status = 'pending')::int AS "pendingReports"
+      FROM user_name_reports report
+      JOIN users reporter ON reporter.id = report.reporter_user_id
+      JOIN users target ON target.id = report.reported_user_id
+      LEFT JOIN user_name_reports related
+        ON related.reported_user_id = report.reported_user_id
+       AND related.reported_name = report.reported_name
+      GROUP BY report.id, target.display_name, reporter.display_name, reporter.email
+      ORDER BY (report.status = 'pending') DESC, report.created_at DESC
+      LIMIT 100
+    `),
   ]);
 
   const optionsByRanking = new Map();
@@ -1743,6 +1889,79 @@ async function moderationQueue(req, res) {
     moderator: { name: user.display_name, email: user.email },
     options: optionSuggestions,
     rankings: rankingRows,
+    names: nameReportRows,
+  });
+}
+
+async function moderateNameReport(res, moderator, id, decision, moderationNote) {
+  const [report] = await sql.query(
+    `
+    SELECT
+      id,
+      reported_user_id AS "reportedUserId",
+      reported_name AS "reportedName",
+      status
+    FROM user_name_reports
+    WHERE id = $1::uuid
+    LIMIT 1
+  `,
+    [id],
+  );
+  if (!report || report.status !== 'pending') {
+    return json(res, 409, { error: 'name_report_already_reviewed' });
+  }
+
+  if (decision === 'dismiss') {
+    await sql.query(
+      `
+      UPDATE user_name_reports
+      SET status = 'dismissed',
+          reviewed_by = $3,
+          moderation_note = $4,
+          reviewed_at = now()
+      WHERE reported_user_id = $1
+        AND reported_name = $2
+        AND status = 'pending'
+    `,
+      [report.reportedUserId, report.reportedName, moderator.id, moderationNote],
+    );
+    return json(res, 200, { ok: true, decision });
+  }
+
+  const replacementName = defaultDisplayName(report.reportedUserId);
+  const rows = await sql.query(
+    `
+    WITH changed_user AS (
+      UPDATE users
+      SET display_name = $3,
+          display_name_updated_at = NULL
+      WHERE id = $1
+        AND display_name = $2
+      RETURNING id
+    )
+    UPDATE user_name_reports
+    SET status = CASE
+          WHEN EXISTS (SELECT 1 FROM changed_user) THEN 'removed'
+          ELSE 'dismissed'
+        END,
+        reviewed_by = $4,
+        moderation_note = CASE
+          WHEN EXISTS (SELECT 1 FROM changed_user) THEN $5
+          ELSE COALESCE($5, 'O nome já havia sido alterado.')
+        END,
+        reviewed_at = now()
+    WHERE reported_user_id = $1
+      AND reported_name = $2
+      AND status = 'pending'
+    RETURNING status
+  `,
+    [report.reportedUserId, report.reportedName, replacementName, moderator.id, moderationNote],
+  );
+
+  return json(res, 200, {
+    ok: true,
+    decision: rows.some((row) => row.status === 'removed') ? 'remove' : 'dismiss',
+    replacementName,
   });
 }
 
@@ -1894,9 +2113,10 @@ async function moderateSuggestion(req, res, body) {
   const decision = String(body.decision || '');
   const moderationNote = suggestionText(String(body.note || ''), 1, 300) || null;
   const validDecision =
-    ['approve', 'reject'].includes(decision) ||
+    ((kind === 'option' || kind === 'ranking') && ['approve', 'reject'].includes(decision)) ||
     (kind === 'ranking' && decision === 'publish') ||
-    (kind === 'option' && decision === 'duplicate');
+    (kind === 'option' && decision === 'duplicate') ||
+    (kind === 'name' && ['remove', 'dismiss'].includes(decision));
   const duplicateOptionId = String(body.duplicateOptionId || '');
   const hasCorrectedLabel = Object.prototype.hasOwnProperty.call(body, 'label');
   const correctedLabel = hasCorrectedLabel
@@ -1910,7 +2130,7 @@ async function moderateSuggestion(req, res, body) {
     kind === 'ranking' && decision === 'approve' ? suggestionText(body.category, 2, 50) : null;
   if (
     !/^[0-9a-f-]{36}$/i.test(id) ||
-    !['option', 'ranking'].includes(kind) ||
+    !['option', 'ranking', 'name'].includes(kind) ||
     !validDecision ||
     (kind === 'option' && decision === 'duplicate' && !/^\d+$/.test(duplicateOptionId)) ||
     (kind === 'option' && decision === 'approve' && hasCorrectedLabel && !correctedLabel) ||
@@ -1921,6 +2141,10 @@ async function moderateSuggestion(req, res, body) {
         !SUGGESTION_CATEGORIES.has(approvedRankingCategory)))
   ) {
     return json(res, 400, { error: 'invalid_moderation' });
+  }
+
+  if (kind === 'name') {
+    return moderateNameReport(res, user, id, decision, moderationNote);
   }
 
   if (kind === 'ranking' && decision === 'publish') {
@@ -2514,6 +2738,7 @@ export default async function handler(req, res) {
         }
         if (action === 'logout') return logout(req, res);
         if (action === 'comments') return writeComment(req, res, body);
+        if (action === 'name-reports') return createNameReport(req, res, body);
         if (action === 'suggestions') return createSuggestion(req, res, body);
         if (action === 'request-password-reset' || action === 'reset-password') {
           return json(res, 410, { error: 'password_auth_disabled' });

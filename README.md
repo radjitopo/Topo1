@@ -1,6 +1,6 @@
 # TOPO
 
-Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para baixo, usar votos duplos conquistados no perfil, comentar e sugerir novos rankings.
+Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para baixo, usar votos duplos conquistados no perfil, escolher um nome público, comentar e sugerir novos rankings.
 
 ## Arquitetura
 
@@ -51,6 +51,7 @@ As funções de produção não criam nem alteram tabelas durante uma requisiç�
 ```bash
 npm run db:comments
 npm run db:clerk
+npm run db:profile-names
 npm run db:suggestions
 ```
 

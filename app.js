@@ -1317,6 +1317,8 @@ function suggestionStatusInfo(status) {
       rejected: { label: 'Não aprovada', className: 'rejected' },
       duplicate: { label: 'Já existe', className: 'duplicate' },
       published: { label: 'Publicada', className: 'published' },
+      removed: { label: 'Nome removido', className: 'rejected' },
+      dismissed: { label: 'Nome mantido', className: 'approved' },
     }[status] || { label: 'Em análise', className: 'pending' }
   );
 }
@@ -1664,6 +1666,23 @@ function profileLevel(votes) {
 function profileInitial(name) {
   return Array.from(String(name || 'T').trim())[0]?.toUpperCase() || 'T';
 }
+function profileNameDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+  return date.toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+function profileNameEditorHTML(user = {}) {
+  const canChange = user.canChangeName !== false,
+    hasChosenName = user.hasChosenName === true,
+    title = hasChosenName ? 'Nome no TOPO' : 'Como você quer aparecer?',
+    availableDate = profileNameDate(user.nameChangeAvailableAt);
+  return `<div class="profileIdentityPanel" id="profileIdentityPanel"><div class="profilePhotoTitle">${title}</div>${canChange ? `<form class="profileNameForm" id="profileNameForm"><label for="profileNameInput">Nome público</label><div><input id="profileNameInput" name="displayName" type="text" minlength="3" maxlength="24" autocomplete="nickname" value="${escapeHTML(user.name || '')}" required><button type="submit">Salvar nome</button></div></form><p class="profilePhotoNote">Esse nome aparece nos comentários e no ranking da comunidade. Use de 3 a 24 caracteres; termos ofensivos e nomes que imitam a equipe são bloqueados. Seu e-mail continua privado.</p><p class="profileNameCooldown">Depois de salvar, você poderá trocar novamente em 30 dias.</p>` : `<strong class="profileIdentityCurrent">${escapeHTML(user.name || 'Pessoa no TOPO')}</strong><p class="profilePhotoNote">Este é o seu nome público. Seu e-mail continua privado.</p><p class="profileNameCooldown">Você poderá mudar novamente em ${escapeHTML(availableDate || '30 dias')}.</p>`}<div class="profileNameStatus" id="profileNameStatus" aria-live="polite"></div></div>`;
+}
 function profileDoubleVotesHTML(state = {}) {
   const votes = Math.max(0, Number(state.totalVotes || 0)),
     unlockedCount = Math.max(0, Number(state.unlocked || 0)),
@@ -1735,13 +1754,52 @@ function profileLeaderboardHTML(entries = []) {
         avatar = entry.avatarData
           ? `<img src="${escapeHTML(entry.avatarData)}" alt="Foto de ${escapeHTML(entry.name)}">`
           : `<span>${escapeHTML(profileInitial(entry.name))}</span>`,
-        row = `<div class="profileLeaderboardRow ${entry.isCurrent ? 'current' : ''}"><span class="profileLeaderboardPosition top${Math.min(position, 3)}">${position}</span><span class="profileLeaderboardAvatar">${avatar}</span><span class="profileLeaderboardPerson"><strong>${escapeHTML(entry.name || 'Pessoa no TOPO')}${entry.isCurrent ? '<em>você</em>' : ''}</strong><small>${escapeHTML(profileLevel(votes))} · ${fmt(rankingsCount)} ranking${rankingsCount === 1 ? '' : 's'}</small></span><span class="profileLeaderboardScore"><strong>${fmt(votes)}</strong><small>votos</small></span></div>`;
+        reportAction = entry.isCurrent
+          ? ''
+          : `<button class="profileNameReport ${entry.reportedByCurrent ? 'reported' : ''}" type="button" data-report-name data-user-id="${escapeHTML(entry.userId)}" data-user-name="${escapeHTML(entry.name || 'Pessoa no TOPO')}" ${entry.reportedByCurrent ? 'disabled' : ''}>${entry.reportedByCurrent ? 'nome denunciado' : 'denunciar nome'}</button>`,
+        row = `<div class="profileLeaderboardRow ${entry.isCurrent ? 'current' : ''}"><span class="profileLeaderboardPosition top${Math.min(position, 3)}">${position}</span><span class="profileLeaderboardAvatar">${avatar}</span><span class="profileLeaderboardPerson"><strong>${escapeHTML(entry.name || 'Pessoa no TOPO')}${entry.isCurrent ? '<em>você</em>' : ''}</strong><small>${escapeHTML(profileLevel(votes))} · ${fmt(rankingsCount)} ranking${rankingsCount === 1 ? '' : 's'}</small>${reportAction}</span><span class="profileLeaderboardScore"><strong>${fmt(votes)}</strong><small>votos</small></span></div>`;
       previousPosition = position;
       return gap + row;
     })
     .join(
       '',
     )}</div><p class="profileLeaderboardNote">A posição considera os votos conquistados e, em caso de empate, a variedade de rankings.</p>`;
+}
+function bindProfileLeaderboardReports(root = document) {
+  root.querySelectorAll('[data-report-name]').forEach((button) => {
+    button.onclick = async () => {
+      const name = button.dataset.userName || 'este nome';
+      if (!window.confirm(`Enviar “${name}” para análise da moderação?`)) return;
+      button.disabled = true;
+      button.textContent = 'enviando…';
+      try {
+        const response = await fetch('/api?action=name-reports', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ userId: button.dataset.userId }),
+          }),
+          result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          location.assign('/entrar?voltar=%2Fperfil');
+          return;
+        }
+        if (!response.ok) throw result;
+        button.classList.add('reported');
+        button.textContent = 'nome denunciado';
+        toast(
+          result.alreadyReported ? 'Esse nome já estava em análise' : 'Nome enviado para análise',
+        );
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = 'denunciar nome';
+        toast(
+          error?.error === 'name_report_limit'
+            ? 'Limite diário de denúncias atingido'
+            : 'Não consegui enviar a denúncia',
+        );
+      }
+    };
+  });
 }
 async function loadProfileLeaderboard() {
   const recentSection = document.querySelector('.profileRecentSection');
@@ -1759,6 +1817,7 @@ async function loadProfileLeaderboard() {
       entries = Array.isArray(data.leaderboard) ? data.leaderboard : [],
       current = entries.find((entry) => entry.isCurrent);
     section.innerHTML = `<div class="profileSectionHead"><div class="sectionLabel">Ranking da comunidade</div><span>Top 10</span></div>${profileLeaderboardHTML(entries)}`;
+    bindProfileLeaderboardReports(section);
     const metrics = document.querySelector('.profileMetrics');
     if (current && metrics && !metrics.querySelector('.profileMetricRank'))
       metrics.insertAdjacentHTML(
@@ -1843,13 +1902,67 @@ async function saveProfilePatch(patch) {
     location.replace('/entrar?modo=entrar');
     throw new Error('Sua sessão terminou.');
   }
-  if (!res.ok)
-    throw new Error(
-      result.error === 'invalid_profile_image'
-        ? 'Essa imagem não pôde ser salva.'
-        : 'Não consegui salvar agora.',
-    );
+  if (!res.ok) {
+    const nameErrors = {
+        length: 'Use um nome com 3 a 24 caracteres.',
+        characters: 'Use apenas letras, números, espaços, ponto, hífen ou apóstrofo.',
+        contact: 'Não coloque e-mail, link ou contato no nome.',
+        repeated: 'Evite repetir o mesmo caractere muitas vezes.',
+        reserved: 'Esse nome pode ser confundido com a equipe do TOPO.',
+        offensive: 'Esse nome não pode ser usado no TOPO.',
+      },
+      message =
+        result.error === 'invalid_profile_image'
+          ? 'Essa imagem não pôde ser salva.'
+          : result.error === 'invalid_display_name'
+            ? nameErrors[result.reason] || 'Escolha outro nome para aparecer no TOPO.'
+            : result.error === 'display_name_cooldown'
+              ? `Você poderá mudar o nome novamente em ${profileNameDate(result.availableAt) || '30 dias'}.`
+              : 'Não consegui salvar agora.',
+      error = new Error(message);
+    error.code = result.error;
+    error.availableAt = result.availableAt;
+    throw error;
+  }
   return result;
+}
+function setProfileName(name) {
+  const publicName = String(name || 'Pessoa no TOPO'),
+    heading = document.querySelector('.profileName'),
+    image = document.getElementById('profileAvatarImage'),
+    initial = document.getElementById('profileAvatarInitial');
+  if (heading) heading.textContent = publicName;
+  if (image) image.alt = `Foto de perfil de ${publicName}`;
+  if (initial && image?.hidden) initial.textContent = profileInitial(publicName);
+}
+function bindProfileNameControl() {
+  const form = document.getElementById('profileNameForm'),
+    panel = document.getElementById('profileIdentityPanel'),
+    status = document.getElementById('profileNameStatus');
+  if (!form || !panel || !status) return;
+  form.onsubmit = async (event) => {
+    event.preventDefault();
+    const input = document.getElementById('profileNameInput'),
+      button = form.querySelector('button[type=submit]'),
+      displayName = String(input?.value || '').trim();
+    if (!input || !button) return;
+    button.disabled = true;
+    input.disabled = true;
+    status.textContent = 'Salvando…';
+    try {
+      const result = await saveProfilePatch({ displayName }),
+        savedUser = result.user || { name: displayName, canChangeName: false };
+      setProfileName(savedUser.name || displayName);
+      panel.outerHTML = profileNameEditorHTML(savedUser);
+      bindProfileNameControl();
+      toast('Nome público atualizado');
+    } catch (error) {
+      button.disabled = false;
+      input.disabled = false;
+      status.textContent = error.message || 'Não consegui salvar o nome.';
+      input.focus();
+    }
+  };
 }
 function setProfileAvatar(data) {
   const image = document.getElementById('profileAvatarImage'),
@@ -1872,6 +1985,7 @@ function setProfileAvatar(data) {
   }
 }
 function bindProfileControls() {
+  bindProfileNameControl();
   const input = document.getElementById('profilePhotoInput'),
     upload = document.getElementById('chooseProfilePhoto'),
     remove = document.getElementById('removeProfilePhoto'),
@@ -1968,7 +2082,7 @@ async function renderProfile() {
       powerSummary = progress.unlocked
         ? `${fmt(doubleVotes.available || 0)} livre${Number(doubleVotes.available || 0) === 1 ? '' : 's'} · ${fmt(doubleVotes.active || 0)} em uso`
         : 'valem 2 pontos';
-    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/">← TOPO</a><button class="logoutBtn" id="logoutBtn">Sair</button></div><section class="profileHero profileGameHero"><div class="profileAvatarProgress" style="--profile-progress:${progress.progress}%"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div><span class="profileProgressCount">${fmt(progress.total)}</span></div><div class="profileHeroCopy"><div><div class="authEyebrow">Seu perfil</div><div class="profileName">${escapeHTML(p.user.name)}</div><div class="profileEmail">${escapeHTML(p.user.email)} · desde ${date}</div></div><div class="profileBadges"><span>${escapeHTML(level)}</span><span>${unlockedText}</span></div><p class="profileProgressText">${progressText}</p><div class="profileMetrics" aria-label="Resumo do perfil"><span><strong>${fmt(p.stats.votes)}</strong><small>votos ativos</small></span><span><strong>${fmt(p.stats.rankings)}</strong><small>rankings</small></span><span><strong>${fmt(p.stats.streak || 0)} dia${Number(p.stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></div></section><div class="profileDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p><div class="profilePhotoPanel"><div class="profilePhotoTitle">Foto do perfil</div><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><div class="profilePhotoActions"><button type="button" id="chooseProfilePhoto">${avatar ? 'Trocar foto' : 'Adicionar foto'}</button><button type="button" id="removeProfilePhoto" ${avatar ? '' : 'hidden'}>Remover</button></div><label class="profilePhotoCheck"><input id="profilePhotoVisibility" type="checkbox" ${showAvatar ? 'checked' : ''}><span>Mostrar minha foto no ranking de usuários</span></label><p class="profilePhotoNote">A imagem é recortada e reduzida antes de ser salva. Você também pode usar apenas a inicial.</p><div class="profilePhotoStatus" id="profilePhotoStatus" aria-live="polite"></div></div></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(p.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(p.recent)}</section>`;
+    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/">← TOPO</a><button class="logoutBtn" id="logoutBtn">Sair</button></div><section class="profileHero profileGameHero"><div class="profileAvatarProgress" style="--profile-progress:${progress.progress}%"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div><span class="profileProgressCount">${fmt(progress.total)}</span></div><div class="profileHeroCopy"><div><div class="authEyebrow">Seu perfil</div><div class="profileName">${escapeHTML(p.user.name)}</div><div class="profileEmail">${escapeHTML(p.user.email)} · desde ${date}</div></div><div class="profileBadges"><span>${escapeHTML(level)}</span><span>${unlockedText}</span></div><p class="profileProgressText">${progressText}</p><div class="profileMetrics" aria-label="Resumo do perfil"><span><strong>${fmt(p.stats.votes)}</strong><small>votos ativos</small></span><span><strong>${fmt(p.stats.rankings)}</strong><small>rankings</small></span><span><strong>${fmt(p.stats.streak || 0)} dia${Number(p.stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></div></section><div class="profileDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p>${profileNameEditorHTML(p.user)}<div class="profilePhotoPanel"><div class="profilePhotoTitle">Foto do perfil</div><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><div class="profilePhotoActions"><button type="button" id="chooseProfilePhoto">${avatar ? 'Trocar foto' : 'Adicionar foto'}</button><button type="button" id="removeProfilePhoto" ${avatar ? '' : 'hidden'}>Remover</button></div><label class="profilePhotoCheck"><input id="profilePhotoVisibility" type="checkbox" ${showAvatar ? 'checked' : ''}><span>Mostrar minha foto no ranking de usuários</span></label><p class="profilePhotoNote">A imagem é recortada e reduzida antes de ser salva. Você também pode usar apenas a inicial.</p><div class="profilePhotoStatus" id="profilePhotoStatus" aria-live="polite"></div></div></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(p.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(p.recent)}</section>`;
     document.getElementById('logoutBtn').onclick = logout;
     bindProfileControls();
   } catch (e) {
@@ -2270,8 +2384,16 @@ function moderationCardHTML(item) {
         : '';
   return `<article class="moderationCard ${target ? 'targeted' : ''} ${ready ? 'preparing' : ''}" id="sugestao-${escapeHTML(item.id)}" data-status="${escapeHTML(item.status)}"><div class="moderationCardHead"><div><span class="moderationKind">${isOption ? 'Opção sugerida' : 'Ideia de ranking'}</span><h3>${escapeHTML(title)}</h3><p>${escapeHTML(context || '')}</p></div><span class="suggestionStatus ${status.className}">${status.label}</span></div>${pending && isOption ? moderationOptionReviewHTML(item) : ''}${pending && !isOption ? moderationRankingReviewHTML(item) : ''}${examples.length && !ready ? `<div class="moderationExamples"><strong>Opções iniciais</strong><ol>${examples.map((option) => `<li>${escapeHTML(option)}</li>`).join('')}</ol></div>` : ''}${item.flagReason ? `<div class="moderationFlag"><strong>Revisar com atenção</strong><span>${escapeHTML(item.flagReason)}</span></div>` : ''}<div class="moderationMeta"><span>Por <strong>${escapeHTML(item.userName || 'Pessoa')}</strong> · ${escapeHTML(item.userEmail || '')}</span><time>${moderationDate(item.createdAt)}</time></div>${item.moderationNote ? `<div class="moderationNote"><strong>Nota da moderação:</strong> ${escapeHTML(item.moderationNote)}</div>` : ''}${pending ? `<div class="moderationActions"><button class="approve" type="button" data-moderate data-kind="${item.kind}" data-id="${escapeHTML(item.id)}" data-decision="approve">${isOption ? 'Aprovar e incluir' : 'Aprovar nome e categoria'}</button>${isOption ? `<button class="duplicate" type="button" data-moderate data-kind="option" data-id="${escapeHTML(item.id)}" data-decision="duplicate">Já existe</button>` : ''}<button class="reject" type="button" data-moderate data-kind="${item.kind}" data-id="${escapeHTML(item.id)}" data-decision="reject">Recusar</button></div>` : ''}${ready ? moderationCreationReadyHTML() : ''}${publishedLink}</article>`;
 }
+function moderationNameCardHTML(item) {
+  const pending = item.status === 'pending',
+    status = suggestionStatusInfo(item.status),
+    target = queryParams.get('tipo') === 'name' && queryParams.get('id') === item.id,
+    changed = item.currentName && item.currentName !== item.reportedName,
+    reports = Math.max(1, Number(item.pendingReports || 1));
+  return `<article class="moderationCard moderationNameCard ${target ? 'targeted' : ''}" id="sugestao-${escapeHTML(item.id)}" data-status="${escapeHTML(item.status)}" data-reported-name="${escapeHTML(item.reportedName)}"><div class="moderationCardHead"><div><span class="moderationKind">Nome denunciado</span><h3>${escapeHTML(item.reportedName || 'Sem nome')}</h3><p>${pending ? `${reports} denúncia${reports === 1 ? '' : 's'} pendente${reports === 1 ? '' : 's'}` : 'Denúncia analisada'}${changed ? ` · atualmente aparece como “${escapeHTML(item.currentName)}”` : ''}</p></div><span class="suggestionStatus ${status.className}">${status.label}</span></div><div class="moderationMeta"><span>Enviado por <strong>${escapeHTML(item.userName || 'Pessoa')}</strong> · ${escapeHTML(item.userEmail || '')}</span><time>${moderationDate(item.createdAt)}</time></div>${item.moderationNote ? `<div class="moderationNote"><strong>Nota da moderação:</strong> ${escapeHTML(item.moderationNote)}</div>` : ''}${pending ? `<div class="moderationActions"><button class="reject" type="button" data-moderate data-kind="name" data-id="${escapeHTML(item.id)}" data-decision="remove">Substituir por nome neutro</button><button class="duplicate" type="button" data-moderate data-kind="name" data-id="${escapeHTML(item.id)}" data-decision="dismiss">Manter este nome</button></div>` : ''}</article>`;
+}
 function moderationSectionHTML(title, items, emptyText) {
-  return `<section class="moderationSection"><div class="moderationSectionHead"><h2>${title}</h2><span>${items.length}</span></div>${items.length ? `<div class="moderationList">${items.map(moderationCardHTML).join('')}</div>` : `<div class="moderationEmpty">${emptyText}</div>`}</section>`;
+  return `<section class="moderationSection"><div class="moderationSectionHead"><h2>${title}</h2><span>${items.length}</span></div>${items.length ? `<div class="moderationList">${items.map((item) => (item.kind === 'name' ? moderationNameCardHTML(item) : moderationCardHTML(item))).join('')}</div>` : `<div class="moderationEmpty">${emptyText}</div>`}</section>`;
 }
 function bindModerationActions() {
   document.querySelectorAll('[data-moderate]').forEach((button) => {
@@ -2281,18 +2403,29 @@ function bindModerationActions() {
         decision = button.dataset.decision,
         id = button.dataset.id,
         isOption = kind === 'option',
+        isName = kind === 'name',
         label = isOption ? card?.querySelector('[data-option-label]')?.value.trim() || '' : '',
-        rankingTitle = !isOption
-          ? card?.querySelector('[data-ranking-title]')?.value.trim() || ''
-          : '',
-        rankingCategory = !isOption
-          ? card?.querySelector('[data-ranking-category]')?.value || ''
-          : '',
+        rankingTitle =
+          !isOption && !isName
+            ? card?.querySelector('[data-ranking-title]')?.value.trim() || ''
+            : '',
+        rankingCategory =
+          !isOption && !isName ? card?.querySelector('[data-ranking-category]')?.value || '' : '',
         duplicateSelect = isOption ? card?.querySelector('[data-duplicate-target]') : null,
         duplicateOptionId = duplicateSelect?.value || '',
         duplicateLabel = duplicateSelect?.selectedOptions?.[0]?.textContent || '';
       let note = '';
-      if (decision === 'approve') {
+      if (isName) {
+        const reportedName = card?.dataset.reportedName || 'este nome';
+        if (
+          !window.confirm(
+            decision === 'remove'
+              ? `Substituir “${reportedName}” por um nome neutro? A pessoa poderá escolher outro nome válido imediatamente.`
+              : `Manter “${reportedName}” e arquivar as denúncias pendentes?`,
+          )
+        )
+          return;
+      } else if (decision === 'approve') {
         if (isOption && ([...label].length < 2 || [...label].length > 80)) {
           toast('Revise o nome da opção');
           return;
@@ -2352,18 +2485,24 @@ function bindModerationActions() {
         }
         if (!response.ok) throw result;
         toast(
-          decision === 'approve' && !isOption
-            ? 'Nome e categoria aprovados. Pronto para criação.'
-            : decision === 'approve'
-              ? 'Sugestão aprovada'
-              : decision === 'duplicate'
-                ? 'Marcada como já existente'
-                : 'Sugestão recusada',
+          isName
+            ? result.decision === 'remove'
+              ? 'Nome substituído por uma opção neutra'
+              : 'Denúncia de nome arquivada'
+            : decision === 'approve' && !isOption
+              ? 'Nome e categoria aprovados. Pronto para criação.'
+              : decision === 'approve'
+                ? 'Sugestão aprovada'
+                : decision === 'duplicate'
+                  ? 'Marcada como já existente'
+                  : 'Sugestão recusada',
         );
         await renderModeration();
       } catch (error) {
         card?.querySelectorAll('button').forEach((item) => (item.disabled = false));
-        if (error?.error === 'option_already_exists') {
+        if (error?.error === 'name_report_already_reviewed') {
+          toast('Essa denúncia já foi analisada');
+        } else if (error?.error === 'option_already_exists') {
           const targetId = String(error?.option?.optionId || '');
           if (targetId && duplicateSelect) duplicateSelect.value = targetId;
           toast('Essa opção já existe. Use “Já existe”.');
@@ -2401,8 +2540,15 @@ async function renderModeration() {
     if (!response.ok) throw data;
     const optionPending = (data.options || []).filter((item) => item.status === 'pending'),
       rankingPending = (data.rankings || []).filter((item) => item.status === 'pending'),
+      namePending = [
+        ...new Map(
+          (data.names || [])
+            .filter((item) => item.status === 'pending')
+            .map((item) => [`${item.reportedUserId}:${item.reportedName}`, item]),
+        ).values(),
+      ],
       approvedRankings = (data.rankings || []).filter((item) => item.status === 'approved'),
-      reviewed = [...(data.options || []), ...(data.rankings || [])]
+      reviewed = [...(data.options || []), ...(data.rankings || []), ...(data.names || [])]
         .filter(
           (item) =>
             item.status !== 'pending' && !(item.kind === 'ranking' && item.status === 'approved'),
@@ -2411,13 +2557,13 @@ async function renderModeration() {
           (a, b) => new Date(b.reviewedAt || b.createdAt) - new Date(a.reviewedAt || a.createdAt),
         )
         .slice(0, 40),
-      total = optionPending.length + rankingPending.length,
+      total = optionPending.length + rankingPending.length + namePending.length,
       heroMessage = total
         ? `${total} sugestão${total === 1 ? ' aguarda' : ' aguardam'} sua análise.`
         : approvedRankings.length
           ? `${approvedRankings.length} ranking${approvedRankings.length === 1 ? ' está' : 's estão'} pronto${approvedRankings.length === 1 ? '' : 's'} para eu criar.`
           : 'Tudo analisado por enquanto.';
-    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div><header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
+    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div><header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
     bindModerationActions();
     const targetId = queryParams.get('id'),
       target = targetId ? document.getElementById(`sugestao-${targetId}`) : null;
