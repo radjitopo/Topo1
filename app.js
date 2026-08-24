@@ -50,7 +50,14 @@ let rankings = [],
   },
   community = { rankings: 0, votes: 0, users: 0 },
   clerkLoadPromise = null,
-  clerkAuthFlow = { email: '', kind: 'signin' };
+  clerkAuthFlow = { email: '', kind: 'signin' },
+  notificationState = {
+    items: [],
+    unread: 0,
+    loaded: false,
+    loading: false,
+    open: false,
+  };
 const groupNames = [
     'Todos',
     'Cinema',
@@ -341,11 +348,162 @@ function toast(t) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => e.classList.remove('show'), 1400);
 }
-function renderAccount() {
-  if (viewer.registered) accountEl.innerHTML = '<a class="accountLink" href="/perfil">Perfil</a>';
-  else
-    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || 30} votos</span>`;
+function notificationTime(value) {
+  const date = new Date(value),
+    elapsed = Date.now() - date.getTime(),
+    minutes = Math.floor(elapsed / 60000),
+    hours = Math.floor(elapsed / 3600000),
+    days = Math.floor(elapsed / 86400000);
+  if (!Number.isFinite(elapsed)) return '';
+  if (minutes < 1) return 'agora';
+  if (minutes < 60) return `há ${minutes} min`;
+  if (hours < 24) return `há ${hours} h`;
+  if (days === 1) return 'ontem';
+  if (days < 7) return `há ${days} dias`;
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 }
+function notificationIcon(kind) {
+  if (kind === 'ranking_changed') return '↕';
+  if (kind === 'double_vote') return '2×';
+  if (kind === 'level') return '★';
+  return 'T';
+}
+function notificationItemsHTML() {
+  if (notificationState.loading && !notificationState.loaded) {
+    return '<div class="notificationEmpty">Buscando novidades…</div>';
+  }
+  if (!notificationState.items.length) {
+    return '<div class="notificationEmpty"><strong>Tudo tranquilo por aqui.</strong><span>As novidades dos seus rankings aparecerão neste espaço.</span></div>';
+  }
+  return notificationState.items
+    .map((item) => {
+      const href = String(item.href || '').startsWith('/') ? item.href : '/perfil';
+      return `<a class="notificationItem ${item.readAt ? '' : 'unread'}" href="${escapeHTML(href)}" data-notification-id="${escapeHTML(item.id)}"><span class="notificationKind ${escapeHTML(item.kind)}" aria-hidden="true">${notificationIcon(item.kind)}</span><span class="notificationCopy"><strong>${escapeHTML(item.title)}</strong><span>${escapeHTML(item.body)}</span><time>${escapeHTML(notificationTime(item.createdAt))}</time></span></a>`;
+    })
+    .join('');
+}
+function renderNotificationContents() {
+  const badge = document.getElementById('notificationBadge'),
+    button = document.getElementById('notificationButton'),
+    panel = document.getElementById('notificationPanel');
+  if (!badge || !button || !panel) return;
+  const unread = Math.max(0, Number(notificationState.unread || 0));
+  badge.hidden = unread === 0;
+  badge.textContent = unread > 9 ? '9+' : String(unread);
+  button.setAttribute(
+    'aria-label',
+    unread ? `Notificações: ${unread} não lida${unread === 1 ? '' : 's'}` : 'Notificações',
+  );
+  button.setAttribute('aria-expanded', String(notificationState.open));
+  panel.hidden = !notificationState.open;
+  panel.innerHTML = `<div class="notificationPanelHead"><div><strong>Notificações</strong><span>O que aconteceu no seu TOPO</span></div>${unread ? '<button type="button" id="notificationReadAll">Marcar como lidas</button>' : ''}</div><div class="notificationList">${notificationItemsHTML()}</div>`;
+
+  panel.querySelectorAll('[data-notification-id]').forEach((link) => {
+    link.onclick = async (event) => {
+      event.preventDefault();
+      const href = link.getAttribute('href') || '/perfil';
+      await markNotificationRead(link.dataset.notificationId).catch(() => {});
+      location.href = href;
+    };
+  });
+  const readAll = document.getElementById('notificationReadAll');
+  if (readAll) {
+    readAll.onclick = async () => {
+      readAll.disabled = true;
+      try {
+        const response = await fetch('/api?action=notifications', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ operation: 'read-all' }),
+        });
+        if (!response.ok) throw new Error('notification_read_failed');
+        notificationState.items = notificationState.items.map((item) => ({
+          ...item,
+          readAt: item.readAt || new Date().toISOString(),
+        }));
+        notificationState.unread = 0;
+        renderNotificationContents();
+      } catch {
+        readAll.disabled = false;
+        toast('Não consegui marcar as notificações');
+      }
+    };
+  }
+}
+async function markNotificationRead(id) {
+  const item = notificationState.items.find((entry) => entry.id === id);
+  if (!item || item.readAt) return;
+  const response = await fetch('/api?action=notifications', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ operation: 'read', id }),
+    keepalive: true,
+  });
+  if (!response.ok) throw new Error('notification_read_failed');
+  item.readAt = new Date().toISOString();
+  notificationState.unread = Math.max(0, notificationState.unread - 1);
+  renderNotificationContents();
+}
+async function loadNotifications({ force = false } = {}) {
+  if (!viewer.registered || notificationState.loading || (notificationState.loaded && !force)) {
+    return;
+  }
+  notificationState.loading = true;
+  renderNotificationContents();
+  try {
+    const response = await fetch('/api?action=notifications', { cache: 'no-store' });
+    if (!response.ok) throw new Error('notification_load_failed');
+    const data = await response.json();
+    notificationState.items = Array.isArray(data.notifications) ? data.notifications : [];
+    notificationState.unread = Math.max(0, Number(data.unread || 0));
+    notificationState.loaded = true;
+  } catch (error) {
+    console.error('Não foi possível carregar as notificações.', error);
+  } finally {
+    notificationState.loading = false;
+    renderNotificationContents();
+  }
+}
+function bindNotificationBell() {
+  const button = document.getElementById('notificationButton'),
+    panel = document.getElementById('notificationPanel');
+  if (!button || !panel) return;
+  button.onclick = (event) => {
+    event.stopPropagation();
+    notificationState.open = !notificationState.open;
+    renderNotificationContents();
+    if (notificationState.open) void loadNotifications();
+  };
+  panel.onclick = (event) => event.stopPropagation();
+}
+function renderAccount() {
+  if (viewer.registered) {
+    accountEl.innerHTML = `<div class="notificationShell"><button class="notificationButton" id="notificationButton" type="button" aria-haspopup="dialog" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"></path><path d="M10 21h4"></path></svg><span class="notificationBadge" id="notificationBadge" hidden></span></button><section class="notificationPanel" id="notificationPanel" aria-label="Suas notificações" hidden></section></div><a class="accountLink" href="/perfil">Perfil</a>`;
+    bindNotificationBell();
+    renderNotificationContents();
+    void loadNotifications();
+  } else {
+    notificationState = {
+      items: [],
+      unread: 0,
+      loaded: false,
+      loading: false,
+      open: false,
+    };
+    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || 30} votos</span>`;
+  }
+}
+document.addEventListener('click', (event) => {
+  if (!notificationState.open || event.target.closest('.notificationShell')) return;
+  notificationState.open = false;
+  renderNotificationContents();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape' || !notificationState.open) return;
+  notificationState.open = false;
+  renderNotificationContents();
+  document.getElementById('notificationButton')?.focus();
+});
 function renderCommunityPulse() {
   if (sitePulseEl)
     sitePulseEl.innerHTML = `<span><strong>${fmt(community.rankings)}</strong> rankings</span><span><strong>${fmt(community.votes)}</strong> votos</span><span><strong>${fmt(community.users)}</strong> pessoas</span>`;
@@ -2291,6 +2449,7 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
     }
     if (!res.ok) throw result;
     if (!applyVoteResult(optionId, result)) await refreshVoteState(rankOrder);
+    if (viewer.registered) void loadNotifications({ force: true });
     if (showHelp && direction !== 0) showVoteHelp();
   } catch (e) {
     toast('Não consegui registrar. Tente novamente.');

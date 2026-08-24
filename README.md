@@ -51,6 +51,7 @@ As funções de produção não criam nem alteram tabelas durante uma requisiç�
 ```bash
 npm run db:comments
 npm run db:clerk
+npm run db:notifications
 npm run db:profile-names
 npm run db:suggestions
 ```

@@ -23,6 +23,14 @@ const clerkClient = CLERK_SECRET_KEY
 const ANONYMOUS_LIMIT = 30;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
+const PROFILE_LEVEL_MILESTONES = Object.freeze([
+  { at: 20, key: 'explorer', name: 'Explorador de rankings' },
+  { at: 75, key: 'curator', name: 'Curador do TOPO' },
+  { at: 200, key: 'reference', name: 'Referência no TOPO' },
+]);
+const NOTIFICATION_LIMIT = 30;
+const NOTIFICATION_RETURN_DAYS = 7;
+const RANKING_NOTIFICATION_FANOUT_LIMIT = 500;
 const PROFILE_AVATAR_MAX_LENGTH = 240000;
 const COMMENT_LIMIT = 200;
 const COMMENTS_PAGE_SIZE = 20;
@@ -455,6 +463,249 @@ async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
     nextAt,
     remaining: nextAt ? Math.max(0, nextAt - totalVotes) : 0,
   };
+}
+
+async function upsertNotification(userId, notification, { revive = false } = {}) {
+  const conflict = revive
+    ? `DO UPDATE SET
+         kind = EXCLUDED.kind,
+         title = EXCLUDED.title,
+         body = EXCLUDED.body,
+         href = EXCLUDED.href,
+         read_at = NULL,
+         created_at = now()`
+    : 'DO NOTHING';
+
+  await sql.query(
+    `
+    INSERT INTO user_notifications (
+      id,
+      user_id,
+      kind,
+      title,
+      body,
+      href,
+      dedupe_key,
+      created_at
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, now())
+    ON CONFLICT (user_id, dedupe_key)
+    ${conflict}
+  `,
+    [
+      randomUUID(),
+      userId,
+      notification.kind,
+      notification.title,
+      notification.body,
+      notification.href || '/perfil',
+      notification.dedupeKey,
+    ],
+  );
+}
+
+async function syncAchievementNotifications(user) {
+  const [history] = await sql.query(
+    `
+    SELECT COUNT(*)::int AS total
+    FROM user_vote_history
+    WHERE user_id = $1
+  `,
+    [user.id],
+  );
+  const total = Number(history?.total || 0);
+  const achievements = [];
+
+  DOUBLE_VOTE_THRESHOLDS.forEach((threshold, index) => {
+    if (total < threshold) return;
+    const ordinal = ['primeiro', 'segundo', 'terceiro'][index];
+    achievements.push({
+      kind: 'double_vote',
+      title: 'Você ganhou um voto duplo',
+      body: `Você chegou a ${threshold} votos e liberou seu ${ordinal} voto duplo.`,
+      href: '/perfil',
+      dedupeKey: `double-vote:${index + 1}`,
+    });
+  });
+
+  PROFILE_LEVEL_MILESTONES.forEach((level) => {
+    if (total < level.at) return;
+    achievements.push({
+      kind: 'level',
+      title: `Novo nível: ${level.name}`,
+      body: `Sua participação levou você ao nível ${level.name}.`,
+      href: '/perfil',
+      dedupeKey: `level:${level.key}`,
+    });
+  });
+
+  await Promise.all(achievements.map((notification) => upsertNotification(user.id, notification)));
+}
+
+async function syncReturnNotification(user) {
+  const [current] = await sql.query(
+    `
+    SELECT notification_last_seen_at
+    FROM users
+    WHERE id = $1
+    LIMIT 1
+  `,
+    [user.id],
+  );
+  const previous = current?.notification_last_seen_at
+    ? new Date(current.notification_last_seen_at)
+    : null;
+  const wasAway =
+    previous &&
+    Number.isFinite(previous.getTime()) &&
+    Date.now() - previous.getTime() >= NOTIFICATION_RETURN_DAYS * 24 * 60 * 60 * 1000;
+
+  await sql.query('UPDATE users SET notification_last_seen_at = now() WHERE id = $1', [user.id]);
+
+  if (wasAway) {
+    await upsertNotification(user.id, {
+      kind: 'return',
+      title: 'Que bom ter você de volta',
+      body: 'A gente estava com saudades. Tem ranking novo esperando o seu voto.',
+      href: '/',
+      dedupeKey: `return:${new Date().toISOString().slice(0, 10)}`,
+    });
+  }
+}
+
+async function rankingOrderSignature(rankingId) {
+  const [row] = await sql.query(
+    `
+    SELECT string_agg(state.id::text, ',' ORDER BY state.score DESC, state.position) AS signature
+    FROM (
+      SELECT
+        option.id,
+        option.position,
+        option.baseline_score
+          + COALESCE((SELECT SUM(vote.direction) FROM votes vote WHERE vote.option_id = option.id), 0)
+          + COALESCE((SELECT SUM(double_vote.direction) FROM user_double_votes double_vote WHERE double_vote.option_id = option.id), 0) AS score
+      FROM ranking_options option
+      WHERE option.ranking_id = $1
+    ) state
+  `,
+    [rankingId],
+  );
+  return String(row?.signature || '');
+}
+
+async function queueRankingChangeNotifications(rankingId, actorUserId) {
+  const [rankingRows, recipients] = await Promise.all([
+    sql.query('SELECT id, question FROM rankings WHERE id = $1 AND is_active = true LIMIT 1', [
+      rankingId,
+    ]),
+    sql.query(
+      `
+      SELECT history.user_id AS "userId", MAX(history.first_voted_at) AS "lastVoteAt"
+      FROM user_vote_history history
+      JOIN ranking_options option ON option.id = history.option_id
+      WHERE option.ranking_id = $1
+        AND ($2::uuid IS NULL OR history.user_id <> $2::uuid)
+      GROUP BY history.user_id
+      ORDER BY "lastVoteAt" DESC
+      LIMIT $3
+    `,
+      [rankingId, actorUserId || null, RANKING_NOTIFICATION_FANOUT_LIMIT],
+    ),
+  ]);
+  const ranking = rankingRows[0];
+  if (!ranking || !recipients.length) return;
+  const question = rankingQuestion(ranking.id, ranking.question);
+  const dedupeKey = `ranking:${ranking.id}:${new Date().toISOString().slice(0, 10)}`;
+
+  await Promise.all(
+    recipients.map((recipient) =>
+      upsertNotification(
+        recipient.userId,
+        {
+          kind: 'ranking_changed',
+          title: 'Um ranking que você acompanha mudou',
+          body: `A ordem mudou em “${question}”.`,
+          href: `/ranking/${encodeURIComponent(ranking.id)}`,
+          dedupeKey,
+        },
+        { revive: true },
+      ),
+    ),
+  );
+}
+
+async function notifications(req, res, body = null) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  if (body) {
+    if (body.operation === 'read-all') {
+      const rows = await sql.query(
+        `
+        UPDATE user_notifications
+        SET read_at = now()
+        WHERE user_id = $1
+          AND read_at IS NULL
+        RETURNING id
+      `,
+        [user.id],
+      );
+      return json(res, 200, { ok: true, updated: rows.length });
+    }
+
+    const notificationId = String(body.id || '');
+    if (body.operation !== 'read' || !/^[0-9a-f-]{36}$/i.test(notificationId)) {
+      return json(res, 400, { error: 'invalid_notification_action' });
+    }
+    const rows = await sql.query(
+      `
+      UPDATE user_notifications
+      SET read_at = COALESCE(read_at, now())
+      WHERE id = $1::uuid
+        AND user_id = $2
+      RETURNING id
+    `,
+      [notificationId, user.id],
+    );
+    if (!rows[0]) return json(res, 404, { error: 'notification_not_found' });
+    return json(res, 200, { ok: true, updated: 1 });
+  }
+
+  await Promise.all([syncAchievementNotifications(user), syncReturnNotification(user)]);
+
+  const [rows, unreadRows] = await Promise.all([
+    sql.query(
+      `
+      SELECT
+        id,
+        kind,
+        title,
+        body,
+        href,
+        read_at AS "readAt",
+        created_at AS "createdAt"
+      FROM user_notifications
+      WHERE user_id = $1
+      ORDER BY created_at DESC, id DESC
+      LIMIT $2
+    `,
+      [user.id, NOTIFICATION_LIMIT],
+    ),
+    sql.query(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM user_notifications
+      WHERE user_id = $1
+        AND read_at IS NULL
+    `,
+      [user.id],
+    ),
+  ]);
+
+  return json(res, 200, {
+    unread: Number(unreadRows[0]?.total || 0),
+    notifications: rows,
+  });
 }
 
 async function viewerFor(user, deviceId) {
@@ -2406,7 +2657,7 @@ async function vote(req, res, body) {
   }
 
   const deviceIds = await devicesFor(user, deviceId);
-  const [currentRows, countRows] = await Promise.all([
+  const [currentRows, countRows, orderBefore] = await Promise.all([
     sql.query(
       `
       SELECT direction
@@ -2428,6 +2679,7 @@ async function vote(req, res, body) {
     `,
       [deviceIds, option.ranking_id],
     ),
+    rankingOrderSignature(option.ranking_id),
   ]);
 
   const hasCurrentVote = Boolean(currentRows[0]);
@@ -2633,7 +2885,7 @@ async function vote(req, res, body) {
     );
   }
 
-  const [stateRows, updatedViewer] = await Promise.all([
+  const [stateRows, updatedViewer, orderAfter] = await Promise.all([
     sql.query(
       `
       WITH option_state AS (
@@ -2691,8 +2943,20 @@ async function vote(req, res, body) {
       [optionId],
     ),
     viewerFor(user, deviceId),
+    rankingOrderSignature(option.ranking_id),
   ]);
   const state = stateRows[0];
+
+  try {
+    const notificationTasks = [];
+    if (orderBefore !== orderAfter) {
+      notificationTasks.push(queueRankingChangeNotifications(option.ranking_id, user?.id));
+    }
+    if (user) notificationTasks.push(syncAchievementNotifications(user));
+    await Promise.all(notificationTasks);
+  } catch (error) {
+    console.error('TOPO notification update error', error);
+  }
 
   return json(res, 200, {
     ok: true,
@@ -2715,6 +2979,7 @@ export default async function handler(req, res) {
     if (method === 'GET') {
       if (!action) return catalog(req, res);
       if (action === 'auth-config') return clerkConfig(req, res);
+      if (action === 'notifications') return notifications(req, res);
       if (action === 'profile') return profile(req, res);
       if (action === 'leaderboard') return leaderboard(req, res);
       if (action === 'comments') return comments(req, res);
@@ -2739,6 +3004,7 @@ export default async function handler(req, res) {
         if (action === 'logout') return logout(req, res);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);
+        if (action === 'notifications') return notifications(req, res, body);
         if (action === 'suggestions') return createSuggestion(req, res, body);
         if (action === 'request-password-reset' || action === 'reset-password') {
           return json(res, 410, { error: 'password_auth_disabled' });
