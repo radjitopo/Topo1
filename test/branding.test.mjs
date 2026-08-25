@@ -24,8 +24,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-7'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-7'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-8'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-8'));
 assert.match(
   index,
   /class="brandSlogan">Tudo vira ranking\.<\/span>/,
@@ -74,8 +74,13 @@ assert.match(
 );
 assert.match(
   compactPopCss,
-  /@media\(max-width:700px\)[\s\S]*\.popHomeHero\{[^}]*display:flex[^}]*flex-direction:column[\s\S]*\.popHomeStack\{[^}]*order:1[^}]*height:auto[\s\S]*\.popHomeCard1\{[^}]*position:relative[^}]*width:100%[^}]*display:grid/,
-  'a real featured ranking must lead the mobile home before any explanatory copy',
+  /@media\(max-width:700px\)[\s\S]*\.popElectric\.popHomeLead\{[^}]*grid-template-columns:1fr[^}]*gap:13px[\s\S]*\.popElectric\.popHomeLead\.portalHeroLink\{[^}]*min-height:330px[\s\S]*\.popElectric\.popHomeLead\.portalSideColumn\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
+  'the restored editorial lead must stack the main ranking before two compact supporting rankings',
+);
+assert.doesNotMatch(
+  compactPopCss,
+  /\.popHomeHero|\.popHomeActions|\.popHomePulse/,
+  'the repeated explanatory hero must leave no dead visual rules behind',
 );
 assert.doesNotMatch(
   compactPopCss,

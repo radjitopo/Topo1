@@ -18,13 +18,18 @@ assert.doesNotMatch(
   'related ranking cards must not reveal the current leader',
 );
 assert.doesNotMatch(source, /Top 3 agora/, 'Home cards must not reveal the current Top 3');
-assert.match(source, /function popHomeHeroHTML\(/, 'the Pop Electric home hero must use live rankings');
+assert.match(source, /function popHomeLeadHTML\(/, 'the Pop Electric home lead must use live rankings');
 assert.match(
   source,
-  /const firstPath = cards\[0\] \? rankingPath\(cards\[0\]\.id\)/,
-  'the home hero action must open the live ranking shown above the fold',
+  /portalLeadGrid popHomeLead/,
+  'the home must restore the editorial lead distribution with the Pop Electric skin',
 );
-assert.match(source, /VOTAR AGORA/, 'the home hero must lead people into the real voting flow');
+assert.match(source, /class="popHomeStats"/, 'community numbers must stay in a compact top line');
+assert.doesNotMatch(
+  source,
+  /SUA VEZ|VOTAR AGORA|popHomeHero/,
+  'the home must not repeat its proposition before showing rankings',
+);
 
 const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
 assert.ok(categoryCardSource, 'the ranking discovery card must remain testable');

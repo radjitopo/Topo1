@@ -401,15 +401,6 @@ body.legalShell {
   padding: 0 0 100px;
 }
 
-.popHomeHero {
-  min-height: 510px;
-  display: grid;
-  grid-template-columns: 0.68fr 1.32fr;
-  align-items: center;
-  gap: 42px;
-  padding: 36px 0 52px;
-}
-
 .popEyebrow,
 .popElectric .portalKicker,
 .popElectric .authEyebrow,
@@ -423,209 +414,131 @@ body.legalShell {
   text-transform: uppercase;
 }
 
-.popHomeHero h1 {
-  max-width: 520px;
-  margin: 12px 0 0;
-  color: var(--ink);
-  font-size: clamp(52px, 5.7vw, 78px);
-  line-height: 0.88;
-  letter-spacing: -0.045em;
-}
-
-.popHomeHero h1 em {
-  display: block;
-  color: var(--pink);
-  font-style: normal;
-}
-
-.popHomeHeroCopy > p {
-  margin: 28px 0 25px;
-  font: 700 clamp(16px, 1.5vw, 20px)/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.popHomeActions {
+.popHomeStats {
+  min-height: 43px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 13px;
-}
-
-.popHomeActions a {
-  min-height: 53px;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border: 2px solid var(--ink);
-  border-radius: 9px;
-  padding: 0 24px;
-  color: var(--ink);
-  text-decoration: none;
-  font: 900 17px/1 Impact, "Arial Black", sans-serif;
-  letter-spacing: 0.035em;
-  transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-.popHomeActions a:hover {
-  box-shadow: 5px 5px 0 var(--ink);
-  transform: translate(-2px, -2px);
-}
-
-.popHomeActions .popPrimaryAction {
-  background: var(--pink);
-  color: #fff;
-}
-
-.popHomeActions .popSecondaryAction {
-  background: transparent;
-}
-
-.popHomePulse {
-  display: flex;
-  align-items: baseline;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 23px;
+  gap: 7px;
+  padding: 9px 2px;
   color: var(--muted);
-  font: 700 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font: 800 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-.popHomePulse strong {
+.popHomeStats strong {
   color: var(--violet-dark);
-  font: 900 23px/1 Impact, "Arial Black", sans-serif;
+  font: 900 15px/1 Impact, "Arial Black", sans-serif;
 }
 
-.popHomePulse i {
-  width: 5px;
-  height: 5px;
+.popHomeStats i {
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: var(--pink);
-  margin: 0 3px;
+  margin: 0 2px;
 }
 
-.popHomeStack {
-  position: relative;
-  height: 450px;
-}
-
-.popHomeStackLabel {
-  position: absolute;
-  top: 8px;
-  left: 1px;
+.popHomeStats button {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
   color: var(--violet);
-  font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.15em;
+  padding: 5px 0;
+  font: 900 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  cursor: pointer;
 }
 
-.popHomeCard {
-  position: absolute;
-  width: 34%;
-  overflow: hidden;
+.popElectric .popHomeLead {
+  grid-template-columns: minmax(0, 1.52fr) minmax(210px, 0.72fr) minmax(230px, 0.72fr);
+  align-items: stretch;
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.popElectric .popHomeLead .portalHeroLink {
+  min-height: 460px;
   border: 3px solid var(--ink);
-  border-radius: 17px;
-  background: #fff;
-  color: var(--ink);
-  text-decoration: none;
-  box-shadow: 7px 8px 0 rgba(38, 0, 79, 0.18);
-  transition: transform 180ms ease, z-index 180ms ease;
-}
-
-.popHomeCard:hover {
-  z-index: 6;
-  transform: rotate(0deg) translateY(-12px) !important;
-}
-
-.popHomeCard1 {
-  left: 0;
-  top: 45px;
-  transform: rotate(-3deg);
-}
-
-.popHomeCard2 {
-  left: 31%;
-  top: 0;
-  transform: rotate(2deg);
-}
-
-.popHomeCard3 {
-  left: 62%;
-  top: 52px;
-  transform: rotate(5deg);
-}
-
-.popHomeCardMedia {
-  height: 235px;
-  display: block;
-  overflow: hidden;
+  border-radius: 20px;
   background: var(--violet);
+  box-shadow: 8px 8px 0 var(--pink);
 }
 
-.popHomeCardMedia img,
-.popElectric .categoryRankMedia img,
-.popElectric .portalStoryMedia img,
-.popElectric .portalSideMedia img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
+.popElectric .popHomeLead .portalHeroCopy {
+  width: min(82%, 580px);
+  border-top: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  border-radius: 0 15px 0 0;
+  background: var(--violet);
+  padding: 20px 22px;
 }
 
-.popHomeCardPill {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  display: inline-flex;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  padding: 7px 10px;
-  background: var(--pink);
-  color: #fff;
+.popElectric .popHomeLead .portalHeroCopy .portalKicker {
+  color: var(--mint);
+}
+
+.popElectric .popHomeLead .portalHeroCopy h1 {
+  margin: 7px 0 11px;
+  color: var(--cream);
+  font: 900 clamp(34px, 3.35vw, 50px)/0.94 Impact, "Arial Black", sans-serif;
+  letter-spacing: -0.025em;
+}
+
+.popElectric .portalHeroAction {
+  color: var(--mint);
   font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.popHomeCardPill.mint {
-  background: var(--mint);
-  color: var(--ink);
+.popElectric .popHomeLead .portalSideColumn {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.popHomeCardPill.lilac {
-  background: var(--lilac);
-  color: var(--ink);
+.popElectric .popHomeLead .portalSideStory {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 122px minmax(0, 1fr);
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 15px;
+  background: #fff;
+  padding: 0;
 }
 
-.popHomeCardCopy {
-  min-height: 126px;
-  display: flex;
-  flex-direction: column;
-  padding: 17px 18px;
+.popElectric .popHomeLead .portalSideStory:last-child {
+  padding-bottom: 0;
 }
 
-.popHomeCardCopy strong {
-  display: block;
-  font: 900 clamp(21px, 1.8vw, 28px)/0.98 Impact, "Arial Black", sans-serif;
+.popElectric .popHomeLead .portalSideMedia {
+  height: 122px;
+  border-radius: 0;
+  margin: 0;
 }
 
-.popHomeCardCopy small {
-  margin-top: auto;
-  padding-top: 14px;
-  color: var(--muted);
-  font: 700 12px/1 ui-monospace, monospace;
+.popElectric .popHomeLead .portalSideCopy {
+  min-width: 0;
+  padding: 12px;
 }
 
-.popSpark {
-  position: absolute;
-  color: var(--pink);
-  font-size: 48px;
-  font-weight: 900;
+.popElectric .popHomeLead .portalSideCopy h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  margin: 6px 0 8px;
+  font: 900 22px/1 Impact, "Arial Black", sans-serif;
+  letter-spacing: -0.015em;
 }
 
-.popSpark.one {
-  top: -36px;
-  right: 2px;
-}
-
-.popSpark.two {
-  bottom: -2px;
-  left: 27%;
+.popElectric .popHomeLead > .portalRankPanel {
+  min-height: 0;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-top: 10px solid var(--pink);
+  border-radius: 15px;
+  background: #fff;
+  padding: 0 14px 8px;
 }
 
 .popElectric .portalTrending {
@@ -1753,21 +1666,18 @@ body.legalShell {
     display: none;
   }
 
-  .popHomeHero {
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: 30px;
+  .popElectric .popHomeLead {
+    grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
   }
 
-  .popHomeCardMedia {
-    height: 190px;
+  .popElectric .popHomeLead > .portalRankPanel {
+    grid-column: 1 / -1;
   }
 
-  .popHomeCardCopy {
-    min-height: 118px;
-  }
-
-  .popHomeStack {
-    height: 390px;
+  .popElectric .popHomeLead > .portalRankPanel ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 22px;
   }
 
   .popElectric .categoryRankGrid,
@@ -1902,102 +1812,71 @@ body.legalShell {
     font-size: 12px;
   }
 
-  .popHomeHero {
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 15px 0 36px;
-  }
-
-  .popHomeHeroCopy {
-    order: 2;
-    margin-top: 21px;
-  }
-
-  .popHomeHero h1 {
-    max-width: 500px;
-    margin-top: 7px;
-    font-size: clamp(34px, 10vw, 46px);
-    line-height: 0.94;
-    letter-spacing: -0.035em;
-  }
-
-  .popHomeHero h1 em {
-    display: inline;
-  }
-
-  .popHomeHeroCopy > p {
-    margin: 10px 0 15px;
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .popHomeActions a {
-    min-height: 43px;
-    padding-inline: 15px;
-    font-size: 13px;
-  }
-
-  .popHomePulse {
-    margin-top: 14px;
-    font-size: 11px;
-  }
-
-  .popHomeStack {
-    order: 1;
-    height: auto;
-    margin-top: 0;
-  }
-
-  .popHomeCard {
-    display: none;
-  }
-
-  .popHomeCard1 {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    min-height: 178px;
-    display: grid;
-    grid-template-columns: 44% minmax(0, 1fr);
-    transform: none;
-  }
-
-  .popHomeCardMedia {
-    height: 100%;
-    min-height: 178px;
-  }
-
-  .popHomeCardCopy {
-    min-height: 178px;
-    padding: 17px 15px;
-  }
-
-  .popHomeCardCopy strong {
-    font-size: clamp(22px, 6vw, 28px);
-    line-height: 1;
-    overflow-wrap: anywhere;
-  }
-
-  .popHomeCardPill {
-    top: 9px;
-    left: 9px;
-    padding: 5px 7px;
+  .popHomeStats {
+    min-height: 39px;
+    padding: 7px 1px;
     font-size: 9px;
   }
 
-  .popHomeStackLabel {
-    position: static;
-    display: block;
-    margin: 0 0 9px 1px;
-    font-size: 10px;
+  .popHomeStats strong {
+    font-size: 14px;
   }
 
-  .popSpark {
-    display: none;
+  .popHomeStats button {
+    font-size: 9px;
+  }
+
+  .popElectric .popHomeLead {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    margin-bottom: 18px;
+  }
+
+  .popElectric .popHomeLead .portalHeroLink {
+    min-height: 330px;
+    border-radius: 16px;
+    box-shadow: 6px 6px 0 var(--pink);
+  }
+
+  .popElectric .popHomeLead .portalHeroCopy {
+    width: 88%;
+    padding: 15px;
+  }
+
+  .popElectric .popHomeLead .portalHeroCopy h1 {
+    font-size: clamp(30px, 9vw, 40px);
+  }
+
+  .popElectric .popHomeLead .portalSideColumn {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    gap: 10px;
+  }
+
+  .popElectric .popHomeLead .portalSideStory {
+    grid-template-rows: 108px minmax(118px, auto);
+  }
+
+  .popElectric .popHomeLead .portalSideMedia {
+    height: 108px;
+  }
+
+  .popElectric .popHomeLead .portalSideCopy {
+    padding: 10px;
+  }
+
+  .popElectric .popHomeLead .portalSideCopy h2 {
+    font-size: 19px;
+  }
+
+  .popElectric .popHomeLead > .portalRankPanel {
+    grid-column: auto;
+  }
+
+  .popElectric .popHomeLead > .portalRankPanel ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
   }
 
   .popElectric .portalTrending,
@@ -2270,6 +2149,31 @@ body.legalShell {
 
   .popElectric .brandSlogan {
     font-size: 7px;
+  }
+
+  .popHomeStats {
+    gap: 6px;
+  }
+
+  .popHomeStats button {
+    padding-left: 8px;
+  }
+
+  .popElectric .popHomeLead .portalHeroLink {
+    min-height: 290px;
+  }
+
+  .popElectric .popHomeLead .portalHeroCopy {
+    width: 92%;
+    padding: 13px;
+  }
+
+  .popElectric .popHomeLead .portalHeroCopy h1 {
+    font-size: clamp(28px, 8.5vw, 35px);
+  }
+
+  .popElectric .popHomeLead > .portalRankPanel ol {
+    grid-template-columns: 1fr;
   }
 
   .popElectric .account,
