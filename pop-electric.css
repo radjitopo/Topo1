@@ -1,20 +1,20 @@
 :root {
-  --cream: #fffaf2;
+  --cream: #fff8ec;
   --paper: #ffffff;
-  --ink: #160d20;
-  --muted: #746c7a;
-  --line: #21152b;
-  --violet: #4a0790;
-  --violet-dark: #26004f;
-  --pink: #ff2f87;
-  --mint: #78f5ad;
-  --lilac: #c6a8ff;
-  --accent: #4a0790;
-  --bg: #fffaf2;
-  --up: #159a50;
-  --upbg: #e6f8ec;
-  --down: #df3445;
-  --downbg: #fff0f1;
+  --ink: #151019;
+  --muted: #68616f;
+  --line: #151019;
+  --violet: #2447ff;
+  --violet-dark: #151019;
+  --pink: #ff4f3d;
+  --mint: #bfff3c;
+  --lilac: #dbe2ff;
+  --accent: #2447ff;
+  --bg: #fff8ec;
+  --up: #3b7a16;
+  --upbg: #efffd8;
+  --down: #b83129;
+  --downbg: #ffe8e4;
 }
 
 html {
@@ -88,7 +88,7 @@ body.legalShell {
 
 /* Header and global navigation */
 .popElectric .top {
-  background: rgba(255, 250, 242, 0.96);
+  background: rgba(255, 248, 236, 0.96);
   border-bottom: 2px solid var(--ink);
   box-shadow: none;
   backdrop-filter: blur(16px);
@@ -193,15 +193,15 @@ body.legalShell {
 }
 
 .popElectric .siteSearch input::placeholder {
-  color: #776c7b;
+  color: #68616f;
 }
 
 .popElectric .siteSearch kbd {
   display: inline-flex;
-  border: 1px solid #d6c8df;
+  border: 1px solid #cbd3ef;
   border-radius: 6px;
-  background: #f1e8f6;
-  color: #6d5c74;
+  background: #eef1ff;
+  color: #5d5864;
   padding: 4px 7px;
   font: 700 11px/1 ui-monospace, monospace;
 }
@@ -222,7 +222,7 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 10px;
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
   padding: 9px 17px;
 }
 
@@ -265,6 +265,7 @@ body.legalShell {
   height: 18px;
   border-color: var(--cream);
   background: var(--pink);
+  color: var(--ink);
   font-size: 10px;
 }
 
@@ -297,7 +298,7 @@ body.legalShell {
 }
 
 .popElectric .notificationItem.unread {
-  background: #f5efff;
+  background: #eef1ff;
 }
 
 .popElectric .notificationItem.unread::after {
@@ -315,7 +316,7 @@ body.legalShell {
 }
 
 .popElectric .experienceWrap {
-  border-top: 1px solid rgba(33, 21, 43, 0.2);
+  border-top: 1px solid rgba(21, 16, 25, 0.2);
   background: #fff;
 }
 
@@ -369,7 +370,7 @@ body.legalShell {
 
 .popElectric .groupsWrap,
 .popElectric.homePage .groupsWrap {
-  border-top: 1px solid rgba(33, 21, 43, 0.22);
+  border-top: 1px solid rgba(21, 16, 25, 0.22);
   border-bottom: 0;
   background: var(--cream);
 }
@@ -557,6 +558,7 @@ body.legalShell {
 
 .popElectric .portalTrendingLabel {
   background: var(--pink);
+  color: var(--ink);
   font-size: 12px;
 }
 
@@ -570,8 +572,8 @@ body.legalShell {
 .popElectric .categoryRail {
   grid-template-columns: 170px minmax(0, 1fr);
   border: 0;
-  border-top: 1px solid rgba(33, 21, 43, 0.4);
-  border-bottom: 1px solid rgba(33, 21, 43, 0.4);
+  border-top: 1px solid rgba(21, 16, 25, 0.4);
+  border-bottom: 1px solid rgba(21, 16, 25, 0.4);
   background: transparent;
   padding: 17px 0;
   margin: 28px 0;
@@ -727,7 +729,7 @@ body.legalShell {
   margin: 76px calc(50% - 50vw);
   padding: 45px max(24px, calc((100vw - 1240px) / 2));
   background: var(--violet);
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popLocalCallout .popEyebrow {
@@ -736,13 +738,13 @@ body.legalShell {
 
 .popLocalCallout h2 {
   margin: 5px 0 6px;
-  color: #fffaf2;
+  color: #fff8ec;
   font-size: clamp(48px, 5vw, 72px);
   line-height: 0.9;
 }
 
 .popLocalCallout h2 em {
-  color: var(--pink);
+  color: var(--mint);
   font-style: normal;
 }
 
@@ -755,7 +757,7 @@ body.legalShell {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 2px solid #fffaf2;
+  border: 2px solid #fff8ec;
   border-radius: 10px;
   padding: 14px 17px;
   font: 800 13px/1 ui-monospace, monospace;
@@ -933,7 +935,7 @@ body.legalShell {
 .popElectric.localMode .categoryLandingHead,
 .popElectric .localCatalogHead {
   background: var(--violet);
-  color: #fffaf2;
+  color: #fff8ec;
   box-shadow: 8px 8px 0 var(--pink);
 }
 
@@ -944,11 +946,11 @@ body.legalShell {
 }
 
 .popElectric.localMode .categoryLandingCount {
-  border-color: #fffaf2;
+  border-color: #fff8ec;
 }
 
 .popElectric.localMode .categoryLandingCount strong {
-  color: var(--pink);
+  color: var(--mint);
 }
 
 .popElectric .categoryListBar {
@@ -968,7 +970,7 @@ body.legalShell {
 .popElectric .categorySorts button.active {
   border-color: var(--ink);
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
 }
 
 .popElectric .categoryLoadMore button,
@@ -978,7 +980,7 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 9px;
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
   padding: 12px 17px;
   font-size: 12px;
   font-weight: 900;
@@ -1107,7 +1109,7 @@ body.legalShell {
 
 .popElectric .option {
   min-height: 74px;
-  border-bottom: 1px solid rgba(33, 21, 43, 0.25);
+  border-bottom: 1px solid rgba(21, 16, 25, 0.25);
   padding: 12px 0;
 }
 
@@ -1163,7 +1165,7 @@ body.legalShell {
 
 .popElectric .doubleVoteAction.active {
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
 }
 
 .popElectric .allItemsExplorer {
@@ -1234,11 +1236,11 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 20px;
   background: var(--violet);
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .rankingContinuationHead h2 {
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .rankingFlowButton {
@@ -1248,7 +1250,7 @@ body.legalShell {
 
 .popElectric .rankingFlowButton.primary {
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
 }
 
 /* Comments and suggestions */
@@ -1288,7 +1290,7 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 9px;
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
   font-size: 12px;
 }
 
@@ -1332,6 +1334,7 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 9px;
   background: var(--pink);
+  color: var(--ink);
   font-size: 13px;
 }
 
@@ -1346,13 +1349,13 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 22px;
   background: var(--violet);
-  color: #fffaf2;
+  color: #fff8ec;
   box-shadow: 9px 9px 0 var(--pink);
 }
 
 .popElectric .profileHeroCopy .profileName,
 .popElectric .moderationHero h1 {
-  color: #fffaf2;
+  color: #fff8ec;
   font-size: clamp(48px, 6vw, 72px);
 }
 
@@ -1369,7 +1372,7 @@ body.legalShell {
 }
 
 .popElectric .profileProgressText strong {
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .profileIdentityPanel {
@@ -1405,12 +1408,12 @@ body.legalShell {
   min-height: 76px;
   align-content: center;
   padding: 12px;
-  border: 1px solid rgba(255, 250, 242, 0.55);
+  border: 1px solid rgba(255, 248, 236, 0.55);
 }
 
 .popElectric .profileMetrics strong,
 .popElectric .profileMetrics small {
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .profileMetrics strong {
@@ -1481,7 +1484,7 @@ body.legalShell {
 .popElectric .profilePhotoActions button:first-of-type,
 .popElectric .moderationActions .approve {
   background: var(--pink);
-  color: #fff;
+  color: var(--ink);
 }
 
 .popElectric .moderationCounts span {
@@ -1489,9 +1492,9 @@ body.legalShell {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  border: 1px solid #fffaf2;
+  border: 1px solid #fff8ec;
   background: rgba(255, 255, 255, 0.09);
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .moderationCounts strong {
@@ -1511,7 +1514,7 @@ body.legalShell {
 
 /* Modal, toast and footer */
 .popElectric .modalLayer {
-  background: rgba(22, 13, 32, 0.68);
+  background: rgba(21, 16, 25, 0.7);
 }
 
 .popElectric .modalCard {
@@ -1532,6 +1535,7 @@ body.legalShell {
 .popElectric .modalActions .main {
   border-color: var(--ink);
   background: var(--pink);
+  color: var(--ink);
 }
 
 .popElectric .toast {
@@ -1547,7 +1551,7 @@ body.legalShell {
 .legalShell .siteFooter {
   border-top: 3px solid var(--ink);
   background: var(--violet-dark);
-  color: #fffaf2;
+  color: #fff8ec;
 }
 
 .popElectric .siteFooterGrid,
@@ -1580,7 +1584,7 @@ body.legalShell {
 .legalShell .siteFooter a,
 .popElectric .siteFooterBottom,
 .legalShell .siteFooterBottom {
-  color: #fffaf2;
+  color: #fff8ec;
   font-size: 12px;
 }
 

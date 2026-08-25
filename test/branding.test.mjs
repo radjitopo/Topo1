@@ -9,12 +9,12 @@ const [logo, mark, popCss, index, institutional] = await Promise.all(
 );
 const compactPopCss = compactSource(popCss);
 
-assert.match(logo, /fill="#4a0790"/, 'the beta master logo must keep the violet seal');
-assert.match(logo, /fill="#ff2f87"/, 'the beta master logo must keep the pink signature');
-assert.match(logo, /fill="#78f5ad"/, 'the last O must carry the mint signal');
-assert.match(logo, /stroke="#26004f"/, 'the upward signal must be drawn inside the last O');
-assert.match(mark, /fill="#4a0790"/);
-assert.match(mark, /fill="#78f5ad"/);
+assert.match(logo, /fill="#2447ff"/, 'the master logo must keep the electric-blue seal');
+assert.match(logo, /fill="#ff4f3d"/, 'the master logo must keep the coral signature');
+assert.match(logo, /fill="#bfff3c"/, 'the last O must carry the lime signal');
+assert.match(logo, /stroke="#151019"/, 'the upward signal must be drawn inside the last O');
+assert.match(mark, /fill="#2447ff"/);
+assert.match(mark, /fill="#bfff3c"/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
@@ -24,8 +24,14 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-9'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-9'));
+assert.ok(index.includes('/pop-electric.css?v=20260825-10'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260825-10'));
+assert.match(index, /name="theme-color" content="#2447ff"/);
+assert.match(
+  compactPopCss,
+  /--cream:#fff8ec;--paper:#ffffff;--ink:#151019;--muted:#68616f;--line:#151019;--violet:#2447ff;--violet-dark:#151019;--pink:#ff4f3d;--mint:#bfff3c;--lilac:#dbe2ff/,
+  'the public shell must use the approved electric-blue, coral, lime and cream palette',
+);
 assert.match(
   index,
   /class="brandSlogan" aria-label="Tudo vira ranking\."><span>Tudo<\/span><span>vira<\/span><span>ranking\.<\/span><\/span>/,
@@ -94,8 +100,8 @@ assert.doesNotMatch(
 );
 assert.match(
   compactPopCss,
-  /\.popElectric\.profileProgressTextstrong\{[^}]*color:#fffaf2/,
-  'profile progress emphasis must remain readable over the violet hero',
+  /\.popElectric\.profileProgressTextstrong\{[^}]*color:#fff8ec/,
+  'profile progress emphasis must remain readable over the electric-blue hero',
 );
 assert.match(
   compactPopCss,

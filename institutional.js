@@ -496,10 +496,10 @@ function renderPage(slug, page) {
 <meta property="og:locale" content="pt_BR"><meta property="og:type" content="website"><meta property="og:site_name" content="TOPO">
 <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo.png">
-<meta name="theme-color" content="#4a0790">
+<meta name="theme-color" content="#2447ff">
 <link rel="icon" href="/topo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css?v=20260824-8">
-<link rel="stylesheet" href="/pop-electric.css?v=20260824-9">
+<link rel="stylesheet" href="/pop-electric.css?v=20260825-10">
 </head>
 <body class="legalShell popElectric">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
