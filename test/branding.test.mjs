@@ -2,52 +2,40 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
-const css = await readFile(new URL('../style.css', import.meta.url), 'utf8');
-const pages = await Promise.all(
-  ['../index.html', '../institutional.js'].map((path) =>
-    readFile(new URL(path, import.meta.url), 'utf8'),
+const [logo, mark, popCss, index, institutional] = await Promise.all(
+  ['../logo-topo.svg', '../topo-mark.svg', '../pop-electric.css', '../index.html', '../institutional.js'].map(
+    (path) => readFile(new URL(path, import.meta.url), 'utf8'),
   ),
 );
-const compactCss = compactSource(css);
+const compactPopCss = compactSource(popCss);
+
+assert.match(logo, /fill="#4a0790"/, 'the beta master logo must keep the violet seal');
+assert.match(logo, /fill="#ff2f87"/, 'the beta master logo must keep the pink signature');
+assert.match(logo, /fill="#78f5ad"/, 'the last O must carry the mint signal');
+assert.match(logo, /stroke="#26004f"/, 'the upward signal must be drawn inside the last O');
+assert.match(mark, /fill="#4a0790"/);
+assert.match(mark, /fill="#78f5ad"/);
+
+assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
+assert.equal(
+  (index.match(/src="\/logo-topo\.svg"/g) || []).length,
+  2,
+  'the header and footer must use the same master SVG',
+);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
+assert.ok(index.includes('/pop-electric.css?v=20260824-1'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-1'));
 
 assert.match(
-  compactCss,
-  /\.logo\{[^}]*color:#465e6d/,
-  'the TOPO wordmark must use the darker editorial blue',
-);
-assert.match(
-  compactCss,
-  /\.logo::after\{[^}]*background:#c9562f/,
-  'the TOPO wordmark must keep the orange dot',
-);
-assert.match(
-  compactCss,
-  /\.siteFooterBrand::after\{[^}]*background:#c9562f/,
-  'the footer must use the same brand signature',
+  compactPopCss,
+  /\.popElectric\.logo\{[^}]*width:168px/,
+  'the master logo needs one shared desktop size rule',
 );
 assert.doesNotMatch(
-  compactCss,
-  /\.homePage \.logo\{/,
-  'the Home and ranking pages must share the same logo sizing rules',
-);
-assert.ok(
-  pages.every((page) => page.includes('/style.css?v=20260824-8')),
-  'every public page must load the current brand stylesheet',
-);
-assert.match(
-  compactCss,
-  /\.portalTrendingLabel\{[^}]*min-width:0[^}]*overflow:hidden/,
-  'long trending labels must stay inside their colored band',
-);
-assert.match(
-  compactCss,
-  /\.localMode\.portalTrending\{[^}]*grid-template-columns:124pxminmax\(0,1fr\)/,
-  'Topo Local must reserve enough room for long city names',
-);
-assert.match(
-  compactCss,
-  /@media\(max-width:700px\)[\s\S]*\.localMode\.portalTrending\{[^}]*grid-template-columns:104pxminmax\(0,1fr\)/,
-  'the mobile Topo Local band must remain compact without clipping the city',
+  compactPopCss,
+  /\.homePage\.logo\{/,
+  'Home and ranking pages must not use different logo sizing rules',
 );
 
-console.log('Branding test passed: darker blue wordmark and orange dot are consistent.');
+console.log('Branding test passed: the 4A beta seal is one SVG across every public shell.');

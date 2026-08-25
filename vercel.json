@@ -10,6 +10,9 @@
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "robots.txt", "use": "@vercel/static" },
     { "src": "style.css", "use": "@vercel/static" },
+    { "src": "pop-electric.css", "use": "@vercel/static" },
+    { "src": "logo-topo.svg", "use": "@vercel/static" },
+    { "src": "topo-mark.svg", "use": "@vercel/static" },
     { "src": "topo-local.js", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
     { "src": "editorial-*.js", "use": "@vercel/static" }

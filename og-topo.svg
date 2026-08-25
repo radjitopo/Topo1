@@ -1,13 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#f3f0e9"/>
-  <rect width="1200" height="34" fill="#191919"/>
-  <rect x="72" y="92" width="1056" height="2" fill="#dedad2"/>
-  <text x="72" y="150" fill="#657986" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">ESCOLHA UM TEMA. MUDE A ORDEM.</text>
-  <text x="64" y="424" fill="#657986" font-family="Georgia, serif" font-size="250" font-weight="700" letter-spacing="-18">TOPO</text>
-  <line x1="812" y1="210" x2="812" y2="456" stroke="#dedad2" stroke-width="3"/>
-  <text x="858" y="280" fill="#191919" font-family="Georgia, serif" font-size="58" font-weight="700">Tudo vira</text>
-  <text x="858" y="348" fill="#191919" font-family="Georgia, serif" font-size="58" font-weight="700">ranking.</text>
-  <text x="858" y="418" fill="#706d67" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2">VOTE · COMPARE · DESCUBRA</text>
-  <rect x="72" y="520" width="1056" height="2" fill="#191919"/>
-  <text x="72" y="570" fill="#706d67" font-family="Arial, sans-serif" font-size="20" font-weight="700">somostopo.com.br</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+  <title id="title">TOPO — Tudo vira ranking</title>
+  <rect width="1200" height="630" fill="#fffaf2"/>
+  <rect x="860" y="-90" width="430" height="430" rx="90" fill="#c6a8ff" transform="rotate(10 860 -90)"/>
+  <circle cx="1080" cy="535" r="155" fill="#78f5ad"/>
+  <path d="M922 422h172v42H993l101 101-30 30-101-101v101h-42z" fill="#ff2f87"/>
+  <g transform="translate(82 65) scale(.6)">
+    <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff2f87"/>
+    <rect x="2" y="2" width="690" height="205" rx="42" fill="#4a0790" stroke="#160d20" stroke-width="4"/>
+    <g transform="translate(70 17) scale(1.08)">
+      <path d="M0 11h112v38H77v119H35V49H0z" fill="#fffaf2"/>
+      <rect x="99" y="10" width="135" height="158" rx="66" fill="#fffaf2"/>
+      <rect x="140" y="45" width="53" height="88" rx="26" fill="#4a0790"/>
+      <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fffaf2"/>
+      <rect x="386" y="10" width="135" height="158" rx="66" fill="#fffaf2"/>
+      <rect x="427" y="45" width="53" height="88" rx="26" fill="#78f5ad"/>
+      <path d="M453.5 108V70m0 0-15 16m15-16 15 16" fill="none" stroke="#26004f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <text x="82" y="355" fill="#160d20" font-family="Impact, Arial Black, Arial, sans-serif" font-size="94" font-weight="900" letter-spacing="-3">TUDO VIRA</text>
+  <text x="82" y="452" fill="#ff2f87" font-family="Impact, Arial Black, Arial, sans-serif" font-size="111" font-weight="900" letter-spacing="-4">RANKING.</text>
+  <text x="88" y="525" fill="#4a0790" font-family="DejaVu Sans Mono, monospace" font-size="23" font-weight="700">VOTE · COMPARE · DESCUBRA</text>
+  <rect x="82" y="568" width="680" height="4" fill="#160d20"/>
+  <text x="82" y="601" fill="#746c7a" font-family="DejaVu Sans Mono, monospace" font-size="17">somostopo.com.br</text>
 </svg>

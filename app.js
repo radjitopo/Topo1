@@ -795,13 +795,19 @@ function whatsAppShareURL(r) {
 function whatsAppShareHTML(r, compact = false) {
   return `<a class="whatsappShare ${compact ? 'compact' : ''}" href="${escapeHTML(whatsAppShareURL(r))}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHTML(r.q)} no WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.4 11.8a8.4 8.4 0 0 1-12.5 7.4L3 20.5l1.3-4.7a8.4 8.4 0 1 1 16.1-4Z"></path><path d="M8.1 7.7c.4 3.5 2.7 5.8 6.2 6.3.7.1 1.4-.9 1-1.4l-1.1-1c-.3-.3-.7-.3-1 0l-.7.5a7.2 7.2 0 0 1-2.7-2.7l.5-.7c.2-.3.2-.7 0-1L9.4 6.6c-.5-.5-1.4.3-1.3 1.1Z"></path></svg>${compact ? '' : '<span>Compartilhar no WhatsApp</span>'}</a>`;
 }
-function portalQuickVotesHTML(r, limit = 3) {
-  const options = (r?.opts || []).slice(0, limit);
-  if (!options.length) return '';
-  return `<div class="portalQuickVotes"><div class="portalQuickHead"><span>Top 3 agora</span><span class="portalQuickLinks">${whatsAppShareHTML(r, true)}<a href="${rankingPath(r.id)}#votar">ver ranking completo →</a></span></div>${options.map((o, i) => `<div class="portalQuickOption"><span class="portalQuickPos">${i + 1}</span><a class="portalQuickName" href="${rankingPath(r.id)}#votar">${escapeHTML(o.label)}</a><span class="portalQuickScore">${fmt(o.score)} pt ${doubleVoteBadgeHTML(o)}</span>${previewVoteActionsHTML(r, o)}</div>`).join('')}</div>`;
-}
 function portalHeroHTML(r) {
-  return `<article class="portalHero"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, true)}</span><span class="portalHeroCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><h1>${escapeHTML(r.q)}</h1></span></a>${portalQuickVotesHTML(r)}</article>`;
+  return `<article class="portalHero"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, true)}</span><span class="portalHeroCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><h1>${escapeHTML(r.q)}</h1><span class="portalHeroAction">abrir ranking →</span></span></a></article>`;
+}
+function popHomeCardHTML(r, index) {
+  const tones = ['pink', 'mint', 'lilac'];
+  return `<a class="popHomeCard popHomeCard${index + 1}" href="${rankingPath(r.id)}"><span class="popHomeCardMedia">${portalImageHTML(r, index === 0)}</span><span class="popHomeCardPill ${tones[index % tones.length]}">${escapeHTML(categoryLabel(r))}</span><span class="popHomeCardCopy"><strong>${escapeHTML(r.q)}</strong><small>${voteCountText(r.votes)}</small></span></a>`;
+}
+function popHomeHeroHTML(featured) {
+  const cards = featured.filter(Boolean).slice(0, 3);
+  return `<section class="popHomeHero"><div class="popHomeHeroCopy"><span class="popEyebrow">RANKING DE TUDO</span><h1>Tudo vira <em>ranking.</em></h1><p>Vote. Compare. Descubra o que está no topo.</p><div class="popHomeActions"><a class="popPrimaryAction" href="#para-voce">COMEÇAR A VOTAR</a><a class="popSecondaryAction" href="/local">TOPO LOCAL</a></div><div class="popHomePulse"><strong>${fmt(community.rankings)}</strong><span>rankings ativos</span><i></i><strong>${fmt(community.votes)}</strong><span>votos da comunidade</span></div></div><div class="popHomeStack" aria-label="Rankings em destaque">${cards.map(popHomeCardHTML).join('')}<span class="popSpark one" aria-hidden="true">✦</span><span class="popSpark two" aria-hidden="true">↗</span></div></section>`;
+}
+function popLocalCalloutHTML() {
+  return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
 }
 function portalSideStoryHTML(r) {
   return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><span class="portalStoryMeta">${voteCountText(r.votes)}</span></div></article>`;
@@ -883,9 +889,8 @@ function categorySortedRankings(list) {
   return categoryPriorityRankings(list);
 }
 function categoryRankCardHTML(r) {
-  const options = (r.opts || []).slice(0, 3),
-    voteHref = `${rankingPath(r.id)}#votar`;
-  return `<article class="categoryRankCard"><div class="categoryRankTop"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">Ver ranking completo →</a></div></div></div><div class="categoryVoteList" aria-label="Top 3 atual">${options.map((o, i) => `<div class="categoryVoteOption"><span class="categoryVotePos">${i + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${escapeHTML(o.label)}</strong><small>${fmt(o.score)} pt ${doubleVoteBadgeHTML(o)}</small></a>${previewVoteActionsHTML(r, o, 'categoryVoteActions')}</div>`).join('')}</div></article>`;
+  const voteHref = `${rankingPath(r.id)}#votar`;
+  return `<article class="categoryRankCard"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">VER RANKING <b>→</b></a></div></div></article>`;
 }
 function categoryRankCardsHTML(list) {
   return list.map(categoryRankCardHTML).join('');
@@ -953,7 +958,7 @@ function renderCategoryHome(visible) {
       ? `Aqui aparecem somente os rankings de ${selectedCity}. Para explorar outro lugar, troque a cidade.`
       : isAll
         ? 'Todos os rankings em uma lista. Os novos e os que você ainda não votou aparecem primeiro.'
-        : 'Todos os rankings deste tema reunidos em um só lugar. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.';
+        : 'Todos os rankings deste tema reunidos em um só lugar. Abra uma disputa para ver os itens e votar.';
   document.title = local
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : `${activeGroup} — rankings no TOPO`;
@@ -992,7 +997,7 @@ function renderSearchResults(visible) {
         searchRelevance(b) - searchRelevance(a) || Number(b.votes || 0) - Number(a.votes || 0),
     );
   document.title = `Busca: ${homeSearch} — ${local ? 'TOPO LOCAL' : 'TOPO'}`;
-  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">${local ? `Busca no TOPO LOCAL · ${escapeHTML(selectedCity)}` : 'Busca em todo o TOPO'}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'}${local ? ` em ${escapeHTML(selectedCity)}` : ', em todas as categorias'}. Toque numa seta para abrir a lista; o voto é confirmado lá dentro.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">${local ? `Busca no TOPO LOCAL · ${escapeHTML(selectedCity)}` : 'Busca em todo o TOPO'}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'}${local ? ` em ${escapeHTML(selectedCity)}` : ', em todas as categorias'}. Abra um ranking para ver os itens e votar.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   document.getElementById('clearHomeSearch')?.addEventListener('click', clearHomeSearch);
   bindVotes();
 }
@@ -1030,12 +1035,13 @@ renderHome = function () {
       (a, b) => topGap(a) - topGap(b) || Number(b.votes || 0) - Number(a.votes || 0),
     ).slice(0, 5),
     remaining = portalVisible.filter((r) => !used.has(r.id)),
-    stories = (remaining.length ? remaining : portalVisible.filter((r) => r.id !== hero.id)).slice(
-      0,
-      10,
-    ),
-    more = remaining.slice(10, 16);
-  feed.innerHTML = `${portalTrendingHTML(portalVisible, 'Em alta')}<section class="portalLeadGrid">${portalHeroHTML(hero)}<div class="portalSideColumn">${support.map(portalSideStoryHTML).join('')}</div>${portalListHTML('Mais votados', topVoted, 'voted')}</section>${categoryRailHTML('Explore por tema')}<div class="portalSectionHead"><div><span>Novos para descobrir</span><h2>Rankings que estão movimentando o TOPO</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${categoryRailHTML('Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
+    forYou = remaining.slice(0, 6),
+    storySource = remaining.slice(6).length
+      ? remaining.slice(6)
+      : portalVisible.filter((r) => r.id !== hero.id),
+    stories = storySource.slice(0, 8),
+    more = storySource.slice(8, 14);
+  feed.innerHTML = `${popHomeHeroHTML([hero, ...support])}${portalTrendingHTML(portalVisible, 'Em alta')}${categoryRailHTML('Explore por tema')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>FEITO PARA VOCÊ</span><h2>Para você</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos para descobrir</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais votados', topVoted, 'voted')}${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${categoryRailHTML('Continue por categoria')}${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
   bindCategoryRails();

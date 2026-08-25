@@ -17,7 +17,17 @@ assert.doesNotMatch(
   /relatedLead/,
   'related ranking cards must not reveal the current leader',
 );
-assert.match(source, /Top 3 agora/, 'the dedicated Top 3 preview must remain visible');
+assert.doesNotMatch(source, /Top 3 agora/, 'Home cards must not reveal the current Top 3');
+assert.match(source, /function popHomeHeroHTML\(/, 'the Pop Electric home hero must use live rankings');
+assert.match(source, /COMEÇAR A VOTAR/, 'the home hero must lead people into the real voting flow');
+
+const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
+assert.ok(categoryCardSource, 'the ranking discovery card must remain testable');
+assert.doesNotMatch(
+  categoryCardSource,
+  /previewVoteActionsHTML|categoryVoteList|Top 3/,
+  'discovery cards must open rankings instead of imitating a vote or revealing the leaders',
+);
 
 const wanted = [
   'homeContextOnlyRankingIds',

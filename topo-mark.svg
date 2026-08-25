@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" role="img" aria-labelledby="title">
+  <title id="title">Símbolo do TOPO</title>
+  <rect x="8" y="8" width="88" height="88" rx="24" fill="#ff2f87"/>
+  <rect x="3" y="3" width="88" height="88" rx="24" fill="#4a0790" stroke="#160d20" stroke-width="3"/>
+  <rect x="21" y="17" width="52" height="62" rx="26" fill="#fffaf2"/>
+  <rect x="36" y="29" width="22" height="38" rx="11" fill="#78f5ad"/>
+  <path d="M47 58V39m0 0-7 8m7-8 7 8" fill="none" stroke="#26004f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

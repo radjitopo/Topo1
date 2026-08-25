@@ -1,0 +1,2115 @@
+:root {
+  --cream: #fffaf2;
+  --paper: #ffffff;
+  --ink: #160d20;
+  --muted: #746c7a;
+  --line: #21152b;
+  --violet: #4a0790;
+  --violet-dark: #26004f;
+  --pink: #ff2f87;
+  --mint: #78f5ad;
+  --lilac: #c6a8ff;
+  --accent: #4a0790;
+  --bg: #fffaf2;
+  --up: #159a50;
+  --upbg: #e6f8ec;
+  --down: #df3445;
+  --downbg: #fff0f1;
+}
+
+body.popElectric,
+body.legalShell {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+.popElectric *,
+.legalShell * {
+  accent-color: var(--pink);
+}
+
+.popElectric button,
+.popElectric input,
+.popElectric select,
+.popElectric textarea,
+.legalShell button,
+.legalShell input {
+  font-family: inherit;
+}
+
+.popElectric a,
+.legalShell a {
+  text-underline-offset: 3px;
+}
+
+.popElectric :focus-visible,
+.legalShell :focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 3px;
+}
+
+.popElectric h1,
+.popElectric h2,
+.popElectric h3,
+.popElectric .authTitle,
+.popElectric .profileName,
+.popElectric .modalTitle,
+.legalShell h1,
+.legalShell h2 {
+  font-family: Impact, "Arial Black", Arial, sans-serif;
+  font-weight: 900;
+}
+
+.popElectric .wrap,
+.legalShell .wrap {
+  width: min(1240px, calc(100% - 48px));
+}
+
+.popElectric .rankingPage .wrap {
+  width: min(920px, calc(100% - 36px));
+}
+
+.rankingPage .feed {
+  width: min(920px, calc(100% - 36px));
+}
+
+.profilePage .feed,
+.moderationPage .feed {
+  width: min(1100px, calc(100% - 40px));
+}
+
+/* Header and global navigation */
+.popElectric .top {
+  background: rgba(255, 250, 242, 0.96);
+  border-bottom: 2px solid var(--ink);
+  box-shadow: none;
+  backdrop-filter: blur(16px);
+}
+
+.popElectric header,
+.popElectric.homePage header,
+.popElectric.rankingPage header {
+  min-height: 90px;
+  height: 90px;
+  display: grid;
+  grid-template-columns: 184px minmax(280px, 640px) 1fr;
+  align-items: center;
+  gap: 32px;
+}
+
+.popElectric .brandBlock {
+  min-width: 0;
+}
+
+.popElectric .logo {
+  display: block;
+  width: 168px;
+  height: auto;
+  color: inherit;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.popElectric .logo::after,
+.legalShell .logo::after,
+.popElectric .siteFooterBrand::after,
+.legalShell .siteFooterBrand::after {
+  display: none;
+  content: none;
+}
+
+.popElectric .logo img,
+.legalShell .logo img,
+.popElectric .siteFooterBrand img,
+.legalShell .siteFooterBrand img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.popElectric .sitePulse {
+  display: none;
+}
+
+.popElectric .siteSearch,
+.popElectric.homePage .siteSearch,
+.popElectric.rankingPage .siteSearch {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--violet-dark);
+  padding: 0 15px;
+}
+
+.popElectric .siteSearchSubmit {
+  width: 25px;
+  height: 25px;
+}
+
+.popElectric .siteSearch svg,
+.popElectric.homePage .siteSearch svg,
+.popElectric.rankingPage .siteSearch svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 2.2;
+}
+
+.popElectric .siteSearch input,
+.popElectric.homePage .siteSearch input,
+.popElectric.rankingPage .siteSearch input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  outline: 0;
+  font: 700 14px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.popElectric .siteSearch input::placeholder {
+  color: #776c7b;
+}
+
+.popElectric .siteSearch kbd {
+  display: inline-flex;
+  border: 1px solid #d6c8df;
+  border-radius: 6px;
+  background: #f1e8f6;
+  color: #6d5c74;
+  padding: 4px 7px;
+  font: 700 11px/1 ui-monospace, monospace;
+}
+
+.popElectric .account {
+  min-width: 0;
+  gap: 12px;
+}
+
+.popElectric .accountLink {
+  color: var(--violet-dark);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.popElectric .accountEnter {
+  min-height: 42px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--pink);
+  color: #fff;
+  padding: 9px 17px;
+}
+
+.popElectric .accountEnter:hover,
+.popElectric .accountEnter:focus-visible {
+  background: var(--violet);
+  color: #fff;
+}
+
+.popElectric .voteMeter {
+  border-left: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.popElectric .notificationButton {
+  width: 43px;
+  height: 43px;
+  border: 2px solid transparent;
+  color: var(--violet-dark);
+}
+
+.popElectric .notificationButton svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+.popElectric .notificationButton:hover,
+.popElectric .notificationButton:focus-visible,
+.popElectric .notificationButton[aria-expanded='true'] {
+  border-color: var(--ink);
+  background: var(--lilac);
+}
+
+.popElectric .notificationBadge {
+  top: 0;
+  right: -1px;
+  min-width: 18px;
+  height: 18px;
+  border-color: var(--cream);
+  background: var(--pink);
+  font-size: 10px;
+}
+
+.popElectric .notificationPanel {
+  right: -30px;
+  width: min(390px, calc(100vw - 24px));
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 8px 8px 0 var(--violet-dark);
+}
+
+.popElectric .notificationPanelHead strong {
+  color: var(--violet-dark);
+  font: 900 22px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .notificationPanelHead span,
+.popElectric .notificationPanelHead button,
+.popElectric .notificationCopy strong,
+.popElectric .notificationCopy > span,
+.popElectric .notificationCopy time,
+.popElectric .notificationEmpty strong,
+.popElectric .notificationEmpty span {
+  font-size: 12px;
+}
+
+.popElectric .notificationPanelHead button {
+  color: var(--pink);
+}
+
+.popElectric .notificationItem.unread {
+  background: #f5efff;
+}
+
+.popElectric .notificationItem.unread::after {
+  background: var(--pink);
+}
+
+.popElectric .notificationKind {
+  background: var(--lilac);
+  color: var(--violet-dark);
+}
+
+.popElectric .notificationKind.double_vote {
+  background: var(--mint);
+  color: var(--violet-dark);
+}
+
+.popElectric .experienceWrap {
+  border-top: 1px solid rgba(33, 21, 43, 0.2);
+  background: #fff;
+}
+
+.popElectric .experienceInner {
+  min-height: 43px;
+}
+
+.popElectric .experienceSwitch {
+  gap: 28px;
+}
+
+.popElectric .experienceLink {
+  gap: 7px;
+  border-bottom-width: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.popElectric .experienceLink img {
+  display: none;
+}
+
+.popElectric .experienceLink.active,
+.popElectric .experienceLink.local.active {
+  border-color: var(--pink);
+  color: var(--violet-dark);
+}
+
+.popElectric .localMark {
+  width: 9px;
+  height: 9px;
+  background: var(--mint);
+  border: 1px solid var(--ink);
+}
+
+.popElectric .cityPicker {
+  color: var(--violet);
+}
+
+.popElectric .cityPicker svg {
+  width: 17px;
+  height: 17px;
+}
+
+.popElectric .cityPicker select {
+  max-width: 260px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.popElectric .groupsWrap,
+.popElectric.homePage .groupsWrap {
+  border-top: 1px solid rgba(33, 21, 43, 0.22);
+  border-bottom: 0;
+  background: var(--cream);
+}
+
+.popElectric .groups,
+.popElectric.homePage .groups {
+  gap: 32px;
+  padding: 0;
+}
+
+.popElectric .groupBtn,
+.popElectric.homePage .groupBtn {
+  min-height: 58px;
+  border: 0;
+  border-bottom: 4px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 19px 0 15px;
+  font: 800 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.popElectric .groupBtn:hover,
+.popElectric .groupBtn:focus-visible,
+.popElectric .groupBtn.active,
+.popElectric.homePage .groupBtn.active {
+  border-bottom-color: var(--pink);
+  background: transparent;
+  color: var(--violet);
+}
+
+/* Pop home */
+.popElectric.homePage .feed {
+  padding: 0 0 100px;
+}
+
+.popHomeHero {
+  min-height: 585px;
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  align-items: center;
+  gap: 48px;
+  padding: 54px 0 68px;
+}
+
+.popEyebrow,
+.popElectric .portalKicker,
+.popElectric .authEyebrow,
+.popElectric .sectionLabel,
+.popElectric .suggestionEyebrow,
+.popElectric .moderationKind,
+.legalShell .legalKicker {
+  color: var(--violet);
+  font: 900 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.popHomeHero h1 {
+  max-width: 620px;
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-size: clamp(66px, 7.4vw, 104px);
+  line-height: 0.82;
+  letter-spacing: -0.052em;
+}
+
+.popHomeHero h1 em {
+  display: block;
+  color: var(--pink);
+  font-style: normal;
+}
+
+.popHomeHeroCopy > p {
+  margin: 28px 0 25px;
+  font: 700 clamp(16px, 1.5vw, 20px)/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.popHomeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.popHomeActions a {
+  min-height: 53px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  padding: 0 24px;
+  color: var(--ink);
+  text-decoration: none;
+  font: 900 17px/1 Impact, "Arial Black", sans-serif;
+  letter-spacing: 0.035em;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.popHomeActions a:hover {
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
+.popHomeActions .popPrimaryAction {
+  background: var(--pink);
+  color: #fff;
+}
+
+.popHomeActions .popSecondaryAction {
+  background: transparent;
+}
+
+.popHomePulse {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 23px;
+  color: var(--muted);
+  font: 700 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.popHomePulse strong {
+  color: var(--violet-dark);
+  font: 900 23px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popHomePulse i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pink);
+  margin: 0 3px;
+}
+
+.popHomeStack {
+  position: relative;
+  height: 450px;
+}
+
+.popHomeCard {
+  position: absolute;
+  width: 34%;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  border-radius: 17px;
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 7px 8px 0 rgba(38, 0, 79, 0.18);
+  transition: transform 180ms ease, z-index 180ms ease;
+}
+
+.popHomeCard:hover {
+  z-index: 6;
+  transform: rotate(0deg) translateY(-12px) !important;
+}
+
+.popHomeCard1 {
+  left: 0;
+  top: 45px;
+  transform: rotate(-3deg);
+}
+
+.popHomeCard2 {
+  left: 31%;
+  top: 0;
+  transform: rotate(2deg);
+}
+
+.popHomeCard3 {
+  left: 62%;
+  top: 52px;
+  transform: rotate(5deg);
+}
+
+.popHomeCardMedia {
+  height: 235px;
+  display: block;
+  overflow: hidden;
+  background: var(--violet);
+}
+
+.popHomeCardMedia img,
+.popElectric .categoryRankMedia img,
+.popElectric .portalStoryMedia img,
+.popElectric .portalSideMedia img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.popHomeCardPill {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: var(--pink);
+  color: #fff;
+  font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-transform: uppercase;
+}
+
+.popHomeCardPill.mint {
+  background: var(--mint);
+  color: var(--ink);
+}
+
+.popHomeCardPill.lilac {
+  background: var(--lilac);
+  color: var(--ink);
+}
+
+.popHomeCardCopy {
+  min-height: 126px;
+  display: flex;
+  flex-direction: column;
+  padding: 17px 18px;
+}
+
+.popHomeCardCopy strong {
+  display: block;
+  font: 900 clamp(21px, 1.8vw, 28px)/0.98 Impact, "Arial Black", sans-serif;
+}
+
+.popHomeCardCopy small {
+  margin-top: auto;
+  padding-top: 14px;
+  color: var(--muted);
+  font: 700 12px/1 ui-monospace, monospace;
+}
+
+.popSpark {
+  position: absolute;
+  color: var(--pink);
+  font-size: 48px;
+  font-weight: 900;
+}
+
+.popSpark.one {
+  top: -36px;
+  right: 2px;
+}
+
+.popSpark.two {
+  bottom: -2px;
+  left: 27%;
+}
+
+.popElectric .portalTrending {
+  grid-template-columns: 108px minmax(0, 1fr);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  margin: 0 0 25px;
+}
+
+.popElectric .portalTrendingLabel {
+  background: var(--pink);
+  font-size: 12px;
+}
+
+.popElectric .portalTrending a {
+  width: 280px;
+  max-width: 280px;
+  font-size: 12px;
+  padding-block: 14px;
+}
+
+.popElectric .categoryRail {
+  grid-template-columns: 170px minmax(0, 1fr);
+  border: 0;
+  border-top: 1px solid rgba(33, 21, 43, 0.4);
+  border-bottom: 1px solid rgba(33, 21, 43, 0.4);
+  background: transparent;
+  padding: 17px 0;
+  margin: 28px 0;
+}
+
+.popElectric .categoryRailLabel {
+  color: var(--violet);
+  font-size: 12px;
+}
+
+.popElectric .categoryRailButton {
+  min-height: 38px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+.popElectric .categoryRailButton:hover,
+.popElectric .categoryRailButton:focus-visible {
+  border-color: var(--ink);
+  background: var(--lilac);
+}
+
+.popElectric .portalSectionHead {
+  border-top: 0;
+  margin: 62px 0 27px;
+  padding-top: 0;
+}
+
+.popElectric .portalSectionHead > div > span {
+  color: var(--violet);
+  font: 900 12px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.14em;
+}
+
+.popElectric .portalSectionHead h2 {
+  margin: 6px 0 0;
+  font-size: clamp(46px, 5vw, 72px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.popElectric .portalShuffle,
+.popElectric .categoryShuffle {
+  min-height: 42px;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--violet);
+  padding: 9px 13px;
+  font-size: 12px;
+}
+
+.popElectric .categoryRankGrid,
+.popElectric .popHomeGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.popElectric .categoryRankCard {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 0 0 transparent;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.popElectric .categoryRankCard:hover {
+  box-shadow: 6px 6px 0 var(--lilac);
+  transform: translate(-2px, -2px);
+}
+
+.popElectric .categoryRankMedia {
+  height: 190px;
+  display: block;
+  overflow: hidden;
+  background: var(--violet);
+}
+
+.popElectric .categoryRankCopy {
+  min-height: 214px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px;
+}
+
+.popElectric .categoryRankMeta {
+  color: var(--muted);
+  font: 700 12px/1.2 ui-monospace, monospace;
+}
+
+.popElectric .categoryRankMeta .category,
+.popElectric .category {
+  color: var(--violet);
+  font-size: 12px;
+}
+
+.popElectric .newBadge {
+  border: 1px solid var(--ink);
+  background: var(--mint);
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.popElectric .categoryRankTitle h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  margin: 13px 0 18px;
+  padding-bottom: 0.12em;
+  color: var(--ink);
+  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.popElectric .categoryRankLinks {
+  margin-top: auto;
+}
+
+.popElectric .categoryRankLinks .categoryVoteCta {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-bottom: 3px solid var(--pink);
+  border-radius: 0;
+  color: var(--violet-dark);
+  padding: 0 0 3px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.popElectric .categoryRankLinks .whatsappShare.compact {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--ink);
+}
+
+.popLocalCallout {
+  min-height: 230px;
+  display: grid;
+  grid-template-columns: 1.2fr auto 1fr 62px;
+  align-items: center;
+  gap: 40px;
+  margin: 76px calc(50% - 50vw);
+  padding: 45px max(24px, calc((100vw - 1240px) / 2));
+  background: var(--violet);
+  color: #fffaf2;
+}
+
+.popLocalCallout .popEyebrow {
+  color: var(--mint);
+}
+
+.popLocalCallout h2 {
+  margin: 5px 0 6px;
+  color: #fffaf2;
+  font-size: clamp(48px, 5vw, 72px);
+  line-height: 0.9;
+}
+
+.popLocalCallout h2 em {
+  color: var(--pink);
+  font-style: normal;
+}
+
+.popLocalCallout p {
+  margin: 0;
+  font: 700 15px/1.4 ui-monospace, monospace;
+}
+
+.popLocalCity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #fffaf2;
+  border-radius: 10px;
+  padding: 14px 17px;
+  font: 800 13px/1 ui-monospace, monospace;
+}
+
+.popLocalCity span {
+  color: var(--mint);
+}
+
+.popLocalTopics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 26px;
+  font: 800 13px/1.2 ui-monospace, monospace;
+}
+
+.popLocalCallout > a {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--mint);
+  color: var(--violet-dark);
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.popElectric .portalNewsLayout {
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 32px;
+}
+
+.popElectric .portalStoryFeed {
+  gap: 18px;
+}
+
+.popElectric .portalStory {
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.popElectric .portalStory.compact {
+  border-top: 9px solid var(--pink);
+}
+
+.popElectric .portalStoryCopy {
+  padding: 18px;
+}
+
+.popElectric .portalStoryCopy h2,
+.popElectric .portalSideCopy h2 {
+  margin: 8px 0 12px;
+  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.popElectric .portalStory.feature h2 {
+  font-size: 42px;
+}
+
+.popElectric .portalStoryFoot,
+.popElectric .portalStoryMeta,
+.popElectric .portalRankPanel small {
+  font-size: 12px;
+}
+
+.popElectric .portalStoryFoot a {
+  color: var(--violet);
+}
+
+.popElectric .portalRankPanel {
+  border-top: 9px solid var(--violet-dark);
+  background: #fff;
+  padding: 0 16px 8px;
+}
+
+.popElectric .portalRankPanel + .portalRankPanel {
+  margin-top: 28px;
+}
+
+.popElectric .portalRankPanel.disputed {
+  border-top-color: var(--pink);
+}
+
+.popElectric .portalPanelTitle {
+  font-size: 13px;
+}
+
+.popElectric .portalRankPanel li {
+  grid-template-columns: 38px 1fr;
+  padding: 14px 0;
+}
+
+.popElectric .portalListNum {
+  color: var(--violet);
+  font: 900 24px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .portalRankPanel strong {
+  font: 900 17px/1.05 Arial, sans-serif;
+}
+
+.popElectric .portalMore {
+  border-top: 2px solid var(--ink);
+}
+
+.popElectric .portalMoreGrid {
+  gap: 20px;
+}
+
+.popElectric .portalSideStory {
+  border-bottom: 2px solid var(--ink);
+}
+
+.popElectric .portalSideMedia {
+  border-radius: 13px;
+}
+
+.popElectric .portalIdeaCallout {
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: var(--lilac);
+  box-shadow: 8px 8px 0 var(--pink);
+}
+
+.popElectric .end {
+  color: var(--violet);
+  font-size: 12px;
+}
+
+/* Category, search and local catalogs */
+.popElectric .categoryLandingHead,
+.popElectric .searchResultsHead {
+  border: 2px solid var(--ink);
+  border-radius: 19px;
+  background: #fff;
+  padding: 29px 31px;
+  margin: 28px 0 18px;
+  box-shadow: 7px 7px 0 var(--lilac);
+}
+
+.popElectric .categoryLandingHead h1,
+.popElectric .searchResultsHead h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.popElectric .categoryLandingHead p,
+.popElectric .searchResultsHead p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.popElectric .categoryLandingCount {
+  border-left: 2px solid var(--ink);
+}
+
+.popElectric .categoryLandingCount strong {
+  color: var(--pink);
+  font: 900 45px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .categoryLandingCount span {
+  font-size: 11px;
+}
+
+.popElectric.localMode .categoryLandingHead,
+.popElectric .localCatalogHead {
+  background: var(--violet);
+  color: #fffaf2;
+  box-shadow: 8px 8px 0 var(--pink);
+}
+
+.popElectric.localMode .categoryLandingHead .portalKicker,
+.popElectric.localMode .categoryLandingHead p,
+.popElectric.localMode .categoryLandingCount span {
+  color: var(--mint);
+}
+
+.popElectric.localMode .categoryLandingCount {
+  border-color: #fffaf2;
+}
+
+.popElectric.localMode .categoryLandingCount strong {
+  color: var(--pink);
+}
+
+.popElectric .categoryListBar {
+  border-bottom: 2px solid var(--ink);
+  padding: 10px 0 16px;
+}
+
+.popElectric .categorySorts button {
+  min-height: 38px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 13px;
+  font-size: 12px;
+}
+
+.popElectric .categorySorts button.active {
+  border-color: var(--ink);
+  background: var(--pink);
+  color: #fff;
+}
+
+.popElectric .categoryLoadMore button,
+.popElectric .localExploreButton,
+.popElectric .searchResultsHead button,
+.popElectric .portalEmpty button {
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: var(--pink);
+  color: #fff;
+  padding: 12px 17px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.popElectric .categoryLoadMore span,
+.popElectric .localDataCredit,
+.popElectric .localCityOptions span {
+  font-size: 12px;
+}
+
+.popElectric .localCatalogFooter {
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: var(--mint);
+  box-shadow: 8px 8px 0 var(--violet);
+}
+
+.popElectric .localCatalogFooter h2,
+.popElectric .portalEmpty h1 {
+  font-size: 48px;
+  line-height: 0.95;
+}
+
+.popElectric .localCityOptions button {
+  border: 2px solid var(--ink);
+  background: #fff;
+  font-size: 13px;
+}
+
+.popElectric .searchRankList {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.popElectric .searchRankList .categoryRankMedia {
+  height: 190px;
+}
+
+.popElectric .searchRankList .categoryRankTitle h2 {
+  font-size: 29px;
+}
+
+/* Ranking and voting */
+.popElectric.rankingPage .feed {
+  padding-top: 26px;
+}
+
+.popElectric .internalHead {
+  margin-bottom: 15px;
+}
+
+.popElectric .backLink,
+.popElectric .internalMeta,
+.popElectric .total,
+.popElectric .rankFoot,
+.popElectric .fullLink {
+  font-size: 12px;
+}
+
+.popElectric .backLink,
+.popElectric .fullLink {
+  color: var(--violet);
+}
+
+.popElectric .rank,
+.popElectric .rank.rankingMain,
+.popElectric .contentSection,
+.popElectric .commentsSection {
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: #fff;
+}
+
+.popElectric .rank.rankingMain {
+  padding: 25px;
+  box-shadow: 8px 8px 0 var(--lilac);
+}
+
+.popElectric .rankingMain > h2 {
+  margin: 10px 0 20px;
+  font-size: clamp(46px, 6vw, 68px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.popElectric .imageStrip {
+  height: 310px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+}
+
+.popElectric .statsRow {
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.popElectric .statBox {
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--cream);
+  padding: 13px;
+}
+
+.popElectric .statLabel {
+  font-size: 11px;
+}
+
+.popElectric .statValue {
+  color: var(--violet);
+  font: 900 27px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .rankingResultHead {
+  border-top: 2px solid var(--ink);
+  font-size: 11px;
+}
+
+.popElectric .rankingResultHead strong {
+  font-size: 12px;
+}
+
+.popElectric .options {
+  border-top: 2px solid var(--ink);
+}
+
+.popElectric .option {
+  min-height: 74px;
+  border-bottom: 1px solid rgba(33, 21, 43, 0.25);
+  padding: 12px 0;
+}
+
+.popElectric .pos {
+  color: var(--violet);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 22px;
+}
+
+.popElectric .name {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.popElectric .score {
+  font-size: 12px;
+}
+
+.popElectric .react {
+  width: 44px;
+  height: 44px;
+  border: 2px solid currentColor;
+  font-size: 27px;
+}
+
+.popElectric .react.up {
+  background: var(--upbg);
+  color: var(--up);
+}
+
+.popElectric .react.down {
+  background: var(--downbg);
+  color: var(--down);
+}
+
+.popElectric .react.up.selected {
+  background: var(--up);
+  color: #fff;
+}
+
+.popElectric .react.down.selected {
+  background: var(--down);
+  color: #fff;
+}
+
+.popElectric .doubleVoteAction,
+.popElectric .doubleVoteBadge {
+  border-color: var(--ink);
+  background: var(--mint);
+  color: var(--violet-dark);
+  font-size: 11px;
+}
+
+.popElectric .doubleVoteAction.active {
+  background: var(--pink);
+  color: #fff;
+}
+
+.popElectric .allItemsExplorer {
+  border-top: 2px solid var(--ink);
+}
+
+.popElectric .allItemsToggle {
+  border: 2px solid var(--ink);
+  border-radius: 13px;
+  background: var(--cream);
+}
+
+.popElectric .allItemsToggle[aria-expanded='true'] {
+  background: var(--lilac);
+  border-color: var(--ink);
+}
+
+.popElectric .allItemsToggle strong {
+  font: 900 21px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .allItemsToggle small {
+  color: var(--violet);
+  font-size: 12px;
+}
+
+.popElectric .allItemsToggle > b {
+  background: var(--pink);
+}
+
+.popElectric .rankingShareRow .whatsappShare,
+.popElectric .whatsappShare {
+  border: 1px solid var(--ink);
+  background: #1c8f55;
+  color: #fff;
+  font-size: 12px;
+}
+
+.popElectric .contentSection {
+  padding: 22px;
+  margin-top: 18px;
+}
+
+.popElectric .aboutText {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.popElectric .curioCard,
+.popElectric .relatedCard {
+  border: 2px solid var(--ink);
+  background: var(--cream);
+}
+
+.popElectric .curioNum {
+  color: var(--pink);
+  font: 900 28px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .curioText,
+.popElectric .relatedCat,
+.popElectric .relatedTitle {
+  font-size: 12px;
+}
+
+.popElectric .rankingContinuation {
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: var(--violet);
+  color: #fffaf2;
+}
+
+.popElectric .rankingContinuationHead h2 {
+  color: #fffaf2;
+}
+
+.popElectric .rankingFlowButton {
+  border: 2px solid var(--ink);
+  background: #fff;
+}
+
+.popElectric .rankingFlowButton.primary {
+  background: var(--pink);
+  color: #fff;
+}
+
+/* Comments and suggestions */
+.popElectric .commentsShell,
+.popElectric .commentsSection,
+.popElectric .rankingSuggestion,
+.popElectric .rankingSuggestionForm {
+  border-color: var(--ink);
+}
+
+.popElectric .commentsTitle,
+.popElectric .commentsCount,
+.popElectric .commentAuthor,
+.popElectric .commentMeta,
+.popElectric .commentText,
+.popElectric .commentLimit,
+.popElectric .commentsLoading,
+.popElectric .suggestionField span,
+.popElectric .suggestionField small,
+.popElectric .suggestionFormStatus {
+  font-size: 12px;
+}
+
+.popElectric .commentForm textarea,
+.popElectric .suggestionField input,
+.popElectric .suggestionField select,
+.popElectric .profileNameForm input {
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.popElectric .commentForm button,
+.popElectric .suggestionSubmit,
+.popElectric .profileNameForm button {
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: var(--pink);
+  color: #fff;
+  font-size: 12px;
+}
+
+/* Auth */
+.popElectric .authShell {
+  max-width: 610px;
+  margin: 44px auto 90px;
+}
+
+.popElectric .authCard {
+  border: 2px solid var(--ink);
+  border-radius: 22px;
+  background: #fff;
+  padding: 32px;
+  box-shadow: 9px 9px 0 var(--lilac);
+}
+
+.popElectric .authTitle {
+  margin: 8px 0 12px;
+  color: var(--violet-dark);
+  font-size: 52px;
+  line-height: 0.95;
+}
+
+.popElectric .authIntro,
+.popElectric .authNote,
+.popElectric .authFine,
+.popElectric .field span,
+.popElectric .formError,
+.popElectric .codeStepActions button {
+  font-size: 12px;
+}
+
+.popElectric .field input {
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.popElectric .primaryBtn {
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: var(--pink);
+  font-size: 13px;
+}
+
+/* Profile and moderation */
+.popElectric.profilePage .groupsWrap,
+.popElectric.moderationPage .groupsWrap {
+  display: none;
+}
+
+.popElectric .profileGameHero,
+.popElectric .moderationHero {
+  border: 2px solid var(--ink);
+  border-radius: 22px;
+  background: var(--violet);
+  color: #fffaf2;
+  box-shadow: 9px 9px 0 var(--pink);
+}
+
+.popElectric .profileHeroCopy .profileName,
+.popElectric .moderationHero h1 {
+  color: #fffaf2;
+  font-size: clamp(48px, 6vw, 72px);
+}
+
+.popElectric .profileHeroCopy .profileEmail,
+.popElectric .profileProgressText,
+.popElectric .moderationHero p {
+  color: var(--lilac);
+  font-size: 13px;
+}
+
+.popElectric .profileAvatarRing {
+  background: var(--mint);
+}
+
+.popElectric .profileAvatar {
+  border: 3px solid var(--ink);
+  background: var(--cream);
+  color: var(--violet-dark);
+}
+
+.popElectric .profileBadges span {
+  border: 1px solid var(--ink);
+  background: var(--mint);
+  color: var(--violet-dark);
+  font-size: 11px;
+}
+
+.popElectric .profileMetrics > span {
+  border: 1px solid rgba(255, 250, 242, 0.55);
+}
+
+.popElectric .profileMetrics strong,
+.popElectric .profileMetrics small {
+  color: #fffaf2;
+}
+
+.popElectric .profileMetrics strong {
+  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+}
+
+.popElectric .profileMetrics small,
+.popElectric .profileSectionHead > span,
+.popElectric .profilePowerCopy small,
+.popElectric .profilePowerStatus,
+.popElectric .profileComingSoon,
+.popElectric .profilePhotoNote,
+.popElectric .profileVoteLegend,
+.popElectric .profileSubhead,
+.popElectric .recentOption,
+.popElectric .recentQuestion,
+.popElectric .recentTime,
+.popElectric .profileCategoryLabel,
+.popElectric .profileLeaderboardPerson strong,
+.popElectric .profileLeaderboardPerson small,
+.popElectric .suggestionHistoryItem,
+.popElectric .moderationMeta,
+.popElectric .moderationNote {
+  font-size: 12px;
+}
+
+.popElectric .profileSection,
+.popElectric .moderationCard,
+.popElectric .moderationSection {
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.popElectric .profileSectionHead .sectionLabel,
+.popElectric .moderationSectionHead h2 {
+  color: var(--violet);
+}
+
+.popElectric .profilePowerIcon.unlocked,
+.popElectric .profileLeaderboardPosition.top1 {
+  background: var(--mint);
+  color: var(--violet-dark);
+}
+
+.popElectric .profileVoteSplit .up {
+  background: var(--up);
+}
+
+.popElectric .profileVoteSplit .down {
+  background: var(--down);
+}
+
+.popElectric .profilePhotoActions button,
+.popElectric .logoutBtn,
+.popElectric .moderationActions button,
+.popElectric .moderationProfileLink {
+  border: 2px solid var(--ink);
+  font-size: 12px;
+}
+
+.popElectric .profilePhotoActions button:first-of-type,
+.popElectric .moderationActions .approve {
+  background: var(--pink);
+  color: #fff;
+}
+
+.popElectric .moderationCounts span {
+  border: 1px solid #fffaf2;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Modal, toast and footer */
+.popElectric .modalLayer {
+  background: rgba(22, 13, 32, 0.68);
+}
+
+.popElectric .modalCard {
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 9px 9px 0 var(--pink);
+}
+
+.popElectric .modalKicker,
+.popElectric .modalText,
+.popElectric .howCopy,
+.popElectric .modalActions a,
+.popElectric .modalActions button {
+  font-size: 12px;
+}
+
+.popElectric .modalActions .main {
+  border-color: var(--ink);
+  background: var(--pink);
+}
+
+.popElectric .toast {
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--violet-dark);
+  color: #fff;
+  box-shadow: 5px 5px 0 var(--pink);
+  font-size: 13px;
+}
+
+.popElectric .siteFooter,
+.legalShell .siteFooter {
+  border-top: 3px solid var(--ink);
+  background: var(--violet-dark);
+  color: #fffaf2;
+}
+
+.popElectric .siteFooterGrid,
+.legalShell .siteFooterGrid {
+  padding-top: 54px;
+}
+
+.popElectric .siteFooterBrand,
+.legalShell .siteFooterBrand {
+  display: block;
+  width: 190px;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+}
+
+.popElectric .siteFooterIntro p,
+.legalShell .siteFooterIntro p {
+  color: var(--lilac);
+  font-size: 13px;
+}
+
+.popElectric .siteFooterColumn strong,
+.legalShell .siteFooterColumn strong {
+  color: var(--mint);
+  font-size: 12px;
+}
+
+.popElectric .siteFooter a,
+.legalShell .siteFooter a,
+.popElectric .siteFooterBottom,
+.legalShell .siteFooterBottom {
+  color: #fffaf2;
+  font-size: 12px;
+}
+
+/* Institutional pages */
+.legalShell .legalTop {
+  border-bottom: 2px solid var(--ink);
+  background: var(--cream);
+}
+
+.legalShell .legalTop .wrap {
+  min-height: 92px;
+}
+
+.legalShell .legalTop .logo {
+  width: 168px;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+}
+
+.legalShell .legalBack {
+  color: var(--violet);
+  font-size: 12px;
+}
+
+.legalShell .legalPage {
+  padding-top: 64px;
+}
+
+.legalShell .legalPage > h1 {
+  max-width: 920px;
+  color: var(--violet-dark);
+  font-size: clamp(58px, 7vw, 94px);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+}
+
+.legalShell .legalLead {
+  max-width: 820px;
+  font-size: 18px;
+}
+
+.legalShell .legalUpdated,
+.legalShell .legalSection p,
+.legalShell .legalSection li,
+.legalShell .legalReviewNote,
+.legalShell .legalFine {
+  font-size: 13px;
+}
+
+.legalShell .legalSection {
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.legalShell .legalSection h2 {
+  color: var(--violet);
+  font-size: 32px;
+}
+
+.legalShell .legalCallout {
+  background: var(--lilac);
+  box-shadow: 8px 8px 0 var(--pink);
+}
+
+.legalShell .legalAction {
+  border-bottom: 3px solid var(--pink);
+  color: var(--violet-dark);
+}
+
+@media (max-width: 980px) {
+  .popElectric .wrap,
+  .legalShell .wrap {
+    width: min(100% - 32px, 920px);
+  }
+
+  .popElectric header,
+  .popElectric.homePage header,
+  .popElectric.rankingPage header {
+    grid-template-columns: 155px minmax(220px, 1fr) auto;
+    gap: 18px;
+  }
+
+  .popElectric .logo {
+    width: 150px;
+  }
+
+  .popElectric .voteMeter {
+    display: none;
+  }
+
+  .popHomeHero {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 30px;
+  }
+
+  .popHomeCardMedia {
+    height: 190px;
+  }
+
+  .popHomeCardCopy {
+    min-height: 118px;
+  }
+
+  .popHomeStack {
+    height: 390px;
+  }
+
+  .popElectric .categoryRankGrid,
+  .popElectric .popHomeGrid,
+  .popElectric .searchRankList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .popLocalCallout {
+    grid-template-columns: 1fr auto 58px;
+  }
+
+  .popLocalTopics {
+    display: none;
+  }
+
+  .popElectric .portalNewsLayout {
+    grid-template-columns: minmax(0, 1fr) 270px;
+  }
+}
+
+@media (max-width: 700px) {
+  .popElectric .wrap,
+  .legalShell .wrap,
+  .rankingPage .feed,
+  .profilePage .feed,
+  .moderationPage .feed {
+    width: calc(100% - 24px);
+  }
+
+  .popElectric header,
+  .popElectric.homePage header,
+  .popElectric.rankingPage header {
+    min-height: 72px;
+    height: 72px;
+    grid-template-columns: 116px 1fr auto;
+    gap: 11px;
+  }
+
+  .popElectric .logo {
+    width: 114px;
+  }
+
+  .popElectric .siteSearch,
+  .popElectric.homePage .siteSearch,
+  .popElectric.rankingPage .siteSearch {
+    min-height: 43px;
+    padding: 0 10px;
+  }
+
+  .popElectric .siteSearch input,
+  .popElectric.homePage .siteSearch input,
+  .popElectric.rankingPage .siteSearch input {
+    font-size: 12px;
+  }
+
+  .popElectric .siteSearch kbd,
+  .popElectric .voteMeter,
+  .popElectric .accountLink:not(.accountEnter) {
+    display: none;
+  }
+
+  .popElectric .accountEnter {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .popElectric .notificationButton {
+    width: 38px;
+    height: 38px;
+  }
+
+  .popElectric .experienceInner {
+    min-height: 40px;
+  }
+
+  .popElectric .experienceSwitch {
+    gap: 19px;
+  }
+
+  .popElectric .experienceLink {
+    font-size: 11px;
+  }
+
+  .popElectric .cityPicker select {
+    max-width: 145px;
+    font-size: 11px;
+  }
+
+  .popElectric .groups,
+  .popElectric.homePage .groups {
+    gap: 24px;
+  }
+
+  .popElectric .groupBtn,
+  .popElectric.homePage .groupBtn {
+    min-height: 49px;
+    padding: 16px 0 12px;
+    font-size: 12px;
+  }
+
+  .popHomeHero {
+    min-height: 0;
+    display: block;
+    padding: 38px 0 42px;
+  }
+
+  .popHomeHero h1 {
+    max-width: 500px;
+    font-size: clamp(62px, 20vw, 88px);
+  }
+
+  .popHomeHeroCopy > p {
+    font-size: 15px;
+  }
+
+  .popHomeActions a {
+    min-height: 48px;
+    padding-inline: 18px;
+    font-size: 15px;
+  }
+
+  .popHomePulse {
+    font-size: 11px;
+  }
+
+  .popHomeStack {
+    height: 330px;
+    margin-top: 42px;
+  }
+
+  .popHomeCard {
+    width: 42%;
+  }
+
+  .popHomeCard1 {
+    left: 0;
+    top: 35px;
+  }
+
+  .popHomeCard2 {
+    left: 29%;
+  }
+
+  .popHomeCard3 {
+    left: 58%;
+    top: 38px;
+  }
+
+  .popHomeCardMedia {
+    height: 155px;
+  }
+
+  .popHomeCardCopy {
+    min-height: 105px;
+    padding: 13px;
+  }
+
+  .popHomeCardCopy strong {
+    font-size: 18px;
+  }
+
+  .popHomeCardPill {
+    top: 9px;
+    left: 9px;
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+
+  .popSpark {
+    font-size: 38px;
+  }
+
+  .popElectric .portalTrending,
+  .popElectric.localMode .portalTrending {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .popElectric .portalTrendingLabel,
+  .popElectric.localMode .portalTrendingLabel {
+    font-size: 10px;
+  }
+
+  .popElectric .portalTrending a {
+    width: 230px;
+    max-width: 230px;
+  }
+
+  .popElectric .categoryRail {
+    display: block;
+    padding: 14px 0;
+  }
+
+  .popElectric .categoryRailLabel {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .popElectric .portalSectionHead {
+    align-items: flex-end;
+    margin-top: 48px;
+  }
+
+  .popElectric .portalSectionHead h2 {
+    font-size: 47px;
+  }
+
+  .popElectric .portalShuffle {
+    max-width: 112px;
+  }
+
+  .popElectric .categoryRankGrid,
+  .popElectric .popHomeGrid,
+  .popElectric .searchRankList {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .popElectric .categoryRankCard {
+    display: grid;
+    grid-template-columns: 128px minmax(0, 1fr);
+  }
+
+  .popElectric .categoryRankMedia,
+  .popElectric .searchRankList .categoryRankMedia {
+    height: 100%;
+    min-height: 190px;
+  }
+
+  .popElectric .categoryRankCopy {
+    min-height: 190px;
+    padding: 14px;
+  }
+
+  .popElectric .categoryRankMeta > span:last-child {
+    display: none;
+  }
+
+  .popElectric .categoryRankTitle h2,
+  .popElectric .searchRankList .categoryRankTitle h2 {
+    margin: 11px 0 13px;
+    font-size: 24px;
+  }
+
+  .popLocalCallout {
+    min-height: 0;
+    grid-template-columns: 1fr 52px;
+    gap: 24px;
+    margin-top: 55px;
+    margin-bottom: 55px;
+    padding: 36px 20px;
+  }
+
+  .popLocalCallout h2 {
+    font-size: 51px;
+  }
+
+  .popLocalCity {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .popLocalCallout > a {
+    grid-column: 2;
+    grid-row: 1;
+    width: 50px;
+    height: 50px;
+  }
+
+  .popElectric .portalNewsLayout {
+    display: block;
+  }
+
+  .popElectric .portalStoryFeed {
+    grid-template-columns: 1fr;
+  }
+
+  .popElectric .portalStory.feature,
+  .popElectric .portalStory.row {
+    display: block;
+  }
+
+  .popElectric .portalStory.feature .portalStoryMedia,
+  .popElectric .portalStoryMedia {
+    min-height: 190px;
+  }
+
+  .popElectric .portalNewsLayout > aside {
+    position: static;
+    margin-top: 32px;
+  }
+
+  .popElectric .portalMoreGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .popElectric .categoryLandingHead,
+  .popElectric .searchResultsHead {
+    display: block;
+    padding: 22px;
+    margin-top: 20px;
+  }
+
+  .popElectric .categoryLandingHead h1,
+  .popElectric .searchResultsHead h1 {
+    font-size: 50px;
+  }
+
+  .popElectric .categoryLandingCount {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    border-left: 0;
+    border-top: 2px solid currentColor;
+    margin-top: 18px;
+    padding: 15px 0 0;
+    text-align: left;
+  }
+
+  .popElectric .categoryLandingCount strong {
+    font-size: 34px;
+  }
+
+  .popElectric .categoryListBar {
+    align-items: flex-end;
+  }
+
+  .popElectric .categoryShuffle {
+    max-width: 105px;
+  }
+
+  .popElectric .rank.rankingMain {
+    padding: 17px;
+  }
+
+  .popElectric .rankingMain > h2 {
+    font-size: 45px;
+  }
+
+  .popElectric .imageStrip {
+    height: 210px;
+  }
+
+  .popElectric .option {
+    grid-template-columns: 29px minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .popElectric .react {
+    width: 39px;
+    height: 39px;
+  }
+
+  .popElectric .rankFoot {
+    display: block;
+  }
+
+  .popElectric .rankFoot span {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .popElectric .curiosGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .popElectric .authCard {
+    padding: 22px;
+  }
+
+  .popElectric .authTitle {
+    font-size: 43px;
+  }
+
+  .popElectric .profileGameHero,
+  .popElectric .moderationHero {
+    padding: 20px;
+  }
+
+  .popElectric .profileHeroCopy .profileName,
+  .popElectric .moderationHero h1 {
+    font-size: 48px;
+  }
+
+  .popElectric .profileMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .popElectric .siteFooterBrand,
+  .legalShell .siteFooterBrand {
+    width: 165px;
+  }
+
+  .legalShell .legalTop .logo {
+    width: 120px;
+  }
+
+  .legalShell .legalPage {
+    padding-top: 40px;
+  }
+
+  .legalShell .legalPage > h1 {
+    font-size: 58px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popElectric *,
+  .popElectric *::before,
+  .popElectric *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
