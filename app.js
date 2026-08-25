@@ -2351,7 +2351,7 @@ function showAccountRequired() {
 function mountInternalShare() {
   if (pageKind() !== 'ranking' || document.querySelector('.rankingShareRow')) return;
   const r = rankings.find((x) => x.id === internalId()),
-    title = feed.querySelector('.rankingMain h2'),
+    title = feed.querySelector('.rankingMain h1, .rankingMain h2'),
     image = feed.querySelector('.rankingMain .imageStrip'),
     anchor = image || title;
   if (r && anchor)
