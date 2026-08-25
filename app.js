@@ -1195,8 +1195,13 @@ function nextRankingFor(r) {
       )[0]?.candidate || null
   );
 }
+function isTeamRanking(r) {
+  return /\b(?:time|times|clube|clubes)\b/.test(foldText(`${r?.id || ''} ${r?.q || ''}`));
+}
 function randomRankingFor(r) {
-  const available = rankingsInSameExperience(r).filter((candidate) => candidate.id !== r.id),
+  const available = rankingsInSameExperience(r).filter(
+      (candidate) => candidate.id !== r.id && !isTeamRanking(candidate),
+    ),
     unvoted = available.filter((candidate) => myVoteCount(candidate) === 0),
     pool = unvoted.length ? unvoted : available;
   return pool[Math.floor(Math.random() * pool.length)] || null;

@@ -24,18 +24,23 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-8'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-8'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-9'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-9'));
 assert.match(
   index,
-  /class="brandSlogan">Tudo vira ranking\.<\/span>/,
-  'the slogan must be a small lockup directly below the master logo',
+  /class="brandSlogan" aria-label="Tudo vira ranking\."><span>Tudo<\/span><span>vira<\/span><span>ranking\.<\/span><\/span>/,
+  'the slogan must be a deliberate lockup directly below the master logo',
 );
 
 assert.match(
   compactPopCss,
   /\.popElectric\.logo\{[^}]*width:168px/,
   'the master logo needs one shared desktop size rule',
+);
+assert.match(
+  compactPopCss,
+  /\.popElectric\.brandBlock\{[^}]*width:168px[\s\S]*\.popElectric\.brandSlogan\{[^}]*width:100%[^}]*display:flex[^}]*justify-content:space-between/,
+  'the slogan must span exactly the same visual width as the logo lockup',
 );
 assert.doesNotMatch(
   compactPopCss,

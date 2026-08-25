@@ -105,6 +105,7 @@ body.legalShell {
 
 .popElectric .brandBlock {
   min-width: 0;
+  width: 168px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -138,9 +139,13 @@ body.legalShell {
 }
 
 .popElectric .brandSlogan {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   color: var(--violet-dark);
-  font: 800 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.075em;
+  font: 800 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.025em;
   white-space: nowrap;
 }
 
@@ -1662,6 +1667,10 @@ body.legalShell {
     width: 150px;
   }
 
+  .popElectric .brandBlock {
+    width: 150px;
+  }
+
   .popElectric .voteMeter {
     display: none;
   }
@@ -1719,6 +1728,7 @@ body.legalShell {
   .popElectric .brandBlock,
   .popElectric.homePage .brandBlock,
   .popElectric.rankingPage .brandBlock {
+    width: 114px;
     grid-column: 1;
     grid-row: 1;
   }
@@ -1728,8 +1738,8 @@ body.legalShell {
   }
 
   .popElectric .brandSlogan {
-    font-size: 8px;
-    letter-spacing: 0.055em;
+    font-size: 9px;
+    letter-spacing: 0.015em;
   }
 
   .popElectric .siteSearch,
@@ -2135,6 +2145,7 @@ body.legalShell {
   .popElectric .brandBlock,
   .popElectric.homePage .brandBlock,
   .popElectric.rankingPage .brandBlock {
+    width: 112px;
     grid-column: 1;
     grid-row: 1;
   }
@@ -2148,7 +2159,7 @@ body.legalShell {
   }
 
   .popElectric .brandSlogan {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .popHomeStats {

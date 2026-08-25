@@ -25,6 +25,11 @@ assert.match(
 );
 assert.match(
   compactApp,
+  /functionisTeamRanking\(r\)[\s\S]*!isTeamRanking\(candidate\)/,
+  'the random ranking action must leave football-team rankings out of its pool',
+);
+assert.match(
+  compactApp,
   /\$\{rankingContinuationHTML\(r\)\}\$\{commentsShellHTML\(\)\}/,
   'continuation must appear immediately after the ranking and before comments',
 );
