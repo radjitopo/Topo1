@@ -1379,14 +1379,15 @@ body.legalShell .siteFooterColumn strong {
 
   body.popElectric .groupBtn,
   body.popElectric.homePage .groupBtn {
-    min-height: 45px;
-    padding: 15px 0 11px;
+    min-height: 41px;
+    padding: 12px 0 9px;
     font-size: 12px;
   }
 
   body.popElectric .popHomeStats {
-    min-height: 44px;
-    gap: 16px;
+    min-height: 38px;
+    gap: 14px;
+    padding: 7px 0;
   }
 
   body.popElectric .popHomeStats .popHomeTagline {
@@ -1406,14 +1407,14 @@ body.legalShell .siteFooterColumn strong {
 
   body.popElectric .editorialHomeLead {
     display: block;
-    margin-bottom: 40px;
-    padding: 38px 0 48px;
+    margin-bottom: 32px;
+    padding: 20px 0 32px;
   }
 
   body.popElectric .editorialHomeLead .portalHeroCopy h1 {
-    margin: 19px 0;
-    font-size: clamp(44px, 13vw, 60px);
-    line-height: 0.92;
+    margin: 15px 0 14px;
+    font-size: clamp(42px, 12vw, 54px);
+    line-height: 0.94;
   }
 
   body.popElectric .editorialHomeLead .portalHeroMedia {
@@ -1421,7 +1422,7 @@ body.legalShell .siteFooterColumn strong {
   }
 
   body.popElectric .homeVoteRail {
-    margin-top: 38px;
+    margin-top: 27px;
   }
 
   body.popElectric .portalTrending,
@@ -1443,7 +1444,7 @@ body.legalShell .siteFooterColumn strong {
   }
 
   body.popElectric .portalSectionHead {
-    margin-top: 50px;
+    margin-top: 40px;
   }
 
   body.popElectric .portalSectionHead h2 {
@@ -1476,7 +1477,7 @@ body.legalShell .siteFooterColumn strong {
     min-height: 0;
     grid-template-columns: 1fr 48px;
     gap: 22px;
-    margin: 58px calc(50% - 50vw);
+    margin: 46px calc(50% - 50vw);
     padding: 36px 15px;
   }
 
@@ -1621,13 +1622,15 @@ body.legalShell .siteFooterColumn strong {
 
   body.popElectric .popHomeStats button {
     margin-left: auto;
-    font-size: 10px;
+    font-size: 9px;
     white-space: nowrap;
   }
 
   body.popElectric .popHomeStats {
+    min-height: 36px;
     flex-wrap: nowrap;
-    gap: 11px;
+    gap: 10px;
+    padding: 6px 0;
   }
 
   body.popElectric .popHomeStats > span:not(.popHomeTagline) {
@@ -1647,13 +1650,29 @@ body.legalShell .siteFooterColumn strong {
     margin-right: 20px;
   }
 
+  body.popElectric .editorialHomeLead {
+    margin-bottom: 26px;
+    padding: 15px 0 26px;
+  }
+
   body.popElectric .editorialHomeLead .portalHeroEyebrow {
-    font-size: 10px;
+    padding: 6px 7px 5px;
+    font-size: 9px;
   }
 
   body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
-    display: block;
-    margin: 10px 0 0;
+    display: inline-flex;
+    margin: 0 0 0 7px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy h1 {
+    margin: 13px 0 11px;
+    font-size: clamp(38px, 11vw, 48px);
+    line-height: 0.95;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroAction {
+    margin-bottom: 10px;
   }
 
   body.popElectric .homeVoteRail li {
@@ -1668,6 +1687,25 @@ body.legalShell .siteFooterColumn strong {
   body.popElectric .homeLeadVoteActions .homeReact {
     width: 36px;
     height: 38px;
+  }
+
+  body.popElectric .homeVoteRail {
+    margin-top: 23px;
+  }
+
+  body.popElectric .portalTrending,
+  body.popElectric.localMode .portalTrending {
+    margin-bottom: 24px;
+  }
+
+  body.popElectric .categoryRail {
+    margin: 25px 0;
+  }
+
+  body.popElectric .portalSectionHead {
+    margin-top: 36px;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
   }
 
   body.popElectric .categoryRankGrid,

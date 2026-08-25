@@ -887,7 +887,7 @@ function homeLeadVoteRailHTML(r) {
     )}</ol><p>Escolha uma seta para abrir o ranking e confirmar seu voto.</p><a class="homeVoteOpen" href="${rankingPath(r.id)}#votar">Abrir ranking completo <span>↗</span></a></aside>`;
 }
 function popHomeLeadHTML(hero) {
-  return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">ver outro destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Ranking em destaque">${portalHeroHTML(hero)}${homeLeadVoteRailHTML(hero)}</section>`;
+  return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">trocar destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Ranking em destaque">${portalHeroHTML(hero)}${homeLeadVoteRailHTML(hero)}</section>`;
 }
 function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
