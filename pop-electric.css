@@ -141,9 +141,7 @@ body.legalShell {
 
 .popElectric .brandSlogan {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: block;
   color: var(--violet-dark);
   font:
     800 11px/1 ui-monospace,

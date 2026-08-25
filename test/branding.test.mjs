@@ -44,9 +44,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-5-mobile-density'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-6-slogan'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-5-mobile-density'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-6-slogan'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -55,8 +55,8 @@ assert.match(
 );
 assert.match(
   index,
-  /class="brandSlogan" aria-label="Tudo vira ranking\."><span>Tudo<\/span><span>vira<\/span><span>ranking\.<\/span><\/span>/,
-  'the slogan must be a deliberate lockup directly below the master logo',
+  /class="brandSlogan">Tudo vira ranking\.<\/span>/,
+  'the slogan must read as one continuous phrase below the master logo',
 );
 assert.match(
   compactEditorialCss,
@@ -71,8 +71,8 @@ assert.match(
 );
 assert.match(
   compactPopCss,
-  /\.popElectric\.brandBlock\{[^}]*width:168px[\s\S]*\.popElectric\.brandSlogan\{[^}]*width:100%[^}]*display:flex[^}]*justify-content:space-between/,
-  'the slogan must span exactly the same visual width as the logo lockup',
+  /\.popElectric\.brandBlock\{[^}]*width:168px[\s\S]*\.popElectric\.brandSlogan\{[^}]*width:100%[^}]*display:block/,
+  'the slogan must stay compact instead of spreading its words across the logo width',
 );
 assert.doesNotMatch(
   compactPopCss,
