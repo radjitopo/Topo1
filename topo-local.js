@@ -55,6 +55,13 @@
       .trim();
   }
 
+  function routeSlug(value) {
+    return foldText(value)
+      .replace(/&/g, ' e ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   const cityAliases = Object.freeze(
     Object.assign(
       Object.fromEntries([...cityOrder, ...legacyCityOrder].map((city) => [cityKey(city), city])),
@@ -145,6 +152,32 @@
     return cityAliases[cityKey(value)] || '';
   }
 
+  function citySlug(value) {
+    const city = normalizeCity(value);
+    return city ? routeSlug(city) : '';
+  }
+
+  function cityFromSlug(value) {
+    return normalizeCity(String(value || '').replace(/-/g, ' '));
+  }
+
+  function groupSlug(value) {
+    const group = groupOrder.find((item) => item === value);
+    return group && group !== 'Todos' ? routeSlug(group) : '';
+  }
+
+  function groupFromSlug(value) {
+    const slug = routeSlug(value);
+    return groupOrder.find((group) => group !== 'Todos' && routeSlug(group) === slug) || '';
+  }
+
+  function collectionPath(cityValue, groupValue = 'Todos') {
+    const city = citySlug(cityValue);
+    if (!city) return '/local';
+    const group = groupSlug(groupValue);
+    return `/local/${city}${group ? `/${group}` : ''}`;
+  }
+
   function cityForRanking(ranking) {
     return normalizeCity(ranking?.cat);
   }
@@ -203,12 +236,17 @@
 
   root.TopoLocal = Object.freeze({
     availableCities,
+    cityFromSlug,
     cityForRanking,
     cityMatches: (ranking, city) => cityForRanking(ranking) === normalizeCity(city),
     cityOrder,
+    citySlug,
+    collectionPath,
     foldText,
+    groupFromSlug,
     groupForRanking,
     groupOrder,
+    groupSlug,
     isLocalRanking,
     legacyCityOrder,
     normalizeCity,

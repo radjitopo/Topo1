@@ -484,6 +484,28 @@ function footerHtml() {
 function renderPage(slug, page) {
   const title = `${page.title} — TOPO`;
   const canonical = `${BASE_URL}/${slug}`;
+  const structuredData = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': canonical,
+        name: title,
+        description: page.description,
+        url: canonical,
+        inLanguage: 'pt-BR',
+        dateModified: '2026-08-22',
+        isPartOf: { '@id': `${BASE_URL}/#website` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'TOPO', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: page.title, item: canonical },
+        ],
+      },
+    ],
+  }).replace(/</g, '\\u003c');
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -492,14 +514,17 @@ function renderPage(slug, page) {
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(page.description)}">
 <link rel="canonical" href="${escapeHtml(canonical)}">
-<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="alternate" hreflang="pt-BR" href="${escapeHtml(canonical)}">
+<link rel="alternate" hreflang="x-default" href="${escapeHtml(canonical)}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:locale" content="pt_BR"><meta property="og:type" content="website"><meta property="og:site_name" content="TOPO">
 <meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo.png">
+<script type="application/ld+json">${structuredData}</script>
 <meta name="theme-color" content="#fffdf8">
 <link rel="icon" href="/topo-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/style.css?v=20260824-8">
-<link rel="stylesheet" href="/pop-electric.css?v=20260825-11">
+<link rel="stylesheet" href="/style.css?v=20260825-9-seo">
+<link rel="stylesheet" href="/pop-electric.css?v=20260825-12-seo">
 </head>
 <body class="legalShell popElectric">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
@@ -527,6 +552,7 @@ export default function handler(req, res) {
     return res.status(302).end();
   }
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Content-Language', 'pt-BR');
   res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
   return res.status(200).send(renderPage(slug, page));
 }

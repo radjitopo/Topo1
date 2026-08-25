@@ -116,12 +116,11 @@ test('the selector has the 20 largest cities plus Florianópolis and keeps legac
     'Florianópolis',
   ]);
   assert.deepEqual(local.legacyCityOrder, ['Balneário Camboriú']);
-  assert.deepEqual(local.availableCities(rankings), [
-    'São Paulo',
-    'Brasília',
-    'Florianópolis',
-  ]);
-  assert.equal(local.isLocalRanking(rankings.find((ranking) => ranking.id === 'padarias-bc')), true);
+  assert.deepEqual(local.availableCities(rankings), ['São Paulo', 'Brasília', 'Florianópolis']);
+  assert.equal(
+    local.isLocalRanking(rankings.find((ranking) => ranking.id === 'padarias-bc')),
+    true,
+  );
   assert.equal(local.normalizeCity('Sao-Goncalo'), 'São Gonçalo');
   assert.equal(local.normalizeCity('Floripa'), 'Florianópolis');
 });
@@ -152,9 +151,9 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /data-experience="topo"/);
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
-  assert.match(index, /topo-local\.js\?v=20260825-5/);
-  assert.match(index, /app\.js\?v=20260825-30-catalog/);
-  assert.match(index, /pop-electric\.css\?v=20260825-11/);
+  assert.match(index, /topo-local\.js\?v=20260825-6-seo/);
+  assert.match(index, /app\.js\?v=20260825-31-seo/);
+  assert.match(index, /pop-electric\.css\?v=20260825-12-seo/);
   assert.match(api, /x-vercel-ip-city/);
   assert.match(api, /location: \{ city: geolocationCity\(req\) \}/);
   assert.match(page, /TOPO LOCAL — rankings da sua cidade/);

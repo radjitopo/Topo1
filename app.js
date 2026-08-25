@@ -30,10 +30,41 @@ function rotateDeviceId() {
 }
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
+const generalGroupSlugs = Object.freeze({
+  Cinema: 'cinema',
+  Música: 'musica',
+  'TV & Séries': 'tv-e-series',
+  Livros: 'livros',
+  Arte: 'arte',
+  Moda: 'moda',
+  Comida: 'comida',
+  Lugares: 'lugares',
+  Famosos: 'famosos',
+  Natureza: 'natureza',
+  Motores: 'motores',
+  Esporte: 'esporte',
+  Jogos: 'jogos',
+  Tecnologia: 'tecnologia',
+  Produtos: 'produtos',
+  Vida: 'vida',
+});
+function generalGroupFromRoute() {
+  const match = location.pathname.match(/^\/categoria\/([^/]+)\/?$/);
+  if (!match) return '';
+  return Object.entries(generalGroupSlugs).find(([, slug]) => slug === match[1])?.[0] || '';
+}
+function localRouteState() {
+  const parts = location.pathname.split('/').filter(Boolean);
+  if (parts[0] !== 'local') return { city: '', group: '' };
+  return {
+    city: topoLocal.cityFromSlug(parts[1] || ''),
+    group: topoLocal.groupFromSlug(parts[2] || ''),
+  };
+}
 let renderHome;
 let rankings = [],
-  activeGroup = 'Todos',
-  homePortal = !isLocalRoute(),
+  activeGroup = generalGroupFromRoute() || localRouteState().group || 'Todos',
+  homePortal = !isLocalRoute() && !isCategoryRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
   categorySort = 'priority',
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
@@ -260,10 +291,17 @@ function pageKind() {
 function isLocalRoute() {
   return location.pathname === '/local' || location.pathname.startsWith('/local/');
 }
+function isCategoryRoute() {
+  return location.pathname === '/categoria' || location.pathname.startsWith('/categoria/');
+}
 function isLocalExperience() {
   if (isLocalRoute()) return true;
   if (pageKind() !== 'ranking' || !rankings.length) return false;
   return topoLocal.isLocalRanking(rankings.find((ranking) => ranking.id === internalId()));
+}
+function groupPath(group) {
+  if (isLocalExperience()) return topoLocal.collectionPath(selectedCity, group);
+  return group === 'Todos' ? '/' : `/categoria/${generalGroupSlugs[group] || ''}`;
 }
 document.body.classList.toggle('homePage', pageKind() === 'home');
 document.body.classList.toggle('rankingPage', pageKind() === 'ranking');
@@ -564,11 +602,17 @@ function syncExperienceNavigation() {
 }
 function initializeCity(locationData = {}) {
   detectedCity = String(locationData.city || '');
+  const routeCity = localRouteState().city;
   let savedCity = '';
   try {
     savedCity = localStorage.getItem(cityStoreKey) || '';
   } catch {}
-  selectedCity = topoLocal.resolvePreferredCity(rankings, savedCity, detectedCity);
+  selectedCity = topoLocal.resolvePreferredCity(rankings, routeCity || savedCity, detectedCity);
+  if (
+    activeGroup !== 'Todos' &&
+    !localRankingsForSelectedCity().some((ranking) => belongsToGroup(ranking, activeGroup))
+  )
+    activeGroup = 'Todos';
   syncExperienceNavigation();
 }
 function changeSelectedCity(city) {
@@ -578,6 +622,10 @@ function changeSelectedCity(city) {
   try {
     localStorage.setItem(cityStoreKey, selectedCity);
   } catch {}
+  if (isLocalRoute() && pageKind() === 'home') {
+    location.assign(topoLocal.collectionPath(selectedCity, activeGroup));
+    return;
+  }
   sessionHeroId = '';
   categoryVisibleCount = CATEGORY_PAGE_SIZE;
   if (
@@ -606,25 +654,15 @@ function syncHomeSearchURL() {
   if (homeSearch) queryParams.set('busca', homeSearch);
 }
 function selectGroup(group) {
-  activeGroup = group;
-  homePortal = false;
-  homeSearch = '';
-  categorySort = 'priority';
-  categoryVisibleCount = CATEGORY_PAGE_SIZE;
-  if (searchInput) searchInput.value = '';
-  syncHomeSearchURL();
-  renderGroups();
-  renderHome();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  location.assign(groupPath(group));
 }
 function renderGroups() {
   groupsEl.innerHTML = availableGroupNames()
     .map(
       (g) =>
-        `<button class="groupBtn ${!homePortal && !homeSearch && g === activeGroup ? 'active' : ''}" data-g="${g}" aria-pressed="${!homePortal && !homeSearch && g === activeGroup}">${g}</button>`,
+        `<a class="groupBtn ${!homePortal && !homeSearch && g === activeGroup ? 'active' : ''}" href="${escapeHTML(groupPath(g))}" data-g="${escapeHTML(g)}" ${!homePortal && !homeSearch && g === activeGroup ? 'aria-current="page"' : ''}>${escapeHTML(g)}</a>`,
     )
     .join('');
-  groupsEl.querySelectorAll('button').forEach((b) => (b.onclick = () => selectGroup(b.dataset.g)));
 }
 if (searchInput)
   searchInput.addEventListener('input', () => {
@@ -678,13 +716,14 @@ function pageLoadingHTML(kind) {
 }
 async function load() {
   const kind = pageKind();
-  feed.innerHTML = pageLoadingHTML(kind);
+  if (feed.dataset.serverRendered !== 'true') feed.innerHTML = pageLoadingHTML(kind);
   try {
     const data = await fetchBootstrap();
     viewer = data.viewer || viewer;
     community = communityFrom(data);
     rankings = smartShuffle(data.rankings || []);
     initializeCity(data.location || {});
+    feed.removeAttribute('data-server-rendered');
     renderAccount();
     renderCommunityPulse();
     if (kind === 'home') {
@@ -761,6 +800,14 @@ function choosePortalHero(list) {
 }
 function rankingPath(id) {
   return '/ranking/' + encodeURIComponent(id);
+}
+function rankingCategoryPath(ranking) {
+  if (topoLocal.isLocalRanking(ranking))
+    return topoLocal.collectionPath(
+      topoLocal.cityForRanking(ranking),
+      topoLocal.groupForRanking(ranking),
+    );
+  return `/categoria/${generalGroupSlugs[groupOf(ranking)] || 'vida'}`;
 }
 function internalId() {
   return decodeURIComponent(location.pathname.split('/ranking/')[1] || '');
@@ -864,15 +911,13 @@ function portalTrendingHTML(list, label = 'Em alta') {
 }
 function categoryRailHTML(label) {
   const groups = availableGroupNames().filter((group) => group !== 'Todos');
-  return `<section class="categoryRail" aria-label="${escapeHTML(label)}"><span class="categoryRailLabel">${escapeHTML(label)}</span><div class="categoryRailList">${groups.map((group) => `<button class="categoryRailButton" type="button" data-home-group="${escapeHTML(group)}">${escapeHTML(group)}</button>`).join('')}</div></section>`;
+  return `<section class="categoryRail" aria-label="${escapeHTML(label)}"><span class="categoryRailLabel">${escapeHTML(label)}</span><div class="categoryRailList">${groups.map((group) => `<a class="categoryRailButton" href="${escapeHTML(groupPath(group))}" data-home-group="${escapeHTML(group)}">${escapeHTML(group)}</a>`).join('')}</div></section>`;
 }
 function portalIdeaCalloutHTML() {
   return `<section class="portalIdeaCallout"><div><span class="portalKicker">A comunidade também cria</span><h2>Tem uma ideia de ranking?</h2><p>Sugira um tema no seu perfil e acompanhe a análise.</p></div><a href="/perfil#sugerir-ranking">Sugerir novo ranking →</a></section>`;
 }
 function bindCategoryRails() {
-  document
-    .querySelectorAll('[data-home-group]')
-    .forEach((button) => (button.onclick = () => selectGroup(button.dataset.homeGroup)));
+  return document.querySelectorAll('[data-home-group]').length;
 }
 function clearHomeSearch() {
   homeSearch = '';
@@ -914,7 +959,7 @@ function categorySortedRankings(list) {
 }
 function categoryRankCardHTML(r) {
   const voteHref = `${rankingPath(r.id)}#votar`;
-  return `<article class="categoryRankCard"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">VER RANKING <b>→</b></a></div></div></article>`;
+  return `<article class="categoryRankCard"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><a class="category" href="${rankingCategoryPath(r)}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">VER RANKING <b>→</b></a></div></div></article>`;
 }
 function categoryRankCardsHTML(list) {
   return list.map(categoryRankCardHTML).join('');
@@ -926,7 +971,7 @@ function localCityExplorerHTML() {
   return `<section class="localCatalogFooter"><div class="localCatalogFooterCopy"><span class="portalKicker">Trocar de lugar</span><h2>Quer explorar outra cidade?</h2><p>Escolha uma cidade para ver somente os rankings de lá.</p></div><button id="toggleLocalCityExplorer" class="localExploreButton" type="button" aria-expanded="false" aria-controls="localCityOptions">Explorar outra cidade</button><p class="localDataCredit">Dados iniciais: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noreferrer">Overture Maps Foundation</a> e diretórios públicos locais. A ordem é definida pelos votos da comunidade.</p><div class="localCityOptions" id="localCityOptions" hidden>${cities
     .map((city) => {
       const total = topoLocal.rankingsForCity(rankings, city).length;
-      return `<button type="button" data-local-city="${escapeHTML(city)}"><strong>${escapeHTML(city)}</strong><span>${fmt(total)} ranking${total === 1 ? '' : 's'}</span></button>`;
+      return `<a href="${topoLocal.collectionPath(city)}" data-local-city="${escapeHTML(city)}"><strong>${escapeHTML(city)}</strong><span>${fmt(total)} ranking${total === 1 ? '' : 's'}</span></a>`;
     })
     .join('')}</div></section>`;
 }
@@ -939,15 +984,8 @@ function bindLocalCityExplorer() {
       options.hidden = !opening;
       toggle.setAttribute('aria-expanded', String(opening));
       toggle.textContent = opening ? 'Fechar cidades' : 'Explorar outra cidade';
-      if (opening) options.querySelector('button')?.focus();
+      if (opening) options.querySelector('a')?.focus();
     };
-  document.querySelectorAll('[data-local-city]').forEach(
-    (button) =>
-      (button.onclick = () => {
-        changeSelectedCity(button.dataset.localCity);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }),
-  );
 }
 function bindCategoryControls() {
   document.querySelectorAll('[data-category-sort]').forEach(
@@ -1474,12 +1512,13 @@ function renderInternal() {
     return;
   }
   const local = topoLocal.isLocalRanking(r),
-    homePath = local ? '/local' : '/',
-    homeLabel = local ? 'TOPO LOCAL' : 'TOPO';
+    homePath = local ? topoLocal.collectionPath(topoLocal.cityForRanking(r)) : '/',
+    homeLabel = local ? 'TOPO LOCAL' : 'TOPO',
+    categoryPath = rankingCategoryPath(r);
   document.title = `${r.q} — ${homeLabel}`;
   const visibleLimit = allItemsOpen ? r.opts.length : Math.min(10, r.opts.length),
     visibleOptions = r.opts.slice(0, visibleLimit);
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${fmt(r.votes)} votos · Top ${visibleLimit}</span></div><article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><span class="category">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h2>${escapeHTML(r.q)}</h2>${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i)).join('')}</div><div class="rankFoot"><span>Até ${viewer.rankingLimit || 20} votos por ranking.</span><span>${viewer.registered ? 'Vote normalmente · 2× reforça' : '↑ sobe · ↓ desce'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para todos os rankings ${local ? 'locais' : ''}</a></div>`;
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${fmt(r.votes)} votos · Top ${visibleLimit}</span></div><article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h1>${escapeHTML(r.q)}</h1>${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i)).join('')}</div><div class="rankFoot"><span>Até ${viewer.rankingLimit || 20} votos por ranking.</span><span>${viewer.registered ? 'Vote normalmente · 2× reforça' : '↑ sobe · ↓ desce'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para todos os rankings ${local ? 'locais' : ''}</a></div>`;
   bindVotes();
   bindAllItems(r);
   bindRankingSuggestion(r);
@@ -2766,7 +2805,7 @@ async function boot() {
     hasClerkSession = document.cookie
       .split(';')
       .some((part) => part.trim().startsWith('__session='));
-  feed.innerHTML = pageLoadingHTML(kind);
+  if (feed.dataset.serverRendered !== 'true') feed.innerHTML = pageLoadingHTML(kind);
   if (kind === 'auth' || kind === 'profile' || kind === 'moderation' || hasClerkSession)
     await initClerk();
   await load();

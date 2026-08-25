@@ -18,7 +18,11 @@ assert.doesNotMatch(
   'related ranking cards must not reveal the current leader',
 );
 assert.doesNotMatch(source, /Top 3 agora/, 'Home cards must not reveal the current Top 3');
-assert.match(source, /function popHomeLeadHTML\(/, 'the Pop Electric home lead must use live rankings');
+assert.match(
+  source,
+  /function popHomeLeadHTML\(/,
+  'the Pop Electric home lead must use live rankings',
+);
 assert.match(
   source,
   /portalLeadGrid popHomeLead/,

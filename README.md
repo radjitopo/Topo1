@@ -6,9 +6,10 @@ Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para
 
 - `index.html`, `app.js` e `style.css`: interface pública sem framework.
 - `api.js`: API HTTP de catálogo, votos, perfil, comentários, sugestões e moderação.
-- `page.js`: metadados dinâmicos e HTML das páginas de ranking.
+- `page.js`: HTML inicial rastreável, metadados e dados estruturados de Home, categorias, cidades e rankings.
+- `seo-taxonomy.js`: URLs e taxonomia canônica usada pelas páginas e pelo sitemap.
 - `institutional.js`: páginas institucionais e legais.
-- `sitemap.js`: sitemap gerado a partir dos rankings ativos.
+- `sitemap.js`: sitemap gerado a partir dos rankings ativos, categorias e coleções locais.
 - `editorial-*.js`: conteúdo editorial carregado pelas páginas de ranking.
 - `migrations/` e `scripts/`: alterações reproduzíveis do banco Neon.
 - `test/`: testes de contrato, conteúdo, interface e integrações opcionais.

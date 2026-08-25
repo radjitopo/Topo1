@@ -65,7 +65,7 @@ body.legalShell {
 .popElectric .modalTitle,
 .legalShell h1,
 .legalShell h2 {
-  font-family: Impact, "Arial Black", Arial, sans-serif;
+  font-family: Impact, 'Arial Black', Arial, sans-serif;
   font-weight: 900;
 }
 
@@ -145,7 +145,11 @@ body.legalShell {
   align-items: center;
   justify-content: space-between;
   color: var(--violet-dark);
-  font: 800 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    800 11px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
   letter-spacing: 0.025em;
   white-space: nowrap;
 }
@@ -190,7 +194,11 @@ body.legalShell {
   background: transparent;
   color: var(--ink);
   outline: 0;
-  font: 700 14px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    700 14px/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
 }
 
 .popElectric .siteSearch input::placeholder {
@@ -204,7 +212,9 @@ body.legalShell {
   background: #f3efea;
   color: #5f5961;
   padding: 4px 7px;
-  font: 700 11px/1 ui-monospace, monospace;
+  font:
+    700 11px/1 ui-monospace,
+    monospace;
 }
 
 .popElectric .account {
@@ -281,7 +291,10 @@ body.legalShell {
 
 .popElectric .notificationPanelHead strong {
   color: var(--violet-dark);
-  font: 900 22px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 22px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .notificationPanelHead span,
@@ -391,7 +404,11 @@ body.legalShell {
   background: transparent;
   color: var(--ink);
   padding: 19px 0 15px;
-  font: 800 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    800 13px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
 }
 
 .popElectric .groupBtn:hover,
@@ -416,7 +433,11 @@ body.legalShell {
 .popElectric .moderationKind,
 .legalShell .legalKicker {
   color: var(--violet);
-  font: 900 12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    900 12px/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -429,12 +450,19 @@ body.legalShell {
   gap: 7px;
   padding: 9px 2px;
   color: var(--muted);
-  font: 800 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    800 10px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
 }
 
 .popHomeStats strong {
   color: var(--violet-dark);
-  font: 900 15px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 15px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popHomeStats i {
@@ -451,7 +479,11 @@ body.legalShell {
   background: transparent;
   color: var(--violet);
   padding: 5px 0;
-  font: 900 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    900 10px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
   cursor: pointer;
 }
 
@@ -486,13 +518,20 @@ body.legalShell {
 .popElectric .popHomeLead .portalHeroCopy h1 {
   margin: 7px 0 11px;
   color: var(--cream);
-  font: 900 clamp(34px, 3.35vw, 50px)/0.94 Impact, "Arial Black", sans-serif;
+  font:
+    900 clamp(34px, 3.35vw, 50px)/0.94 Impact,
+    'Arial Black',
+    sans-serif;
   letter-spacing: -0.025em;
 }
 
 .popElectric .portalHeroAction {
   color: var(--mint);
-  font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    900 11px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -534,7 +573,10 @@ body.legalShell {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   margin: 6px 0 8px;
-  font: 900 22px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 22px/1 Impact,
+    'Arial Black',
+    sans-serif;
   letter-spacing: -0.015em;
 }
 
@@ -608,7 +650,9 @@ body.legalShell {
 
 .popElectric .portalSectionHead > div > span {
   color: var(--violet);
-  font: 900 12px/1.2 ui-monospace, monospace;
+  font:
+    900 12px/1.2 ui-monospace,
+    monospace;
   letter-spacing: 0.14em;
 }
 
@@ -645,7 +689,9 @@ body.legalShell {
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 0 0 transparent;
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .popElectric .categoryRankCard:hover {
@@ -670,7 +716,9 @@ body.legalShell {
 
 .popElectric .categoryRankMeta {
   color: var(--muted);
-  font: 700 12px/1.2 ui-monospace, monospace;
+  font:
+    700 12px/1.2 ui-monospace,
+    monospace;
 }
 
 .popElectric .categoryRankMeta .category,
@@ -694,7 +742,10 @@ body.legalShell {
   margin: 13px 0 18px;
   padding-bottom: 0.12em;
   color: var(--ink);
-  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 29px/1 Impact,
+    'Arial Black',
+    sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -751,7 +802,9 @@ body.legalShell {
 
 .popLocalCallout p {
   margin: 0;
-  font: 700 15px/1.4 ui-monospace, monospace;
+  font:
+    700 15px/1.4 ui-monospace,
+    monospace;
 }
 
 .popLocalCity {
@@ -761,7 +814,9 @@ body.legalShell {
   border: 2px solid var(--cream);
   border-radius: 10px;
   padding: 14px 17px;
-  font: 800 13px/1 ui-monospace, monospace;
+  font:
+    800 13px/1 ui-monospace,
+    monospace;
 }
 
 .popLocalCity span {
@@ -772,7 +827,9 @@ body.legalShell {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px 26px;
-  font: 800 13px/1.2 ui-monospace, monospace;
+  font:
+    800 13px/1.2 ui-monospace,
+    monospace;
 }
 
 .popLocalCallout > a {
@@ -816,7 +873,10 @@ body.legalShell {
 .popElectric .portalStoryCopy h2,
 .popElectric .portalSideCopy h2 {
   margin: 8px 0 12px;
-  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 29px/1 Impact,
+    'Arial Black',
+    sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -859,7 +919,10 @@ body.legalShell {
 
 .popElectric .portalListNum {
   color: var(--violet);
-  font: 900 24px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 24px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .portalRankPanel li:first-child .portalListNum {
@@ -867,7 +930,9 @@ body.legalShell {
 }
 
 .popElectric .portalRankPanel strong {
-  font: 900 17px/1.05 Arial, sans-serif;
+  font:
+    900 17px/1.05 Arial,
+    sans-serif;
 }
 
 .popElectric .portalMore {
@@ -930,7 +995,10 @@ body.legalShell {
 
 .popElectric .categoryLandingCount strong {
   color: var(--accent);
-  font: 900 45px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 45px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .categoryLandingCount span {
@@ -1010,7 +1078,7 @@ body.legalShell {
   line-height: 0.95;
 }
 
-.popElectric .localCityOptions button {
+.popElectric .localCityOptions :is(button, a) {
   border: 2px solid var(--ink);
   background: #fff;
   font-size: 13px;
@@ -1065,7 +1133,7 @@ body.legalShell {
   box-shadow: 8px 8px 0 var(--lilac);
 }
 
-.popElectric .rankingMain > h2 {
+.popElectric .rankingMain > :is(h1, h2) {
   margin: 10px 0 20px;
   font-size: clamp(46px, 6vw, 68px);
   line-height: 0.92;
@@ -1096,7 +1164,10 @@ body.legalShell {
 
 .popElectric .statValue {
   color: var(--violet);
-  font: 900 27px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 27px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .rankingResultHead {
@@ -1120,7 +1191,7 @@ body.legalShell {
 
 .popElectric .pos {
   color: var(--violet);
-  font-family: Impact, "Arial Black", sans-serif;
+  font-family: Impact, 'Arial Black', sans-serif;
   font-size: 22px;
 }
 
@@ -1193,7 +1264,10 @@ body.legalShell {
 }
 
 .popElectric .allItemsToggle strong {
-  font: 900 21px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 21px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .allItemsToggle small {
@@ -1232,7 +1306,10 @@ body.legalShell {
 
 .popElectric .curioNum {
   color: var(--pink);
-  font: 900 28px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 28px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .curioText,
@@ -1426,7 +1503,10 @@ body.legalShell {
 }
 
 .popElectric .profileMetrics strong {
-  font: 900 29px/1 Impact, "Arial Black", sans-serif;
+  font:
+    900 29px/1 Impact,
+    'Arial Black',
+    sans-serif;
 }
 
 .popElectric .profileMetrics small,
@@ -2070,7 +2150,7 @@ body.legalShell {
     padding: 17px;
   }
 
-  .popElectric .rankingMain > h2 {
+  .popElectric .rankingMain > :is(h1, h2) {
     font-size: 45px;
   }
 
@@ -2451,6 +2531,107 @@ body.legalShell {
     font-size: 22px;
     line-height: 1.05;
     overflow-wrap: anywhere;
+  }
+}
+
+.popElectric .seoLandingHead {
+  margin: 28px 0 24px;
+}
+
+.popElectric .seoTopicLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0 0 36px;
+}
+
+.popElectric .seoTopicLinks a {
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  padding: 9px 13px;
+  font:
+    800 12px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  text-decoration: none;
+}
+
+.popElectric .seoTopicLinks a:hover,
+.popElectric .seoTopicLinks a:focus-visible {
+  background: var(--lilac);
+  outline: 0;
+}
+
+.popElectric .seoCollection {
+  margin-top: 44px;
+}
+
+.popElectric .seoCollection .portalSectionHead {
+  margin-top: 0;
+}
+
+.popElectric .seoBreadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 16px;
+  color: var(--muted);
+  font:
+    800 11px/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  text-transform: uppercase;
+}
+
+.popElectric .seoBreadcrumb a {
+  color: var(--ink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.popElectric .seoOption .seoPosition {
+  color: var(--violet);
+  font:
+    900 12px/1 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+}
+
+.popElectric .seoRankingNote,
+.popElectric .seoNoScript {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.popElectric .seoNoScript {
+  border: 2px solid var(--ink);
+  background: var(--lilac);
+  padding: 14px;
+}
+
+@media (max-width: 700px) {
+  .popElectric .seoLandingHead {
+    margin-top: 18px;
+  }
+
+  .popElectric .seoTopicLinks {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-bottom: 28px;
+    padding-bottom: 5px;
+    scrollbar-width: none;
+  }
+
+  .popElectric .seoTopicLinks a {
+    flex: 0 0 auto;
   }
 }
 

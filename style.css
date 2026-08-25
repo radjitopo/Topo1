@@ -220,6 +220,8 @@ header {
   font-size: 11px;
   font-weight: 900;
   cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
 .groupBtn.active {
   background: var(--accent);
@@ -281,6 +283,7 @@ header {
   letter-spacing: 0.12em;
   font-weight: 900;
   color: var(--accent);
+  text-decoration: none;
 }
 .newBadge {
   display: inline-flex;
@@ -302,7 +305,8 @@ header {
   color: var(--muted);
   white-space: nowrap;
 }
-h2 {
+h2,
+.rankingMain > h1 {
   font-family: Georgia, serif;
   font-size: 32px;
   line-height: 0.98;
@@ -1904,6 +1908,7 @@ h2 {
   font-size: 10px;
   font-weight: 900;
   cursor: pointer;
+  text-decoration: none;
 }
 .categoryRailButton:hover,
 .categoryRailButton:focus-visible {
@@ -3474,7 +3479,7 @@ h2 {
 .localCityOptions[hidden] {
   display: none;
 }
-.localCityOptions button {
+.localCityOptions :is(button, a) {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3486,9 +3491,10 @@ h2 {
   padding: 11px 12px;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
 }
-.localCityOptions button:hover,
-.localCityOptions button:focus-visible {
+.localCityOptions :is(button, a):hover,
+.localCityOptions :is(button, a):focus-visible {
   border-color: #c9562f;
   outline: 0;
 }

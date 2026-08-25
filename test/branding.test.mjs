@@ -3,9 +3,13 @@ import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
 const [logo, mark, popCss, index, institutional] = await Promise.all(
-  ['../logo-topo.svg', '../topo-mark.svg', '../pop-electric.css', '../index.html', '../institutional.js'].map(
-    (path) => readFile(new URL(path, import.meta.url), 'utf8'),
-  ),
+  [
+    '../logo-topo.svg',
+    '../topo-mark.svg',
+    '../pop-electric.css',
+    '../index.html',
+    '../institutional.js',
+  ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
 );
 const compactPopCss = compactSource(popCss);
 
@@ -24,8 +28,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260825-11'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260825-11'));
+assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
