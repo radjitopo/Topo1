@@ -472,7 +472,7 @@ function escapeHtml(value) {
 function footerHtml() {
   return `<footer class="siteFooter">
     <div class="wrap siteFooterGrid">
-      <div class="siteFooterIntro"><a class="siteFooterBrand" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg" alt="TOPO" width="184" height="60"></a><p>Tudo vira ranking. Vote, descubra e mude a ordem.</p></div>
+      <div class="siteFooterIntro"><a class="siteFooterBrand" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg?v=20260825-2" alt="TOPO" width="184" height="60"></a><p>Tudo vira ranking. Vote, descubra e mude a ordem.</p></div>
       <nav class="siteFooterColumn" aria-label="Sobre o TOPO"><strong>Sobre o TOPO</strong><a href="/sobre">Sobre nós</a><a href="/como-funciona">Como funciona</a><a href="/imprensa">Imprensa</a><a href="/anuncie">Anuncie no TOPO</a></nav>
       <nav class="siteFooterColumn" aria-label="Ajuda e segurança"><strong>Ajuda e segurança</strong><a href="/contato">Fale conosco</a><a href="/denuncie">Denuncie um conteúdo</a><a href="/regras">Regras da comunidade</a><a href="/seguranca">Segurança e privacidade</a></nav>
       <nav class="siteFooterColumn" aria-label="Informações legais"><strong>Legal</strong><a href="/termos">Termos de uso</a><a href="/privacidade">Política de privacidade</a><a href="/cookies">Política de cookies</a><a href="/direitos-autorais">Direitos autorais</a></nav>
@@ -522,13 +522,13 @@ function renderPage(slug, page) {
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo.png">
 <script type="application/ld+json">${structuredData}</script>
 <meta name="theme-color" content="#fffdf8">
-<link rel="icon" href="/topo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="/topo-mark.svg?v=20260825-2" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css?v=20260825-9-seo">
 <link rel="stylesheet" href="/pop-electric.css?v=20260825-12-seo">
-<link rel="stylesheet" href="/editorial-clean.css?v=20260825-1">
+<link rel="stylesheet" href="/editorial-clean.css?v=20260825-2-logo">
 </head>
 <body class="legalShell popElectric">
-<header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
+<header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg?v=20260825-2" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
 <main class="wrap legalPage">
   <div class="legalKicker">${escapeHtml(page.kicker)}</div>
   <h1>${escapeHtml(page.headline)}</h1>

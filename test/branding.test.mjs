@@ -2,36 +2,45 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
-const [logo, mark, popCss, index, institutional] = await Promise.all(
+const [logo, mark, popCss, editorialCss, index, institutional] = await Promise.all(
   [
     '../logo-topo.svg',
     '../topo-mark.svg',
     '../pop-electric.css',
+    '../editorial-clean.css',
     '../index.html',
     '../institutional.js',
   ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
 );
 const compactPopCss = compactSource(popCss);
+const compactEditorialCss = compactSource(editorialCss);
 
-assert.match(logo, /fill="#ff5a45"/, 'the master logo must keep the coral seal');
-assert.match(logo, /fill="#ff2d8d"/, 'the master logo must keep the hot-pink signature');
-assert.match(logo, /fill="#c7ff38"/, 'the last O must carry the lime signal');
-assert.match(logo, /stroke="#151019"/, 'the upward signal must be drawn inside the last O');
-assert.match(mark, /fill="#ff5a45"/);
-assert.match(mark, /fill="#c7ff38"/);
+assert.match(logo, /<g fill="#0a0a0a">/, 'the master wordmark must be black');
+assert.match(
+  logo,
+  /<circle cx="584" cy="123" r="18"\/>/,
+  'the final point must be part of the wordmark',
+);
+assert.match(logo, /stroke="#fff"/, 'the final point must carry a white upward arrow');
+assert.doesNotMatch(logo, /#ff5a45|#ff2d8d|#c7ff38/, 'the master logo must stay monochrome');
+assert.match(mark, /<circle cx="50" cy="50" r="45" fill="#0a0a0a"\/>/);
+assert.match(mark, /stroke="#fff"/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo\.svg"/g) || []).length,
+  (index.match(/src="\/logo-topo\.svg\?v=20260825-2"/g) || []).length,
   2,
   'the header and footer must use the same master SVG',
 );
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
-assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg\?v=20260825-2"/);
+assert.match(
+  institutional,
+  /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg\?v=20260825-2"/,
+);
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-1'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-2-logo'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-1'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-2-logo'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -42,6 +51,11 @@ assert.match(
   index,
   /class="brandSlogan" aria-label="Tudo vira ranking\."><span>Tudo<\/span><span>vira<\/span><span>ranking\.<\/span><\/span>/,
   'the slogan must be a deliberate lockup directly below the master logo',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:invert\(1\)/,
+  'the monochrome logo must invert cleanly over the dark footer',
 );
 
 assert.match(
@@ -120,4 +134,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the coral 4A seal is one SVG across every public shell.');
+console.log('Branding test passed: the black TOPO wordmark and arrow point are consistent.');

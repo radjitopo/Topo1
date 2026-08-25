@@ -874,6 +874,11 @@ body.legalShell .siteFooter {
   color: var(--clean-paper);
 }
 
+body.popElectric .siteFooterBrand img,
+body.legalShell .siteFooterBrand img {
+  filter: invert(1);
+}
+
 body.popElectric .siteFooterColumn strong,
 body.legalShell .siteFooterColumn strong {
   color: var(--clean-lime);

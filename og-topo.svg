@@ -1,25 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">TOPO — Tudo vira ranking</title>
-  <rect width="1200" height="630" fill="#fffdf8"/>
-  <rect x="860" y="-90" width="430" height="430" rx="90" fill="#eee8e2" transform="rotate(10 860 -90)"/>
-  <circle cx="1080" cy="535" r="155" fill="#c7ff38"/>
-  <path d="M922 422h172v42H993l101 101-30 30-101-101v101h-42z" fill="#ff5a45"/>
-  <g transform="translate(82 65) scale(.6)">
-    <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff2d8d"/>
-    <rect x="2" y="2" width="690" height="205" rx="42" fill="#ff5a45" stroke="#151019" stroke-width="4"/>
-    <g transform="translate(70 17) scale(1.08)">
-      <path d="M0 11h112v38H77v119H35V49H0z" fill="#fffdf8"/>
-      <rect x="99" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
-      <rect x="140" y="45" width="53" height="88" rx="26" fill="#ff5a45"/>
-      <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fffdf8"/>
-      <rect x="386" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
-      <rect x="427" y="45" width="53" height="88" rx="26" fill="#c7ff38"/>
-      <path d="M453.5 108V70m0 0-15 16m15-16 15 16" fill="none" stroke="#151019" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <desc id="desc">Cartão editorial branco e preto do TOPO, com o ponto-seta da marca.</desc>
+  <rect width="1200" height="630" fill="#fff"/>
+  <g transform="translate(78 58) scale(.72)">
+    <g fill="#0a0a0a">
+      <path d="M16 20h110v28H85v96H57V48H16z"/>
+      <path fill-rule="evenodd" d="M202 18c-37.6 0-68 29.1-68 64s30.4 64 68 64 68-29.1 68-64-30.4-64-68-64Zm0 28c21.3 0 38.5 16.1 38.5 36S223.3 118 202 118s-38.5-16.1-38.5-36S180.7 46 202 46Z"/>
+      <path fill-rule="evenodd" d="M286 20h59c35 0 55 19 55 50s-21 50-56 50h-30v24h-28V20Zm28 28v44h27c18 0 28-7 28-22s-10-22-28-22h-27Z"/>
+      <path fill-rule="evenodd" d="M476 18c-37.6 0-68 29.1-68 64s30.4 64 68 64 68-29.1 68-64-30.4-64-68-64Zm0 28c21.3 0 38.5 16.1 38.5 36S497.3 118 476 118s-38.5-16.1-38.5-36S454.7 46 476 46Z"/>
+      <circle cx="584" cy="123" r="18"/>
     </g>
+    <path d="M584 132v-18m0 0-7 7m7-7 7 7" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <text x="82" y="355" fill="#151019" font-family="Impact, Arial Black, Arial, sans-serif" font-size="94" font-weight="900" letter-spacing="-3">TUDO VIRA</text>
-  <text x="82" y="452" fill="#ff2d8d" font-family="Impact, Arial Black, Arial, sans-serif" font-size="111" font-weight="900" letter-spacing="-4">RANKING.</text>
-  <text x="88" y="525" fill="#151019" font-family="DejaVu Sans Mono, monospace" font-size="23" font-weight="700">VOTE · COMPARE · DESCUBRA</text>
-  <rect x="82" y="568" width="680" height="4" fill="#151019"/>
-  <text x="82" y="601" fill="#68616f" font-family="DejaVu Sans Mono, monospace" font-size="17">somostopo.com.br</text>
+  <rect x="82" y="207" width="650" height="3" fill="#0a0a0a"/>
+  <text x="78" y="345" fill="#0a0a0a" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="92" font-weight="900" letter-spacing="-4">TUDO VIRA</text>
+  <text x="78" y="445" fill="#0a0a0a" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="108" font-weight="900" letter-spacing="-5">RANKING.</text>
+  <text x="83" y="523" fill="#0a0a0a" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="5">VOTE  ·  COMPARE  ·  DESCUBRA</text>
+  <text x="82" y="586" fill="#666" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="2">somostopo.com.br</text>
+  <circle cx="1018" cy="315" r="132" fill="#0a0a0a"/>
+  <path d="M1018 382V242m0 0-54 54m54-54 54 54" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
