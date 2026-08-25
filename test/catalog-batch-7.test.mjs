@@ -105,7 +105,7 @@ test('catalog importer and page assets include the seventh batch', async () => {
   assert.match(importer, /newRankings\.length !== 162/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 202/);
   assert.match(index, /editorial-15\.js/);
-  assert.match(index, /app\.js\?v=20260825-31-seo/);
+  assert.match(index, /app\.js\?v=20260825-32-editorial/);
   for (const category of ['Arte', 'Motores', 'Tecnologia', 'Produtos', 'TV & Séries']) {
     assert.ok(app.includes(`'${category}'`), `app must preserve the ${category} group`);
   }

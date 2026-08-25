@@ -29,7 +29,9 @@ assert.equal(
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-1'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-1'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,

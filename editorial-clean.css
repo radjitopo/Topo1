@@ -1,0 +1,1214 @@
+/*
+ * TOPO — direção editorial limpa
+ * Esta camada preserva toda a estrutura e as interações existentes e troca
+ * somente a apresentação por uma linguagem mais direta, legível e fotográfica.
+ */
+
+:root {
+  --clean-ink: #0a0a0a;
+  --clean-paper: #ffffff;
+  --clean-muted: #6d6d6d;
+  --clean-line: #d8d8d8;
+  --clean-soft: #f3f3f0;
+  --clean-coral: #ff513f;
+  --clean-lime: #c8f433;
+  --clean-blue: #38aee3;
+}
+
+body.popElectric,
+body.legalShell {
+  --cream: var(--clean-paper);
+  --paper: var(--clean-paper);
+  --ink: var(--clean-ink);
+  --muted: var(--clean-muted);
+  --line: var(--clean-line);
+  --violet: var(--clean-ink);
+  --violet-dark: var(--clean-ink);
+  --pink: var(--clean-coral);
+  --mint: var(--clean-lime);
+  --lilac: var(--clean-soft);
+  --accent: var(--clean-coral);
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.popElectric h1,
+body.popElectric h2,
+body.popElectric h3,
+body.popElectric .authTitle,
+body.popElectric .profileName,
+body.popElectric .modalTitle,
+body.legalShell h1,
+body.legalShell h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
+}
+
+body.popElectric .wrap,
+body.legalShell .wrap {
+  width: min(1220px, calc(100% - 48px));
+}
+
+body.popElectric :focus-visible,
+body.legalShell :focus-visible {
+  outline: 2px solid var(--clean-coral);
+  outline-offset: 3px;
+}
+
+/* Cabeçalho */
+body.popElectric .top {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid var(--clean-ink);
+  box-shadow: none;
+  backdrop-filter: blur(12px);
+}
+
+body.popElectric .top header {
+  min-height: 84px;
+  height: 84px;
+  grid-template-columns: 168px minmax(260px, 430px) 1fr;
+  gap: 34px;
+}
+
+body.popElectric .brandBlock {
+  width: 168px;
+  gap: 4px;
+}
+
+body.popElectric .brandSlogan {
+  color: var(--clean-ink);
+  font:
+    700 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.02em;
+}
+
+body.popElectric .siteSearch,
+body.popElectric.homePage .siteSearch,
+body.popElectric.rankingPage .siteSearch {
+  min-height: 42px;
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 0;
+}
+
+body.popElectric .siteSearch:focus-within {
+  border-bottom-color: var(--clean-coral);
+}
+
+body.popElectric .siteSearch input,
+body.popElectric.homePage .siteSearch input,
+body.popElectric.rankingPage .siteSearch input {
+  font:
+    500 14px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .siteSearch kbd {
+  display: none;
+}
+
+body.popElectric .account {
+  gap: 16px;
+}
+
+body.popElectric .accountLink {
+  color: var(--clean-ink);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+body.popElectric .accountEnter {
+  min-height: 38px;
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 8px 0 4px;
+}
+
+body.popElectric .accountEnter:hover,
+body.popElectric .accountEnter:focus-visible {
+  background: transparent;
+  color: var(--clean-coral);
+  border-color: var(--clean-coral);
+}
+
+body.popElectric .notificationButton {
+  border-radius: 0;
+}
+
+body.popElectric .notificationButton:hover,
+body.popElectric .notificationButton:focus-visible,
+body.popElectric .notificationButton[aria-expanded='true'] {
+  border-color: var(--clean-ink);
+  background: var(--clean-paper);
+}
+
+body.popElectric .notificationPanel {
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  box-shadow: 6px 6px 0 var(--clean-ink);
+}
+
+body.popElectric .experienceWrap {
+  border-top: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+}
+
+body.popElectric .experienceInner {
+  min-height: 42px;
+}
+
+body.popElectric .experienceLink {
+  border-bottom-width: 2px;
+  color: var(--clean-muted);
+  font:
+    800 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.07em;
+}
+
+body.popElectric .experienceLink.active,
+body.popElectric .experienceLink.local.active {
+  border-color: var(--clean-ink);
+  color: var(--clean-ink);
+}
+
+body.popElectric .localMark {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--clean-lime);
+  transform: rotate(45deg);
+}
+
+body.popElectric .groupsWrap,
+body.popElectric.homePage .groupsWrap {
+  border-top: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+}
+
+body.popElectric .groups,
+body.popElectric.homePage .groups {
+  gap: 26px;
+}
+
+body.popElectric .groupBtn,
+body.popElectric.homePage .groupBtn {
+  min-height: 46px;
+  border-bottom-width: 3px;
+  color: var(--clean-ink);
+  padding: 16px 0 12px;
+  font:
+    700 13px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .groupBtn:hover,
+body.popElectric .groupBtn:focus-visible,
+body.popElectric .groupBtn.active,
+body.popElectric.homePage .groupBtn.active {
+  border-bottom-color: var(--clean-ink);
+  color: var(--clean-ink);
+}
+
+/* Home */
+body.popElectric.homePage .feed {
+  padding: 0 0 80px;
+}
+
+body.popElectric .popHomeStats {
+  min-height: 50px;
+  gap: 20px;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 10px 0;
+  color: var(--clean-muted);
+  font:
+    600 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .popHomeStats .popHomeTagline {
+  margin-right: auto;
+  color: var(--clean-ink);
+  font-weight: 800;
+}
+
+body.popElectric .popHomeStats strong {
+  color: var(--clean-ink);
+  font:
+    800 15px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .popHomeStats i {
+  display: none;
+}
+
+body.popElectric .popHomeStats button {
+  margin-left: 0;
+  color: var(--clean-ink);
+  font:
+    700 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+body.popElectric .editorialHomeLead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.72fr);
+  align-items: end;
+  gap: 42px;
+  border-bottom: 1px solid var(--clean-ink);
+  margin: 0 0 52px;
+  padding: 58px 0 62px;
+}
+
+body.popElectric .editorialHomeLead .portalHeroLink {
+  position: static;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  box-shadow: none;
+}
+
+body.popElectric .editorialHomeLead .portalHeroCopy {
+  position: static;
+  order: -1;
+  width: 100%;
+  display: block;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+body.popElectric .portalHeroEyebrow {
+  display: inline-block;
+  background: var(--clean-coral);
+  color: var(--clean-ink);
+  padding: 7px 9px 6px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
+  display: inline-flex;
+  margin-left: 11px;
+  color: var(--clean-ink);
+  font:
+    800 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+}
+
+body.popElectric .editorialHomeLead .portalHeroCopy h1 {
+  max-width: 860px;
+  margin: 23px 0 22px;
+  color: var(--clean-ink);
+  font:
+    800 clamp(54px, 5.25vw, 78px)/0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.062em;
+}
+
+body.popElectric .editorialHomeLead .portalHeroAction {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--clean-muted);
+  font:
+    700 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+body.popElectric .editorialHomeLead .portalHeroMedia {
+  position: static;
+  inset: auto;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--clean-soft);
+}
+
+body.popElectric .editorialHomeLead .portalHeroMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.popElectric .homeVoteRail {
+  align-self: end;
+  border-top: 6px solid var(--clean-ink);
+}
+
+body.popElectric .homeVoteRailHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 16px 0 18px;
+}
+
+body.popElectric .homeVoteRailHead span,
+body.popElectric .homeVoteRailHead small {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+body.popElectric .homeVoteRailHead h2 {
+  margin: 8px 0 0;
+  font-size: 27px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+body.popElectric .homeVoteRailHead small {
+  border: 1px solid var(--clean-ink);
+  padding: 6px;
+}
+
+body.popElectric .homeVoteRail ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.popElectric .homeVoteRail li {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 11px 0;
+}
+
+body.popElectric .homeVotePosition {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+body.popElectric .homeVoteOption {
+  min-width: 0;
+}
+
+body.popElectric .homeVoteOption strong,
+body.popElectric .homeVoteOption small {
+  display: block;
+}
+
+body.popElectric .homeVoteOption strong {
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.popElectric .homeVoteOption small {
+  margin-top: 4px;
+  color: var(--clean-muted);
+  font-size: 11px;
+}
+
+body.popElectric .homeLeadVoteActions {
+  display: grid;
+  grid-template-columns: repeat(2, 38px);
+}
+
+body.popElectric .homeLeadVoteActions .homeReact {
+  width: 38px;
+  height: 38px;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  margin-left: -1px;
+  padding: 0;
+  font-size: 20px;
+}
+
+body.popElectric .homeLeadVoteActions .homeReact.up:hover,
+body.popElectric .homeLeadVoteActions .homeReact.up:focus-visible {
+  background: var(--clean-lime);
+}
+
+body.popElectric .homeLeadVoteActions .homeReact.down:hover,
+body.popElectric .homeLeadVoteActions .homeReact.down:focus-visible {
+  background: var(--clean-coral);
+}
+
+body.popElectric .homeVoteRail > p {
+  min-height: 28px;
+  margin: 13px 0 4px;
+  color: var(--clean-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+body.popElectric .homeVoteOpen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 13px 0;
+  color: var(--clean-ink);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+body.popElectric .homeVoteOpen:hover,
+body.popElectric .homeVoteOpen:focus-visible {
+  border-color: var(--clean-coral);
+  color: var(--clean-coral);
+}
+
+body.popElectric .portalTrending,
+body.popElectric.localMode .portalTrending {
+  grid-template-columns: 100px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  margin: 0 0 34px;
+}
+
+body.popElectric .portalTrendingLabel,
+body.popElectric.localMode .portalTrendingLabel {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  font-size: 11px;
+}
+
+body.popElectric .portalTrending a {
+  font-size: 12px;
+}
+
+body.popElectric .categoryRail {
+  grid-template-columns: 160px minmax(0, 1fr);
+  border-top: 1px solid var(--clean-line);
+  border-bottom: 1px solid var(--clean-line);
+  padding: 17px 0;
+  margin: 34px 0;
+}
+
+body.popElectric .categoryRailLabel {
+  color: var(--clean-ink);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric .categoryRailButton {
+  min-height: 34px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 999px;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 8px 14px;
+  font-size: 11px;
+}
+
+body.popElectric .categoryRailButton:hover,
+body.popElectric .categoryRailButton:focus-visible {
+  background: var(--clean-soft);
+}
+
+body.popElectric .portalSectionHead {
+  align-items: end;
+  border-bottom: 1px solid var(--clean-ink);
+  margin: 64px 0 28px;
+  padding: 0 0 18px;
+}
+
+body.popElectric .portalSectionHead > div > span {
+  color: var(--clean-ink);
+  font:
+    900 11px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.12em;
+}
+
+body.popElectric .portalSectionHead h2 {
+  margin: 10px 0 0;
+  font:
+    800 clamp(38px, 4vw, 58px)/0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .portalShuffle,
+body.popElectric .categoryShuffle {
+  min-height: 34px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 8px 0;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+body.popElectric .categoryRankGrid,
+body.popElectric .popHomeGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 42px 24px;
+}
+
+body.popElectric .categoryRankCard {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+body.popElectric .categoryRankCard:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+body.popElectric .categoryRankMedia,
+body.popElectric .searchRankList .categoryRankMedia {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  background: var(--clean-soft);
+}
+
+body.popElectric .categoryRankCopy {
+  min-height: 0;
+  padding: 0;
+}
+
+body.popElectric .categoryRankMeta {
+  padding: 13px 0 9px;
+  color: var(--clean-muted);
+  font:
+    600 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0;
+}
+
+body.popElectric .categoryRankMeta .category,
+body.popElectric .category {
+  color: var(--clean-ink);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
+
+body.popElectric .categoryRankTitle h2,
+body.popElectric .searchRankList .categoryRankTitle h2 {
+  display: block;
+  overflow: visible;
+  margin: 0 0 15px;
+  padding: 0;
+  color: var(--clean-ink);
+  font:
+    800 clamp(22px, 2vw, 29px)/1.02 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+}
+
+body.popElectric .categoryRankCard:hover .categoryRankTitle h2 {
+  text-decoration: underline;
+  text-decoration-color: var(--clean-coral);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+body.popElectric .categoryRankLinks {
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 0;
+}
+
+body.popElectric .categoryRankLinks .categoryVoteCta {
+  min-height: 30px;
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  color: var(--clean-ink);
+  padding: 4px 0;
+  font-size: 10px;
+}
+
+body.popElectric .categoryRankLinks .whatsappShare.compact {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 50%;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
+body.popElectric .popLocalCallout {
+  min-height: 250px;
+  grid-template-columns: 1.2fr auto 1fr 54px;
+  gap: 38px;
+  margin: 76px calc(50% - 50vw);
+  padding: 44px max(24px, calc((100vw - 1220px) / 2));
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .popLocalCallout h2 {
+  color: var(--clean-paper);
+  font:
+    800 clamp(44px, 4.6vw, 66px)/0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .popLocalCallout h2 em,
+body.popElectric .popLocalCallout .popEyebrow {
+  color: var(--clean-lime);
+}
+
+body.popElectric .popLocalCallout p,
+body.popElectric .popLocalTopics,
+body.popElectric .popLocalCity {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.popElectric .popLocalCity {
+  border: 1px solid var(--clean-paper);
+  border-radius: 0;
+}
+
+body.popElectric .popLocalCallout > a {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-lime);
+  color: var(--clean-ink);
+}
+
+body.popElectric .portalNewsLayout {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 44px;
+}
+
+body.popElectric .portalStoryFeed {
+  gap: 0;
+}
+
+body.popElectric .portalStory,
+body.popElectric .portalStory.compact {
+  min-height: 190px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  align-items: center;
+  overflow: visible;
+  border: 0;
+  border-top: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: transparent;
+  padding: 24px 0;
+}
+
+body.popElectric .portalStory.feature,
+body.popElectric .portalStory.row {
+  display: grid;
+}
+
+body.popElectric .portalStoryMedia,
+body.popElectric .portalStory.feature .portalStoryMedia {
+  grid-column: 2;
+  grid-row: 1;
+  width: 210px;
+  min-height: 142px;
+  height: 142px;
+  background: var(--clean-soft);
+}
+
+body.popElectric .portalStoryCopy {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 0 28px 0 0;
+}
+
+body.popElectric .portalStoryCopy h2,
+body.popElectric .portalSideCopy h2,
+body.popElectric .portalStory.feature h2 {
+  margin: 8px 0 12px;
+  font:
+    800 clamp(28px, 3vw, 41px)/0.98 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric .portalStoryFoot a {
+  color: var(--clean-ink);
+  text-decoration: underline;
+}
+
+body.popElectric .portalRankPanel {
+  border: 0;
+  border-top: 6px solid var(--clean-ink);
+  background: transparent;
+  padding: 0;
+}
+
+body.popElectric .portalRankPanel.disputed {
+  border-top-color: var(--clean-ink);
+}
+
+body.popElectric .portalRankPanel li {
+  border-bottom: 1px solid var(--clean-line);
+  padding: 14px 0;
+}
+
+body.popElectric .portalListNum {
+  color: var(--clean-ink);
+  font:
+    800 18px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .portalRankPanel li:first-child .portalListNum {
+  color: var(--clean-coral);
+}
+
+body.popElectric .portalIdeaCallout {
+  border: 0;
+  border-top: 1px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.popElectric .portalIdeaCallout h2 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.popElectric .portalIdeaCallout > a {
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-lime);
+  color: var(--clean-ink);
+}
+
+/* Categorias, busca e páginas internas */
+body.popElectric .categoryLandingHead,
+body.popElectric .searchResultsHead {
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.popElectric .categoryLandingHead h1,
+body.popElectric .searchResultsHead h1 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.popElectric .categorySorts button,
+body.popElectric .categoryLoadMore button,
+body.popElectric .localExploreButton {
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
+body.popElectric .categorySorts button.active {
+  background: var(--clean-ink);
+  border-color: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .rank,
+body.popElectric .profileSection,
+body.popElectric .commentsPanel,
+body.popElectric .authCard,
+body.legalShell .legalSection {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.popElectric .siteFooter,
+body.legalShell .siteFooter {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .siteFooterColumn strong,
+body.legalShell .siteFooterColumn strong {
+  color: var(--clean-lime);
+}
+
+@media (max-width: 980px) {
+  body.popElectric .wrap,
+  body.legalShell .wrap {
+    width: min(100% - 32px, 920px);
+  }
+
+  body.popElectric .top header {
+    grid-template-columns: 150px minmax(220px, 1fr) auto;
+    gap: 20px;
+  }
+
+  body.popElectric .editorialHomeLead {
+    grid-template-columns: minmax(0, 1.4fr) minmax(285px, 0.8fr);
+    gap: 28px;
+  }
+
+  body.popElectric .categoryRankGrid,
+  body.popElectric .popHomeGrid,
+  body.popElectric .searchRankList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.popElectric .popLocalCallout {
+    grid-template-columns: 1fr auto 54px;
+  }
+
+  body.popElectric .popLocalTopics {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  body.popElectric .wrap,
+  body.legalShell .wrap,
+  body.rankingPage .feed,
+  body.profilePage .feed,
+  body.moderationPage .feed {
+    width: calc(100% - 30px);
+  }
+
+  body.popElectric .top {
+    position: static;
+  }
+
+  body.popElectric .top header {
+    min-height: 0;
+    height: auto;
+    grid-template-columns: 118px minmax(0, 1fr) auto;
+    grid-template-rows: auto;
+    gap: 12px;
+    padding: 15px 0;
+  }
+
+  body.popElectric .brandBlock,
+  body.popElectric.homePage .brandBlock,
+  body.popElectric.rankingPage .brandBlock,
+  body.popElectric .logo {
+    width: 116px;
+  }
+
+  body.popElectric .brandSlogan {
+    font-size: 8px;
+  }
+
+  body.popElectric .siteSearch,
+  body.popElectric.homePage .siteSearch,
+  body.popElectric.rankingPage .siteSearch {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 40px;
+  }
+
+  body.popElectric .account,
+  body.popElectric.homePage .account,
+  body.popElectric.rankingPage .account {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  body.popElectric .accountLink:not(.accountEnter) {
+    min-height: 36px;
+    font-size: 11px;
+  }
+
+  body.popElectric .accountEnter {
+    display: none;
+  }
+
+  body.popElectric .groups,
+  body.popElectric.homePage .groups {
+    gap: 20px;
+  }
+
+  body.popElectric .groupBtn,
+  body.popElectric.homePage .groupBtn {
+    min-height: 45px;
+    padding: 15px 0 11px;
+    font-size: 12px;
+  }
+
+  body.popElectric .popHomeStats {
+    min-height: 44px;
+    gap: 16px;
+  }
+
+  body.popElectric .popHomeStats .popHomeTagline {
+    flex: 1 0 auto;
+  }
+
+  body.popElectric .popHomeStats > span:not(.popHomeTagline) {
+    display: none;
+  }
+
+  body.popElectric .editorialHomeLead {
+    display: block;
+    margin-bottom: 40px;
+    padding: 38px 0 48px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy h1 {
+    margin: 19px 0;
+    font-size: clamp(44px, 13vw, 60px);
+    line-height: 0.92;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroMedia {
+    aspect-ratio: 4 / 3;
+  }
+
+  body.popElectric .homeVoteRail {
+    margin-top: 38px;
+  }
+
+  body.popElectric .portalTrending,
+  body.popElectric.localMode .portalTrending {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+
+  body.popElectric .categoryRail {
+    display: block;
+  }
+
+  body.popElectric .categoryRailLabel {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  body.popElectric .portalSectionHead {
+    margin-top: 50px;
+  }
+
+  body.popElectric .portalSectionHead h2 {
+    font-size: 41px;
+  }
+
+  body.popElectric .categoryRankGrid,
+  body.popElectric .popHomeGrid,
+  body.popElectric .searchRankList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 14px;
+  }
+
+  body.popElectric .categoryRankCard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.popElectric .categoryRankMedia,
+  body.popElectric .searchRankList .categoryRankMedia {
+    min-height: 0;
+  }
+
+  body.popElectric .categoryRankTitle h2,
+  body.popElectric .searchRankList .categoryRankTitle h2 {
+    font-size: 21px;
+  }
+
+  body.popElectric .popLocalCallout {
+    min-height: 0;
+    grid-template-columns: 1fr 48px;
+    gap: 22px;
+    margin: 58px calc(50% - 50vw);
+    padding: 36px 15px;
+  }
+
+  body.popElectric .popLocalCallout h2 {
+    font-size: 48px;
+  }
+
+  body.popElectric .popLocalCity {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  body.popElectric .popLocalCallout > a {
+    grid-column: 2;
+    grid-row: 1;
+    width: 48px;
+    height: 48px;
+  }
+
+  body.popElectric .portalNewsLayout {
+    display: block;
+  }
+
+  body.popElectric .portalStory,
+  body.popElectric .portalStory.compact,
+  body.popElectric .portalStory.feature,
+  body.popElectric .portalStory.row {
+    grid-template-columns: minmax(0, 1fr) 116px;
+    min-height: 150px;
+    padding: 20px 0;
+  }
+
+  body.popElectric .portalStoryMedia,
+  body.popElectric .portalStory.feature .portalStoryMedia {
+    width: 116px;
+    min-height: 110px;
+    height: 110px;
+  }
+
+  body.popElectric .portalStoryCopy {
+    padding-right: 14px;
+  }
+
+  body.popElectric .portalStoryCopy h2,
+  body.popElectric .portalStory.feature h2 {
+    font-size: 27px;
+  }
+
+  body.popElectric .portalNewsLayout > aside {
+    margin-top: 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.popElectric .top header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    padding: 11px 0 12px;
+  }
+
+  body.popElectric .brandBlock,
+  body.popElectric.homePage .brandBlock,
+  body.popElectric.rankingPage .brandBlock,
+  body.popElectric .logo {
+    grid-column: 1;
+    grid-row: 1;
+    width: 112px;
+  }
+
+  body.popElectric .account,
+  body.popElectric.homePage .account,
+  body.popElectric.rankingPage .account {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  body.popElectric .siteSearch,
+  body.popElectric.homePage .siteSearch,
+  body.popElectric.rankingPage .siteSearch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+
+  body.popElectric .popHomeStats button {
+    font-size: 10px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroEyebrow {
+    font-size: 10px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
+    display: block;
+    margin: 10px 0 0;
+  }
+
+  body.popElectric .homeVoteRail li {
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+
+  body.popElectric .homeLeadVoteActions {
+    grid-template-columns: repeat(2, 36px);
+  }
+
+  body.popElectric .homeLeadVoteActions .homeReact {
+    width: 36px;
+    height: 38px;
+  }
+
+  body.popElectric .categoryRankGrid,
+  body.popElectric .popHomeGrid,
+  body.popElectric .searchRankList {
+    grid-template-columns: 1fr;
+  }
+
+  body.popElectric .categoryRankTitle h2,
+  body.popElectric .searchRankList .categoryRankTitle h2 {
+    font-size: 25px;
+  }
+
+  body.popElectric .portalSectionHead {
+    display: block;
+  }
+
+  body.popElectric .portalShuffle {
+    width: max-content;
+    margin-top: 8px;
+  }
+
+  body.popElectric .portalStory,
+  body.popElectric .portalStory.compact,
+  body.popElectric .portalStory.feature,
+  body.popElectric .portalStory.row {
+    grid-template-columns: minmax(0, 1fr) 100px;
+  }
+
+  body.popElectric .portalStoryMedia,
+  body.popElectric .portalStory.feature .portalStoryMedia {
+    width: 100px;
+    height: 96px;
+    min-height: 96px;
+  }
+
+  body.popElectric .portalStoryCopy h2,
+  body.popElectric .portalStory.feature h2 {
+    font-size: 23px;
+  }
+}
