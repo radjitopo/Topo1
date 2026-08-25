@@ -102,8 +102,8 @@ test('catalog importer and page assets include the seventh batch', async () => {
 
   assert.match(importer, /rankings-batch-7\.json/);
   assert.match(importer, /seventhBatchRankings\.length !== 61/);
-  assert.match(importer, /newRankings\.length !== 161/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 201/);
+  assert.match(importer, /newRankings\.length !== 162/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 202/);
   assert.match(index, /editorial-15\.js/);
   assert.match(index, /app\.js\?v=20260825-30-catalog/);
   for (const category of ['Arte', 'Motores', 'Tecnologia', 'Produtos', 'TV & Séries']) {

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "celebridades-cerveja",
+    "category": "Famosos",
+    "question": "Com qual celebridade você tomaria uma cerveja?",
+    "image_url": "https://somostopo.com.br/social/celebridades-cerveja.jpg",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T13:05:00.000Z",
+    "opts": [
+      { "label": "Rita Lee", "position": 1, "baseline_score": 0 },
+      { "label": "Keanu Reeves", "position": 2, "baseline_score": 0 },
+      { "label": "Fernanda Torres", "position": 3, "baseline_score": 0 },
+      { "label": "Anthony Bourdain", "position": 4, "baseline_score": 0 },
+      { "label": "Pedro Pascal", "position": 5, "baseline_score": 0 },
+      { "label": "Ivete Sangalo", "position": 6, "baseline_score": 0 },
+      { "label": "Wagner Moura", "position": 7, "baseline_score": 0 },
+      { "label": "Jennifer Lawrence", "position": 8, "baseline_score": 0 },
+      { "label": "Seu Jorge", "position": 9, "baseline_score": 0 },
+      { "label": "Jack Black", "position": 10, "baseline_score": 0 },
+      { "label": "Fernanda Montenegro", "position": 11, "baseline_score": 0 },
+      { "label": "Snoop Dogg", "position": 12, "baseline_score": 0 },
+      { "label": "Selton Mello", "position": 13, "baseline_score": 0 },
+      { "label": "Lady Gaga", "position": 14, "baseline_score": 0 },
+      { "label": "Ney Matogrosso", "position": 15, "baseline_score": 0 },
+      { "label": "Paul McCartney", "position": 16, "baseline_score": 0 },
+      { "label": "Lázaro Ramos", "position": 17, "baseline_score": 0 },
+      { "label": "Viola Davis", "position": 18, "baseline_score": 0 },
+      { "label": "Anitta", "position": 19, "baseline_score": 0 },
+      { "label": "George Clooney", "position": 20, "baseline_score": 0 }
+    ]
+  }
+]

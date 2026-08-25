@@ -24,11 +24,20 @@ const staticFiles = new Set([
   '/editorial-7.js',
   '/editorial-8.js',
   '/editorial-9.js',
+  '/editorial-10.js',
+  '/editorial-11.js',
+  '/editorial-12.js',
+  '/editorial-13.js',
+  '/editorial-14.js',
+  '/editorial-15.js',
+  '/editorial-16.js',
+  '/social/celebridades-cerveja.jpg',
 ]);
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  '.jpg': 'image/jpeg',
 };
 
 async function bodyOf(req) {
