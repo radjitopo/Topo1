@@ -10,6 +10,7 @@
     "format:check": "prettier --check .",
     "audit:images": "node scripts/audit-ranking-images.mjs --site https://somostopo.com.br",
     "audit:images:local": "node scripts/audit-ranking-images.mjs --strict",
+    "catalog:batch7": "node scripts/build-batch-7.mjs",
     "catalog:sql": "node scripts/build-local-catalog.mjs --sql",
     "dev": "node test/dev-server.mjs",
     "test:engagement": "node test/engagement-flow.test.mjs",

@@ -9,6 +9,7 @@ const catalog = await readFile(new URL('../scripts/apply-catalog.mjs', import.me
 const batch4 = await readFile(new URL('../data/rankings-batch-4.json', import.meta.url), 'utf8');
 const batch5 = await readFile(new URL('../data/rankings-batch-5.json', import.meta.url), 'utf8');
 const batch6 = await readFile(new URL('../data/rankings-batch-6.json', import.meta.url), 'utf8');
+const batch7 = await readFile(new URL('../data/rankings-batch-7.json', import.meta.url), 'utf8');
 const cityScript = await readFile(
   new URL('../scripts/apply-city-rankings.mjs', import.meta.url),
   'utf8',
@@ -37,7 +38,7 @@ assert.match(
   'catalog application must surface repeated covers for editorial review',
 );
 
-for (const source of [batch4, batch5, batch6, cityScript]) {
+for (const source of [batch4, batch5, batch6, batch7, cityScript]) {
   assert.doesNotMatch(
     source,
     /photo-1569783721854-33a99b4c66c5/,

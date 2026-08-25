@@ -299,7 +299,22 @@ const categoryLabelOverrides = {
 };
 function groupOf(r) {
   if (groupOverrides[r.id]) return groupOverrides[r.id];
-  if (['Cinema', 'Música', 'Livros', 'Moda', 'Jogos', 'Natureza'].includes(r.cat)) return r.cat;
+  if (
+    [
+      'Cinema',
+      'Música',
+      'Livros',
+      'Arte',
+      'Moda',
+      'Jogos',
+      'Natureza',
+      'Motores',
+      'Tecnologia',
+      'Produtos',
+      'TV & Séries',
+    ].includes(r.cat)
+  )
+    return r.cat;
   if (r.cat === 'TV') return 'TV & Séries';
   if (['Pessoas', 'Famosos'].includes(r.cat)) return 'Famosos';
   if (r.cat === 'Cultura') return 'Arte';

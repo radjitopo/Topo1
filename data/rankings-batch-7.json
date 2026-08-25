@@ -1,0 +1,6773 @@
+[
+  {
+    "id": "comedias-cinema",
+    "category": "Cinema",
+    "question": "Qual é a melhor comédia de todos os tempos?",
+    "image_url": "https://images.unsplash.com/photo-1751823886813-0cfc86cb9478?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:00.000Z",
+    "opts": [
+      {
+        "label": "O Auto da Compadecida",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minha Mãe É uma Peça",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apertem os Cintos... O Piloto Sumiu!",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Feitiço do Tempo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quanto Mais Quente Melhor",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Monty Python em Busca do Cálice Sagrado",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Vida de Brian",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Grande Lebowski",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Se Beber, Não Case!",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Missão Madrinha de Casamento",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Superbad: É Hoje",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Um Príncipe em Nova York",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curtindo a Vida Adoidado",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry e Sally: Feitos um para o Outro",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tempos Modernos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Luzes da Cidade",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Grande Hotel Budapeste",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Caça-Fantasmas",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tootsie",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dr. Fantástico",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animacoes-cinema",
+    "category": "Cinema",
+    "question": "Qual é a melhor animação da história do cinema?",
+    "image_url": "https://images.unsplash.com/photo-1729006426245-b774fc155c1e?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:01.000Z",
+    "opts": [
+      {
+        "label": "Toy Story",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Viagem de Chihiro",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Rei Leão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shrek",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "WALL-E",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ratatouille",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Up: Altas Aventuras",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Divertida Mente",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Homem-Aranha no Aranhaverso",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Princesa Mononoke",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Túmulo dos Vagalumes",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Bela e a Fera",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Incríveis",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Procurando Nemo",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viva: A Vida é uma Festa",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Fantástico Sr. Raposo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Akira",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Gigante de Ferro",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pinóquio",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Branca de Neve e os Sete Anões",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "filmes-ficcao-cientifica",
+    "category": "Cinema",
+    "question": "Qual é o maior filme de ficção científica?",
+    "image_url": "https://images.unsplash.com/photo-1517486518908-97a5f91b325f?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:02.000Z",
+    "opts": [
+      {
+        "label": "2001: Uma Odisseia no Espaço",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blade Runner: O Caçador de Androides",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Matrix",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alien: O Oitavo Passageiro",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Exterminador do Futuro 2",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Star Wars: O Império Contra-Ataca",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Interestelar",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "De Volta para o Futuro",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Chegada",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jurassic Park",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "E.T.: O Extraterrestre",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Origem",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Solaris",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Filhos da Esperança",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mad Max: Estrada da Fúria",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Duna: Parte Dois",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Enigma de Outro Mundo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Distrito 9",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ex Machina",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Planeta dos Macacos",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "viloes-cinema",
+    "category": "Cinema",
+    "question": "Qual vilão do cinema é impossível esquecer?",
+    "image_url": "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:03.000Z",
+    "opts": [
+      {
+        "label": "Darth Vader",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hannibal Lecter",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coringa em O Cavaleiro das Trevas",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anton Chigurh",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Norman Bates",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lord Voldemort",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Enfermeira Ratched",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "T-1000",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Agente Smith",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Thanos",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bruxa Má do Oeste",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hans Landa",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Scar",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sauron",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Freddy Krueger",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Michael Myers",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jason Voorhees",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Annie Wilkes",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cômodo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cruella de Vil",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "finais-cinema",
+    "category": "Cinema",
+    "question": "Qual filme tem o final mais inesquecível?",
+    "image_url": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:04.000Z",
+    "opts": [
+      {
+        "label": "O Sexto Sentido",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Clube da Luta",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Planeta dos Macacos",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Suspeitos",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seven: Os Sete Crimes Capitais",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cinema Paradiso",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Casablanca",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Whiplash: Em Busca da Perfeição",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Origem",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Nevoeiro",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oldboy",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Primeira Noite de um Homem",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "2001: Uma Odisseia no Espaço",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Thelma & Louise",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toy Story 3",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Chegada",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Memórias de um Assassino",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Parasita",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ilha do Medo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brazil: O Filme",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "novelas-brasileiras",
+    "category": "TV & Séries",
+    "question": "Qual é a maior novela brasileira de todos os tempos?",
+    "image_url": "https://images.unsplash.com/photo-1478802848783-2ed6e96a0462?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:05.000Z",
+    "opts": [
+      {
+        "label": "Roque Santeiro",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vale Tudo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Avenida Brasil",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pantanal (1990)",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Clone",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tieta",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Próxima Vítima",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mulheres de Areia",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Senhora do Destino",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Renascer (1993)",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Terra Nostra",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Por Amor",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Laços de Família",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Rei do Gado",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gabriela (1975)",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Escrava Isaura (1976)",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Que Rei Sou Eu?",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vamp",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xica da Silva",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chocolate com Pimenta",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "series-comedia",
+    "category": "TV & Séries",
+    "question": "Qual é a melhor série de comédia?",
+    "image_url": "https://images.unsplash.com/photo-1615986200762-a1ed9610d3b1?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:06.000Z",
+    "opts": [
+      {
+        "label": "Friends",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Office",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seinfeld",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fleabag",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brooklyn Nine-Nine",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Parks and Recreation",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Community",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ted Lasso",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Modern Family",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arrested Development",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curb Your Enthusiasm",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "It's Always Sunny in Philadelphia",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Good Place",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Schitt's Creek",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abbott Elementary",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "What We Do in the Shadows",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "BoJack Horseman",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chaves",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sai de Baixo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Grande Família",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "personagens-series",
+    "category": "TV & Séries",
+    "question": "Qual personagem de série é o mais inesquecível?",
+    "image_url": "https://images.unsplash.com/photo-1593784991188-c899ca07263b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:07.000Z",
+    "opts": [
+      {
+        "label": "Walter White",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tony Soprano",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fleabag",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eleven",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tyrion Lannister",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Omar Little",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Don Draper",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Michael Scott",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rachel Green",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Saul Goodman",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wandinha Addams",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rue Bennett",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sherlock Holmes",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "BoJack Horseman",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Buffy Summers",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dexter Morgan",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Villanelle",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Phoebe Buffay",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Joel Miller",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dana Scully",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "livros-ler-na-vida",
+    "category": "Livros",
+    "question": "Qual livro todo mundo deveria ler uma vez na vida?",
+    "image_url": "https://images.unsplash.com/photo-1763368230845-150be8503232?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:08.000Z",
+    "opts": [
+      {
+        "label": "1984",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Sol é para Todos",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cem Anos de Solidão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Pequeno Príncipe",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sapiens",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Diário de Anne Frank",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Irmãos Karamázov",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dom Quixote",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Crime e Castigo",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Sertão: Veredas",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dom Casmurro",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Hora da Estrela",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Mundo se Despedaça",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Amada",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frankenstein",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Conto da Aia",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Alquimista",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Estrangeiro",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Cidades Invisíveis",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Em Busca de Sentido",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maiores-livros-brasileiros",
+    "category": "Livros",
+    "question": "Qual é o maior livro da literatura brasileira?",
+    "image_url": "https://images.unsplash.com/photo-1754430543609-aae159c530ef?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:09.000Z",
+    "opts": [
+      {
+        "label": "Grande Sertão: Veredas",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dom Casmurro",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Memórias Póstumas de Brás Cubas",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vidas Secas",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Macunaíma",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Hora da Estrela",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Capitães da Areia",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Torto Arado",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quarto de Despejo",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Cortiço",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sagarana",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Ateneu",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lavoura Arcaica",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dois Irmãos",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Paixão Segundo G.H.",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Triste Fim de Policarpo Quaresma",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Quinze",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Bernardo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Menino de Engenho",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Romance d'A Pedra do Reino",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "livros-infantis",
+    "category": "Livros",
+    "question": "Qual livro infantil mais marcou sua infância?",
+    "image_url": "https://images.unsplash.com/photo-1752920299211-28be8c9b0121?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:10.000Z",
+    "opts": [
+      {
+        "label": "O Pequeno Príncipe",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Potter e a Pedra Filosofal",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alice no País das Maravilhas",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Mágico de Oz",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Matilda",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Fantástica Fábrica de Chocolate",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Onde Vivem os Monstros",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anne de Green Gables",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Crônicas de Nárnia",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peter Pan",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ursinho Pooh",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sítio do Picapau Amarelo",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Meu Pé de Laranja Lima",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marcelo, Marmelo, Martelo",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Bolsa Amarela",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Menino Maluquinho",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bisa Bia, Bisa Bel",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coraline",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "A História sem Fim",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Momo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "personagens-literatura",
+    "category": "Livros",
+    "question": "Qual personagem da literatura é inesquecível?",
+    "image_url": "https://images.unsplash.com/photo-1772617616232-b9ed723ab115?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:11.000Z",
+    "opts": [
+      {
+        "label": "Sherlock Holmes",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elizabeth Bennet",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dom Quixote",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hamlet",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Potter",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frodo Bolseiro",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Capitu",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Riobaldo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anna Kariênina",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Holden Caulfield",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jean Valjean",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jane Eyre",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Conde Drácula",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "A criatura de Frankenstein",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hercule Poirot",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alice",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Matilda",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Macabéa",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Edmond Dantès",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Atticus Finch",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "adaptacoes-livros-cinema",
+    "category": "Livros",
+    "question": "Qual livro ganhou a melhor adaptação para o cinema?",
+    "image_url": "https://images.unsplash.com/photo-1750809411151-c46ca3d43b97?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:12.000Z",
+    "opts": [
+      {
+        "label": "O Poderoso Chefão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Senhor dos Anéis: O Retorno do Rei",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Um Sonho de Liberdade",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Silêncio dos Inocentes",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Onde os Fracos Não Têm Vez",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Um Estranho no Ninho",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jurassic Park",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Clube da Luta",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adoráveis Mulheres (2019)",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Duna: Parte Dois",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Sol é para Todos",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Cor Púrpura (1985)",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Bons Companheiros",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garota Exemplar",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blade Runner: O Caçador de Androides",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Filhos da Esperança",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cidade de Deus",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Horas",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Razão e Sensibilidade",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Los Angeles: Cidade Proibida",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "livros-suspense",
+    "category": "Livros",
+    "question": "Qual é o melhor livro de suspense?",
+    "image_url": "https://images.unsplash.com/photo-1520467795206-62e33627e6ce?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:13.000Z",
+    "opts": [
+      {
+        "label": "E Não Sobrou Nenhum",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Silêncio dos Inocentes",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garota Exemplar",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Homens que Não Amavam as Mulheres",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Iluminado",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rebecca",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Talentoso Ripley",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "À Beira do Abismo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Nome da Rosa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Antes de Dormir",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Objetos Cortantes",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Sangue Frio",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Assassinato de Roger Ackroyd",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Misery",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sobre Meninos e Lobos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Código Da Vinci",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Mulher de Branco",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lugares Escuros",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "A História Secreta",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Verity",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "sagas-fantasia",
+    "category": "Livros",
+    "question": "Qual saga de fantasia tem o universo mais incrível?",
+    "image_url": "https://images.unsplash.com/photo-1567168539593-59673ababaae?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:14.000Z",
+    "opts": [
+      {
+        "label": "O Senhor dos Anéis",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Potter",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Crônicas de Gelo e Fogo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Crônicas de Nárnia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ciclo de Terramar",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Roda do Tempo",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Discworld",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Relatos da Guerra das Tempestades",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mistborn",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fronteiras do Universo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Witcher",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Crônica do Matador do Rei",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Torre Negra",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Duna",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Percy Jackson e os Olimpianos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Terra Partida",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Malazan",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Sandman",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dragonlance",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ciclo da Herança",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "escritores-brasileiros",
+    "category": "Livros",
+    "question": "Quem é o maior escritor brasileiro?",
+    "image_url": "https://images.unsplash.com/photo-1765634898266-6bd03cb0fce7?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:15.000Z",
+    "opts": [
+      {
+        "label": "Machado de Assis",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Clarice Lispector",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "João Guimarães Rosa",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Graciliano Ramos",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jorge Amado",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carlos Drummond de Andrade",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carolina Maria de Jesus",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Conceição Evaristo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "João Cabral de Melo Neto",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lima Barreto",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cecília Meireles",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ariano Suassuna",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lygia Fagundes Telles",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rachel de Queiroz",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mário de Andrade",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Raduan Nassar",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milton Hatoum",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hilda Hilst",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rubem Fonseca",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Érico Veríssimo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "livros-para-reler",
+    "category": "Livros",
+    "question": "Qual livro você gostaria de esquecer para ler de novo?",
+    "image_url": "https://images.unsplash.com/photo-1760106782590-bb02f861cbc7?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:16.000Z",
+    "opts": [
+      {
+        "label": "Cem Anos de Solidão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Potter e a Pedra Filosofal",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Senhor dos Anéis",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orgulho e Preconceito",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Pequeno Príncipe",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "1984",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Nome do Vento",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dom Casmurro",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Hora da Estrela",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Guia do Mochileiro das Galáxias",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Duna",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Menina que Roubava Livros",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Percy Jackson e o Ladrão de Raios",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Belas Maldições",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jane Eyre",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frankenstein",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Alquimista",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Crime e Castigo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Não Me Abandone Jamais",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Canção de Aquiles",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "biografias-autobiografias",
+    "category": "Livros",
+    "question": "Qual é a biografia ou autobiografia mais fascinante?",
+    "image_url": "https://images.unsplash.com/photo-1769962929240-24f4c2a69b3b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:17.000Z",
+    "opts": [
+      {
+        "label": "O Diário de Anne Frank",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Longa Caminhada até a Liberdade",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minha História",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Steve Jobs",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Agassi: Autobiografia",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nascido do Crime",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eu Sei por que o Pássaro Canta na Gaiola",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Menina da Montanha",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Último Sopro de Vida",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Só Garotos",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Autobiografia de Malcolm X",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Meus Experimentos com a Verdade",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cisnes Selvagens",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cozinha Confidencial",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Castelo de Vidro",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rita Lee: Uma Autobiografia",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ainda Estou Aqui",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Que É Isso, Companheiro?",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estação Carandiru",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leonardo da Vinci",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "artistas-visuais-brasileiros",
+    "category": "Arte",
+    "question": "Quem é o maior artista visual brasileiro?",
+    "image_url": "https://images.unsplash.com/photo-1774125553858-3f41e84d4e92?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:18.000Z",
+    "opts": [
+      {
+        "label": "Tarsila do Amaral",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Candido Portinari",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lygia Clark",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hélio Oiticica",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anita Malfatti",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Beatriz Milhazes",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vik Muniz",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adriana Varejão",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lygia Pape",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Di Cavalcanti",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arthur Bispo do Rosário",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aleijadinho",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Amilcar de Castro",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maria Martins",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lasar Segall",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tomie Ohtake",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rosana Paulino",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ernesto Neto",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cildo Meireles",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alfredo Volpi",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "obras-arte-historia",
+    "category": "Arte",
+    "question": "Qual é a maior obra de arte da história?",
+    "image_url": "https://images.unsplash.com/photo-1766289496983-ea3c8127f27f?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:19.000Z",
+    "opts": [
+      {
+        "label": "Mona Lisa",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Noite Estrelada",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guernica",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Teto da Capela Sistina",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Última Ceia",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Nascimento de Vênus",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Ronda Noturna",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moça com Brinco de Pérola",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Grito",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Persistência da Memória",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Meninas",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Liberdade Guiando o Povo",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Beijo, de Gustav Klimt",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Jardim das Delícias Terrenas",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nighthawks",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "American Gothic",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Grande Onda de Kanagawa",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abaporu",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Davi, de Michelangelo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vênus de Milo",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "esculturas-historia",
+    "category": "Arte",
+    "question": "Qual é a escultura mais impressionante da história?",
+    "image_url": "https://images.unsplash.com/photo-1769905226750-1db769c30bdc?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:20.000Z",
+    "opts": [
+      {
+        "label": "Davi, de Michelangelo",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pietà",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Pensador",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vênus de Milo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vitória de Samotrácia",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Exército de Terracota",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Discóbolo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Êxtase de Santa Teresa",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Beijo, de Rodin",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moais da Ilha de Páscoa",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estátua da Liberdade",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cristo Redentor",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cloud Gate",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maman",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Balloon Dog",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Burgueses de Calais",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pássaro no Espaço",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Formas Únicas da Continuidade no Espaço",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gálata Moribundo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Laocoonte e Seus Filhos",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "museus-mundo",
+    "category": "Arte",
+    "question": "Qual museu você mais gostaria de visitar?",
+    "image_url": "https://images.unsplash.com/photo-1772617616268-a2f27d194fce?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:21.000Z",
+    "opts": [
+      {
+        "label": "Museu do Louvre",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu do Prado",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Metropolitan Museum of Art",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu Britânico",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museus do Vaticano",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Galeria Uffizi",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "MoMA",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rijksmuseum",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu Hermitage",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Centro Pompidou",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu de Orsay",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tate Modern",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guggenheim Bilbao",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "National Gallery de Londres",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu de Pérgamo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu da Acrópole",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Inhotim",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "MASP",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Museu Nacional de Antropologia do México",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Art Institute of Chicago",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "movimentos-artisticos",
+    "category": "Arte",
+    "question": "Qual movimento artístico mais mudou a história?",
+    "image_url": "https://images.unsplash.com/photo-1695922294859-925ffd18a4e6?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:22.000Z",
+    "opts": [
+      {
+        "label": "Renascimento",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Impressionismo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Expressionismo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cubismo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Surrealismo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barroco",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Modernismo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pop Art",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Expressionismo Abstrato",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dadaísmo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bauhaus",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Romantismo",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Realismo",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Futurismo",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Construtivismo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minimalismo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arte Conceitual",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Neoclassicismo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Art Nouveau",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arte de Rua e Grafite",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "fotografos-historia",
+    "category": "Arte",
+    "question": "Quem é o maior fotógrafo da história?",
+    "image_url": "https://images.unsplash.com/photo-1779070693953-5a2f9207a140?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:23.000Z",
+    "opts": [
+      {
+        "label": "Henri Cartier-Bresson",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ansel Adams",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dorothea Lange",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Robert Capa",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sebastião Salgado",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vivian Maier",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Diane Arbus",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gordon Parks",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Steve McCurry",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Annie Leibovitz",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Richard Avedon",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Irving Penn",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cindy Sherman",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Robert Frank",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nan Goldin",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Man Ray",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Helmut Newton",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "William Eggleston",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Daido Moriyama",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Claudia Andujar",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "fotografias-iconicas",
+    "category": "Arte",
+    "question": "Qual é a fotografia mais icônica da história?",
+    "image_url": "https://images.unsplash.com/photo-1742146861179-a1f7cc547e3d?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:24.000Z",
+    "opts": [
+      {
+        "label": "Mãe Migrante",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Menina Afegã",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Homem do Tanque",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Beijo da Times Square",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Almoço no Topo de um Arranha-céu",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Earthrise",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Blue Marble",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bandeira em Iwo Jima",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guerrillero Heroico",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Menina do Napalm",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Einstein Mostrando a Língua",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Muhammad Ali sobre Sonny Liston",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marilyn Monroe no Metrô",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dalí Atomicus",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Beijo do Hôtel de Ville",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Serra Pelada, de Sebastião Salgado",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Beatles na Abbey Road",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Homem na Lua",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Desastre do Hindenburg",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Menino do Gueto de Varsóvia",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "artistas-rua",
+    "category": "Arte",
+    "question": "Quem é o maior artista de rua?",
+    "image_url": "https://images.unsplash.com/photo-1785290515822-2cf15f4cc6db?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:25.000Z",
+    "opts": [
+      {
+        "label": "Banksy",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jean-Michel Basquiat",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Keith Haring",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Os Gêmeos",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eduardo Kobra",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shepard Fairey",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "JR",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Invader",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blu",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vhils",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lady Pink",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Swoon",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Futura 2000",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rammellzee",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blek le Rat",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Faith47",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bordalo II",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nunca",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nina Pandolfo",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zezão",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "obras-arte-em-casa",
+    "category": "Arte",
+    "question": "Qual obra de arte você teria em casa?",
+    "image_url": "https://images.unsplash.com/photo-1747766369281-26a375aadf6d?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:26.000Z",
+    "opts": [
+      {
+        "label": "A Noite Estrelada",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Grande Onda de Kanagawa",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Beijo, de Gustav Klimt",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nenúfares",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Nascimento de Vênus",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Composição VIII",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Dança, de Matisse",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nighthawks",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abaporu",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Girassóis",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moça com Brinco de Pérola",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Latas de Sopa Campbell",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Filho do Homem",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "American Gothic",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "As Duas Fridas",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Jardim das Delícias Terrenas",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Grito",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Terraço do Café à Noite",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Primavera, de Botticelli",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "A Persistência da Memória",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pecas-atemporais",
+    "category": "Moda",
+    "question": "Qual é a peça de roupa mais atemporal?",
+    "image_url": "https://images.unsplash.com/photo-1784850227098-d731ad18cf02?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:27.000Z",
+    "opts": [
+      {
+        "label": "Calça jeans",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camisa branca",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vestido preto",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blazer",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaqueta de couro",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Trench coat",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tênis branco",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camiseta básica",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Calça de alfaiataria",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaqueta jeans",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bota preta",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mocassim",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suéter de tricô",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Saia midi",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenço",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Terno",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cardigan",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camisa polo",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tênis Converse All Star",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Óculos aviador",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "epocas-moda",
+    "category": "Moda",
+    "question": "Qual época teve a moda mais bonita?",
+    "image_url": "https://images.unsplash.com/photo-1784850758009-2b41bcf1f242?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:28.000Z",
+    "opts": [
+      {
+        "label": "Egito Antigo",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grécia e Roma Antigas",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Idade Média",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Renascimento",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barroco",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rococó",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Período Regencial",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Era Vitoriana",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Belle Époque",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1920",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1930",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1940",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1950",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1960",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1970",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1980",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 1990",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 2000",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 2010",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anos 2020",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "icones-estilo",
+    "category": "Moda",
+    "question": "Quem é o maior ícone de estilo?",
+    "image_url": "https://images.unsplash.com/photo-1784850350622-701c3053f0ae?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:29.000Z",
+    "opts": [
+      {
+        "label": "Audrey Hepburn",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "David Bowie",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grace Jones",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Princesa Diana",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rihanna",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zendaya",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Styles",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Madonna",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jane Birkin",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pharrell Williams",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Iman",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kate Moss",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jackie Kennedy",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marlene Dietrich",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cher",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Naomi Campbell",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Timothée Chalamet",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tilda Swinton",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Beyoncé",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bad Bunny",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "estilistas-historia",
+    "category": "Moda",
+    "question": "Quem é o maior estilista da história?",
+    "image_url": "https://images.unsplash.com/photo-1784850350833-ebf69e760d0b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:30.000Z",
+    "opts": [
+      {
+        "label": "Coco Chanel",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yves Saint Laurent",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alexander McQueen",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vivienne Westwood",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Giorgio Armani",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Miuccia Prada",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rei Kawakubo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Karl Lagerfeld",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Christian Dior",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gianni Versace",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cristóbal Balenciaga",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elsa Schiaparelli",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Ford",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marc Jacobs",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Virgil Abloh",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Issey Miyake",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yohji Yamamoto",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Valentino Garavani",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pierre Cardin",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zuzu Angel",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "acessorios-look",
+    "category": "Moda",
+    "question": "Qual acessório mais transforma um look?",
+    "image_url": "https://images.unsplash.com/photo-1784850758006-21742e6553ad?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:31.000Z",
+    "opts": [
+      {
+        "label": "Óculos de sol",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Relógio",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenço",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chapéu",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bolsa",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brincos",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colar",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pulseira",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cinto",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anel",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boné",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gravata",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Broche",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Luvas",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suspensório",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bandana",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Acessório de cabelo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Meias",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lenço de bolso",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mochila",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "humoristas-brasileiros",
+    "category": "Famosos",
+    "question": "Quem é o maior humorista brasileiro?",
+    "image_url": "https://images.unsplash.com/photo-1731007733979-6f3d7b8632ae?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:32.000Z",
+    "opts": [
+      {
+        "label": "Chico Anysio",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jô Soares",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paulo Gustavo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mussum",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Renato Aragão",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Cavalcante",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dercy Gonçalves",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tatá Werneck",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marcelo Adnet",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fábio Porchat",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gregório Duvivier",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dani Calabresa",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Whindersson Nunes",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tiririca",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Costinha",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oscarito",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Otelo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nair Bello",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marco Luque",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leandro Hassum",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "icones-pop-brasileiros",
+    "category": "Famosos",
+    "question": "Quem é o maior ícone pop brasileiro?",
+    "image_url": "https://images.unsplash.com/photo-1704253802932-61137bd11d07?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:33.000Z",
+    "opts": [
+      {
+        "label": "Carmen Miranda",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pelé",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ayrton Senna",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xuxa",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gisele Bündchen",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernanda Montenegro",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roberto Carlos",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hebe Camargo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Neymar",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ivete Sangalo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anitta",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gilberto Gil",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caetano Veloso",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gal Costa",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rita Lee",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Silvio Santos",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elza Soares",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marília Mendonça",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wagner Moura",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sônia Braga",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "celebridades-estilosas",
+    "category": "Famosos",
+    "question": "Qual celebridade tem o melhor estilo?",
+    "image_url": "https://images.unsplash.com/photo-1657412235086-c2de1a1176a9?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:34.000Z",
+    "opts": [
+      {
+        "label": "Rihanna",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zendaya",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lady Gaga",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "David Beckham",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Timothée Chalamet",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harry Styles",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Beyoncé",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bad Bunny",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tilda Swinton",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pharrell Williams",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Janelle Monáe",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "A$AP Rocky",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anitta",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Iza",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabrina Sato",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marina Ruy Barbosa",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lewis Hamilton",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cate Blanchett",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pedro Pascal",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lupita Nyong’o",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "famosos-melhor-amigo",
+    "category": "Famosos",
+    "question": "Qual famoso parece que seria seu melhor amigo?",
+    "image_url": "https://images.unsplash.com/photo-1774301786017-a9ac4a74e6f2?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:35.000Z",
+    "opts": [
+      {
+        "label": "Keanu Reeves",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jennifer Lawrence",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ryan Reynolds",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Emma Stone",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pedro Pascal",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernanda Torres",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Selton Mello",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Taís Araújo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lázaro Ramos",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ivete Sangalo",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paulo Vieira",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tatá Werneck",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fábio Porchat",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gil do Vigor",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sandy",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rodrigo Santoro",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jack Black",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viola Davis",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Hanks",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Drew Barrymore",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "apresentadores-tv-brasil",
+    "category": "Famosos",
+    "question": "Quem é o maior apresentador da TV brasileira?",
+    "image_url": "https://images.unsplash.com/photo-1786552428640-da953178d0ce?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:36.000Z",
+    "opts": [
+      {
+        "label": "Silvio Santos",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hebe Camargo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chacrinha",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jô Soares",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xuxa",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Faustão",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gugu Liberato",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eliana",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Luciano Huck",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ana Maria Braga",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabrina Sato",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marcos Mion",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tatá Werneck",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Serginho Groisman",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pedro Bial",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Angélica",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fátima Bernardes",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cazé Peçanha",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palmirinha Onofre",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Raul Gil",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "fenomenos-natureza",
+    "category": "Natureza",
+    "question": "Qual é o fenômeno da natureza mais impressionante?",
+    "image_url": "https://images.unsplash.com/photo-1723965849654-a36fe740cab0?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:37.000Z",
+    "opts": [
+      {
+        "label": "Aurora boreal",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eclipse solar total",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Erupção vulcânica",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bioluminescência no mar",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tempestade elétrica",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tornado",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Furacão",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tsunami",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gêiser",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arco-íris",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eclipse lunar",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chuva de meteoros",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Supercélula",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Halo solar",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mar de nuvens",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arco circum-horizontal",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caverna de gelo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Deserto florido",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rolos de neve",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nuvens lenticulares",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animais-extintos",
+    "category": "Natureza",
+    "question": "Qual animal extinto você mais gostaria de ver vivo?",
+    "image_url": "https://images.unsplash.com/photo-1782848796142-88a50598df91?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:38.000Z",
+    "opts": [
+      {
+        "label": "Tiranossauro rex",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mamute-lanoso",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dodô",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tigre-dentes-de-sabre",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Megalodonte",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tricerátopo",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Preguiça-gigante",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tilacino",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quaga",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pombo-passageiro",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moa",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Auroque",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alce-gigante",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Archaeopteryx",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dunkleosteus",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Espinossauro",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rinoceronte-lanoso",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gliptodonte",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ara-gigante",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lobo-terrível",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-brasileiros-iconicos",
+    "category": "Motores",
+    "question": "Qual é o carro mais icônico do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1785103336655-8f69d35957f3?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:39.000Z",
+    "opts": [
+      {
+        "label": "Volkswagen Fusca",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Kombi",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Opala",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Chevette",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Gol",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiat Uno Mille",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Monza",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Brasília",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Maverick",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Corcel",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiat 147",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Escort XR3",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Santana",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Kadett GSi",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiat Tempra Turbo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Omega",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiat Palio",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Celta",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Saveiro",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Puma GTB",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-esportivos",
+    "category": "Motores",
+    "question": "Qual é o maior carro esportivo da história?",
+    "image_url": "https://images.unsplash.com/photo-1675065720352-f3a5fac5b179?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:40.000Z",
+    "opts": [
+      {
+        "label": "Ferrari F40",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche 911",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lamborghini Miura",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "McLaren F1",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Benz 300 SL",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford GT40",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nissan Skyline GT-R R34",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota Supra Mk4",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Corvette Stingray",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audi R8",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda NSX",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW M3 E30",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaguar E-Type",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shelby Cobra",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bugatti Veyron",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lancia Stratos",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dodge Viper",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aston Martin DB5",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lotus Esprit",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mazda RX-7",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "motos-iconicas",
+    "category": "Motores",
+    "question": "Qual é a moto mais icônica da história?",
+    "image_url": "https://images.unsplash.com/photo-1787310725110-932df03f7c9f?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:41.000Z",
+    "opts": [
+      {
+        "label": "Harley-Davidson Sportster",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda CB 750",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ducati 916",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Triumph Bonneville",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yamaha RD 350",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda CG 125",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vespa PX",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW R 1250 GS",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kawasaki Ninja H2",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suzuki Hayabusa",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yamaha XT 600",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda Super Cub",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Indian Chief",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ducati Monster",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Royal Enfield Bullet",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kawasaki Z1",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda Gold Wing",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yamaha YZF-R1",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "KTM 990 Adventure",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "MV Agusta F4",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marcas-carros",
+    "category": "Motores",
+    "question": "Qual é a maior marca de carros da história?",
+    "image_url": "https://images.unsplash.com/photo-1711476926864-5cbbe34f0f5e?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:42.000Z",
+    "opts": [
+      {
+        "label": "Ferrari",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Benz",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lamborghini",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audi",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volvo",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaguar",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aston Martin",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nissan",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Subaru",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alfa Romeo",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bugatti",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rolls-Royce",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tesla",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-cinema-tv",
+    "category": "Motores",
+    "question": "Qual é o carro mais inesquecível do cinema e da TV?",
+    "image_url": "https://images.unsplash.com/photo-1785186128382-82aff2b57bbd?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:43.000Z",
+    "opts": [
+      {
+        "label": "DeLorean de De Volta para o Futuro",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Batmóvel",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aston Martin DB5 de James Bond",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ecto-1 de Os Caça-Fantasmas",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mach 5 de Speed Racer",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "KITT de A Supermáquina",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Herbie",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dodge Charger de Velozes e Furiosos",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Mustang de Bullitt",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mini Cooper de Uma Saída de Mestre",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Interceptor de Mad Max",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "General Lee de Os Gatões",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Máquina de Mistério de Scooby-Doo",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Relâmpago McQueen",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota Supra de Velozes e Furiosos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bumblebee",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bluesmobile de Os Irmãos Cara de Pau",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Anglia de Harry Potter",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lotus Esprit de 007",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gran Torino de Starsky & Hutch",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-design",
+    "category": "Motores",
+    "question": "Qual carro tem o design mais bonito da história?",
+    "image_url": "https://images.unsplash.com/photo-1785498491915-d535dddc97b7?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:44.000Z",
+    "opts": [
+      {
+        "label": "Jaguar E-Type",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Citroën DS",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche 911",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lamborghini Miura",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Benz 300 SL",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferrari 250 GTO",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alfa Romeo 33 Stradale",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bugatti Type 57SC Atlantic",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aston Martin DB5",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Fusca",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mini Cooper",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Corvette Stingray 1963",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford GT40",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lancia Stratos",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW 507",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota 2000GT",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda NSX",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mazda RX-7 FD",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alpine A110",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audi Quattro",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-viagem-estrada",
+    "category": "Motores",
+    "question": "Qual carro você escolheria para uma grande viagem?",
+    "image_url": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:45.000Z",
+    "opts": [
+      {
+        "label": "Land Rover Defender",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota Land Cruiser",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volvo XC90",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche 911",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Subaru Outback",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Mustang",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jeep Wrangler",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Kombi",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Benz Classe G",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honda CR-V",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toyota RAV4",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Suburban",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW Série 5 Touring",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audi RS6 Avant",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mazda MX-5",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volvo 240 Wagon",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Bronco",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Citroën DS",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lexus GX",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen Golf",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carros-eletricos",
+    "category": "Motores",
+    "question": "Qual é o melhor carro elétrico já lançado?",
+    "image_url": "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:46.000Z",
+    "opts": [
+      {
+        "label": "Tesla Model S",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche Taycan",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hyundai Ioniq 5",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kia EV6",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lucid Air",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rivian R1T",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "BMW i4",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Benz EQS",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ford Mustang Mach-E",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volkswagen ID. Buzz",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audi e-tron GT",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Renault Zoe",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nissan Leaf",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chevrolet Bolt EV",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "BYD Seal",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Volvo EX30",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polestar 2",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaguar I-Pace",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rimac Nevera",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiat 500e",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "corridas-automobilismo",
+    "category": "Motores",
+    "question": "Qual é a maior corrida do automobilismo?",
+    "image_url": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:47.000Z",
+    "opts": [
+      {
+        "label": "24 Horas de Le Mans",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Prêmio de Mônaco",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "500 Milhas de Indianápolis",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rali Dakar",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "24 Horas de Nürburgring",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Daytona 500",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bathurst 1000",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "TT da Ilha de Man",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rali de Monte Carlo",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mille Miglia",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Subida Internacional de Pikes Peak",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "12 Horas de Sebring",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Targa Florio",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carrera Panamericana",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Prêmio de São Paulo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rali da Finlândia",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Baja 1000",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "24 Horas de Spa",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grande Prêmio de Macau",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rali Safari",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pilotos-automobilismo",
+    "category": "Motores",
+    "question": "Quem é o maior piloto do automobilismo?",
+    "image_url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:48.000Z",
+    "opts": [
+      {
+        "label": "Ayrton Senna",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Michael Schumacher",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lewis Hamilton",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Juan Manuel Fangio",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alain Prost",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jim Clark",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Niki Lauda",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Max Verstappen",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jackie Stewart",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernando Alonso",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sebastian Vettel",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Stirling Moss",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nelson Piquet",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Emerson Fittipaldi",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mario Andretti",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "A. J. Foyt",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Kristensen",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sébastien Loeb",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dale Earnhardt",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Valentino Rossi",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "jogos-mundo-aberto",
+    "category": "Jogos",
+    "question": "Qual é o melhor jogo de mundo aberto?",
+    "image_url": "https://images.unsplash.com/photo-1632765743329-3b257fe779a6?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:49.000Z",
+    "opts": [
+      {
+        "label": "Red Dead Redemption 2",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Legend of Zelda: Breath of the Wild",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grand Theft Auto V",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elden Ring",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Witcher 3: Wild Hunt",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Elder Scrolls V: Skyrim",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minecraft",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ghost of Tsushima",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cyberpunk 2077",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Horizon Zero Dawn",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fallout: New Vegas",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Metal Gear Solid V: The Phantom Pain",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Assassin’s Creed IV: Black Flag",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grand Theft Auto: San Andreas",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Far Cry 3",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marvel’s Spider-Man",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Death Stranding",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "No Man’s Sky",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Subnautica",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Legend of Zelda: Tears of the Kingdom",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "personagens-videogame",
+    "category": "Jogos",
+    "question": "Qual é o maior personagem dos videogames?",
+    "image_url": "https://images.unsplash.com/photo-1760900954419-89f057caf7f2?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:50.000Z",
+    "opts": [
+      {
+        "label": "Mario",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Link",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lara Croft",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sonic",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kratos",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Master Chief",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pikachu",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pac-Man",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samus Aran",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Solid Snake",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cloud Strife",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Geralt de Rívia",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ellie",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nathan Drake",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mega Man",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chun-Li",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ryu",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Crash Bandicoot",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Donkey Kong",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kirby",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "trilhas-jogos",
+    "category": "Jogos",
+    "question": "Qual jogo tem a melhor trilha sonora?",
+    "image_url": "https://images.unsplash.com/photo-1655029164758-51e484f5576b?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:51.000Z",
+    "opts": [
+      {
+        "label": "The Last of Us",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Legend of Zelda: Ocarina of Time",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Final Fantasy VII",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Elder Scrolls V: Skyrim",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Halo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Super Mario Galaxy",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chrono Trigger",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "NieR: Automata",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Journey",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Donkey Kong Country 2",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hollow Knight",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Undertale",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Doom",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Persona 5",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Castlevania: Symphony of the Night",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Red Dead Redemption 2",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Minecraft",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Street Fighter II",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sonic the Hedgehog 2",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shadow of the Colossus",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "invencoes-tecnologicas",
+    "category": "Tecnologia",
+    "question": "Qual invenção tecnológica mais mudou o mundo?",
+    "image_url": "https://images.unsplash.com/photo-1779011654250-f1100196a5e0?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:52.000Z",
+    "opts": [
+      {
+        "label": "Internet",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Transistor",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Telefone",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lâmpada elétrica",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Imprensa de tipos móveis",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Computador",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Smartphone",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "GPS",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Avião",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rádio",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Televisão",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Câmera fotográfica",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Máquina a vapor",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Microprocessador",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bateria recarregável",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Refrigeração artificial",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Laser",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Satélite artificial",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Impressora 3D",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wi-Fi",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "gadgets-anos-2000",
+    "category": "Tecnologia",
+    "question": "Qual gadget mais marcou os anos 2000?",
+    "image_url": "https://images.unsplash.com/photo-1761906976176-0559a6d130dd?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:53.000Z",
+    "opts": [
+      {
+        "label": "iPod",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nokia 3310",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "BlackBerry",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Razr V3",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "PlayStation 2",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nintendo Wii",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "PSP",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Primeiro iPhone",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Câmera digital compacta",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "PalmPilot",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "iMac G3",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pen drive",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "DVD portátil",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "TiVo",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "GPS automotivo Garmin",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Webcam",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "MP3 player",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xbox 360",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nintendo DS",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Netbook",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "tecnologias-ficcao",
+    "category": "Tecnologia",
+    "question": "Qual tecnologia da ficção você mais gostaria que existisse?",
+    "image_url": "https://images.unsplash.com/photo-1772618375204-06b8348417e5?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:54.000Z",
+    "opts": [
+      {
+        "label": "Teletransporte",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Holodeck",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabre de luz",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carro voador",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Máquina do tempo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tradutor universal",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Replicador de matéria",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Capa de invisibilidade",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hoverboard",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Interface neural perfeita",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Androide assistente",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fusão nuclear limpa e ilimitada",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sono criogênico seguro",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gravidade artificial",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Comunicador quântico instantâneo",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Scanner médico instantâneo",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jetpack seguro",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Materiais autorreparáveis",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elevador espacial",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Habitat autossuficiente em Marte",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "celulares-historia",
+    "category": "Tecnologia",
+    "question": "Qual celular mais mudou a história?",
+    "image_url": "https://images.unsplash.com/photo-1784969330482-edd995d4edec?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:55.000Z",
+    "opts": [
+      {
+        "label": "Motorola DynaTAC 8000X",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nokia 3310",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "BlackBerry Bold",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola Razr V3",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Primeiro iPhone",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy S",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nokia N95",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "T-Mobile Sidekick",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palm Treo 600",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "iPhone 4",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung Galaxy Note",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Moto G",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi Mi 1",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Google Pixel",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "OnePlus One",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nokia Lumia 920",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "HTC Dream",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola StarTAC",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony Ericsson W800",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG Chocolate",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "redes-sociais-impactantes",
+    "category": "Tecnologia",
+    "question": "Qual rede social mais mudou a internet?",
+    "image_url": "https://images.unsplash.com/photo-1783419116339-a2956ffeb7a0?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:56.000Z",
+    "opts": [
+      {
+        "label": "Orkut",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Facebook",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Instagram",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "YouTube",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Twitter / X",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "TikTok",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "WhatsApp",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Reddit",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "LinkedIn",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Snapchat",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pinterest",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tumblr",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "MySpace",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "MSN Messenger",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Telegram",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Discord",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Twitch",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vine",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Threads",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "ICQ",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marcas-tecnologia",
+    "category": "Tecnologia",
+    "question": "Qual é a maior marca de tecnologia da história?",
+    "image_url": "https://images.unsplash.com/photo-1688895463871-f5e81079d7be?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:57.000Z",
+    "opts": [
+      {
+        "label": "Apple",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Microsoft",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Google",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sony",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "IBM",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Intel",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nvidia",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Amazon",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Meta",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nintendo",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tesla",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Huawei",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dell",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "HP",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Adobe",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oracle",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Spotify",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "OpenAI",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "embalagens-iconicas",
+    "category": "Produtos",
+    "question": "Qual é a embalagem mais icônica da história?",
+    "image_url": "https://images.unsplash.com/photo-1781232815711-1c1d9ec1ca44?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:58.000Z",
+    "opts": [
+      {
+        "label": "Garrafa de vidro da Coca-Cola",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lata de sopa Campbell’s",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa azul da Tiffany & Co.",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa triangular do Toblerone",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tubo de Pringles",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa de ketchup Heinz",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa branca do iPhone",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa de Absolut Vodka",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Frasco de Chanel Nº 5",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Embalagem de KitKat",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa do McLanche Feliz",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lata de Leite Moça",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lata de Nescau",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa amarela de Maizena",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lata de Bombril",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pote de Nutella",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa de Perrier",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa de lápis Faber-Castell",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pote de Aveia Quaker",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa de molho Tabasco",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "objetos-design",
+    "category": "Produtos",
+    "question": "Qual objeto cotidiano tem o melhor design?",
+    "image_url": "https://images.unsplash.com/photo-1786617829002-e130d77fe64a?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:00:59.000Z",
+    "opts": [
+      {
+        "label": "Caneta BIC Cristal",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Isqueiro Zippo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canivete suíço",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Câmera Polaroid",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lambreta Vespa",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Poltrona Eames Lounge",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Luminária Anglepoise",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Batedeira KitchenAid",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chaleira Alessi 9093",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Calculadora Braun ET66",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "iPod",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peça de LEGO",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa de Coca-Cola",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cafeteira Moka Express",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cubo Mágico",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bloco Post-it",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Máquina de escrever Olivetti Valentine",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Garrafa térmica",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caneta Parker 51",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Relógio Casio G-Shock",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "produtos-brasileiros-iconicos",
+    "category": "Produtos",
+    "question": "Qual produto mais marcou gerações de brasileiros?",
+    "image_url": "https://images.unsplash.com/photo-1606021490433-d28d1d978deb?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-25T10:01:00.000Z",
+    "opts": [
+      {
+        "label": "Havaianas",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bombril",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leite Moça",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nescau",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guaraná Antarctica",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paçoquita",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bis",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Natura Ekos",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Melissa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Malbec de O Boticário",
+        "position": 10,
+        "baseline_score": 0
+      },
+      {
+        "label": "Talheres Tramontina",
+        "position": 11,
+        "baseline_score": 0
+      },
+      {
+        "label": "Filtro de barro São João",
+        "position": 12,
+        "baseline_score": 0
+      },
+      {
+        "label": "Meu Primeiro Gradiente",
+        "position": 13,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cachaça 51",
+        "position": 14,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fandangos",
+        "position": 15,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sandálias Rider",
+        "position": 16,
+        "baseline_score": 0
+      },
+      {
+        "label": "Serenata de Amor",
+        "position": 17,
+        "baseline_score": 0
+      },
+      {
+        "label": "Panettone Bauducco",
+        "position": 18,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leite de Rosas",
+        "position": 19,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pomada Minancora",
+        "position": 20,
+        "baseline_score": 0
+      }
+    ]
+  }
+]
