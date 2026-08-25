@@ -24,8 +24,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-3'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-3'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-4'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-4'));
 
 assert.match(
   compactPopCss,
@@ -41,6 +41,21 @@ assert.match(
   compactPopCss,
   /@media\(max-width:700px\)[\s\S]*grid-template-columns:116pxminmax\(0,1fr\)auto[\s\S]*\.popElectric\.homePage\.siteSearch[^}]*grid-column:2;grid-row:1/,
   'the mobile search must stay in the header row instead of colliding with the experience switch',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*grid-template-rows:autoauto[\s\S]*\.popElectric\.homePage\.siteSearch[^}]*grid-column:1\/-1;grid-row:2/,
+  'compact phones need a dedicated full-width search row',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categorySorts\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)[^}]*overflow:visible/,
+  'the four category filters must fit in a two-by-two mobile grid',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categoryRankCard\{[^}]*display:flex;flex-direction:column[\s\S]*\.popElectric\.categoryRankTitleh2[^}]*-webkit-line-clamp:unset/,
+  'compact cards must stack vertically and show their complete title',
 );
 
 console.log('Branding test passed: the 4A beta seal is one SVG across every public shell.');

@@ -17,6 +17,11 @@
   --downbg: #fff0f1;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body.popElectric,
 body.legalShell {
   background: var(--cream);
@@ -2123,6 +2128,125 @@ body.legalShell {
 
   .legalShell .legalPage > h1 {
     font-size: 58px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popElectric .top {
+    position: relative;
+    top: auto;
+  }
+
+  .popElectric header,
+  .popElectric.homePage header,
+  .popElectric.rankingPage header {
+    min-height: 0;
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    padding: 10px 0 11px;
+  }
+
+  .popElectric .brandBlock,
+  .popElectric.homePage .brandBlock,
+  .popElectric.rankingPage .brandBlock {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .popElectric .logo {
+    width: 112px;
+  }
+
+  .popElectric .account,
+  .popElectric.homePage .account,
+  .popElectric.rankingPage .account {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .popElectric .siteSearch,
+  .popElectric.homePage .siteSearch,
+  .popElectric.rankingPage .siteSearch {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 0 11px;
+  }
+
+  .popElectric .siteSearch input,
+  .popElectric.homePage .siteSearch input,
+  .popElectric.rankingPage .siteSearch input {
+    font-size: 11px;
+  }
+
+  .popElectric .experienceInner {
+    min-height: 36px;
+  }
+
+  .popElectric .groupBtn,
+  .popElectric.homePage .groupBtn {
+    min-height: 44px;
+    padding: 13px 0 10px;
+    font-size: 11px;
+  }
+
+  .popElectric .categoryListBar {
+    display: block;
+  }
+
+  .popElectric .categorySorts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .popElectric .categorySorts button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .popElectric .categoryShuffle {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .popElectric .categoryRankCard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .popElectric .categoryRankMedia,
+  .popElectric .searchRankList .categoryRankMedia {
+    width: 100%;
+    height: 150px;
+    min-height: 150px;
+  }
+
+  .popElectric .categoryRankCopy {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .popElectric .categoryRankTitle h2,
+  .popElectric .searchRankList .categoryRankTitle h2 {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    margin: 10px 0 15px;
+    font-size: 22px;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
   }
 }
 
