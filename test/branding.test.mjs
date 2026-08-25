@@ -24,8 +24,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-4'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-4'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-5'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-5'));
 
 assert.match(
   compactPopCss,
@@ -56,6 +56,16 @@ assert.match(
   compactPopCss,
   /@media\(max-width:480px\)[\s\S]*\.popElectric\.categoryRankCard\{[^}]*display:flex;flex-direction:column[\s\S]*\.popElectric\.categoryRankTitleh2[^}]*-webkit-line-clamp:unset/,
   'compact cards must stack vertically and show their complete title',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:700px\)[\s\S]*\.popElectric\.accountLink:not\(\.accountEnter\)\{[^}]*display:inline-flex[^}]*font-size:11px/,
+  'signed-in mobile users must keep a visible profile entry beside the bell',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.portalSectionHead\{[^}]*display:block[\s\S]*\.popElectric\.portalShuffle\{[^}]*width:max-content[^}]*min-height:36px[^}]*font-size:10px/,
+  'the mobile shuffle control must stay compact below its section title',
 );
 
 console.log('Branding test passed: the 4A beta seal is one SVG across every public shell.');

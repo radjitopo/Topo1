@@ -1779,9 +1779,18 @@ body.legalShell {
   }
 
   .popElectric .siteSearch kbd,
-  .popElectric .voteMeter,
-  .popElectric .accountLink:not(.accountEnter) {
+  .popElectric .voteMeter {
     display: none;
+  }
+
+  .popElectric .accountLink:not(.accountEnter) {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 
   .popElectric .accountEnter {
@@ -2164,6 +2173,21 @@ body.legalShell {
   .popElectric.rankingPage .account {
     grid-column: 2;
     grid-row: 1;
+    gap: 6px;
+  }
+
+  .popElectric .accountLink:not(.accountEnter) {
+    min-height: 36px;
+    border: 2px solid var(--ink);
+    border-radius: 9px;
+    background: #fff;
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .popElectric .notificationButton {
+    width: 36px;
+    height: 36px;
   }
 
   .popElectric .siteSearch,
@@ -2192,6 +2216,25 @@ body.legalShell {
     min-height: 44px;
     padding: 13px 0 10px;
     font-size: 11px;
+  }
+
+  .popElectric .portalSectionHead {
+    display: block;
+  }
+
+  .popElectric .portalShuffle {
+    width: max-content;
+    max-width: 100%;
+    min-height: 36px;
+    margin-top: 10px;
+    padding: 7px 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .popElectric .profileHeroCopy .profileName {
+    font-size: clamp(34px, 12vw, 44px);
+    overflow-wrap: anywhere;
   }
 
   .popElectric .categoryListBar {
