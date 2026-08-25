@@ -494,6 +494,19 @@ document.addEventListener('keydown', (event) => {
   renderNotificationContents();
   document.getElementById('notificationButton')?.focus();
 });
+document.addEventListener('keydown', (event) => {
+  if (
+    !searchInput ||
+    event.defaultPrevented ||
+    event.altKey ||
+    !(event.metaKey || event.ctrlKey) ||
+    event.key.toLowerCase() !== 'k'
+  )
+    return;
+  event.preventDefault();
+  searchInput.focus();
+  searchInput.select();
+});
 function renderCommunityPulse() {
   if (sitePulseEl)
     sitePulseEl.innerHTML = `<span><strong>${fmt(community.rankings)}</strong> rankings</span><span><strong>${fmt(community.votes)}</strong> votos</span><span><strong>${fmt(community.users)}</strong> pessoas</span>`;

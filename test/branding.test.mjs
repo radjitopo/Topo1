@@ -24,8 +24,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-1'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-1'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-2'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-2'));
 
 assert.match(
   compactPopCss,
