@@ -58,7 +58,6 @@ NAME_PATTERNS = {
     "barber": r"\b(?:barber|barbearia|barbeiro|barbershop)\b",
     "gym": r"\b(?:academia|fitness|crossfit|cross training|gym|musculacao)\b",
     "pet": r"\b(?:pet shop|petshop|pet center|petz|cobasi|petland)\b",
-    "dentist": r"\b(?:dentista|dental|odonto|odontologia|ortodont)\b",
     "italian": r"\b(?:italian|italiano|italiana|ristorante|trattoria|osteria|cantina)\b",
     "bakery": r"\b(?:padaria|panificadora|panificacao|bakery|boulangerie)\b",
     "buffet": r"\b(?:quilo|buffet|self service|selfservice|self-service)\b",
@@ -74,7 +73,6 @@ GENERIC_NAMES = {
     "academia",
     "barbearia",
     "salao",
-    "dentista",
     "brecho",
     "bazar",
     "cafe",
@@ -203,8 +201,6 @@ def categories_for(place: dict) -> set[str]:
         {"pet_store", "pet_grooming", "animal_and_pet_store"}
     ) or re.search(NAME_PATTERNS["pet"], name):
         result.add("pet")
-    if "dental_clinic" in hierarchy or re.search(NAME_PATTERNS["dentist"], name):
-        result.add("dentist")
     if "italian_restaurant" in hierarchy or (
         is_restaurant and re.search(NAME_PATTERNS["italian"], name)
     ):
@@ -255,7 +251,6 @@ def score(place: dict, category: str) -> float:
         "barber": "barber",
         "gym": "gym",
         "pet": "pet_store",
-        "dentist": "dental_clinic",
         "italian": "italian_restaurant",
         "bakery": "bakery",
         "buffet": "buffet_restaurant",
@@ -306,7 +301,7 @@ def places_in_city(connection, paths: list[str], bbox, polygon):
 def options_for_city(places: list[dict], city_name: str):
     candidates = {key: {} for key in (
         "restaurants", "pizza", "burger", "sushi", "cafe", "beauty", "barber",
-        "gym", "pet", "dentist", "italian", "bakery", "buffet", "vegan", "thrift"
+        "gym", "pet", "italian", "bakery", "buffet", "vegan", "thrift"
     )}
     for place in places:
         name = clean_name(place.get("name"))

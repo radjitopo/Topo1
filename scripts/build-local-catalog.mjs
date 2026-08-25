@@ -47,8 +47,6 @@ const images = Object.freeze({
     'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=82',
   gym: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=82',
   pet: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=82',
-  dentist:
-    'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1200&q=82',
   italian:
     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=82',
   bakery:
@@ -70,7 +68,6 @@ const patterns = Object.freeze({
   beauty: /\b(?:salao|beleza|beauty|cabeleireir|hair|esmalteria|estetica|studio)\b/,
   gym: /\b(?:academia|fitness|crossfit|cross training|gym|pilates|musculacao)\b/,
   pet: /\b(?:pet shop|petshop|pet center|petz|cobasi|petland|mundo animal)\b/,
-  dentist: /\b(?:dentista|dentistry|dental|odonto|odontologia|sorriso|ortodont)\b/,
   italian: /\b(?:italian|italiano|italiana|ristorante|trattoria|osteria|cantina|pasta|massas)\b/,
   bakery: /\b(?:padaria|panificadora|panificacao|paes|pao|bakery|boulangerie|confeitaria)\b/,
   buffet: /\b(?:quilo|buffet|self service|selfservice|self-service|comida caseira)\b/,
@@ -146,7 +143,6 @@ function categoryId(key, city) {
     barber: `barbearias-${city.slug}`,
     gym: `academias-${city.slug}`,
     pet: `pet-shops-${city.slug}`,
-    dentist: `dentistas-${city.slug}`,
     italian: `restaurantes-italianos-${city.slug}`,
     bakery: `padarias-${city.slug}`,
     buffet: `quilo-${city.slug}`,
@@ -237,16 +233,6 @@ const categories = Object.freeze([
     image: images.pet,
     match: (place) =>
       ['pet', 'pet_grooming'].includes(place.tags.shop) || patterns.pet.test(searchable(place)),
-  },
-  {
-    key: 'dentist',
-    label: 'Dentista',
-    question: (city) => `Qual é a melhor clínica odontológica em ${city.name}?`,
-    image: images.dentist,
-    match: (place) =>
-      place.tags.amenity === 'dentist' ||
-      place.tags.healthcare === 'dentist' ||
-      patterns.dentist.test(searchable(place)),
   },
   {
     key: 'italian',
@@ -351,17 +337,13 @@ nwr["leisure"="fitness_centre"]["name"](area.city)->.gyms;
 .gyms out tags 500;
 nwr["shop"~"^(pet|pet_grooming)$"]["name"](area.city)->.pets;
 .pets out tags 500;
-nwr["amenity"="dentist"]["name"](area.city)->.dentists;
-.dentists out tags 600;
-nwr["healthcare"="dentist"]["name"](area.city)->.healthdentists;
-.healthdentists out tags 600;
 nwr["shop"="bakery"]["name"](area.city)->.bakeries;
 .bakeries out tags 700;
 nwr["shop"~"^(health_food|organic|second_hand|charity)$"]["name"](area.city)->.specialshops;
 .specialshops out tags 500;
 nwr["shop"="clothes"]["second_hand"]["name"](area.city)->.secondhand;
 .secondhand out tags 500;
-nwr["name"~"pizza|pizzaria|pizzeria|burger|burguer|hamburg|sushi|temaki|japon|izakaya|ramen|barbear|barber|academia|fitness|crossfit|pet.?shop|dent|odonto|italian|trattoria|osteria|cantina|ristorante|padaria|panificadora|boulangerie|quilo|buffet|self.?service|vegano|vegan|vegetariano|brech.|bazar",i](area.city)->.named;
+nwr["name"~"pizza|pizzaria|pizzeria|burger|burguer|hamburg|sushi|temaki|japon|izakaya|ramen|barbear|barber|academia|fitness|crossfit|pet.?shop|italian|trattoria|osteria|cantina|ristorante|padaria|panificadora|boulangerie|quilo|buffet|self.?service|vegano|vegan|vegetariano|brech.|bazar",i](area.city)->.named;
 .named out tags 1800;`;
 }
 
@@ -398,7 +380,7 @@ function cleanPlace(element) {
   if (!name || name.length < 3 || name.length > 80) return null;
   if (!/[a-z]/.test(normalized) || /^\d+$/.test(normalized)) return null;
   if (
-    /^(?:restaurante|lanchonete|pizzaria|padaria|academia|barbearia|salao|dentista|brecho|bazar|cafe|pet shop)$/i.test(
+    /^(?:restaurante|lanchonete|pizzaria|padaria|academia|barbearia|salao|brecho|bazar|cafe|pet shop)$/i.test(
       normalized,
     )
   )
@@ -431,8 +413,6 @@ function placeScore(place, category) {
   if (category.key === 'barber' && fold(tags.hairdresser) === 'male') score += 9;
   if (category.key === 'gym' && tags.leisure === 'fitness_centre') score += 9;
   if (category.key === 'pet' && ['pet', 'pet_grooming'].includes(tags.shop)) score += 9;
-  if (category.key === 'dentist' && (tags.amenity === 'dentist' || tags.healthcare === 'dentist'))
-    score += 9;
   if (category.key === 'bakery' && tags.shop === 'bakery') score += 9;
   if (category.key === 'thrift' && ['second_hand', 'charity'].includes(tags.shop)) score += 9;
   if (category.key === 'vegan' && fold(tags['diet:vegan']) === 'only') score += 10;
@@ -498,7 +478,9 @@ function rankingsFromSeed(seed) {
 
 function validate(rankings, allowIncomplete = false) {
   if (rankings.length !== cities.length * categories.length) {
-    throw new Error(`O catálogo tem ${rankings.length} rankings; deveria ter 315.`);
+    throw new Error(
+      `O catálogo tem ${rankings.length} rankings; deveria ter ${cities.length * categories.length}.`,
+    );
   }
   if (new Set(rankings.map((ranking) => ranking.id)).size !== rankings.length) {
     throw new Error('Há IDs repetidos no catálogo local.');

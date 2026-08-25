@@ -15,7 +15,6 @@ const categoryExamples = [
   ['barbearias-brasilia', 'Qual é a melhor barbearia em Brasília?', 'Barbearia'],
   ['academias-brasilia', 'Qual é a melhor academia em Brasília?', 'Academia'],
   ['pet-shops-brasilia', 'Qual é o melhor pet shop em Brasília?', 'Pet shop'],
-  ['dentistas-brasilia', 'Qual é a melhor clínica odontológica em Brasília?', 'Dentista'],
   [
     'restaurantes-italianos-brasilia',
     'Qual é o melhor restaurante italiano em Brasília?',
@@ -45,11 +44,6 @@ const rankings = [
   },
   { id: 'pizza-sp', cat: 'São Paulo', q: 'Qual pizzaria é a cara de São Paulo?' },
   {
-    id: 'dentistas-rio',
-    cat: 'Rio de Janeiro',
-    q: 'Qual é a melhor clínica odontológica no Rio?',
-  },
-  {
     id: 'hoteis-rio',
     cat: 'Rio de Janeiro',
     q: 'Qual hotel entrega a melhor experiência no Rio?',
@@ -71,7 +65,7 @@ const rankings = [
   },
 ];
 
-test('the exact 15 Topo Local categories classify independently', () => {
+test('the exact 14 Topo Local categories classify independently', () => {
   assert.deepEqual(local.groupOrder, ['Todos', ...categoryExamples.map(([, , group]) => group)]);
   for (const [id, , expected] of categoryExamples) {
     const ranking = rankings.find((item) => item.id === id);
@@ -80,7 +74,7 @@ test('the exact 15 Topo Local categories classify independently', () => {
   }
 });
 
-test('legacy hotels and general place rankings stay outside Topo Local', () => {
+test('general place rankings stay outside Topo Local', () => {
   assert.equal(
     local.isLocalRanking(rankings.find((ranking) => ranking.id === 'hoteis-rio')),
     false,
@@ -124,7 +118,6 @@ test('the selector has the 20 largest cities plus Florianópolis and keeps legac
   assert.deepEqual(local.legacyCityOrder, ['Balneário Camboriú']);
   assert.deepEqual(local.availableCities(rankings), [
     'São Paulo',
-    'Rio de Janeiro',
     'Brasília',
     'Florianópolis',
   ]);
@@ -142,7 +135,7 @@ test('manual city wins, then detected city, then the launch default', () => {
 test('the chosen city becomes a closed local catalog', () => {
   assert.deepEqual(
     local.rankingsForCity(rankings, 'Rio').map((ranking) => ranking.id),
-    ['dentistas-rio'],
+    [],
   );
   assert.deepEqual(
     local.rankingsForCity(rankings, 'Florianópolis').map((ranking) => ranking.id),
@@ -159,7 +152,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /data-experience="topo"/);
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
-  assert.match(index, /topo-local\.js\?v=20260824-4/);
+  assert.match(index, /topo-local\.js\?v=20260825-5/);
   assert.match(index, /app\.js\?v=20260824-29-pop/);
   assert.match(index, /pop-electric\.css\?v=20260825-10/);
   assert.match(api, /x-vercel-ip-city/);

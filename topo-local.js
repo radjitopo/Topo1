@@ -34,7 +34,6 @@
     'Barbearia',
     'Academia',
     'Pet shop',
-    'Dentista',
     'Restaurante italiano',
     'Padaria',
     'Restaurante por quilo',
@@ -124,11 +123,6 @@
       name: 'Pet shop',
       id: /^pet\s+shops?(?:\s|$)/,
       question: /\bpet\s+shop\b/,
-    },
-    {
-      name: 'Dentista',
-      id: /^dentistas?(?:\s|$)/,
-      question: /\b(?:dentista|clinica\s+odontologica)\b/,
     },
     {
       name: 'Padaria',
