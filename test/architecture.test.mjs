@@ -32,7 +32,7 @@ test('successful votes update the current catalog without downloading it again',
 
 test('dead public copies are gone and the Open Graph image is static', async () => {
   const vercel = JSON.parse(await readFile(new URL('vercel.json', root), 'utf8'));
-  const ogBuild = vercel.builds.find((build) => build.src === 'og-topo.png');
+  const ogBuild = vercel.builds.find((build) => build.src === 'og-topo-v2.png');
   assert.equal(ogBuild?.use, '@vercel/static');
   assert.ok(!vercel.routes.some((route) => route.dest === '/og-topo.js'));
 

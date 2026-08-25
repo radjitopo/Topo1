@@ -2,14 +2,15 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
-const [logo, mark, popCss, editorialCss, index, institutional] = await Promise.all(
+const [logo, mark, popCss, editorialCss, index, institutional, page] = await Promise.all(
   [
-    '../logo-topo.svg',
-    '../topo-mark.svg',
+    '../logo-topo-v2.svg',
+    '../topo-mark-v2.svg',
     '../pop-electric.css',
     '../editorial-clean.css',
     '../index.html',
     '../institutional.js',
+    '../page.js',
   ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
 );
 const compactPopCss = compactSource(popCss);
@@ -28,15 +29,20 @@ assert.match(mark, /stroke="#fff"/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo\.svg\?v=20260825-2"/g) || []).length,
+  (index.match(/src="\/logo-topo-v2\.svg"/g) || []).length,
   2,
   'the header and footer must use the same master SVG',
 );
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg\?v=20260825-2"/);
-assert.match(
-  institutional,
-  /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg\?v=20260825-2"/,
-);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v2\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-v2\.svg"/);
+assert.match(index, /href="\/topo-mark-v2\.svg"/);
+assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v2\.png/);
+assert.match(institutional, /\/og-topo-v2\.png/);
+assert.match(page, /\/topo-mark-v2\.svg/);
+assert.match(page, /\/og-topo-v2\.png/);
+for (const shell of [index, institutional, page]) {
+  assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
+}
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
 assert.ok(index.includes('/editorial-clean.css?v=20260825-2-logo'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
