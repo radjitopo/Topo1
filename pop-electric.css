@@ -94,9 +94,7 @@ body.legalShell {
   backdrop-filter: blur(16px);
 }
 
-.popElectric header,
-.popElectric.homePage header,
-.popElectric.rankingPage header {
+.popElectric .top header {
   min-height: 90px;
   height: 90px;
   display: grid;
@@ -1427,6 +1425,19 @@ body.legalShell {
   font-size: 13px;
 }
 
+.popElectric .profileGameHero .authEyebrow,
+.popElectric .moderationHero .suggestionEyebrow {
+  color: var(--mint);
+}
+
+.popElectric .profileProgressText strong {
+  color: #fffaf2;
+}
+
+.popElectric .profileIdentityPanel {
+  color: var(--ink);
+}
+
 .popElectric .profileAvatarRing {
   background: var(--mint);
 }
@@ -1444,7 +1455,18 @@ body.legalShell {
   font-size: 11px;
 }
 
+.popElectric .profileMetrics {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
 .popElectric .profileMetrics > span {
+  min-width: 0;
+  min-height: 76px;
+  align-content: center;
+  padding: 12px;
   border: 1px solid rgba(255, 250, 242, 0.55);
 }
 
@@ -1475,6 +1497,12 @@ body.legalShell {
 .popElectric .moderationMeta,
 .popElectric .moderationNote {
   font-size: 12px;
+}
+
+.popElectric .profileMetrics small {
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .popElectric .profileSection,
@@ -1519,8 +1547,28 @@ body.legalShell {
 }
 
 .popElectric .moderationCounts span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border: 1px solid #fffaf2;
   background: rgba(255, 255, 255, 0.09);
+  color: #fffaf2;
+}
+
+.popElectric .moderationCounts strong {
+  color: var(--mint);
+}
+
+.popElectric .moderationHero {
+  display: block;
+  height: auto;
+  min-height: 0;
+}
+
+.popElectric .moderationHero h1 {
+  line-height: 0.94;
+  overflow-wrap: anywhere;
 }
 
 /* Modal, toast and footer */
@@ -1672,9 +1720,7 @@ body.legalShell {
     width: min(100% - 32px, 920px);
   }
 
-  .popElectric header,
-  .popElectric.homePage header,
-  .popElectric.rankingPage header {
+  .popElectric .top header {
     grid-template-columns: 155px minmax(220px, 1fr) auto;
     gap: 18px;
   }
@@ -1732,9 +1778,7 @@ body.legalShell {
     width: calc(100% - 24px);
   }
 
-  .popElectric header,
-  .popElectric.homePage header,
-  .popElectric.rankingPage header {
+  .popElectric .top header {
     min-height: 72px;
     height: 72px;
     grid-template-columns: 116px minmax(0, 1fr) auto;
@@ -2113,13 +2157,16 @@ body.legalShell {
     padding: 20px;
   }
 
-  .popElectric .profileHeroCopy .profileName,
-  .popElectric .moderationHero h1 {
+  .popElectric .profileHeroCopy .profileName {
     font-size: 48px;
   }
 
+  .popElectric .moderationHero h1 {
+    font-size: 38px;
+  }
+
   .popElectric .profileMetrics {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .popElectric .siteFooterBrand,
@@ -2146,9 +2193,7 @@ body.legalShell {
     top: auto;
   }
 
-  .popElectric header,
-  .popElectric.homePage header,
-  .popElectric.rankingPage header {
+  .popElectric .top header {
     min-height: 0;
     height: auto;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -2234,6 +2279,131 @@ body.legalShell {
 
   .popElectric .profileHeroCopy .profileName {
     font-size: clamp(34px, 12vw, 44px);
+    overflow-wrap: anywhere;
+  }
+
+  .popElectric .profileBadges {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .popElectric .profileBadges span {
+    min-height: 36px;
+    justify-content: center;
+    padding: 8px 10px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .popElectric .profileMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .popElectric .profileMetrics > span {
+    min-height: 66px;
+    padding: 10px;
+  }
+
+  .popElectric .profileMetrics strong {
+    font-size: 26px;
+  }
+
+  .popElectric .profileMetrics small {
+    font-size: 9px;
+    letter-spacing: 0.04em;
+  }
+
+  .popElectric.moderationPage .internalHead {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .popElectric.moderationPage .internalMeta {
+    max-width: 64%;
+    overflow: hidden;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .popElectric .moderationHero {
+    padding: 18px;
+  }
+
+  .popElectric .moderationHero h1 {
+    margin: 8px 0 10px;
+    font-size: 34px;
+    line-height: 0.96;
+  }
+
+  .popElectric .moderationHero p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .popElectric .moderationCounts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .popElectric .moderationCounts span {
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px;
+    font-size: 10px;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .popElectric .moderationSection {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .popElectric .moderationSectionHead {
+    align-items: flex-start;
+  }
+
+  .popElectric .moderationSectionHead h2 {
+    min-width: 0;
+    font-size: 22px;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .popElectric .moderationList {
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .popElectric .moderationCard,
+  .popElectric .moderationCard.preparing {
+    margin: 0;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .popElectric .moderationCard h3 {
+    font-size: 22px;
+    line-height: 1.06;
+    overflow-wrap: anywhere;
+  }
+
+  .popElectric .moderationCardHead p,
+  .popElectric .moderationMeta,
+  .popElectric .moderationNote {
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .popElectric .moderationMeta span {
+    min-width: 0;
     overflow-wrap: anywhere;
   }
 

@@ -24,8 +24,8 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-5'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-5'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-6'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-6'));
 
 assert.match(
   compactPopCss,
@@ -66,6 +66,26 @@ assert.match(
   compactPopCss,
   /@media\(max-width:480px\)[\s\S]*\.popElectric\.portalSectionHead\{[^}]*display:block[\s\S]*\.popElectric\.portalShuffle\{[^}]*width:max-content[^}]*min-height:36px[^}]*font-size:10px/,
   'the mobile shuffle control must stay compact below its section title',
+);
+assert.doesNotMatch(
+  compactPopCss,
+  /\.popElectricheader(?:,|\{)/,
+  'global header sizing must never affect internal headers such as moderation',
+);
+assert.match(
+  compactPopCss,
+  /\.popElectric\.profileProgressTextstrong\{[^}]*color:#fffaf2/,
+  'profile progress emphasis must remain readable over the violet hero',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.profileMetrics\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
+  'profile metrics must form a balanced two-by-two grid on phones',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.moderationCounts\{[^}]*display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)[\s\S]*\.popElectric\.moderationCardh3\{[^}]*font-size:22px/,
+  'moderation counts and cards must use the compact mobile composition',
 );
 
 console.log('Branding test passed: the 4A beta seal is one SVG across every public shell.');
