@@ -112,10 +112,12 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
 });
 
 test('Vercel routes every public collection and private account shell through SEO-aware HTML', async () => {
-  const [vercel, robots, app] = await Promise.all([
+  const [vercel, robots, app, index, editorialCss] = await Promise.all([
     readFile(new URL('vercel.json', root), 'utf8').then(JSON.parse),
     readFile(new URL('robots.txt', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('index.html', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
   ]);
   assert.ok(
     vercel.routes.some((route) => route.src === '/' && route.dest === '/page.js?view=home'),
@@ -127,5 +129,17 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Disallow: \/api/);
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
+  assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
+  assert.match(index, /\/app\.js\?v=20260825-33-no-home-flash/);
+  assert.doesNotMatch(index, /vote · veja · continue/);
+  assert.match(
+    editorialCss,
+    /html\.clientBooting body\.popElectric\.homePage #feed\[data-server-rendered='true'\]/,
+  );
+  assert.match(
+    app,
+    /function revealClientPage\(\)[\s\S]*?removeAttribute\('data-server-rendered'\)/,
+  );
+  assert.match(app, /renderHome\(\);[\s\S]*?revealClientPage\(\);/);
   assert.match(app, /href="\$\{escapeHTML\(groupPath\(g\)\)\}"/);
 });

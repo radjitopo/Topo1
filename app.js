@@ -714,6 +714,10 @@ function pageLoadingHTML(kind) {
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo a moderação…</strong></div>';
   return '<div class="loading">carregando…</div>';
 }
+function revealClientPage() {
+  feed.removeAttribute('data-server-rendered');
+  document.documentElement.classList.remove('clientBooting');
+}
 async function load() {
   const kind = pageKind();
   if (feed.dataset.serverRendered !== 'true') feed.innerHTML = pageLoadingHTML(kind);
@@ -723,7 +727,6 @@ async function load() {
     community = communityFrom(data);
     rankings = smartShuffle(data.rankings || []);
     initializeCity(data.location || {});
-    feed.removeAttribute('data-server-rendered');
     renderAccount();
     renderCommunityPulse();
     if (kind === 'home') {
@@ -736,9 +739,11 @@ async function load() {
       else if (kind === 'profile') await renderProfile();
       else if (kind === 'moderation') await renderModeration();
     }
+    revealClientPage();
   } catch (e) {
     feed.innerHTML =
       '<div class="loading">Não consegui carregar.<br><button class="retry" onclick="load()">Tentar de novo</button></div>';
+    revealClientPage();
   }
 }
 function reshuffle() {
