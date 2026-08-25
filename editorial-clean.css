@@ -293,20 +293,19 @@ body.popElectric .popHomeStats button {
 }
 
 body.popElectric .editorialHomeLead {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.72fr);
-  align-items: end;
-  gap: 42px;
+  display: block;
   border-bottom: 1px solid var(--clean-ink);
-  margin: 0 0 52px;
-  padding: 58px 0 62px;
+  margin: 0 0 26px;
+  padding: 28px 0 34px;
 }
 
 body.popElectric .editorialHomeLead .portalHeroLink {
   position: static;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(420px, 1.1fr);
+  align-items: stretch;
+  gap: 36px;
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -317,9 +316,15 @@ body.popElectric .editorialHomeLead .portalHeroLink {
 
 body.popElectric .editorialHomeLead .portalHeroCopy {
   position: static;
-  order: -1;
+  grid-column: 1;
+  grid-row: 1;
   width: 100%;
-  display: block;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  justify-content: start;
+  column-gap: 10px;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -337,8 +342,12 @@ body.popElectric .portalHeroEyebrow {
 }
 
 body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
+  min-width: 0;
   display: inline-flex;
-  margin-left: 11px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
   color: var(--clean-ink);
   font:
     800 10px/1 Arial,
@@ -348,11 +357,12 @@ body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
 }
 
 body.popElectric .editorialHomeLead .portalHeroCopy h1 {
-  max-width: 860px;
-  margin: 23px 0 22px;
+  grid-column: 1 / -1;
+  max-width: 650px;
+  margin: 18px 0 15px;
   color: var(--clean-ink);
   font:
-    800 clamp(54px, 5.25vw, 78px)/0.94 Arial,
+    800 clamp(42px, 4.2vw, 60px)/0.95 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: -0.062em;
@@ -360,7 +370,8 @@ body.popElectric .editorialHomeLead .portalHeroCopy h1 {
 
 body.popElectric .editorialHomeLead .portalHeroAction {
   display: inline-block;
-  margin-bottom: 16px;
+  grid-column: 1 / -1;
+  margin: 0;
   color: var(--clean-muted);
   font:
     700 11px/1 Arial,
@@ -373,6 +384,8 @@ body.popElectric .editorialHomeLead .portalHeroAction {
 body.popElectric .editorialHomeLead .portalHeroMedia {
   position: static;
   inset: auto;
+  grid-column: 2;
+  grid-row: 1;
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -385,140 +398,10 @@ body.popElectric .editorialHomeLead .portalHeroMedia img {
   object-fit: cover;
 }
 
-body.popElectric .homeVoteRail {
-  align-self: end;
-  border-top: 6px solid var(--clean-ink);
-}
-
-body.popElectric .homeVoteRailHead {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--clean-ink);
-  padding: 16px 0 18px;
-}
-
-body.popElectric .homeVoteRailHead span,
-body.popElectric .homeVoteRailHead small {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-body.popElectric .homeVoteRailHead h2 {
-  margin: 8px 0 0;
-  font-size: 27px;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-body.popElectric .homeVoteRailHead small {
-  border: 1px solid var(--clean-ink);
-  padding: 6px;
-}
-
-body.popElectric .homeVoteRail ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-body.popElectric .homeVoteRail li {
-  min-height: 76px;
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--clean-line);
-  padding: 11px 0;
-}
-
-body.popElectric .homeVotePosition {
-  font-size: 18px;
-  font-weight: 800;
-}
-
-body.popElectric .homeVoteOption {
-  min-width: 0;
-}
-
-body.popElectric .homeVoteOption strong,
-body.popElectric .homeVoteOption small {
-  display: block;
-}
-
-body.popElectric .homeVoteOption strong {
-  overflow: hidden;
-  font-size: 16px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-body.popElectric .homeVoteOption small {
-  margin-top: 4px;
-  color: var(--clean-muted);
-  font-size: 11px;
-}
-
-body.popElectric .homeLeadVoteActions {
-  display: grid;
-  grid-template-columns: repeat(2, 38px);
-}
-
-body.popElectric .homeLeadVoteActions .homeReact {
-  width: 38px;
-  height: 38px;
-  min-width: 0;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--clean-ink);
-  border-radius: 0;
-  background: var(--clean-paper);
-  color: var(--clean-ink);
-  margin-left: -1px;
-  padding: 0;
-  font-size: 20px;
-}
-
-body.popElectric .homeLeadVoteActions .homeReact.up:hover,
-body.popElectric .homeLeadVoteActions .homeReact.up:focus-visible {
-  background: var(--clean-lime);
-}
-
-body.popElectric .homeLeadVoteActions .homeReact.down:hover,
-body.popElectric .homeLeadVoteActions .homeReact.down:focus-visible {
-  background: var(--clean-coral);
-}
-
-body.popElectric .homeVoteRail > p {
-  min-height: 28px;
-  margin: 13px 0 4px;
-  color: var(--clean-muted);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-body.popElectric .homeVoteOpen {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--clean-ink);
-  padding: 13px 0;
-  color: var(--clean-ink);
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-body.popElectric .homeVoteOpen:hover,
-body.popElectric .homeVoteOpen:focus-visible {
-  border-color: var(--clean-coral);
-  color: var(--clean-coral);
-}
-
 body.popElectric .portalTrending,
 body.popElectric.localMode .portalTrending {
-  grid-template-columns: 100px minmax(0, 1fr);
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 0;
   overflow: hidden;
   border: 1px solid var(--clean-ink);
   border-radius: 0;
@@ -534,52 +417,42 @@ body.popElectric.localMode .portalTrendingLabel {
 }
 
 body.popElectric .portalTrending a {
-  font-size: 12px;
+  width: auto;
+  max-width: none;
+  min-height: 58px;
+  align-items: center;
+  border-right: 1px solid var(--clean-line);
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: normal;
 }
 
 body.popElectric .portalTrending > div {
-  padding-left: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: visible;
+  padding: 0;
 }
 
-body.popElectric .portalTrending a {
-  padding-right: 24px;
-  margin-right: 24px;
+body.popElectric .portalTrending a:last-child {
+  border-right: 0;
 }
 
-body.popElectric .categoryRail {
-  grid-template-columns: 160px minmax(0, 1fr);
-  border-top: 1px solid var(--clean-line);
-  border-bottom: 1px solid var(--clean-line);
-  padding: 17px 0;
-  margin: 34px 0;
-}
-
-body.popElectric .categoryRailLabel {
-  color: var(--clean-ink);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-
-body.popElectric .categoryRailButton {
-  min-height: 34px;
-  border: 1px solid var(--clean-ink);
-  border-radius: 999px;
-  background: var(--clean-paper);
-  color: var(--clean-ink);
-  padding: 8px 14px;
-  font-size: 11px;
-}
-
-body.popElectric .categoryRailButton:hover,
-body.popElectric .categoryRailButton:focus-visible {
-  background: var(--clean-soft);
+body.popElectric .portalTrending a span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
 }
 
 body.popElectric .portalSectionHead {
   align-items: end;
   border-bottom: 1px solid var(--clean-ink);
-  margin: 64px 0 28px;
-  padding: 0 0 18px;
+  margin: 40px 0 22px;
+  padding: 0 0 14px;
 }
 
 body.popElectric .portalSectionHead > div > span {
@@ -594,7 +467,7 @@ body.popElectric .portalSectionHead > div > span {
 body.popElectric .portalSectionHead h2 {
   margin: 10px 0 0;
   font:
-    800 clamp(38px, 4vw, 58px)/0.95 Arial,
+    800 clamp(34px, 3.5vw, 50px)/0.95 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: -0.055em;
@@ -617,6 +490,11 @@ body.popElectric .categoryRankGrid,
 body.popElectric .popHomeGrid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 42px 24px;
+}
+
+body.popElectric .popHomeGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 34px 18px;
 }
 
 body.popElectric .categoryRankCard {
@@ -666,11 +544,23 @@ body.popElectric .category {
 }
 
 body.popElectric .newBadge {
+  min-height: 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--clean-ink);
   border-radius: 0;
   background: var(--clean-lime);
   color: var(--clean-ink);
   padding: 4px 7px;
+  font-size: 9px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+body.popElectric .portalKicker .newBadge {
+  margin-left: 0;
+  vertical-align: middle;
 }
 
 body.popElectric .categoryRankTitle h2,
@@ -692,6 +582,19 @@ body.popElectric .categoryRankCard:hover .categoryRankTitle h2 {
   text-decoration-color: var(--clean-coral);
   text-decoration-thickness: 3px;
   text-underline-offset: 4px;
+}
+
+body.popElectric .popHomeGrid .categoryRankMeta {
+  padding: 10px 0 7px;
+}
+
+body.popElectric .popHomeGrid .categoryRankTitle h2 {
+  margin-bottom: 10px;
+  font-size: clamp(18px, 1.65vw, 23px);
+}
+
+body.popElectric .popHomeGrid .whatsappShare.compact {
+  display: none;
 }
 
 body.popElectric .categoryRankLinks {
@@ -1320,7 +1223,11 @@ body.legalShell .siteFooterColumn strong {
   }
 
   body.popElectric .editorialHomeLead {
-    grid-template-columns: minmax(0, 1.4fr) minmax(285px, 0.8fr);
+    padding-top: 24px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroLink {
+    grid-template-columns: minmax(270px, 0.9fr) minmax(360px, 1.1fr);
     gap: 28px;
   }
 
@@ -1328,6 +1235,10 @@ body.legalShell .siteFooterColumn strong {
   body.popElectric .popHomeGrid,
   body.popElectric .searchRankList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.popElectric .popHomeGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   body.popElectric .popLocalCallout {
@@ -1432,48 +1343,64 @@ body.legalShell .siteFooterColumn strong {
 
   body.popElectric .editorialHomeLead {
     display: block;
-    margin-bottom: 32px;
-    padding: 20px 0 32px;
+    margin-bottom: 22px;
+    padding: 18px 0 24px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroLink {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy {
+    order: -1;
   }
 
   body.popElectric .editorialHomeLead .portalHeroCopy h1 {
-    margin: 15px 0 14px;
-    font-size: clamp(42px, 12vw, 54px);
-    line-height: 0.94;
+    margin: 13px 0 10px;
+    font-size: clamp(34px, 9.5vw, 43px);
+    line-height: 0.96;
   }
 
   body.popElectric .editorialHomeLead .portalHeroMedia {
-    aspect-ratio: 4 / 3;
-  }
-
-  body.popElectric .homeVoteRail {
-    margin-top: 27px;
+    aspect-ratio: 16 / 9;
   }
 
   body.popElectric .portalTrending,
   body.popElectric.localMode .portalTrending {
-    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  body.popElectric .portalTrendingLabel,
+  body.popElectric.localMode .portalTrendingLabel {
+    min-height: 34px;
+    place-items: center start;
+    padding: 8px 12px;
   }
 
   body.popElectric .portalTrending > div {
-    padding-left: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  body.popElectric .categoryRail {
-    display: block;
+  body.popElectric .portalTrending a {
+    border-bottom: 1px solid var(--clean-line);
   }
 
-  body.popElectric .categoryRailLabel {
-    display: block;
-    margin-bottom: 10px;
+  body.popElectric .portalTrending a:nth-child(even) {
+    border-right: 0;
+  }
+
+  body.popElectric .portalTrending a:nth-child(n + 3) {
+    border-bottom: 0;
   }
 
   body.popElectric .portalSectionHead {
-    margin-top: 40px;
+    margin-top: 32px;
   }
 
   body.popElectric .portalSectionHead h2 {
-    font-size: 41px;
+    font-size: 36px;
   }
 
   body.popElectric .categoryRankGrid,
@@ -1496,6 +1423,10 @@ body.legalShell .siteFooterColumn strong {
   body.popElectric .categoryRankTitle h2,
   body.popElectric .searchRankList .categoryRankTitle h2 {
     font-size: 21px;
+  }
+
+  body.popElectric .popHomeGrid .categoryRankTitle h2 {
+    font-size: 18px;
   }
 
   body.popElectric .popLocalCallout {
@@ -1666,18 +1597,9 @@ body.legalShell .siteFooterColumn strong {
     font-size: 14px;
   }
 
-  body.popElectric .portalTrending > div {
-    padding-left: 14px;
-  }
-
-  body.popElectric .portalTrending a {
-    padding-right: 20px;
-    margin-right: 20px;
-  }
-
   body.popElectric .editorialHomeLead {
-    margin-bottom: 26px;
-    padding: 15px 0 26px;
+    margin-bottom: 18px;
+    padding: 14px 0 20px;
   }
 
   body.popElectric .editorialHomeLead .portalHeroEyebrow {
@@ -1687,44 +1609,23 @@ body.legalShell .siteFooterColumn strong {
 
   body.popElectric .editorialHomeLead .portalHeroCopy .portalKicker {
     display: inline-flex;
-    margin: 0 0 0 7px;
+    gap: 6px;
+    margin: 0;
   }
 
   body.popElectric .editorialHomeLead .portalHeroCopy h1 {
-    margin: 13px 0 11px;
-    font-size: clamp(38px, 11vw, 48px);
-    line-height: 0.95;
+    margin: 11px 0 9px;
+    font-size: clamp(32px, 9.4vw, 40px);
+    line-height: 0.96;
   }
 
   body.popElectric .editorialHomeLead .portalHeroAction {
     margin-bottom: 10px;
   }
 
-  body.popElectric .homeVoteRail li {
-    grid-template-columns: 20px minmax(0, 1fr) auto;
-    gap: 9px;
-  }
-
-  body.popElectric .homeLeadVoteActions {
-    grid-template-columns: repeat(2, 36px);
-  }
-
-  body.popElectric .homeLeadVoteActions .homeReact {
-    width: 36px;
-    height: 38px;
-  }
-
-  body.popElectric .homeVoteRail {
-    margin-top: 23px;
-  }
-
   body.popElectric .portalTrending,
   body.popElectric.localMode .portalTrending {
-    margin-bottom: 24px;
-  }
-
-  body.popElectric .categoryRail {
-    margin: 25px 0;
+    margin-bottom: 20px;
   }
 
   body.popElectric .portalSectionHead {
@@ -1739,9 +1640,36 @@ body.legalShell .siteFooterColumn strong {
     grid-template-columns: 1fr;
   }
 
+  body.popElectric .popHomeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 12px;
+  }
+
   body.popElectric .categoryRankTitle h2,
   body.popElectric .searchRankList .categoryRankTitle h2 {
     font-size: 25px;
+  }
+
+  body.popElectric .popHomeGrid .categoryRankTitle h2 {
+    margin-bottom: 8px;
+    font-size: 17px;
+    line-height: 1.04;
+  }
+
+  body.popElectric .popHomeGrid .categoryRankMeta {
+    padding: 8px 0 6px;
+    font-size: 8px;
+  }
+
+  body.popElectric .popHomeGrid .categoryRankMeta .category,
+  body.popElectric .popHomeGrid .category {
+    font-size: 8px;
+  }
+
+  body.popElectric .popHomeGrid .newBadge {
+    min-height: 18px;
+    padding: 3px 5px;
+    font-size: 8px;
   }
 
   body.popElectric .portalSectionHead {

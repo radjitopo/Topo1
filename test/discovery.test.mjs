@@ -31,6 +31,17 @@ assert.match(
 assert.match(source, /class="popHomeStats"/, 'community numbers must stay in a compact top line');
 assert.doesNotMatch(
   source,
+  /homeLeadVoteRailHTML|Quem merece subir/,
+  'the home must not repeat the ranking vote controls below the featured ranking',
+);
+assert.doesNotMatch(
+  source,
+  /function categoryRailHTML|Explore por tema|Continue por categoria/,
+  'the home must use the primary category navigation only once',
+);
+assert.match(source, /<h2>Mais rankings<\/h2>/, 'the home must prioritize a dense ranking grid');
+assert.doesNotMatch(
+  source,
   /SUA VEZ|VOTAR AGORA|popHomeHero/,
   'the home must not repeat its proposition before showing rankings',
 );

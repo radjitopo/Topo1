@@ -44,9 +44,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-7-no-home-flash'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-8-dense-home'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-7-no-home-flash'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-8-dense-home'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -110,9 +110,9 @@ assert.match(
   'the mobile shuffle control must stay compact below its section title',
 );
 assert.match(
-  compactPopCss,
-  /@media\(max-width:700px\)[\s\S]*\.popElectric\.popHomeLead\{[^}]*grid-template-columns:1fr[^}]*gap:13px[\s\S]*\.popElectric\.popHomeLead\.portalHeroLink\{[^}]*min-height:330px[\s\S]*\.popElectric\.popHomeLead\.portalSideColumn\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
-  'the restored editorial lead must stack the main ranking before two compact supporting rankings',
+  compactEditorialCss,
+  /@media\(max-width:480px\)[\s\S]*body\.popElectric\.popHomeGrid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
+  'the compact mobile home must show two ranking cards per row',
 );
 assert.doesNotMatch(
   compactPopCss,
