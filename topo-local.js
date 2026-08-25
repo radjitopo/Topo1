@@ -173,7 +173,7 @@
     const present = new Set(
       (rankings || []).filter(isLocalRanking).map(cityForRanking).filter(Boolean),
     );
-    return [...cityOrder, ...legacyCityOrder].filter((city) => present.has(city));
+    return cityOrder.filter((city) => present.has(city));
   }
 
   function resolvePreferredCity(rankings, savedCity, detectedCity) {

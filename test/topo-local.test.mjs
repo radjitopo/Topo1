@@ -96,7 +96,7 @@ test('legacy hotels and general place rankings stay outside Topo Local', () => {
   );
 });
 
-test('the 20 largest cities plus Florianópolis are canonical and legacy BC remains available', () => {
+test('the selector has the 20 largest cities plus Florianópolis and keeps legacy BC direct-only', () => {
   assert.equal(local.cityOrder.length, 21);
   assert.deepEqual(local.cityOrder, [
     'São Paulo',
@@ -127,8 +127,8 @@ test('the 20 largest cities plus Florianópolis are canonical and legacy BC rema
     'Rio de Janeiro',
     'Brasília',
     'Florianópolis',
-    'Balneário Camboriú',
   ]);
+  assert.equal(local.isLocalRanking(rankings.find((ranking) => ranking.id === 'padarias-bc')), true);
   assert.equal(local.normalizeCity('Sao-Goncalo'), 'São Gonçalo');
   assert.equal(local.normalizeCity('Floripa'), 'Florianópolis');
 });
@@ -159,7 +159,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /data-experience="topo"/);
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
-  assert.match(index, /topo-local\.js\?v=20260824-3/);
+  assert.match(index, /topo-local\.js\?v=20260824-4/);
   assert.match(index, /app\.js\?v=20260824-26-pop/);
   assert.match(index, /pop-electric\.css\?v=20260824-2/);
   assert.match(api, /x-vercel-ip-city/);
