@@ -24,8 +24,13 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260824-6'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260824-6'));
+assert.ok(index.includes('/pop-electric.css?v=20260824-7'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260824-7'));
+assert.match(
+  index,
+  /class="brandSlogan">Tudo vira ranking\.<\/span>/,
+  'the slogan must be a small lockup directly below the master logo',
+);
 
 assert.match(
   compactPopCss,
@@ -66,6 +71,11 @@ assert.match(
   compactPopCss,
   /@media\(max-width:480px\)[\s\S]*\.popElectric\.portalSectionHead\{[^}]*display:block[\s\S]*\.popElectric\.portalShuffle\{[^}]*width:max-content[^}]*min-height:36px[^}]*font-size:10px/,
   'the mobile shuffle control must stay compact below its section title',
+);
+assert.match(
+  compactPopCss,
+  /@media\(max-width:700px\)[\s\S]*\.popHomeHero\{[^}]*display:flex[^}]*flex-direction:column[\s\S]*\.popHomeStack\{[^}]*order:1[^}]*height:auto[\s\S]*\.popHomeCard1\{[^}]*position:relative[^}]*width:100%[^}]*display:grid/,
+  'a real featured ranking must lead the mobile home before any explanatory copy',
 );
 assert.doesNotMatch(
   compactPopCss,

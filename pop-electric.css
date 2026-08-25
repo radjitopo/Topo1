@@ -105,6 +105,10 @@ body.legalShell {
 
 .popElectric .brandBlock {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .popElectric .logo {
@@ -131,6 +135,13 @@ body.legalShell {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.popElectric .brandSlogan {
+  color: var(--violet-dark);
+  font: 800 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.075em;
+  white-space: nowrap;
 }
 
 .popElectric .sitePulse {
@@ -391,12 +402,12 @@ body.legalShell {
 }
 
 .popHomeHero {
-  min-height: 585px;
+  min-height: 510px;
   display: grid;
-  grid-template-columns: 0.82fr 1.18fr;
+  grid-template-columns: 0.68fr 1.32fr;
   align-items: center;
-  gap: 48px;
-  padding: 54px 0 68px;
+  gap: 42px;
+  padding: 36px 0 52px;
 }
 
 .popEyebrow,
@@ -413,12 +424,12 @@ body.legalShell {
 }
 
 .popHomeHero h1 {
-  max-width: 620px;
+  max-width: 520px;
   margin: 12px 0 0;
   color: var(--ink);
-  font-size: clamp(66px, 7.4vw, 104px);
-  line-height: 0.82;
-  letter-spacing: -0.052em;
+  font-size: clamp(52px, 5.7vw, 78px);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
 }
 
 .popHomeHero h1 em {
@@ -493,6 +504,15 @@ body.legalShell {
 .popHomeStack {
   position: relative;
   height: 450px;
+}
+
+.popHomeStackLabel {
+  position: absolute;
+  top: 8px;
+  left: 1px;
+  color: var(--violet);
+  font: 900 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.15em;
 }
 
 .popHomeCard {
@@ -1797,6 +1817,11 @@ body.legalShell {
     width: 114px;
   }
 
+  .popElectric .brandSlogan {
+    font-size: 8px;
+    letter-spacing: 0.055em;
+  }
+
   .popElectric .siteSearch,
   .popElectric.homePage .siteSearch,
   .popElectric.rankingPage .siteSearch {
@@ -1879,63 +1904,82 @@ body.legalShell {
 
   .popHomeHero {
     min-height: 0;
-    display: block;
-    padding: 38px 0 42px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 15px 0 36px;
+  }
+
+  .popHomeHeroCopy {
+    order: 2;
+    margin-top: 21px;
   }
 
   .popHomeHero h1 {
     max-width: 500px;
-    font-size: clamp(62px, 20vw, 88px);
+    margin-top: 7px;
+    font-size: clamp(34px, 10vw, 46px);
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+  }
+
+  .popHomeHero h1 em {
+    display: inline;
   }
 
   .popHomeHeroCopy > p {
-    font-size: 15px;
+    margin: 10px 0 15px;
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   .popHomeActions a {
-    min-height: 48px;
-    padding-inline: 18px;
-    font-size: 15px;
+    min-height: 43px;
+    padding-inline: 15px;
+    font-size: 13px;
   }
 
   .popHomePulse {
+    margin-top: 14px;
     font-size: 11px;
   }
 
   .popHomeStack {
-    height: 330px;
-    margin-top: 42px;
+    order: 1;
+    height: auto;
+    margin-top: 0;
   }
 
   .popHomeCard {
-    width: 42%;
+    display: none;
   }
 
   .popHomeCard1 {
-    left: 0;
-    top: 35px;
-  }
-
-  .popHomeCard2 {
-    left: 29%;
-  }
-
-  .popHomeCard3 {
-    left: 58%;
-    top: 38px;
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-height: 178px;
+    display: grid;
+    grid-template-columns: 44% minmax(0, 1fr);
+    transform: none;
   }
 
   .popHomeCardMedia {
-    height: 155px;
+    height: 100%;
+    min-height: 178px;
   }
 
   .popHomeCardCopy {
-    min-height: 105px;
-    padding: 13px;
+    min-height: 178px;
+    padding: 17px 15px;
   }
 
   .popHomeCardCopy strong {
-    font-size: 18px;
+    font-size: clamp(22px, 6vw, 28px);
+    line-height: 1;
+    overflow-wrap: anywhere;
   }
 
   .popHomeCardPill {
@@ -1945,8 +1989,15 @@ body.legalShell {
     font-size: 9px;
   }
 
+  .popHomeStackLabel {
+    position: static;
+    display: block;
+    margin: 0 0 9px 1px;
+    font-size: 10px;
+  }
+
   .popSpark {
-    font-size: 38px;
+    display: none;
   }
 
   .popElectric .portalTrending,
@@ -2211,6 +2262,14 @@ body.legalShell {
 
   .popElectric .logo {
     width: 112px;
+  }
+
+  .popElectric .brandBlock {
+    gap: 3px;
+  }
+
+  .popElectric .brandSlogan {
+    font-size: 7px;
   }
 
   .popElectric .account,
