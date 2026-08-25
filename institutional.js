@@ -499,7 +499,7 @@ function renderPage(slug, page) {
 <meta name="theme-color" content="#4a0790">
 <link rel="icon" href="/topo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css?v=20260824-8">
-<link rel="stylesheet" href="/pop-electric.css?v=20260824-2">
+<link rel="stylesheet" href="/pop-electric.css?v=20260824-3">
 </head>
 <body class="legalShell popElectric">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo.svg" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>

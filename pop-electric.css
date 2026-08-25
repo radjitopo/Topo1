@@ -1732,8 +1732,16 @@ body.legalShell {
   .popElectric.rankingPage header {
     min-height: 72px;
     height: 72px;
-    grid-template-columns: 116px 1fr auto;
+    grid-template-columns: 116px minmax(0, 1fr) auto;
+    grid-template-rows: 1fr;
     gap: 11px;
+  }
+
+  .popElectric .brandBlock,
+  .popElectric.homePage .brandBlock,
+  .popElectric.rankingPage .brandBlock {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .popElectric .logo {
@@ -1743,8 +1751,20 @@ body.legalShell {
   .popElectric .siteSearch,
   .popElectric.homePage .siteSearch,
   .popElectric.rankingPage .siteSearch {
+    width: 100%;
+    min-width: 0;
     min-height: 43px;
+    grid-column: 2;
+    grid-row: 1;
     padding: 0 10px;
+  }
+
+  .popElectric .account,
+  .popElectric.homePage .account,
+  .popElectric.rankingPage .account {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
   }
 
   .popElectric .siteSearch input,
