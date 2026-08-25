@@ -44,9 +44,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-8-dense-home'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-9-no-card-underline'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-8-dense-home'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-9-no-card-underline'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -113,6 +113,11 @@ assert.match(
   compactEditorialCss,
   /@media\(max-width:480px\)[\s\S]*body\.popElectric\.popHomeGrid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
   'the compact mobile home must show two ranking cards per row',
+);
+assert.doesNotMatch(
+  compactEditorialCss,
+  /categoryRankCard:hover\.categoryRankTitleh2\{[^}]*text-decoration:underline/,
+  'touch cards must not leave a stuck underline after being tapped',
 );
 assert.doesNotMatch(
   compactPopCss,

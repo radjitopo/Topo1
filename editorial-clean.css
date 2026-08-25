@@ -577,13 +577,6 @@ body.popElectric .searchRankList .categoryRankTitle h2 {
   letter-spacing: -0.035em;
 }
 
-body.popElectric .categoryRankCard:hover .categoryRankTitle h2 {
-  text-decoration: underline;
-  text-decoration-color: var(--clean-coral);
-  text-decoration-thickness: 3px;
-  text-underline-offset: 4px;
-}
-
 body.popElectric .popHomeGrid .categoryRankMeta {
   padding: 10px 0 7px;
 }
