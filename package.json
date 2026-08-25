@@ -21,6 +21,7 @@
     "db:notifications": "node scripts/apply-notifications.mjs",
     "db:profile-names": "node scripts/apply-profile-names.mjs",
     "db:suggestions": "node scripts/apply-suggestions.mjs",
+    "db:vote-identity": "node scripts/apply-vote-identity.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",
     "test:priority": "node test/priority.test.mjs",

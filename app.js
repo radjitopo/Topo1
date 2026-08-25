@@ -47,6 +47,7 @@ let rankings = [],
     anonymousUsed: 0,
     anonymousLimit: 30,
     rankingLimit: 20,
+    votingRequiresAccount: false,
   },
   community = { rankings: 0, votes: 0, users: 0 },
   clerkLoadPromise = null,
@@ -495,7 +496,7 @@ function renderAccount() {
       loading: false,
       open: false,
     };
-    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || 30} votos</span>`;
+    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${viewer.votingRequiresAccount ? 'entre para votar' : `${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || 30} votos`}</span>`;
   }
 }
 document.addEventListener('click', (event) => {
@@ -2276,7 +2277,6 @@ async function logout() {
     const clerk = window.Clerk || (await initClerk());
     if (clerk?.user) await clerk.signOut();
   } finally {
-    rotateDeviceId();
     location.href = '/';
   }
 }
@@ -2298,6 +2298,11 @@ function showVoteHelp() {
 function showRegistrationWall() {
   showModal(
     `<div class="modalKicker">30 votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Entre com um código enviado ao seu e-mail. Sem senha e sem complicação.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
+  );
+}
+function showAccountRequired() {
+  showModal(
+    `<div class="modalKicker">Conta protegida</div><div class="modalTitle">Entre novamente para votar.</div><div class="modalText">Este aparelho já foi ligado a uma conta. Assim ninguém cria votos extras apenas saindo e entrando novamente.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar</a></div>`,
   );
 }
 function mountInternalShare() {
@@ -2442,6 +2447,12 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
       viewer.anonymousUsed = viewer.anonymousLimit || 30;
       renderAccount();
       showRegistrationWall();
+      return;
+    }
+    if (res.status === 403 && result.error === 'account_required_on_this_device') {
+      viewer.votingRequiresAccount = true;
+      renderAccount();
+      showAccountRequired();
       return;
     }
     if (

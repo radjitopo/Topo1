@@ -400,23 +400,23 @@ function unlockedDoubleVoteCount(totalVotes) {
   return DOUBLE_VOTE_THRESHOLDS.filter((threshold) => total >= threshold).length;
 }
 
-async function syncUserVoteHistory(userId, deviceIds) {
-  if (!userId || !deviceIds.length) return;
+async function syncUserVoteHistory(userId) {
+  if (!userId) return;
 
   await sql.query(
     `
     INSERT INTO user_vote_history (user_id, option_id, first_voted_at)
     SELECT $1, v.option_id, MIN(v.updated_at)
     FROM votes v
-    WHERE v.device_id = ANY($2::text[])
+    WHERE v.user_id = $1
     GROUP BY v.option_id
     ON CONFLICT (user_id, option_id) DO NOTHING
   `,
-    [userId, deviceIds],
+    [userId],
   );
 }
 
-async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
+async function doubleVoteState(user) {
   if (!user) {
     return {
       totalVotes: 0,
@@ -428,8 +428,7 @@ async function doubleVoteState(user, deviceId, knownDeviceIds = null) {
     };
   }
 
-  const deviceIds = knownDeviceIds || (await devicesFor(user, deviceId));
-  await syncUserVoteHistory(user.id, deviceIds);
+  await syncUserVoteHistory(user.id);
 
   const [historyRows, activeRows] = await Promise.all([
     sql.query(
@@ -708,11 +707,8 @@ async function notifications(req, res, body = null) {
   });
 }
 
-async function viewerFor(user, deviceId) {
-  const [used, doubleVotes] = await Promise.all([
-    anonymousUsed(deviceId),
-    doubleVoteState(user, deviceId),
-  ]);
+async function viewerFor(user, deviceId, votingRequiresAccount = false) {
+  const [used, doubleVotes] = await Promise.all([anonymousUsed(deviceId), doubleVoteState(user)]);
 
   return {
     registered: Boolean(user),
@@ -720,35 +716,65 @@ async function viewerFor(user, deviceId) {
     anonymousUsed: used,
     anonymousLimit: ANONYMOUS_LIMIT,
     rankingLimit: RANKING_LIMIT,
+    votingRequiresAccount: !user && votingRequiresAccount,
     doubleVotes,
   };
 }
 
-async function devicesFor(user, deviceId) {
-  if (!user) {
-    return isValidDevice(deviceId) ? [deviceId] : [];
-  }
-
-  if (user.clerk_user_id) {
-    const rows = await sql.query(
-      `
-      SELECT device_id
-      FROM clerk_device_links
-      WHERE clerk_user_id = $1
-        AND user_id = $2
-      ORDER BY created_at
-    `,
-      [user.clerk_user_id, user.id],
-    );
-    return rows.map((row) => row.device_id);
-  }
-
-  const rows = await sql.query(
-    'SELECT device_id FROM user_devices WHERE user_id = $1 ORDER BY linked_at',
-    [user.id],
+async function deviceAccountId(deviceId) {
+  if (!isValidDevice(deviceId)) return null;
+  const [linked] = await sql.query(
+    `
+    SELECT user_id
+    FROM (
+      SELECT user_id FROM user_devices WHERE device_id = $1
+      UNION
+      SELECT user_id FROM clerk_device_links WHERE device_id = $1
+    ) account_device
+    LIMIT 1
+  `,
+    [deviceId],
   );
+  return linked?.user_id || null;
+}
 
-  return rows.map((row) => row.device_id);
+async function mergeAnonymousVotes(userId, deviceId) {
+  if (!userId || !isValidDevice(deviceId)) return;
+
+  await sql.transaction([
+    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [userId]),
+    sql.query(
+      `
+      DELETE FROM votes AS anonymous_vote
+      USING votes AS account_vote
+      WHERE anonymous_vote.device_id = $2
+        AND anonymous_vote.user_id IS NULL
+        AND account_vote.user_id = $1
+        AND account_vote.option_id = anonymous_vote.option_id
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      UPDATE votes
+      SET user_id = $1
+      WHERE device_id = $2
+        AND user_id IS NULL
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      INSERT INTO user_vote_history (user_id, option_id, first_voted_at)
+      SELECT $1, vote.option_id, MIN(vote.updated_at)
+      FROM votes AS vote
+      WHERE vote.user_id = $1
+      GROUP BY vote.option_id
+      ON CONFLICT (user_id, option_id) DO NOTHING
+    `,
+      [userId],
+    ),
+  ]);
 }
 
 async function ensureUserDevice(userId, deviceId) {
@@ -759,7 +785,10 @@ async function ensureUserDevice(userId, deviceId) {
   if (existing && existing.user_id !== userId) {
     return false;
   }
-  if (existing) return true;
+  if (existing) {
+    await mergeAnonymousVotes(userId, deviceId);
+    return true;
+  }
 
   await sql.query(
     `
@@ -774,7 +803,9 @@ async function ensureUserDevice(userId, deviceId) {
     deviceId,
   ]);
 
-  return linked?.user_id === userId;
+  const belongsToUser = linked?.user_id === userId;
+  if (belongsToUser) await mergeAnonymousVotes(userId, deviceId);
+  return belongsToUser;
 }
 
 async function ensureClerkDevice(user, deviceId) {
@@ -791,26 +822,29 @@ async function ensureClerkDevice(user, deviceId) {
   );
   if (trusted) return true;
 
-  const [created] = await sql.query(
-    `
-    WITH new_device AS (
+  const existingUserId = await deviceAccountId(deviceId);
+  if (existingUserId && existingUserId !== user.id) return false;
+
+  await sql.transaction([
+    sql.query(
+      `
       INSERT INTO user_devices (device_id, user_id)
-      VALUES ($1, $3)
+      VALUES ($1, $2)
       ON CONFLICT (device_id) DO NOTHING
-      RETURNING device_id
-    )
-    INSERT INTO clerk_device_links (device_id, clerk_user_id, user_id)
-    SELECT device_id, $2, $3
-    FROM new_device
-    ON CONFLICT DO NOTHING
-    RETURNING device_id
-  `,
-    [deviceId, user.clerk_user_id, user.id],
-  );
+    `,
+      [deviceId, user.id],
+    ),
+    sql.query(
+      `
+      INSERT INTO clerk_device_links (device_id, clerk_user_id, user_id)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (device_id) DO NOTHING
+    `,
+      [deviceId, user.clerk_user_id, user.id],
+    ),
+  ]);
 
-  if (created) return true;
-
-  const [linkedAfterRace] = await sql.query(
+  const [linked] = await sql.query(
     `
     SELECT device_id
     FROM clerk_device_links
@@ -821,7 +855,10 @@ async function ensureClerkDevice(user, deviceId) {
   `,
     [deviceId, user.clerk_user_id, user.id],
   );
-  return Boolean(linkedAfterRace);
+
+  if (!linked) return false;
+  await mergeAnonymousVotes(user.id, deviceId);
+  return true;
 }
 
 async function ensureSessionDevice(user, deviceId) {
@@ -835,7 +872,7 @@ async function catalog(req, res) {
   if (user && isValidDevice(deviceId) && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
-  const deviceIds = await devicesFor(user, deviceId);
+  const votingRequiresAccount = !user && Boolean(await deviceAccountId(deviceId));
 
   const [rows, userCountRows] = await Promise.all([
     sql.query(
@@ -859,12 +896,20 @@ async function catalog(req, res) {
       GROUP BY option_id
     ),
     my_votes AS (
-      SELECT DISTINCT ON (option_id)
+      SELECT
         option_id,
         direction
       FROM votes
-      WHERE device_id = ANY($1::text[])
-      ORDER BY option_id, updated_at DESC, device_id
+      WHERE (
+          $2::uuid IS NOT NULL
+          AND user_id = $2::uuid
+        )
+        OR (
+          $2::uuid IS NULL
+          AND user_id IS NULL
+          AND device_id = $1
+          AND $3::boolean = false
+        )
     ),
     my_double_votes AS (
       SELECT option_id, direction
@@ -900,7 +945,7 @@ async function catalog(req, res) {
     WHERE r.is_active = true
     ORDER BY r.created_at, r.id, o.position
   `,
-      [deviceIds, user?.id || null],
+      [deviceId, user?.id || null, votingRequiresAccount],
     ),
     sql.query('SELECT COUNT(*)::int AS total FROM users'),
   ]);
@@ -947,7 +992,7 @@ async function catalog(req, res) {
       users: Number(userCountRows[0]?.total || 0),
     },
     location: { city: geolocationCity(req) },
-    viewer: await viewerFor(user, deviceId),
+    viewer: await viewerFor(user, deviceId, votingRequiresAccount),
   });
 }
 
@@ -995,8 +1040,7 @@ async function profile(req, res) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
 
-  const deviceIds = await devicesFor(user, deviceId);
-  await syncUserVoteHistory(user.id, deviceIds);
+  await syncUserVoteHistory(user.id);
 
   const [
     statsRows,
@@ -1012,12 +1056,11 @@ async function profile(req, res) {
     sql.query(
       `
       WITH latest AS (
-        SELECT DISTINCT ON (v.option_id)
+        SELECT
           v.option_id,
           v.direction
         FROM votes v
-        WHERE v.device_id = ANY($1::text[])
-        ORDER BY v.option_id, v.updated_at DESC, v.device_id
+        WHERE v.user_id = $1
       )
       SELECT
         COUNT(*)::int AS votes,
@@ -1027,18 +1070,17 @@ async function profile(req, res) {
       FROM latest l
       JOIN ranking_options o ON o.id = l.option_id
     `,
-      [deviceIds],
+      [user.id],
     ),
     sql.query(
       `
       WITH latest AS (
-        SELECT DISTINCT ON (v.option_id)
+        SELECT
           v.option_id,
           v.direction,
           v.updated_at
         FROM votes v
-        WHERE v.device_id = ANY($1::text[])
-        ORDER BY v.option_id, v.updated_at DESC, v.device_id
+        WHERE v.user_id = $1
       )
       SELECT
         r.id AS "rankingId",
@@ -1051,22 +1093,21 @@ async function profile(req, res) {
       JOIN ranking_options o ON o.id = l.option_id
       JOIN rankings r ON r.id = o.ranking_id
       LEFT JOIN user_double_votes dv
-        ON dv.user_id = $2
+        ON dv.user_id = $1
        AND dv.option_id = l.option_id
        AND dv.direction = l.direction
       ORDER BY l.updated_at DESC
       LIMIT 20
     `,
-      [deviceIds, user.id],
+      [user.id],
     ),
     sql.query(
       `
       WITH latest AS (
-        SELECT DISTINCT ON (v.option_id)
+        SELECT
           v.option_id
         FROM votes v
-        WHERE v.device_id = ANY($1::text[])
-        ORDER BY v.option_id, v.updated_at DESC, v.device_id
+        WHERE v.user_id = $1
       )
       SELECT r.category AS name, COUNT(*)::int AS votes
       FROM latest l
@@ -1075,7 +1116,7 @@ async function profile(req, res) {
       GROUP BY r.category
       ORDER BY votes DESC, r.category
     `,
-      [deviceIds],
+      [user.id],
     ),
     sql.query(
       `
@@ -1119,7 +1160,7 @@ async function profile(req, res) {
     `,
       [user.id],
     ),
-    doubleVoteState(user, deviceId, deviceIds),
+    doubleVoteState(user),
     sql.query(
       `
       SELECT
@@ -2639,6 +2680,9 @@ async function vote(req, res, body) {
   if (user && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
+  if (!user && (await deviceAccountId(deviceId))) {
+    return json(res, 403, { error: 'account_required_on_this_device' });
+  }
 
   const [option] = await sql.query(
     `
@@ -2656,29 +2700,53 @@ async function vote(req, res, body) {
     return json(res, 404, { error: 'option_not_found' });
   }
 
-  const deviceIds = await devicesFor(user, deviceId);
+  const currentVoteQuery = user
+    ? sql.query(
+        `
+        SELECT direction
+        FROM votes
+        WHERE option_id = $1
+          AND user_id = $2
+        LIMIT 1
+      `,
+        [optionId, user.id],
+      )
+    : sql.query(
+        `
+        SELECT direction
+        FROM votes
+        WHERE option_id = $1
+          AND device_id = $2
+          AND user_id IS NULL
+        LIMIT 1
+      `,
+        [optionId, deviceId],
+      );
+  const rankingVoteCountQuery = user
+    ? sql.query(
+        `
+        SELECT COUNT(*)::int AS count
+        FROM votes v
+        JOIN ranking_options o ON o.id = v.option_id
+        WHERE v.user_id = $1
+          AND o.ranking_id = $2
+      `,
+        [user.id, option.ranking_id],
+      )
+    : sql.query(
+        `
+        SELECT COUNT(*)::int AS count
+        FROM votes v
+        JOIN ranking_options o ON o.id = v.option_id
+        WHERE v.device_id = $1
+          AND v.user_id IS NULL
+          AND o.ranking_id = $2
+      `,
+        [deviceId, option.ranking_id],
+      );
   const [currentRows, countRows, orderBefore] = await Promise.all([
-    sql.query(
-      `
-      SELECT direction
-      FROM votes
-      WHERE option_id = $1
-        AND device_id = ANY($2::text[])
-      ORDER BY updated_at DESC, device_id
-      LIMIT 1
-    `,
-      [optionId, deviceIds],
-    ),
-    sql.query(
-      `
-      SELECT COUNT(DISTINCT v.option_id)::int AS count
-      FROM votes v
-      JOIN ranking_options o ON o.id = v.option_id
-      WHERE v.device_id = ANY($1::text[])
-        AND o.ranking_id = $2
-    `,
-      [deviceIds, option.ranking_id],
-    ),
+    currentVoteQuery,
+    rankingVoteCountQuery,
     rankingOrderSignature(option.ranking_id),
   ]);
 
@@ -2724,7 +2792,7 @@ async function vote(req, res, body) {
     );
 
     if (!existingDouble) {
-      const state = await doubleVoteState(user, deviceId, deviceIds);
+      const state = await doubleVoteState(user);
       if (state.unlocked === 0) {
         return json(res, 409, {
           error: 'double_vote_locked',
@@ -2781,7 +2849,7 @@ async function vote(req, res, body) {
           [user.id, optionId],
         );
         if (!createdByRace) {
-          const currentState = await doubleVoteState(user, deviceId, deviceIds);
+          const currentState = await doubleVoteState(user);
           return json(res, 409, {
             error: 'double_vote_limit',
             unlocked: currentState.unlocked,
@@ -2804,6 +2872,7 @@ async function vote(req, res, body) {
     weight = 2;
   } else if (user) {
     const statements = [
+      sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [user.id]),
       sql.query(
         `
         DELETE FROM user_double_votes
@@ -2815,10 +2884,10 @@ async function vote(req, res, body) {
       sql.query(
         `
         DELETE FROM votes
-        WHERE option_id = $1
-          AND device_id = ANY($2::text[])
+        WHERE user_id = $1
+          AND option_id = $2
       `,
-        [optionId, deviceIds],
+        [user.id, optionId],
       ),
     ];
 
@@ -2826,10 +2895,10 @@ async function vote(req, res, body) {
       statements.push(
         sql.query(
           `
-        INSERT INTO votes (device_id, option_id, direction, updated_at)
-        VALUES ($1, $2, $3, now())
+        INSERT INTO votes (device_id, user_id, option_id, direction, updated_at)
+        VALUES ($1, $2, $3, $4, now())
       `,
-          [deviceId, optionId, direction],
+          [deviceId, user.id, optionId, direction],
         ),
       );
       statements.push(
