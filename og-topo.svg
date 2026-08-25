@@ -1,25 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
   <title id="title">TOPO — Tudo vira ranking</title>
-  <rect width="1200" height="630" fill="#fff8ec"/>
-  <rect x="860" y="-90" width="430" height="430" rx="90" fill="#dbe2ff" transform="rotate(10 860 -90)"/>
-  <circle cx="1080" cy="535" r="155" fill="#bfff3c"/>
-  <path d="M922 422h172v42H993l101 101-30 30-101-101v101h-42z" fill="#ff4f3d"/>
+  <rect width="1200" height="630" fill="#fffdf8"/>
+  <rect x="860" y="-90" width="430" height="430" rx="90" fill="#eee8e2" transform="rotate(10 860 -90)"/>
+  <circle cx="1080" cy="535" r="155" fill="#c7ff38"/>
+  <path d="M922 422h172v42H993l101 101-30 30-101-101v101h-42z" fill="#ff5a45"/>
   <g transform="translate(82 65) scale(.6)">
-    <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff4f3d"/>
-    <rect x="2" y="2" width="690" height="205" rx="42" fill="#2447ff" stroke="#151019" stroke-width="4"/>
+    <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff2d8d"/>
+    <rect x="2" y="2" width="690" height="205" rx="42" fill="#ff5a45" stroke="#151019" stroke-width="4"/>
     <g transform="translate(70 17) scale(1.08)">
-      <path d="M0 11h112v38H77v119H35V49H0z" fill="#fff8ec"/>
-      <rect x="99" y="10" width="135" height="158" rx="66" fill="#fff8ec"/>
-      <rect x="140" y="45" width="53" height="88" rx="26" fill="#2447ff"/>
-      <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fff8ec"/>
-      <rect x="386" y="10" width="135" height="158" rx="66" fill="#fff8ec"/>
-      <rect x="427" y="45" width="53" height="88" rx="26" fill="#bfff3c"/>
+      <path d="M0 11h112v38H77v119H35V49H0z" fill="#fffdf8"/>
+      <rect x="99" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
+      <rect x="140" y="45" width="53" height="88" rx="26" fill="#ff5a45"/>
+      <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fffdf8"/>
+      <rect x="386" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
+      <rect x="427" y="45" width="53" height="88" rx="26" fill="#c7ff38"/>
       <path d="M453.5 108V70m0 0-15 16m15-16 15 16" fill="none" stroke="#151019" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
   </g>
   <text x="82" y="355" fill="#151019" font-family="Impact, Arial Black, Arial, sans-serif" font-size="94" font-weight="900" letter-spacing="-3">TUDO VIRA</text>
-  <text x="82" y="452" fill="#ff4f3d" font-family="Impact, Arial Black, Arial, sans-serif" font-size="111" font-weight="900" letter-spacing="-4">RANKING.</text>
-  <text x="88" y="525" fill="#2447ff" font-family="DejaVu Sans Mono, monospace" font-size="23" font-weight="700">VOTE · COMPARE · DESCUBRA</text>
+  <text x="82" y="452" fill="#ff2d8d" font-family="Impact, Arial Black, Arial, sans-serif" font-size="111" font-weight="900" letter-spacing="-4">RANKING.</text>
+  <text x="88" y="525" fill="#151019" font-family="DejaVu Sans Mono, monospace" font-size="23" font-weight="700">VOTE · COMPARE · DESCUBRA</text>
   <rect x="82" y="568" width="680" height="4" fill="#151019"/>
   <text x="82" y="601" fill="#68616f" font-family="DejaVu Sans Mono, monospace" font-size="17">somostopo.com.br</text>
 </svg>

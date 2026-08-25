@@ -154,7 +154,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /id="citySelect"/);
   assert.match(index, /topo-local\.js\?v=20260825-5/);
   assert.match(index, /app\.js\?v=20260824-29-pop/);
-  assert.match(index, /pop-electric\.css\?v=20260825-10/);
+  assert.match(index, /pop-electric\.css\?v=20260825-11/);
   assert.match(api, /x-vercel-ip-city/);
   assert.match(api, /location: \{ city: geolocationCity\(req\) \}/);
   assert.match(page, /TOPO LOCAL — rankings da sua cidade/);

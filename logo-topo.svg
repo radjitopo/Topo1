@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="235" viewBox="0 0 720 235" role="img" aria-labelledby="title desc">
   <title id="title">TOPO</title>
-  <desc id="desc">Logo TOPO em selo azul elétrico, com assinatura coral e seta integrada ao último O.</desc>
-  <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff4f3d"/>
-  <rect x="2" y="2" width="690" height="205" rx="42" fill="#2447ff" stroke="#151019" stroke-width="4"/>
+  <desc id="desc">Logo TOPO em selo coral, com assinatura rosa e seta integrada ao último O.</desc>
+  <rect x="15" y="15" width="690" height="205" rx="42" fill="#ff2d8d"/>
+  <rect x="2" y="2" width="690" height="205" rx="42" fill="#ff5a45" stroke="#151019" stroke-width="4"/>
   <g transform="translate(70 17) scale(1.08)">
-    <path d="M0 11h112v38H77v119H35V49H0z" fill="#fff8ec"/>
-    <rect x="99" y="10" width="135" height="158" rx="66" fill="#fff8ec"/>
-    <rect x="140" y="45" width="53" height="88" rx="26" fill="#2447ff"/>
-    <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fff8ec"/>
-    <rect x="386" y="10" width="135" height="158" rx="66" fill="#fff8ec"/>
-    <rect x="427" y="45" width="53" height="88" rx="26" fill="#bfff3c"/>
+    <path d="M0 11h112v38H77v119H35V49H0z" fill="#fffdf8"/>
+    <rect x="99" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
+    <rect x="140" y="45" width="53" height="88" rx="26" fill="#ff5a45"/>
+    <path fill-rule="evenodd" d="M247 10h77c44 0 70 25 70 65 0 41-27 66-71 66h-34v27h-42zm42 36v59h31c19 0 29-10 29-30 0-19-10-29-29-29z" fill="#fffdf8"/>
+    <rect x="386" y="10" width="135" height="158" rx="66" fill="#fffdf8"/>
+    <rect x="427" y="45" width="53" height="88" rx="26" fill="#c7ff38"/>
     <path d="M453.5 108V70m0 0-15 16m15-16 15 16" fill="none" stroke="#151019" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>

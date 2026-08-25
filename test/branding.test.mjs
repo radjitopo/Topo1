@@ -9,12 +9,12 @@ const [logo, mark, popCss, index, institutional] = await Promise.all(
 );
 const compactPopCss = compactSource(popCss);
 
-assert.match(logo, /fill="#2447ff"/, 'the master logo must keep the electric-blue seal');
-assert.match(logo, /fill="#ff4f3d"/, 'the master logo must keep the coral signature');
-assert.match(logo, /fill="#bfff3c"/, 'the last O must carry the lime signal');
+assert.match(logo, /fill="#ff5a45"/, 'the master logo must keep the coral seal');
+assert.match(logo, /fill="#ff2d8d"/, 'the master logo must keep the hot-pink signature');
+assert.match(logo, /fill="#c7ff38"/, 'the last O must carry the lime signal');
 assert.match(logo, /stroke="#151019"/, 'the upward signal must be drawn inside the last O');
-assert.match(mark, /fill="#2447ff"/);
-assert.match(mark, /fill="#bfff3c"/);
+assert.match(mark, /fill="#ff5a45"/);
+assert.match(mark, /fill="#c7ff38"/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
@@ -24,13 +24,13 @@ assert.equal(
 );
 assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo\.svg"/);
 assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo\.svg"/);
-assert.ok(index.includes('/pop-electric.css?v=20260825-10'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260825-10'));
-assert.match(index, /name="theme-color" content="#2447ff"/);
+assert.ok(index.includes('/pop-electric.css?v=20260825-11'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260825-11'));
+assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
-  /--cream:#fff8ec;--paper:#ffffff;--ink:#151019;--muted:#68616f;--line:#151019;--violet:#2447ff;--violet-dark:#151019;--pink:#ff4f3d;--mint:#bfff3c;--lilac:#dbe2ff/,
-  'the public shell must use the approved electric-blue, coral, lime and cream palette',
+  /--cream:#fffdf8;--paper:#ffffff;--ink:#151019;--muted:#68616f;--line:#151019;--violet:#151019;--violet-dark:#151019;--pink:#ff5a45;--mint:#c7ff38;--lilac:#eee8e2;--accent:#ff2d8d;--gold:#f5b800/,
+  'the public shell must stay black and white with coral, lime, pink and gold accents',
 );
 assert.match(
   index,
@@ -100,8 +100,8 @@ assert.doesNotMatch(
 );
 assert.match(
   compactPopCss,
-  /\.popElectric\.profileProgressTextstrong\{[^}]*color:#fff8ec/,
-  'profile progress emphasis must remain readable over the electric-blue hero',
+  /\.popElectric\.profileProgressTextstrong\{[^}]*color:var\(--cream\)/,
+  'profile progress emphasis must remain readable over the near-black hero',
 );
 assert.match(
   compactPopCss,
@@ -114,4 +114,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the 4A beta seal is one SVG across every public shell.');
+console.log('Branding test passed: the coral 4A seal is one SVG across every public shell.');

@@ -1,16 +1,17 @@
 :root {
-  --cream: #fff8ec;
+  --cream: #fffdf8;
   --paper: #ffffff;
   --ink: #151019;
   --muted: #68616f;
   --line: #151019;
-  --violet: #2447ff;
+  --violet: #151019;
   --violet-dark: #151019;
-  --pink: #ff4f3d;
-  --mint: #bfff3c;
-  --lilac: #dbe2ff;
-  --accent: #2447ff;
-  --bg: #fff8ec;
+  --pink: #ff5a45;
+  --mint: #c7ff38;
+  --lilac: #eee8e2;
+  --accent: #ff2d8d;
+  --gold: #f5b800;
+  --bg: #fffdf8;
   --up: #3b7a16;
   --upbg: #efffd8;
   --down: #b83129;
@@ -33,7 +34,7 @@ body.legalShell {
 
 .popElectric *,
 .legalShell * {
-  accent-color: var(--pink);
+  accent-color: var(--accent);
 }
 
 .popElectric button,
@@ -52,7 +53,7 @@ body.legalShell {
 
 .popElectric :focus-visible,
 .legalShell :focus-visible {
-  outline: 3px solid var(--pink);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -88,7 +89,7 @@ body.legalShell {
 
 /* Header and global navigation */
 .popElectric .top {
-  background: rgba(255, 248, 236, 0.96);
+  background: rgba(255, 253, 248, 0.96);
   border-bottom: 2px solid var(--ink);
   box-shadow: none;
   backdrop-filter: blur(16px);
@@ -198,10 +199,10 @@ body.legalShell {
 
 .popElectric .siteSearch kbd {
   display: inline-flex;
-  border: 1px solid #cbd3ef;
+  border: 1px solid #d7d1cc;
   border-radius: 6px;
-  background: #eef1ff;
-  color: #5d5864;
+  background: #f3efea;
+  color: #5f5961;
   padding: 4px 7px;
   font: 700 11px/1 ui-monospace, monospace;
 }
@@ -264,8 +265,8 @@ body.legalShell {
   min-width: 18px;
   height: 18px;
   border-color: var(--cream);
-  background: var(--pink);
-  color: var(--ink);
+  background: var(--accent);
+  color: #fff;
   font-size: 10px;
 }
 
@@ -294,15 +295,15 @@ body.legalShell {
 }
 
 .popElectric .notificationPanelHead button {
-  color: var(--pink);
+  color: var(--accent);
 }
 
 .popElectric .notificationItem.unread {
-  background: #eef1ff;
+  background: #f3efea;
 }
 
 .popElectric .notificationItem.unread::after {
-  background: var(--pink);
+  background: var(--accent);
 }
 
 .popElectric .notificationKind {
@@ -342,7 +343,7 @@ body.legalShell {
 
 .popElectric .experienceLink.active,
 .popElectric .experienceLink.local.active {
-  border-color: var(--pink);
+  border-color: var(--accent);
   color: var(--violet-dark);
 }
 
@@ -397,7 +398,7 @@ body.legalShell {
 .popElectric .groupBtn:focus-visible,
 .popElectric .groupBtn.active,
 .popElectric.homePage .groupBtn.active {
-  border-bottom-color: var(--pink);
+  border-bottom-color: var(--accent);
   background: transparent;
   color: var(--violet);
 }
@@ -440,7 +441,7 @@ body.legalShell {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--accent);
   margin: 0 2px;
 }
 
@@ -706,7 +707,7 @@ body.legalShell {
   display: inline-flex;
   align-items: center;
   border: 0;
-  border-bottom: 3px solid var(--pink);
+  border-bottom: 3px solid var(--accent);
   border-radius: 0;
   color: var(--violet-dark);
   padding: 0 0 3px;
@@ -729,7 +730,7 @@ body.legalShell {
   margin: 76px calc(50% - 50vw);
   padding: 45px max(24px, calc((100vw - 1240px) / 2));
   background: var(--violet);
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popLocalCallout .popEyebrow {
@@ -738,7 +739,7 @@ body.legalShell {
 
 .popLocalCallout h2 {
   margin: 5px 0 6px;
-  color: #fff8ec;
+  color: var(--cream);
   font-size: clamp(48px, 5vw, 72px);
   line-height: 0.9;
 }
@@ -757,7 +758,7 @@ body.legalShell {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 2px solid #fff8ec;
+  border: 2px solid var(--cream);
   border-radius: 10px;
   padding: 14px 17px;
   font: 800 13px/1 ui-monospace, monospace;
@@ -861,6 +862,10 @@ body.legalShell {
   font: 900 24px/1 Impact, "Arial Black", sans-serif;
 }
 
+.popElectric .portalRankPanel li:first-child .portalListNum {
+  color: var(--gold);
+}
+
 .popElectric .portalRankPanel strong {
   font: 900 17px/1.05 Arial, sans-serif;
 }
@@ -924,7 +929,7 @@ body.legalShell {
 }
 
 .popElectric .categoryLandingCount strong {
-  color: var(--pink);
+  color: var(--accent);
   font: 900 45px/1 Impact, "Arial Black", sans-serif;
 }
 
@@ -935,7 +940,7 @@ body.legalShell {
 .popElectric.localMode .categoryLandingHead,
 .popElectric .localCatalogHead {
   background: var(--violet);
-  color: #fff8ec;
+  color: var(--cream);
   box-shadow: 8px 8px 0 var(--pink);
 }
 
@@ -946,7 +951,7 @@ body.legalShell {
 }
 
 .popElectric.localMode .categoryLandingCount {
-  border-color: #fff8ec;
+  border-color: var(--cream);
 }
 
 .popElectric.localMode .categoryLandingCount strong {
@@ -1119,6 +1124,10 @@ body.legalShell {
   font-size: 22px;
 }
 
+.popElectric .options .option:first-child .pos {
+  color: var(--gold);
+}
+
 .popElectric .name {
   font-size: 15px;
   line-height: 1.2;
@@ -1236,11 +1245,11 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 20px;
   background: var(--violet);
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .rankingContinuationHead h2 {
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .rankingFlowButton {
@@ -1349,13 +1358,13 @@ body.legalShell {
   border: 2px solid var(--ink);
   border-radius: 22px;
   background: var(--violet);
-  color: #fff8ec;
+  color: var(--cream);
   box-shadow: 9px 9px 0 var(--pink);
 }
 
 .popElectric .profileHeroCopy .profileName,
 .popElectric .moderationHero h1 {
-  color: #fff8ec;
+  color: var(--cream);
   font-size: clamp(48px, 6vw, 72px);
 }
 
@@ -1372,7 +1381,7 @@ body.legalShell {
 }
 
 .popElectric .profileProgressText strong {
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .profileIdentityPanel {
@@ -1408,12 +1417,12 @@ body.legalShell {
   min-height: 76px;
   align-content: center;
   padding: 12px;
-  border: 1px solid rgba(255, 248, 236, 0.55);
+  border: 1px solid rgba(255, 253, 248, 0.55);
 }
 
 .popElectric .profileMetrics strong,
 .popElectric .profileMetrics small {
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .profileMetrics strong {
@@ -1459,9 +1468,13 @@ body.legalShell {
   color: var(--violet);
 }
 
-.popElectric .profilePowerIcon.unlocked,
-.popElectric .profileLeaderboardPosition.top1 {
+.popElectric .profilePowerIcon.unlocked {
   background: var(--mint);
+  color: var(--violet-dark);
+}
+
+.popElectric .profileLeaderboardPosition.top1 {
+  background: var(--gold);
   color: var(--violet-dark);
 }
 
@@ -1492,9 +1505,9 @@ body.legalShell {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  border: 1px solid #fff8ec;
+  border: 1px solid var(--cream);
   background: rgba(255, 255, 255, 0.09);
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .moderationCounts strong {
@@ -1551,7 +1564,7 @@ body.legalShell {
 .legalShell .siteFooter {
   border-top: 3px solid var(--ink);
   background: var(--violet-dark);
-  color: #fff8ec;
+  color: var(--cream);
 }
 
 .popElectric .siteFooterGrid,
@@ -1584,7 +1597,7 @@ body.legalShell {
 .legalShell .siteFooter a,
 .popElectric .siteFooterBottom,
 .legalShell .siteFooterBottom {
-  color: #fff8ec;
+  color: var(--cream);
   font-size: 12px;
 }
 
