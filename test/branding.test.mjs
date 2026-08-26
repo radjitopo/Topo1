@@ -5,9 +5,9 @@ import { compactSource } from './source-helpers.mjs';
 const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page] =
   await Promise.all(
     [
-      '../logo-topo-v3.svg',
-      '../logo-topo-footer-v3.svg',
-      '../topo-mark-v3.svg',
+      '../logo-topo-v4.svg',
+      '../logo-topo-footer-v4.svg',
+      '../topo-mark-v4.svg',
       '../pop-electric.css',
       '../editorial-clean.css',
       '../index.html',
@@ -18,32 +18,39 @@ const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page]
 const compactPopCss = compactSource(popCss);
 const compactEditorialCss = compactSource(editorialCss);
 
-assert.match(logo, /<g fill="#0a0a0a">/, 'the master wordmark must be black');
+assert.match(logo, /id="wordmark" fill="#0a0a0a"/, 'the master wordmark must be black');
 assert.match(
   logo,
-  /<ellipse cx="476" cy="82" rx="68" ry="64" fill="#73857c"\/>/,
-  'the final O must be the sage upward-arrow symbol',
+  /id="mountain" fill="#0a0a0a" d="M832\.5 115 781 230h103Z"\/\>/,
+  'a black half-height mountain triangle must follow the final O',
 );
-assert.doesNotMatch(logo, /cx="584"/, 'the arrow must not sit outside the wordmark');
-assert.match(logo, /stroke="#fff"/, 'the final O must carry a white upward arrow');
-assert.match(footerLogo, /<g fill="#fff">/, 'the dark footer needs a white wordmark');
-assert.match(footerLogo, /fill="#73857c"/, 'the footer must preserve the sage final O');
-assert.match(mark, /<circle cx="50" cy="50" r="45" fill="#73857c"\/>/);
-assert.match(mark, /stroke="#fff"/);
+assert.doesNotMatch(
+  logo,
+  /(?:circle|ellipse|stroke=)/,
+  'the logo must not bring back the old dot or arrow',
+);
+assert.match(footerLogo, /id="wordmark" fill="#fff"/, 'the dark footer needs a white wordmark');
+assert.match(
+  footerLogo,
+  /id="mountain" fill="#fff"/,
+  'the footer needs the reversed mountain triangle',
+);
+assert.match(mark, /<path fill="#0a0a0a" d="M50 9 5 91h90Z"\/\>/);
+assert.doesNotMatch(mark, /(?:circle|stroke=)/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo-v3\.svg"/g) || []).length,
+  (index.match(/src="\/logo-topo-v4\.svg"/g) || []).length,
   1,
-  'the header must use the sage integrated wordmark',
+  'the header must use the black triangle wordmark',
 );
-assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v3\.svg"/);
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v3\.svg"/);
-assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v3\.svg"/);
-assert.match(index, /href="\/topo-mark-v3\.svg"/);
+assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v4\.svg"/);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v4\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v4\.svg"/);
+assert.match(index, /href="\/topo-mark-v4\.svg"/);
 assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v2\.png/);
 assert.match(institutional, /\/og-topo-v2\.png/);
-assert.match(page, /\/topo-mark-v3\.svg/);
+assert.match(page, /\/topo-mark-v4\.svg/);
 assert.match(page, /\/og-topo-v2\.png/);
 for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
@@ -67,7 +74,7 @@ assert.match(
 assert.match(
   compactEditorialCss,
   /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:none/,
-  'the dedicated footer logo must keep its white and sage colors unchanged',
+  'the dedicated footer logo must keep its white reversed artwork unchanged',
 );
 assert.match(
   compactEditorialCss,
@@ -247,4 +254,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the sage arrow is integrated into the final O.');
+console.log('Branding test passed: the black mountain triangle follows the TOPO wordmark.');
