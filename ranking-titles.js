@@ -61,5 +61,9 @@ export const rankingTitleOverrides = Object.freeze({
 });
 
 export function rankingQuestion(id, fallback = '') {
-  return rankingTitleOverrides[String(id || '')] || String(fallback || '');
+  // The database becomes the source of truth as soon as a moderator edits a
+  // ranking. The map remains as a safe fallback for imports and incomplete
+  // legacy rows; its current values are copied to the database by the ranking
+  // editor migration.
+  return String(fallback || '') || rankingTitleOverrides[String(id || '')] || '';
 }

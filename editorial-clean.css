@@ -2827,3 +2827,377 @@ body.popElectric .categoryRankFooter .categoryVoteCta {
     padding: 6px 10px;
   }
 }
+
+/* Edição direta de rankings — somente para moderadores */
+body.popElectric.rankingPage .rankingModeratorBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: -8px 0 28px;
+  border-top: 1px solid var(--clean-sage);
+  border-bottom: 1px solid var(--clean-sage);
+  background: var(--clean-sage-soft);
+  padding: 13px 15px;
+}
+
+body.popElectric.rankingPage .rankingModeratorBar > div {
+  display: grid;
+  gap: 3px;
+}
+
+body.popElectric.rankingPage .rankingModeratorBar span {
+  color: var(--clean-sage);
+  font:
+    800 9px/1.1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.13em;
+}
+
+body.popElectric.rankingPage .rankingModeratorBar strong {
+  color: var(--clean-ink);
+  font:
+    700 13px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingModeratorBar button {
+  min-height: 38px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 8px 15px;
+  font:
+    800 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .rankingModeratorEditing {
+  text-align: right;
+  letter-spacing: 0.02em;
+}
+
+body.popElectric.rankingPage .rankingEditor {
+  margin: 0 0 56px;
+}
+
+body.popElectric.rankingPage .rankingEditorHead {
+  border-top: 5px solid var(--clean-ink);
+  padding: 16px 0 23px;
+}
+
+body.popElectric.rankingPage .rankingEditorHead h1 {
+  margin: 12px 0 7px;
+  color: var(--clean-ink);
+  font:
+    800 clamp(40px, 7vw, 68px)/0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric.rankingPage .rankingEditorHead p {
+  max-width: 650px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    500 15px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorField {
+  display: grid;
+  gap: 8px;
+}
+
+body.popElectric.rankingPage .rankingEditorField > span,
+body.popElectric.rankingPage .rankingEditorSectionHead span {
+  color: var(--clean-muted);
+  font:
+    800 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.11em;
+}
+
+body.popElectric.rankingPage .rankingEditorField input,
+body.popElectric.rankingPage .rankingEditorOption input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  outline: 0;
+}
+
+body.popElectric.rankingPage .rankingEditorField input:focus,
+body.popElectric.rankingPage .rankingEditorOption input:focus {
+  border-color: var(--clean-sage);
+  box-shadow: inset 4px 0 0 var(--clean-sage);
+}
+
+body.popElectric.rankingPage .rankingEditorTitleField {
+  margin: 0 0 32px;
+}
+
+body.popElectric.rankingPage .rankingEditorTitleField input {
+  min-height: 78px;
+  padding: 12px 15px;
+  font:
+    800 clamp(26px, 4vw, 40px)/1.05 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+}
+
+body.popElectric.rankingPage .rankingEditorPhoto,
+body.popElectric.rankingPage .rankingEditorOptions {
+  margin: 0 0 35px;
+  border-top: 1px solid var(--clean-ink);
+  padding-top: 15px;
+}
+
+body.popElectric.rankingPage .rankingEditorSectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 13px;
+}
+
+body.popElectric.rankingPage .rankingEditorSectionHead > div {
+  display: grid;
+  gap: 4px;
+}
+
+body.popElectric.rankingPage .rankingEditorSectionHead strong {
+  color: var(--clean-ink);
+  font:
+    800 22px/1.05 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorSectionHead small,
+body.popElectric.rankingPage .rankingEditorField small {
+  color: var(--clean-muted);
+  font:
+    500 11px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorPhotoPreview {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--clean-soft);
+}
+
+body.popElectric.rankingPage .rankingEditorPhotoPreview img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+body.popElectric.rankingPage .rankingEditorPhotoEmpty {
+  color: var(--clean-muted);
+  font:
+    800 14px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric.rankingPage .rankingEditorPhotoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 11px 0 18px;
+}
+
+body.popElectric.rankingPage .rankingEditorFileButton,
+body.popElectric.rankingPage .rankingEditorPhotoActions button {
+  min-height: 39px;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 8px 13px;
+  font:
+    800 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .rankingEditorFileButton {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .rankingEditorFileButton input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+body.popElectric.rankingPage #rankingEditorRemovePhoto {
+  border-color: var(--clean-muted-red);
+  color: var(--clean-muted-red);
+}
+
+body.popElectric.rankingPage .rankingEditorUrlField input {
+  min-height: 45px;
+  padding: 10px 12px;
+  font:
+    500 13px/1.3 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorOptionList {
+  border-top: 1px solid var(--clean-line);
+}
+
+body.popElectric.rankingPage .rankingEditorOption {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 7px 0;
+}
+
+body.popElectric.rankingPage .rankingEditorOption > span {
+  color: var(--clean-muted);
+  font:
+    800 17px/1 Arial,
+    Helvetica,
+    sans-serif;
+  text-align: center;
+}
+
+body.popElectric.rankingPage .rankingEditorOption input {
+  min-height: 42px;
+  padding: 9px 11px;
+  font:
+    700 15px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorSaveBar {
+  position: sticky;
+  z-index: 5;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-top: 2px solid var(--clean-ink);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 12px 0;
+  backdrop-filter: blur(10px);
+}
+
+body.popElectric.rankingPage #rankingEditorStatus {
+  color: var(--clean-muted);
+  font:
+    700 11px/1.3 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorSaveBar > div {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+body.popElectric.rankingPage .rankingEditorSaveBar button {
+  min-height: 43px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  padding: 9px 17px;
+  font:
+    800 12px/1 Arial,
+    Helvetica,
+    sans-serif;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .rankingEditorCancel {
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
+body.popElectric.rankingPage .rankingEditorSave {
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .rankingEditorSave:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+@media (max-width: 700px) {
+  body.popElectric.rankingPage .rankingModeratorBar {
+    align-items: stretch;
+    margin-bottom: 22px;
+  }
+
+  body.popElectric.rankingPage .rankingModeratorBar button {
+    min-width: 118px;
+  }
+
+  body.popElectric.rankingPage .rankingModeratorEditing {
+    max-width: 120px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorTitleField input {
+    min-height: 68px;
+    font-size: 26px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorPhotoPreview {
+    aspect-ratio: 4 / 3;
+  }
+
+  body.popElectric.rankingPage .rankingEditorPhotoActions > * {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  body.popElectric.rankingPage .rankingEditorSaveBar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSaveBar > div,
+  body.popElectric.rankingPage .rankingEditorSaveBar button {
+    width: 100%;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSaveBar button {
+    flex: 1;
+  }
+}

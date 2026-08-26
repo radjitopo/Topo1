@@ -69,6 +69,7 @@ let rankings = [],
   categorySort = 'priority',
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
   allItemsOpen = false,
+  rankingEditorState = null,
   sessionHeroId = '',
   selectedCity = '',
   detectedCity = '',
@@ -1502,6 +1503,233 @@ function bindRankingSuggestion(r) {
     }
   };
 }
+
+function moderatorRankingBarHTML(editing = false) {
+  return `<aside class="rankingModeratorBar" aria-label="Ferramentas de moderação"><div><span>MODERAÇÃO</span><strong>${editing ? 'Editando este ranking' : 'Você pode corrigir este ranking aqui mesmo'}</strong></div>${
+    editing
+      ? '<span class="rankingModeratorEditing">Alterações privadas até salvar</span>'
+      : '<button id="rankingEditStart" type="button">Editar ranking</button>'
+  }</aside>`;
+}
+
+function beginRankingEdit(r) {
+  if (!viewer.isModerator) return;
+  rankingEditorState = {
+    rankingId: r.id,
+    originalImageUrl: r.img || null,
+    imagePreview: r.img || '',
+    imageMode: 'keep',
+    imageData: '',
+    imageUrl: String(r.img || '').startsWith('https://') ? r.img : '',
+  };
+  allItemsOpen = true;
+  renderInternal();
+}
+
+function rankingEditorHTML(r, categoryPath) {
+  const state = rankingEditorState,
+    photo = state.imagePreview
+      ? `<img id="rankingEditorImagePreview" src="${escapeHTML(state.imagePreview)}" alt="Prévia da foto de ${escapeHTML(r.q)}">`
+      : '<span class="rankingEditorPhotoEmpty" id="rankingEditorImagePreview">Sem foto</span>',
+    options = r.opts
+      .map(
+        (option, index) =>
+          `<label class="rankingEditorOption"><span>${index + 1}</span><input data-ranking-editor-option data-id="${option.id}" type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" required></label>`,
+      )
+      .join('');
+  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
+}
+
+function renderRankingEditorScreen(r, homePath, homeLabel, categoryPath) {
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">Modo privado</span></div>${moderatorRankingBarHTML(true)}${rankingEditorHTML(r, categoryPath)}<div class="end"><a class="backLink" href="${rankingPath(r.id)}">← cancelar edição</a></div>`;
+  bindRankingEditor(r);
+}
+
+function setRankingEditorPreview(source, alt) {
+  const preview = document.querySelector('.rankingEditorPhotoPreview');
+  if (!preview) return;
+  preview.innerHTML = source
+    ? `<img id="rankingEditorImagePreview" src="${escapeHTML(source)}" alt="${escapeHTML(alt)}">`
+    : '<span class="rankingEditorPhotoEmpty" id="rankingEditorImagePreview">Sem foto</span>';
+}
+
+async function optimizeRankingPhoto(file) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file?.type)) {
+    throw new Error('unsupported_photo');
+  }
+  const objectUrl = URL.createObjectURL(file),
+    image = new Image();
+  try {
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = objectUrl;
+    });
+    const scale = Math.min(1, 1280 / image.naturalWidth, 960 / image.naturalHeight),
+      canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('photo_processing');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    let quality = 0.84,
+      data = canvas.toDataURL('image/jpeg', quality);
+    while (data.length > 1950000 && quality > 0.52) {
+      quality -= 0.08;
+      data = canvas.toDataURL('image/jpeg', quality);
+    }
+    if (data.length > 2000000) throw new Error('photo_too_large');
+    return data;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+function rankingEditorErrorText(error) {
+  return (
+    {
+      invalid_ranking_content: 'Confira o título e tente novamente.',
+      invalid_ranking_options: 'Confira os nomes das opções.',
+      duplicate_ranking_option: 'Há duas opções com o mesmo nome.',
+      ranking_options_changed: 'As opções mudaram em outra tela. Recarregue antes de salvar.',
+      invalid_ranking_image: 'Essa foto não pôde ser usada.',
+      invalid_ranking_image_url: 'Use um link de imagem começando com https://.',
+      moderator_required: 'Esta conta não tem acesso de moderador.',
+      authentication_required: 'Sua sessão terminou. Entre novamente.',
+    }[error] || 'Não consegui salvar agora. Tente novamente.'
+  );
+}
+
+function bindRankingEditor(r) {
+  const form = document.getElementById('rankingEditorForm'),
+    status = document.getElementById('rankingEditorStatus'),
+    fileInput = document.getElementById('rankingEditorFile'),
+    urlInput = document.getElementById('rankingEditorImageUrl');
+  if (!form || !rankingEditorState) return;
+
+  document.getElementById('rankingEditorTitle')?.focus();
+  document.getElementById('rankingEditorCancel').onclick = () => {
+    rankingEditorState = null;
+    allItemsOpen = false;
+    renderInternal();
+  };
+  document.getElementById('rankingEditorKeepPhoto').onclick = () => {
+    rankingEditorState.imageMode = 'keep';
+    rankingEditorState.imageData = '';
+    rankingEditorState.imagePreview = rankingEditorState.originalImageUrl || '';
+    urlInput.value = String(rankingEditorState.originalImageUrl || '').startsWith('https://')
+      ? rankingEditorState.originalImageUrl
+      : '';
+    setRankingEditorPreview(rankingEditorState.imagePreview, r.q);
+    status.textContent = 'Foto atual mantida.';
+  };
+  document.getElementById('rankingEditorRemovePhoto').onclick = () => {
+    rankingEditorState.imageMode = 'remove';
+    rankingEditorState.imageData = '';
+    rankingEditorState.imagePreview = '';
+    urlInput.value = '';
+    setRankingEditorPreview('', r.q);
+    status.textContent = 'A foto será removida quando você salvar.';
+  };
+  urlInput.addEventListener('change', () => {
+    const value = urlInput.value.trim();
+    if (!value) {
+      rankingEditorState.imageMode = 'keep';
+      rankingEditorState.imagePreview = rankingEditorState.originalImageUrl || '';
+      setRankingEditorPreview(rankingEditorState.imagePreview, r.q);
+      return;
+    }
+    if (!value.startsWith('https://')) {
+      status.textContent = 'O link precisa começar com https://.';
+      return;
+    }
+    rankingEditorState.imageMode = 'url';
+    rankingEditorState.imageData = '';
+    rankingEditorState.imageUrl = value;
+    rankingEditorState.imagePreview = value;
+    setRankingEditorPreview(value, r.q);
+    status.textContent = 'Prévia atualizada. Salve para publicar.';
+  });
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    fileInput.disabled = true;
+    status.textContent = 'Preparando a foto…';
+    try {
+      const imageData = await optimizeRankingPhoto(file);
+      rankingEditorState.imageMode = 'upload';
+      rankingEditorState.imageData = imageData;
+      rankingEditorState.imagePreview = imageData;
+      urlInput.value = '';
+      setRankingEditorPreview(imageData, r.q);
+      status.textContent = 'Foto pronta. Salve para publicar.';
+    } catch {
+      fileInput.value = '';
+      status.textContent = 'Não consegui preparar essa foto. Use JPG, PNG ou WebP.';
+    } finally {
+      fileInput.disabled = false;
+    }
+  });
+
+  form.onsubmit = async (event) => {
+    event.preventDefault();
+    const title = document.getElementById('rankingEditorTitle').value.trim(),
+      optionInputs = [...form.querySelectorAll('[data-ranking-editor-option]')],
+      options = optionInputs.map((input) => ({
+        id: Number(input.dataset.id),
+        label: input.value.trim(),
+      })),
+      normalized = options.map((option) => foldText(option.label)),
+      saveButton = form.querySelector('.rankingEditorSave');
+    if (title.length < 8 || options.some((option) => option.label.length < 2)) {
+      status.textContent = 'Confira o título e todas as opções.';
+      return;
+    }
+    if (new Set(normalized).size !== normalized.length) {
+      status.textContent = 'Há duas opções com o mesmo nome.';
+      return;
+    }
+
+    const payload = { rankingId: r.id, title, options };
+    if (rankingEditorState.imageMode === 'upload') {
+      payload.imageData = rankingEditorState.imageData;
+    } else if (rankingEditorState.imageMode === 'url') {
+      payload.imageUrl = urlInput.value.trim();
+    } else if (rankingEditorState.imageMode === 'remove') {
+      payload.imageUrl = '';
+    }
+
+    saveButton.disabled = true;
+    status.textContent = 'Salvando…';
+    try {
+      const response = await fetch('/api?action=ranking-content', {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        }),
+        result = await response.json().catch(() => ({}));
+      if (!response.ok) throw result;
+      const labels = new Map(
+        (result.ranking?.opts || []).map((option) => [Number(option.id), option.label]),
+      );
+      r.q = result.ranking?.q || title;
+      r.img = result.ranking?.img || null;
+      r.opts.forEach((option) => {
+        if (labels.has(Number(option.id))) option.label = labels.get(Number(option.id));
+      });
+      rankingEditorState = null;
+      allItemsOpen = false;
+      renderInternal();
+      toast(result.unchanged ? 'Nada foi alterado' : 'Ranking atualizado');
+    } catch (error) {
+      status.textContent = rankingEditorErrorText(error?.error);
+      saveButton.disabled = false;
+    }
+  };
+}
+
 function renderInternal() {
   const id = internalId(),
     r = rankings.find((x) => x.id === id);
@@ -1515,9 +1743,22 @@ function renderInternal() {
     homeLabel = local ? 'TOPO LOCAL' : 'TOPO',
     categoryPath = rankingCategoryPath(r);
   document.title = `${r.q} — ${homeLabel}`;
+  if (viewer.isModerator && rankingEditorState?.rankingId === r.id) {
+    renderRankingEditorScreen(r, homePath, homeLabel, categoryPath);
+    return;
+  }
+  if (rankingEditorState?.rankingId === r.id) rankingEditorState = null;
   const visibleLimit = allItemsOpen ? r.opts.length : Math.min(10, r.opts.length),
     visibleOptions = r.opts.slice(0, visibleLimit);
   feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${fmt(r.votes)} votos · Top ${visibleLimit}</span></div><article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h1>${escapeHTML(r.q)}</h1>${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i)).join('')}</div><div class="rankFoot"><span>Até ${viewer.rankingLimit || 20} votos por ranking.</span><span>${viewer.registered ? 'Vote normalmente · 2× reforça' : '↑ sobe · ↓ desce'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para todos os rankings ${local ? 'locais' : ''}</a></div>`;
+  if (viewer.isModerator) {
+    feed
+      .querySelector('.internalHead')
+      ?.insertAdjacentHTML('afterend', moderatorRankingBarHTML(false));
+    document
+      .getElementById('rankingEditStart')
+      ?.addEventListener('click', () => beginRankingEdit(r));
+  }
   bindVotes();
   bindAllItems(r);
   bindRankingSuggestion(r);

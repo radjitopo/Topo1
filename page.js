@@ -569,9 +569,11 @@ async function fetchRankingSummaries(sql) {
       ranking.question,
       ranking.image_url,
       ranking.created_at,
+      ranking.content_updated_at,
       (ranking.baseline_votes + COALESCE(activity.live_votes, 0))::int AS vote_count,
       GREATEST(
         ranking.created_at,
+        COALESCE(ranking.content_updated_at, ranking.created_at),
         COALESCE(activity.last_vote_at, ranking.created_at),
         COALESCE(activity.last_double_vote_at, ranking.created_at)
       ) AS updated_at,
@@ -626,6 +628,7 @@ async function fetchRanking(sql, id) {
         ranking.image_url,
         ranking.baseline_votes,
         ranking.created_at,
+        ranking.content_updated_at,
         option.id AS option_id,
         option.label,
         option.position,
@@ -635,6 +638,7 @@ async function fetchRanking(sql, id) {
         COALESCE(vote.live_votes, 0)::int AS live_votes,
         GREATEST(
           ranking.created_at,
+          COALESCE(ranking.content_updated_at, ranking.created_at),
           COALESCE(vote.last_vote_at, ranking.created_at),
           COALESCE(double_vote.last_vote_at, ranking.created_at)
         ) AS updated_at

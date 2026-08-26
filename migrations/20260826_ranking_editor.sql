@@ -1,0 +1,88 @@
+ALTER TABLE rankings
+ADD COLUMN IF NOT EXISTS content_updated_at timestamptz;
+
+CREATE TABLE IF NOT EXISTS ranking_images (
+  ranking_id text PRIMARY KEY REFERENCES rankings(id) ON DELETE CASCADE,
+  mime_type text NOT NULL CHECK (mime_type IN ('image/jpeg', 'image/png', 'image/webp')),
+  image_data text NOT NULL CHECK (length(image_data) BETWEEN 1 AND 2000000),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS ranking_content_edits (
+  id uuid PRIMARY KEY,
+  ranking_id text NOT NULL REFERENCES rankings(id) ON DELETE CASCADE,
+  moderator_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  before_content jsonb NOT NULL,
+  after_content jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS ranking_content_edits_ranking_created_idx
+ON ranking_content_edits (ranking_id, created_at DESC);
+
+-- These titles previously lived only in a code-level compatibility map. Copy
+-- them into Postgres once so future moderator edits remain the source of truth.
+UPDATE rankings AS ranking
+SET question = reviewed.question
+FROM (VALUES
+    ('hamburguer-floripa', 'Quem faz o melhor hambúrguer de Florianópolis?'),
+    ('hamburguer-bc', 'Quem faz o melhor hambúrguer de Balneário Camboriú?'),
+    ('comfort-foods', 'Qual comida mais conforta você?'),
+    ('pintores', 'Quem é o maior pintor da história?'),
+    ('esportes-radicais', 'Qual esporte radical você teria coragem de praticar?'),
+    ('moda-polemica', 'Qual dessas peças você jamais usaria?'),
+    ('discos-rock', 'Qual é o melhor disco de rock de todos os tempos?'),
+    ('guitarristas', 'Quem é o maior guitarrista de todos os tempos?'),
+    ('grupos-kpop', 'Qual é o melhor grupo de K-pop?'),
+    ('animais-superpoderes', 'Qual animal tem a habilidade mais incrível?'),
+    ('plantas-dificeis', 'Qual planta dá mais trabalho para cuidar?'),
+    ('hobbies-para-comecar', 'Qual hobby você gostaria de começar?'),
+    ('biscoitos-recheados', 'Qual é o melhor biscoito recheado?'),
+    ('salgadinhos', 'Qual é o melhor salgadinho?'),
+    ('jogos-celular', 'Qual é o melhor jogo de celular?'),
+    ('pizza-sp', 'Qual é a melhor pizzaria de São Paulo?'),
+    ('quilo-sp', 'Qual é o melhor restaurante por quilo de São Paulo?'),
+    ('hoteis-rio', 'Qual é o melhor hotel do Rio de Janeiro?'),
+    ('pizza-rio', 'Qual é a melhor pizzaria do Rio de Janeiro?'),
+    ('quilo-rio', 'Qual é o melhor restaurante por quilo do Rio de Janeiro?'),
+    ('padarias-floripa', 'Qual é a melhor padaria de Florianópolis?'),
+    ('cafes-floripa', 'Qual é o melhor café de Florianópolis?'),
+    ('hoteis-floripa', 'Qual é o melhor hotel de Florianópolis?'),
+    ('pizzarias-floripa', 'Qual é a melhor pizzaria de Florianópolis?'),
+    ('hoteis-bc', 'Qual é o melhor hotel de Balneário Camboriú?'),
+    ('padarias-bc', 'Qual é a melhor padaria de Balneário Camboriú?'),
+    ('pizza-bc', 'Qual é a melhor pizzaria de Balneário Camboriú?'),
+    ('sushi-bc', 'Qual é o melhor sushi de Balneário Camboriú?'),
+    ('sushi-floripa', 'Qual é o melhor sushi de Florianópolis?'),
+    ('sushi-sp', 'Qual é o melhor sushi de São Paulo?'),
+    ('padarias-sp', 'Qual é a melhor padaria de São Paulo?'),
+    ('sushi-rio', 'Qual é o melhor sushi do Rio de Janeiro?'),
+    ('padarias-rio', 'Qual é a melhor padaria do Rio de Janeiro?'),
+    ('quilo-floripa', 'Qual é o melhor restaurante por quilo de Florianópolis?'),
+    ('quilo-bc', 'Qual é o melhor restaurante por quilo de Balneário Camboriú?'),
+    ('animais-venenosos', 'Qual animal venenoso dá mais medo?'),
+    ('drinks-classicos', 'Qual é o melhor drink clássico?'),
+    ('lanches-recreio', 'Qual é o melhor lanche para o recreio?'),
+    ('animes', 'Qual anime todo mundo deveria assistir?'),
+    ('gambiarras-brasileiras', 'Qual é a gambiarra brasileira mais genial?'),
+    ('pequenas-tragedias-domesticas', 'Qual é a pior pequena tragédia doméstica?'),
+    ('pokemons-irados', 'Qual é o Pokémon mais irado de todos?'),
+    ('piores-empregos', 'Qual é o pior trabalho que existe?'),
+    ('ditadores-crueis', 'Quem foi o ditador mais cruel da história?'),
+    ('roupas-voltar-moda', 'Qual peça do passado deveria voltar à moda?'),
+    ('sapatos-polemicos', 'Qual sapato mais divide opiniões?'),
+    ('modelos-glamourosas', 'Quem é a maior top model de todos os tempos?'),
+    ('bandas-rock', 'Qual é a maior banda de rock de todos os tempos?'),
+    ('vozes-samba', 'Quem é a maior voz do samba brasileiro?'),
+    ('bandas-heavy-metal', 'Qual é a melhor banda de heavy metal de todos os tempos?'),
+    ('bandas-pagode', 'Quem é o maior nome do pagode?'),
+    ('misterios-do-espaco', 'Qual é o maior mistério do espaço?'),
+    ('cafes-supermercado', 'Qual é o melhor café de supermercado?'),
+    ('sorvetes-mercado', 'Qual é o melhor sorvete de supermercado?'),
+    ('desenhos-obrigatorios', 'Qual desenho animado todo mundo deveria assistir?'),
+    ('videogames-consoles', 'Qual console mais marcou a sua geração?'),
+    ('ruas-incriveis', 'Qual rua todo mundo deveria conhecer?'),
+    ('surpresas-professor', 'Qual é a pior surpresa que um professor pode anunciar?'),
+    ('frases-adultos-irritantes', 'Qual frase dos adultos mais irrita?')
+) AS reviewed(id, question)
+WHERE ranking.id = reviewed.id;

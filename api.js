@@ -43,6 +43,8 @@ const PENDING_RANKING_CATEGORY = 'A definir';
 const PENDING_RANKING_EXAMPLES = Object.freeze(['A definir 1', 'A definir 2', 'A definir 3']);
 const PUBLISHED_RANKING_OPTION_LIMIT = 20;
 const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
+const RANKING_IMAGE_MAX_BYTES = 1500000;
+const RANKING_IMAGE_DATA_LIMIT = 2000000;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
 ]);
@@ -363,6 +365,33 @@ function publishedRankingImage(value) {
   } catch {
     return null;
   }
+}
+
+function rankingImageUpload(value) {
+  const raw = String(value || '');
+  if (!raw || raw.length > RANKING_IMAGE_DATA_LIMIT + 40) return null;
+  const match = raw.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
+  if (!match) return null;
+
+  const mimeType = match[1];
+  const image = Buffer.from(match[2], 'base64');
+  if (!image.length || image.length > RANKING_IMAGE_MAX_BYTES) return null;
+  if (image.toString('base64').replace(/=+$/g, '') !== match[2].replace(/=+$/g, '')) return null;
+
+  const validSignature =
+    (mimeType === 'image/jpeg' && image[0] === 0xff && image[1] === 0xd8 && image[2] === 0xff) ||
+    (mimeType === 'image/png' &&
+      image.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) ||
+    (mimeType === 'image/webp' &&
+      image.subarray(0, 4).toString('ascii') === 'RIFF' &&
+      image.subarray(8, 12).toString('ascii') === 'WEBP');
+  if (!validSignature) return null;
+
+  return { mimeType, base64: image.toString('base64'), bytes: image.length };
+}
+
+function isValidRankingId(value) {
+  return /^[a-z0-9][a-z0-9._-]{0,99}$/.test(String(value || ''));
 }
 
 function publishedRankingSlug(value) {
@@ -2077,6 +2106,203 @@ async function mySuggestions(req, res) {
   });
 }
 
+async function rankingImage(req, res) {
+  const rankingId = queryValue(req, 'ranking_id').trim();
+  if (!isValidRankingId(rankingId)) return json(res, 400, { error: 'invalid_ranking' });
+
+  const [row] = await sql.query(
+    `
+      SELECT image.mime_type AS "mimeType", image.image_data AS "imageData"
+      FROM ranking_images image
+      JOIN rankings ranking ON ranking.id = image.ranking_id
+      WHERE image.ranking_id = $1
+        AND ranking.is_active = true
+      LIMIT 1
+    `,
+    [rankingId],
+  );
+  if (!row) return json(res, 404, { error: 'image_not_found' });
+
+  const image = Buffer.from(String(row.imageData || ''), 'base64');
+  if (!image.length || image.length > RANKING_IMAGE_MAX_BYTES) {
+    return json(res, 404, { error: 'image_not_found' });
+  }
+  res.setHeader('Content-Type', row.mimeType);
+  res.setHeader('Content-Length', String(image.length));
+  res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+  res.setHeader('CDN-Cache-Control', 'public, max-age=31536000, immutable');
+  return res.status(200).send(image);
+}
+
+async function updateRankingContent(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
+
+  const rankingId = String(body.rankingId || '').trim();
+  const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
+  const submittedOptions = Array.isArray(body.options) ? body.options : null;
+  if (!isValidRankingId(rankingId) || !title || !submittedOptions) {
+    return json(res, 400, { error: 'invalid_ranking_content' });
+  }
+
+  const [rankingRows, optionRows] = await Promise.all([
+    sql.query(
+      `
+        SELECT id, question, image_url AS "imageUrl", content_updated_at AS "contentUpdatedAt"
+        FROM rankings
+        WHERE id = $1 AND is_active = true
+        LIMIT 1
+      `,
+      [rankingId],
+    ),
+    sql.query(
+      `
+        SELECT id, label, position
+        FROM ranking_options
+        WHERE ranking_id = $1
+        ORDER BY position
+      `,
+      [rankingId],
+    ),
+  ]);
+  const ranking = rankingRows[0];
+  if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
+  if (submittedOptions.length !== optionRows.length) {
+    return json(res, 409, { error: 'ranking_options_changed' });
+  }
+
+  const existingById = new Map(optionRows.map((option) => [Number(option.id), option]));
+  const options = [];
+  const normalizedLabels = new Set();
+  for (const submitted of submittedOptions) {
+    const id = Number(submitted?.id);
+    const label = suggestionText(submitted?.label, 2, SUGGESTION_OPTION_LIMIT);
+    const normalized = normalizeSuggestion(label);
+    if (!Number.isSafeInteger(id) || !existingById.has(id) || !label || !normalized) {
+      return json(res, 400, { error: 'invalid_ranking_options' });
+    }
+    if (normalizedLabels.has(normalized)) {
+      return json(res, 409, { error: 'duplicate_ranking_option' });
+    }
+    normalizedLabels.add(normalized);
+    options.push({ id, label, position: Number(existingById.get(id).position) });
+  }
+  if (new Set(options.map((option) => option.id)).size !== optionRows.length) {
+    return json(res, 400, { error: 'invalid_ranking_options' });
+  }
+
+  let nextImageUrl = ranking.imageUrl || null;
+  let uploadedImage = null;
+  let replaceStoredImage = false;
+  if (Object.hasOwn(body, 'imageData')) {
+    uploadedImage = rankingImageUpload(body.imageData);
+    if (!uploadedImage) return json(res, 400, { error: 'invalid_ranking_image' });
+    const version = randomUUID();
+    nextImageUrl = `/api?action=ranking-image&ranking_id=${encodeURIComponent(rankingId)}&v=${version}`;
+    replaceStoredImage = true;
+  } else if (Object.hasOwn(body, 'imageUrl')) {
+    const rawImageUrl = String(body.imageUrl || '').trim();
+    nextImageUrl = rawImageUrl ? publishedRankingImage(rawImageUrl) : null;
+    if (rawImageUrl && !nextImageUrl) {
+      return json(res, 400, { error: 'invalid_ranking_image_url' });
+    }
+    replaceStoredImage = true;
+  }
+
+  const sortedOptions = options.sort((a, b) => a.position - b.position);
+  const beforeContent = {
+    title: ranking.question,
+    imageUrl: ranking.imageUrl || null,
+    options: optionRows.map((option) => ({ id: Number(option.id), label: option.label })),
+  };
+  const afterContent = {
+    title,
+    imageUrl: nextImageUrl,
+    options: sortedOptions.map((option) => ({ id: option.id, label: option.label })),
+  };
+  const changedOptions = sortedOptions.filter(
+    (option) => existingById.get(option.id).label !== option.label,
+  );
+  const changed =
+    title !== ranking.question ||
+    nextImageUrl !== (ranking.imageUrl || null) ||
+    changedOptions.length;
+  if (!changed) {
+    return json(res, 200, {
+      ok: true,
+      unchanged: true,
+      ranking: { id: rankingId, q: title, img: nextImageUrl, opts: sortedOptions },
+    });
+  }
+
+  const queries = [
+    sql.query(
+      `
+        UPDATE rankings
+        SET question = $2, image_url = $3, content_updated_at = now()
+        WHERE id = $1 AND is_active = true
+      `,
+      [rankingId, title, nextImageUrl],
+    ),
+  ];
+  if (uploadedImage) {
+    queries.push(
+      sql.query(
+        `
+          INSERT INTO ranking_images (ranking_id, mime_type, image_data, updated_at)
+          VALUES ($1, $2, $3, now())
+          ON CONFLICT (ranking_id) DO UPDATE SET
+            mime_type = EXCLUDED.mime_type,
+            image_data = EXCLUDED.image_data,
+            updated_at = now()
+        `,
+        [rankingId, uploadedImage.mimeType, uploadedImage.base64],
+      ),
+    );
+  } else if (replaceStoredImage) {
+    queries.push(sql.query('DELETE FROM ranking_images WHERE ranking_id = $1', [rankingId]));
+  }
+  for (const option of changedOptions) {
+    queries.push(
+      sql.query('UPDATE ranking_options SET label = $1 WHERE id = $2 AND ranking_id = $3', [
+        option.label,
+        option.id,
+        rankingId,
+      ]),
+    );
+  }
+  queries.push(
+    sql.query(
+      `
+        INSERT INTO ranking_content_edits (
+          id, ranking_id, moderator_user_id, before_content, after_content
+        )
+        VALUES ($1, $2, $3, $4::jsonb, $5::jsonb)
+      `,
+      [
+        randomUUID(),
+        rankingId,
+        user.id,
+        JSON.stringify(beforeContent),
+        JSON.stringify(afterContent),
+      ],
+    ),
+  );
+
+  await sql.transaction(queries, { isolationLevel: 'Serializable' });
+  return json(res, 200, {
+    ok: true,
+    ranking: {
+      id: rankingId,
+      q: title,
+      img: nextImageUrl,
+      opts: sortedOptions,
+      contentUpdatedAt: new Date().toISOString(),
+    },
+  });
+}
+
 async function moderationQueue(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
@@ -3048,6 +3274,7 @@ export default async function handler(req, res) {
 
     if (method === 'GET') {
       if (!action) return catalog(req, res);
+      if (action === 'ranking-image') return rankingImage(req, res);
       if (action === 'auth-config') return clerkConfig(req, res);
       if (action === 'notifications') return notifications(req, res);
       if (action === 'profile') return profile(req, res);
@@ -3088,6 +3315,9 @@ export default async function handler(req, res) {
       }
       if (method === 'PATCH' && action === 'moderation') {
         return moderateSuggestion(req, res, body);
+      }
+      if (method === 'PATCH' && action === 'ranking-content') {
+        return updateRankingContent(req, res, body);
       }
       return json(res, 404, { error: 'action_not_found' });
     }

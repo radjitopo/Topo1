@@ -59,15 +59,12 @@ test('editorial review keeps 59 approved titles in one canonical map', async () 
   }
 });
 
-test('editorial title helper overrides approved rankings and preserves every other title', () => {
+test('database titles override the compatibility map after moderator edits', () => {
   assert.equal(
-    rankingQuestion('hamburguer-floripa', 'old title'),
-    'Quem faz o melhor hambúrguer de Florianópolis?',
+    rankingQuestion('hamburguer-floripa', 'Título editado pelo moderador'),
+    'Título editado pelo moderador',
   );
-  assert.equal(
-    rankingQuestion('hobbies-para-comecar', 'old title'),
-    'Qual hobby você gostaria de começar?',
-  );
+  assert.equal(rankingQuestion('hobbies-para-comecar', ''), 'Qual hobby você gostaria de começar?');
   assert.equal(rankingQuestion('ranking-sem-revisao', 'Título original'), 'Título original');
 });
 
