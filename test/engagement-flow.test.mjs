@@ -3,8 +3,10 @@ import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
 const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
+const api = await readFile(new URL('../api.js', import.meta.url), 'utf8');
 const style = await readFile(new URL('../style.css', import.meta.url), 'utf8');
 const compactApp = compactSource(app);
+const compactApi = compactSource(api);
 const compactStyle = compactSource(style);
 
 assert.match(compactApp, /functionnextRankingFor\(r\)/, 'ranking pages must choose a next ranking');
@@ -43,6 +45,21 @@ assert.match(
   compactApp,
   /replaceBrokenRankingImage/,
   'broken ranking images must be replaced without exposing browser error text',
+);
+assert.match(
+  compactApp,
+  /DEFAULT_ANONYMOUS_LIMIT=10/,
+  'signed-out visitors must receive ten free votes in the client',
+);
+assert.match(
+  compactApi,
+  /ANONYMOUS_LIMIT=10/,
+  'the API must enforce the same ten-vote registration threshold',
+);
+assert.match(
+  compactApp,
+  /\$\{viewer\.anonymousLimit\|\|DEFAULT_ANONYMOUS_LIMIT\}votosusados/,
+  'the registration prompt must always show the configured anonymous limit',
 );
 
 assert.match(

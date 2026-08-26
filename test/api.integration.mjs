@@ -63,7 +63,7 @@ try {
     bootstrap.body.rankings.reduce((total, ranking) => total + Number(ranking.votes || 0), 0),
   );
   assert.equal(bootstrap.body.viewer.registered, false);
-  assert.equal(bootstrap.body.viewer.anonymousLimit, 30);
+  assert.equal(bootstrap.body.viewer.anonymousLimit, 10);
   assert.equal(bootstrap.body.viewer.rankingLimit, 20);
   assert.ok(bootstrap.body.rankings.every((ranking) => ranking.opts.length >= 3));
 

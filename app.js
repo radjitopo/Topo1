@@ -29,6 +29,7 @@ function rotateDeviceId() {
 }
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
+const DEFAULT_ANONYMOUS_LIMIT = 10;
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
   Música: 'musica',
@@ -77,7 +78,7 @@ let rankings = [],
     registered: false,
     isModerator: false,
     anonymousUsed: 0,
-    anonymousLimit: 30,
+    anonymousLimit: DEFAULT_ANONYMOUS_LIMIT,
     rankingLimit: 20,
     votingRequiresAccount: false,
   },
@@ -537,7 +538,7 @@ function renderAccount() {
       loading: false,
       open: false,
     };
-    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${viewer.votingRequiresAccount ? 'entre para votar' : `${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || 30} votos`}</span>`;
+    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${viewer.votingRequiresAccount ? 'entre para votar' : `${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos`}</span>`;
   }
 }
 document.addEventListener('click', (event) => {
@@ -2584,12 +2585,12 @@ function showVoteHelp() {
   if (localStorage.getItem('topo_vote_help_seen')) return;
   localStorage.setItem('topo_vote_help_seen', '1');
   showModal(
-    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>${viewer.rankingLimit || 20} opções por ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || 30} votos livres no total</b>. Os votos duplos são conquistados no perfil.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
+    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>${viewer.rankingLimit || 20} opções por ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos são conquistados no perfil.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
   );
 }
 function showRegistrationWall() {
   showModal(
-    `<div class="modalKicker">30 votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Entre com um código enviado ao seu e-mail. Sem senha e sem complicação.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
+    `<div class="modalKicker">${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Entre com um código enviado ao seu e-mail. Sem senha e sem complicação.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
   );
 }
 function showAccountRequired() {
@@ -2731,7 +2732,7 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
       }),
       result = await res.json();
     if (res.status === 403 && result.error === 'registration_required') {
-      viewer.anonymousUsed = viewer.anonymousLimit || 30;
+      viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
       renderAccount();
       showRegistrationWall();
       return;

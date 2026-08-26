@@ -20,7 +20,7 @@ const clerkClient = CLERK_SECRET_KEY
       publishableKey: CLERK_PUBLISHABLE_KEY,
     })
   : null;
-const ANONYMOUS_LIMIT = 30;
+const ANONYMOUS_LIMIT = 10;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
 const PROFILE_LEVEL_MILESTONES = Object.freeze([
