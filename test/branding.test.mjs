@@ -49,9 +49,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-10-sage-logo'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-11-editorial-moderation'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-10-sage-logo'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-11-editorial-moderation'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -78,6 +78,26 @@ assert.match(
   compactEditorialCss,
   /@media\(max-width:700px\)[\s\S]*body\.popElectric\.brandSlogan\{font-size:12px/,
   'the enlarged slogan must remain proportional on mobile',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.moderationHero,body\.popElectric\.moderationAccessDenied\{[^}]*border-radius:0[^}]*background:var\(--clean-paper\)[^}]*box-shadow:none/,
+  'moderation must use the clean editorial hero instead of the old neon panel',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.moderationSection\{[^}]*border:0[^}]*border-radius:0[^}]*background:transparent/,
+  'moderation sections must be flat editorial groups',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.moderationCard,body\.popElectric\.moderationCard\.preparing\{[^}]*border:0[^}]*border-bottom:1pxsolidvar\(--clean-line\)[^}]*border-radius:0[^}]*box-shadow:none/,
+  'moderation cards must be separated by rules instead of thick rounded boxes',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.suggestionStatus\{[^}]*border-radius:0[^}]*background:transparent/,
+  'moderation status labels must use flat editorial tags',
 );
 
 assert.match(
