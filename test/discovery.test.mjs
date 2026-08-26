@@ -29,6 +29,16 @@ assert.match(
   'the home must restore the editorial lead distribution with the Pop Electric skin',
 );
 assert.match(source, /class="popHomeStats"/, 'community numbers must stay in a compact top line');
+assert.match(
+  source,
+  /desktopLead\s*=\s*window\.matchMedia\?\.\('\(min-width: 981px\)'\)\.matches[\s\S]*secondaryHero\s*=\s*desktopLead/,
+  'the second lead ranking must only be created for desktop browsers',
+);
+assert.match(
+  source,
+  /popHomeLeadHTML\(hero, secondaryHero\)/,
+  'desktop home must render both selected lead rankings',
+);
 assert.doesNotMatch(
   source,
   /homeLeadVoteRailHTML|Quem merece subir/,

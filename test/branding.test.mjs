@@ -184,6 +184,16 @@ assert.match(
   'the notebook hero must eliminate dead space, align from the top, and use a restrained headline scale',
 );
 assert.match(
+  compactEditorialCss,
+  /@media\(min-width:981px\)\{[\s\S]*body\.popElectric\.editorialHomeLead\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\);gap:24px[\s\S]*body\.popElectric\.editorialHomeLead\.portalHeroLink\{height:100%;grid-template-columns:minmax\(0,1fr\)minmax\(150px,0\.62fr\)[\s\S]*aspect-ratio:4\/3;max-height:190px[\s\S]*body\.popElectric\.editorialHomeLead\.portalHeroSecondary\{border-left:1pxsolidvar\(--clean-line\);padding-left:24px/,
+  'desktop home must open with two compact rankings and smaller photos',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(max-width:980px\)\{body\.popElectric\.editorialHomeLead\.portalHeroSecondary\{display:none/,
+  'mobile and tablet layouts must keep the original single featured ranking',
+);
+assert.match(
   compactPopCss,
   /@media\(max-width:700px\)[\s\S]*grid-template-columns:116pxminmax\(0,1fr\)auto[\s\S]*\.popElectric\.homePage\.siteSearch[^}]*grid-column:2;grid-row:1/,
   'the mobile search must stay in the header row instead of colliding with the experience switch',

@@ -895,11 +895,14 @@ function nativeShareHTML(r, compact = false) {
 function shareActionsHTML(r, compact = false) {
   return `<span class="shareActions ${compact ? 'compact' : ''}" role="group" aria-label="Opções para compartilhar">${whatsAppShareHTML(r, compact)}${nativeShareHTML(r, compact)}</span>`;
 }
-function portalHeroHTML(r) {
-  return `<article class="portalHero"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, true)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">RANKING DO MOMENTO</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><h1>${escapeHTML(r.q)}</h1><span class="portalHeroAction">abrir ranking →</span></span></a>${shareActionsHTML(r, true)}</article>`;
+function portalHeroHTML(r, secondary = false) {
+  const heading = secondary
+    ? `<h2>${escapeHTML(r.q)}</h2>`
+    : `<h1>${escapeHTML(r.q)}</h1>`;
+  return `<article class="portalHero ${secondary ? 'portalHeroSecondary' : 'portalHeroPrimary'}"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, !secondary)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">${secondary ? 'PARA DESCOBRIR' : 'RANKING DO MOMENTO'}</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span>${heading}<span class="portalHeroAction">abrir ranking →</span></span></a>${shareActionsHTML(r, true)}</article>`;
 }
-function popHomeLeadHTML(hero) {
-  return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">trocar destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Ranking em destaque">${portalHeroHTML(hero)}</section>`;
+function popHomeLeadHTML(hero, secondary = null) {
+  return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">trocar destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Rankings em destaque">${portalHeroHTML(hero)}${secondary ? portalHeroHTML(secondary, true) : ''}</section>`;
 }
 function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
@@ -1106,7 +1109,13 @@ renderHome = function () {
   }
   const portalVisible = homeEligibleRankings(visible),
     hero = choosePortalHero(portalVisible),
-    used = new Set([hero.id]),
+    desktopLead = window.matchMedia?.('(min-width: 981px)').matches,
+    secondaryHero = desktopLead
+      ? portalVisible.find((ranking) => ranking.id !== hero.id && ranking.img) ||
+        portalVisible.find((ranking) => ranking.id !== hero.id) ||
+        null
+      : null,
+    used = new Set([hero.id, secondaryHero?.id].filter(Boolean)),
     disputed = sortForExperience(
       portalVisible.filter((r) => r.opts?.length > 1),
       (a, b) => topGap(a) - topGap(b) || Number(b.votes || 0) - Number(a.votes || 0),
@@ -1118,7 +1127,7 @@ renderHome = function () {
       : portalVisible.filter((r) => r.id !== hero.id),
     stories = storySource.slice(0, 8),
     more = storySource.slice(8, 14);
-  feed.innerHTML = `${popHomeLeadHTML(hero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>MAIS PARA DESCOBRIR</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
+  feed.innerHTML = `${popHomeLeadHTML(hero, secondaryHero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>MAIS PARA DESCOBRIR</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
 };
