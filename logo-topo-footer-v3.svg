@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="180" viewBox="0 0 560 180" role="img" aria-labelledby="title desc">
+  <title id="title">TOPO</title>
+  <desc id="desc">Logo TOPO em branco, com o O final verde acinzentado e uma seta branca para cima.</desc>
+  <g fill="#fff">
+    <path d="M16 20h110v28H85v96H57V48H16z"/>
+    <path fill-rule="evenodd" d="M202 18c-37.6 0-68 29.1-68 64s30.4 64 68 64 68-29.1 68-64-30.4-64-68-64Zm0 28c21.3 0 38.5 16.1 38.5 36S223.3 118 202 118s-38.5-16.1-38.5-36S180.7 46 202 46Z"/>
+    <path fill-rule="evenodd" d="M286 20h59c35 0 55 19 55 50s-21 50-56 50h-30v24h-28V20Zm28 28v44h27c18 0 28-7 28-22s-10-22-28-22h-27Z"/>
+  </g>
+  <ellipse cx="476" cy="82" rx="68" ry="64" fill="#73857c"/>
+  <path d="M476 112V53m0 0-23 23m23-23 23 23" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

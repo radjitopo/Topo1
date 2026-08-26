@@ -220,7 +220,7 @@ export function renderHomePage(template, rankings, search = '') {
       '@id': `${BASE_URL}/#organization`,
       name: 'TOPO',
       url: BASE_URL,
-      logo: `${BASE_URL}/topo-mark-v2.svg`,
+      logo: `${BASE_URL}/topo-mark-v3.svg`,
     },
     {
       '@type': 'WebSite',

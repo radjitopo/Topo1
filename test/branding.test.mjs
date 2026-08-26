@@ -2,51 +2,56 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
-const [logo, mark, popCss, editorialCss, index, institutional, page] = await Promise.all(
-  [
-    '../logo-topo-v2.svg',
-    '../topo-mark-v2.svg',
-    '../pop-electric.css',
-    '../editorial-clean.css',
-    '../index.html',
-    '../institutional.js',
-    '../page.js',
-  ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
-);
+const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page] =
+  await Promise.all(
+    [
+      '../logo-topo-v3.svg',
+      '../logo-topo-footer-v3.svg',
+      '../topo-mark-v3.svg',
+      '../pop-electric.css',
+      '../editorial-clean.css',
+      '../index.html',
+      '../institutional.js',
+      '../page.js',
+    ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
+  );
 const compactPopCss = compactSource(popCss);
 const compactEditorialCss = compactSource(editorialCss);
 
 assert.match(logo, /<g fill="#0a0a0a">/, 'the master wordmark must be black');
 assert.match(
   logo,
-  /<circle cx="584" cy="123" r="18"\/>/,
-  'the final point must be part of the wordmark',
+  /<ellipse cx="476" cy="82" rx="68" ry="64" fill="#73857c"\/>/,
+  'the final O must be the sage upward-arrow symbol',
 );
-assert.match(logo, /stroke="#fff"/, 'the final point must carry a white upward arrow');
-assert.doesNotMatch(logo, /#ff5a45|#ff2d8d|#c7ff38/, 'the master logo must stay monochrome');
-assert.match(mark, /<circle cx="50" cy="50" r="45" fill="#0a0a0a"\/>/);
+assert.doesNotMatch(logo, /cx="584"/, 'the arrow must not sit outside the wordmark');
+assert.match(logo, /stroke="#fff"/, 'the final O must carry a white upward arrow');
+assert.match(footerLogo, /<g fill="#fff">/, 'the dark footer needs a white wordmark');
+assert.match(footerLogo, /fill="#73857c"/, 'the footer must preserve the sage final O');
+assert.match(mark, /<circle cx="50" cy="50" r="45" fill="#73857c"\/>/);
 assert.match(mark, /stroke="#fff"/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo-v2\.svg"/g) || []).length,
-  2,
-  'the header and footer must use the same master SVG',
+  (index.match(/src="\/logo-topo-v3\.svg"/g) || []).length,
+  1,
+  'the header must use the sage integrated wordmark',
 );
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v2\.svg"/);
-assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-v2\.svg"/);
-assert.match(index, /href="\/topo-mark-v2\.svg"/);
+assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v3\.svg"/);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v3\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v3\.svg"/);
+assert.match(index, /href="\/topo-mark-v3\.svg"/);
 assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v2\.png/);
 assert.match(institutional, /\/og-topo-v2\.png/);
-assert.match(page, /\/topo-mark-v2\.svg/);
+assert.match(page, /\/topo-mark-v3\.svg/);
 assert.match(page, /\/og-topo-v2\.png/);
 for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-9-no-card-underline'));
+assert.ok(index.includes('/editorial-clean.css?v=20260825-10-sage-logo'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-9-no-card-underline'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260825-10-sage-logo'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -60,8 +65,19 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:invert\(1\)/,
-  'the monochrome logo must invert cleanly over the dark footer',
+  /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:none/,
+  'the dedicated footer logo must keep its white and sage colors unchanged',
+);
+
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.brandSlogan\{[^}]*70018px\/1Arial/,
+  'the desktop slogan must visually span the wordmark width',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.brandSlogan\{font-size:12px/,
+  'the enlarged slogan must remain proportional on mobile',
 );
 
 assert.match(
@@ -145,4 +161,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the black TOPO wordmark and arrow point are consistent.');
+console.log('Branding test passed: the sage arrow is integrated into the final O.');
