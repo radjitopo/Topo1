@@ -174,6 +174,16 @@ assert.doesNotMatch(
   'Home and ranking pages must not use different logo sizing rules',
 );
 assert.match(
+  compactEditorialCss,
+  /@media\(min-width:981px\)and\(max-width:1440px\)[\s\S]*body\.popElectric\.wrap,body\.legalShell\.wrap\{width:min\(1100px,calc\(100%-40px\)\)[\s\S]*body\.popElectric\.topheader\{min-height:64px;height:64px/,
+  'notebook screens need a narrower canvas and a shorter header',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(min-width:981px\)and\(max-width:1440px\)[\s\S]*body\.popElectric\.popHomeStats\{min-height:32px;padding:4px0[\s\S]*body\.popElectric\.editorialHomeLead\{margin-bottom:18px;padding:10px020px[\s\S]*body\.popElectric\.editorialHomeLead\.portalHeroLink\{grid-template-columns:minmax\(0,0\.92fr\)minmax\(0,1\.08fr\);gap:24px[\s\S]*body\.popElectric\.editorialHomeLead\.portalHeroCopy\{align-content:start;align-self:start;padding-top:0[\s\S]*font-size:clamp\(32px,2\.8vw,40px\)/,
+  'the notebook hero must eliminate dead space, align from the top, and use a restrained headline scale',
+);
+assert.match(
   compactPopCss,
   /@media\(max-width:700px\)[\s\S]*grid-template-columns:116pxminmax\(0,1fr\)auto[\s\S]*\.popElectric\.homePage\.siteSearch[^}]*grid-column:2;grid-row:1/,
   'the mobile search must stay in the header row instead of colliding with the experience switch',

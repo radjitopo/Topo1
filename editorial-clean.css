@@ -2197,6 +2197,200 @@ body.popElectric .moderationEmpty {
   text-align: left;
 }
 
+/* Notebook: mais conteúdo útil na primeira tela, sem comprimir o mobile. */
+@media (min-width: 981px) and (max-width: 1440px) {
+  body.popElectric .wrap,
+  body.legalShell .wrap {
+    width: min(1100px, calc(100% - 40px));
+  }
+
+  body.popElectric .top header {
+    min-height: 64px;
+    height: 64px;
+    grid-template-columns: 140px minmax(240px, 360px) 1fr;
+    gap: 24px;
+  }
+
+  body.popElectric .brandBlock,
+  body.popElectric .logo {
+    width: 140px;
+  }
+
+  body.popElectric .brandBlock {
+    gap: 3px;
+  }
+
+  body.popElectric .brandSlogan {
+    font-size: 14px;
+  }
+
+  body.popElectric .siteSearch,
+  body.popElectric.homePage .siteSearch,
+  body.popElectric.rankingPage .siteSearch {
+    min-height: 38px;
+    padding: 6px 0;
+  }
+
+  body.popElectric .siteSearch input,
+  body.popElectric.homePage .siteSearch input,
+  body.popElectric.rankingPage .siteSearch input {
+    font-size: 13px;
+  }
+
+  body.popElectric .account {
+    gap: 12px;
+  }
+
+  body.popElectric .accountLink {
+    font-size: 11px;
+  }
+
+  body.popElectric .accountEnter {
+    min-height: 38px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  body.popElectric .experienceInner {
+    min-height: 32px;
+  }
+
+  body.popElectric .experienceLink {
+    font-size: 10px;
+  }
+
+  body.popElectric .groups,
+  body.popElectric.homePage .groups {
+    gap: 20px;
+  }
+
+  body.popElectric .groupBtn,
+  body.popElectric.homePage .groupBtn {
+    min-height: 36px;
+    padding: 11px 0 8px;
+    font-size: 11px;
+  }
+
+  body.popElectric .popHomeStats {
+    min-height: 32px;
+    padding: 4px 0;
+  }
+
+  body.popElectric .popHomeStats strong {
+    font-size: 13px;
+  }
+
+  body.popElectric .editorialHomeLead {
+    margin-bottom: 18px;
+    padding: 10px 0 20px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroLink {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 24px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy {
+    align-content: start;
+    align-self: start;
+    padding-top: 0;
+  }
+
+  body.popElectric .portalHeroEyebrow {
+    padding: 6px 8px 5px;
+    font-size: 10px;
+  }
+
+  body.popElectric .editorialHomeLead .portalHeroCopy h1 {
+    max-width: 520px;
+    margin: 12px 0 10px;
+    font-size: clamp(32px, 2.8vw, 40px);
+    line-height: 0.98;
+  }
+
+  body.popElectric .portalTrending,
+  body.popElectric.localMode .portalTrending {
+    grid-template-columns: 100px minmax(0, 1fr);
+    margin-bottom: 28px;
+  }
+
+  body.popElectric .portalTrending a {
+    min-height: 52px;
+    padding: 10px 12px;
+    font-size: 10px;
+  }
+
+  body.popElectric .portalSectionHead {
+    margin: 34px 0 18px;
+    padding-bottom: 12px;
+  }
+
+  body.popElectric .portalSectionHead h2 {
+    margin-top: 8px;
+    font-size: clamp(30px, 2.8vw, 42px);
+  }
+
+  body.popElectric .popHomeGrid {
+    gap: 28px 16px;
+  }
+
+  body.popElectric .popHomeGrid .categoryRankTitle h2 {
+    font-size: clamp(17px, 1.45vw, 21px);
+  }
+
+  body.popElectric .popLocalCallout {
+    min-height: 220px;
+    gap: 28px;
+    margin-top: 56px;
+    margin-bottom: 56px;
+    padding: 36px max(20px, calc((100vw - 1100px) / 2));
+  }
+
+  body.popElectric .popLocalCallout h2 {
+    font-size: clamp(38px, 3.8vw, 52px);
+  }
+
+  body.popElectric .popLocalCallout > a {
+    width: 46px;
+    height: 46px;
+  }
+
+  body.popElectric .portalNewsLayout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 32px;
+  }
+
+  body.popElectric .portalStory,
+  body.popElectric .portalStory.compact {
+    min-height: 170px;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    padding: 20px 0;
+  }
+
+  body.popElectric .portalStoryMedia,
+  body.popElectric .portalStory.feature .portalStoryMedia {
+    width: 190px;
+    min-height: 128px;
+    height: 128px;
+  }
+
+  body.popElectric .portalStoryCopy h2,
+  body.popElectric .portalSideCopy h2,
+  body.popElectric .portalStory.feature h2 {
+    font-size: clamp(25px, 2.35vw, 34px);
+  }
+
+  body.popElectric.rankingPage .feed {
+    width: min(800px, calc(100% - 40px));
+    padding-top: 28px;
+  }
+
+  body.popElectric.rankingPage .rankingMain > :is(h1, h2) {
+    margin-bottom: 24px;
+    font-size: clamp(44px, 4.8vw, 62px);
+  }
+}
+
 @media (max-width: 980px) {
   body.popElectric .wrap,
   body.legalShell .wrap {
