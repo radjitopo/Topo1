@@ -55,6 +55,22 @@ test('SEO taxonomy creates stable category, city and local collection URLs', () 
   assert.equal(localCityBySlug('florianopolis')?.label, 'Florianópolis');
   assert.equal(localGroupForRanking(local)?.slug, 'sushi-japones');
   assert.equal(
+    localGroupForRanking({
+      id: 'bares-floripa',
+      category: 'Florianópolis',
+      question: 'Qual é o melhor bar em Florianópolis?',
+    })?.slug,
+    'bares',
+  );
+  assert.equal(
+    localGroupForRanking({
+      id: 'eventos-esportivos-floripa',
+      category: 'Florianópolis',
+      question: 'Qual tipo de evento esportivo é o favorito em Florianópolis?',
+    })?.slug,
+    'eventos-esportivos',
+  );
+  assert.equal(
     localCollectionPath('florianopolis', 'sushi-japones'),
     '/local/florianopolis/sushi-japones',
   );

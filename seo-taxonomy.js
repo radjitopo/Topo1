@@ -225,6 +225,12 @@ const localGroupDefinitions = [
     question: /\b(?:cafe|cafeteria)\b/,
   },
   {
+    label: 'Bares',
+    description: 'Bares, pubs e botecos da cidade para descobrir, comparar e votar.',
+    id: /^bares?(?:\s|$)/,
+    question: /\b(?:bar|bares|boteco|botequim|pub)\b/,
+  },
+  {
     label: 'Salão de beleza',
     description: 'Salões de beleza da cidade classificados pela experiência da comunidade.',
     id: /^(?:salao|saloes)\s+(?:de\s+)?beleza(?:\s|$)/,
@@ -241,6 +247,12 @@ const localGroupDefinitions = [
     description: 'Academias da cidade reunidas para facilitar a descoberta e a votação.',
     id: /^academias?(?:\s|$)/,
     question: /\bacademia\b/,
+  },
+  {
+    label: 'Eventos esportivos',
+    description: 'Eventos e modalidades esportivas que mais movimentam e animam cada cidade.',
+    id: /^eventos?\s+esportivos?(?:\s|$)/,
+    question: /\bevento\s+esportivo\b/,
   },
   {
     label: 'Pet shop',
