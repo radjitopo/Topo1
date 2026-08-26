@@ -49,9 +49,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260825-11-editorial-moderation'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-12-muted-votes'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260825-11-editorial-moderation'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-12-muted-votes'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -98,6 +98,31 @@ assert.match(
   compactEditorialCss,
   /body\.popElectric\.suggestionStatus\{[^}]*border-radius:0[^}]*background:transparent/,
   'moderation status labels must use flat editorial tags',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric,body\.legalShell\{[^}]*--up:var\(--clean-sage\)[^}]*--down:var\(--clean-muted-red\)/,
+  'positive and negative signals must use the muted editorial palette',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.rankingPage\.react\.up\{[^}]*border-color:var\(--clean-sage\)[^}]*color:var\(--clean-sage\)/,
+  'positive vote buttons must use sage before selection',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.rankingPage\.react\.down\{[^}]*border-color:var\(--clean-muted-red\)[^}]*color:var\(--clean-muted-red\)/,
+  'negative vote buttons must use muted red before selection',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.rankingPage\.react\.up:hover,[^{]*\.react\.up\.selected\{[^}]*background:var\(--clean-sage\)[^}]*color:var\(--clean-paper\)/,
+  'selected positive votes must fill with sage',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.rankingPage\.react\.down:hover,[^{]*\.react\.down\.selected\{[^}]*background:var\(--clean-muted-red\)[^}]*color:var\(--clean-paper\)/,
+  'selected negative votes must fill with muted red',
 );
 
 assert.match(

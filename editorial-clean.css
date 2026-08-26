@@ -14,6 +14,9 @@
   --clean-lime: #c8f433;
   --clean-blue: #38aee3;
   --clean-sage: #73857c;
+  --clean-sage-soft: #eef1ef;
+  --clean-muted-red: #a8645d;
+  --clean-muted-red-soft: #f5ecea;
 }
 
 body.popElectric,
@@ -29,6 +32,10 @@ body.legalShell {
   --mint: var(--clean-lime);
   --lilac: var(--clean-soft);
   --accent: var(--clean-coral);
+  --up: var(--clean-sage);
+  --upbg: var(--clean-sage-soft);
+  --down: var(--clean-muted-red);
+  --downbg: var(--clean-muted-red-soft);
   background: var(--clean-paper);
   color: var(--clean-ink);
   font-family: Arial, Helvetica, sans-serif;
@@ -1017,17 +1024,29 @@ body.popElectric.rankingPage .react {
   font-size: 23px;
 }
 
-body.popElectric.rankingPage .react.up,
-body.popElectric.rankingPage .react.down {
+body.popElectric.rankingPage .react.up {
   background: var(--clean-paper);
-  color: var(--clean-ink);
+  border-color: var(--clean-sage);
+  color: var(--clean-sage);
 }
 
-body.popElectric.rankingPage .react:hover,
-body.popElectric.rankingPage .react:focus-visible,
-body.popElectric.rankingPage .react.up.selected,
+body.popElectric.rankingPage .react.down {
+  background: var(--clean-paper);
+  border-color: var(--clean-muted-red);
+  color: var(--clean-muted-red);
+}
+
+body.popElectric.rankingPage .react.up:hover,
+body.popElectric.rankingPage .react.up:focus-visible,
+body.popElectric.rankingPage .react.up.selected {
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .react.down:hover,
+body.popElectric.rankingPage .react.down:focus-visible,
 body.popElectric.rankingPage .react.down.selected {
-  background: var(--clean-ink);
+  background: var(--clean-muted-red);
   color: var(--clean-paper);
 }
 
