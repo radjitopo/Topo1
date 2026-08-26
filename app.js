@@ -1012,16 +1012,12 @@ function renderCategoryHome(visible) {
     local = isLocalExperience(),
     preferredCount = visible.length,
     heading = local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
-    kicker = local
-      ? `${selectedCity} no TOPO`
-      : isAll
-        ? 'Explore o TOPO inteiro'
-        : 'Escolha um tema e entre na disputa',
+    kicker = local ? `${selectedCity} no TOPO` : isAll ? 'Todos os rankings' : 'Categoria',
     description = local
-      ? `Aqui aparecem somente os rankings de ${selectedCity}. Para explorar outro lugar, troque a cidade.`
+      ? `Só rankings de ${selectedCity}. Troque a cidade para explorar outro lugar.`
       : isAll
-        ? 'Todos os rankings em uma lista. Os novos e os que você ainda não votou aparecem primeiro.'
-        : 'Todos os rankings deste tema reunidos em um só lugar. Abra uma disputa para ver os itens e votar.';
+        ? 'Novos e ainda não votados aparecem primeiro.'
+        : 'Abra um ranking, veja os itens e vote.';
   document.title = local
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : `${activeGroup} — rankings no TOPO`;
@@ -1037,7 +1033,7 @@ function renderCategoryHome(visible) {
     )
     .join(
       '',
-    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-pressed="${categorySort === 'random'}">↻ ${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-label="${categorySort === 'random' ? 'Misturar rankings de novo' : 'Embaralhar rankings'}" aria-pressed="${categorySort === 'random'}"><span class="categoryShuffleIcon" aria-hidden="true">↻</span><span class="categoryShuffleLabel">${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</span></button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }

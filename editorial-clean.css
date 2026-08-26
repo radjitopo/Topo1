@@ -2413,3 +2413,86 @@ body.popElectric .moderationEmpty {
     font-size: 21px;
   }
 }
+
+@media (max-width: 700px) {
+  body.popElectric .categoryLandingHead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0 16px;
+    margin: 10px 0 3px;
+    padding: 16px 0 14px;
+  }
+
+  body.popElectric .categoryLandingHead > div:first-child {
+    min-width: 0;
+  }
+
+  body.popElectric .categoryLandingHead h1 {
+    margin: 4px 0 6px;
+    font-size: clamp(40px, 11vw, 48px);
+    line-height: 0.94;
+  }
+
+  body.popElectric .categoryLandingHead p {
+    max-width: 34rem;
+    font-size: 12px;
+    line-height: 1.38;
+  }
+
+  body.popElectric .categoryLandingCount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 62px;
+    margin: 23px 0 0;
+    border: 0;
+    border-left: 1px solid var(--clean-ink);
+    padding: 0 0 0 12px;
+    text-align: left;
+  }
+
+  body.popElectric .categoryLandingCount strong {
+    font-size: 28px;
+    line-height: 0.9;
+  }
+
+  body.popElectric .categoryLandingCount span {
+    margin: 0;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.popElectric .categoryLandingHead {
+    gap: 0 12px;
+    margin-top: 7px;
+    padding: 12px 0 11px;
+  }
+
+  body.popElectric .categoryLandingHead .portalKicker {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  body.popElectric .categoryLandingHead h1 {
+    margin: 3px 0 5px;
+    font-size: clamp(38px, 11.5vw, 44px);
+  }
+
+  body.popElectric .categoryLandingHead p {
+    font-size: 11px;
+    line-height: 1.34;
+  }
+
+  body.popElectric .categoryLandingCount {
+    min-width: 56px;
+    margin-top: 17px;
+    padding-left: 10px;
+  }
+
+  body.popElectric .categoryLandingCount strong {
+    font-size: 26px;
+  }
+}

@@ -45,6 +45,16 @@ assert.doesNotMatch(
   /SUA VEZ|VOTAR AGORA|popHomeHero/,
   'the home must not repeat its proposition before showing rankings',
 );
+assert.match(
+  source,
+  /'Abra um ranking, veja os itens e vote\.'/,
+  'category introductions must stay concise so rankings appear sooner on mobile',
+);
+assert.match(
+  source,
+  /class="categoryShuffleIcon"[\s\S]*class="categoryShuffleLabel"/,
+  'the category shuffle action needs a compact icon treatment on mobile',
+);
 
 const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
 assert.ok(categoryCardSource, 'the ranking discovery card must remain testable');

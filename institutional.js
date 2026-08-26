@@ -524,8 +524,8 @@ function renderPage(slug, page) {
 <meta name="theme-color" content="#fffdf8">
 <link rel="icon" href="/topo-mark-v3.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css?v=20260825-9-seo">
-<link rel="stylesheet" href="/pop-electric.css?v=20260825-12-seo">
-<link rel="stylesheet" href="/editorial-clean.css?v=20260826-14-profile-palette">
+<link rel="stylesheet" href="/pop-electric.css?v=20260826-13-compact-categories">
+<link rel="stylesheet" href="/editorial-clean.css?v=20260826-15-compact-categories">
 </head>
 <body class="legalShell popElectric">
 <header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo-v3.svg" alt="TOPO" width="184" height="60"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>

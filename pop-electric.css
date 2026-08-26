@@ -2477,30 +2477,49 @@ body.legalShell {
   }
 
   .popElectric .categoryListBar {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0 9px;
+    margin-bottom: 10px;
   }
 
   .popElectric .categorySorts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    overflow: visible;
+    display: flex;
+    gap: 6px;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
 
   .popElectric .categorySorts button {
-    width: 100%;
-    min-width: 0;
-    min-height: 42px;
-    padding: 8px;
-    font-size: 11px;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: max-content;
+    min-height: 34px;
+    padding: 6px 9px;
+    font-size: 10px;
     white-space: nowrap;
   }
 
   .popElectric .categoryShuffle {
-    width: 100%;
-    max-width: none;
+    flex: 0 0 34px;
+    width: 34px;
+    max-width: 34px;
+    min-height: 34px;
     justify-content: center;
-    margin-top: 8px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .popElectric .categoryShuffleLabel {
+    display: none;
+  }
+
+  .popElectric .categoryShuffleIcon {
+    font-size: 17px;
+    line-height: 1;
   }
 
   .popElectric .categoryRankCard {

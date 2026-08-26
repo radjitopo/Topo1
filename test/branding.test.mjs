@@ -48,10 +48,10 @@ assert.match(page, /\/og-topo-v2\.png/);
 for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
-assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-14-profile-palette'));
-assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-14-profile-palette'));
+assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-15-compact-categories'));
+assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-15-compact-categories'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -167,8 +167,13 @@ assert.match(
 );
 assert.match(
   compactPopCss,
-  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categorySorts\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)[^}]*overflow:visible/,
-  'the four category filters must fit in a two-by-two mobile grid',
+  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categorySorts\{[^}]*display:flex[^}]*overflow-x:auto[\s\S]*\.popElectric\.categorySortsbutton\{[^}]*min-height:34px[\s\S]*\.popElectric\.categoryShuffle\{[^}]*width:34px[^}]*max-width:34px/,
+  'category controls must use one compact horizontal mobile strip',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.categoryLandingHead\{[^}]*display:grid[^}]*grid-template-columns:minmax\(0,1fr\)auto[^}]*padding:16px014px[\s\S]*body\.popElectric\.categoryLandingCount\{[^}]*flex-direction:column[^}]*margin:23px00/,
+  'mobile category headers must keep the title and ranking count in one compact composition',
 );
 assert.match(
   compactPopCss,

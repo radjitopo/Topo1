@@ -152,8 +152,8 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
   assert.match(index, /topo-local\.js\?v=20260825-6-seo/);
-  assert.match(index, /app\.js\?v=20260826-36-nostalgia/);
-  assert.match(index, /pop-electric\.css\?v=20260825-12-seo/);
+  assert.match(index, /app\.js\?v=20260826-37-compact-categories/);
+  assert.match(index, /pop-electric\.css\?v=20260826-13-compact-categories/);
   assert.match(api, /x-vercel-ip-city/);
   assert.match(api, /location: \{ city: geolocationCity\(req\) \}/);
   assert.match(page, /TOPO LOCAL — rankings da sua cidade/);
@@ -164,7 +164,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(app, /if \(local \|\| !homePortal\) \{\s*renderCategoryHome\(visible\)/);
   assert.match(app, /Rankings em \$\{selectedCity\}/);
   assert.match(app, /localRankingsForSelectedCity/);
-  assert.match(app, /Aqui aparecem somente os rankings de \$\{selectedCity\}/);
+  assert.match(app, /Só rankings de \$\{selectedCity\}/);
   assert.match(app, /Explorar outra cidade/);
   assert.match(app, /Overture Maps Foundation/);
   assert.match(app, /rankingsInSameExperience/);
