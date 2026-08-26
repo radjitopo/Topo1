@@ -49,10 +49,10 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-19-share-actions'));
-assert.ok(index.includes('/app.js?v=20260826-42-share-actions'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-20-profile-editorial'));
+assert.ok(index.includes('/app.js?v=20260826-43-profile-editorial'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-19-share-actions'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-20-profile-editorial'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -132,8 +132,8 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.profilePage\.profileGameHero\{[^}]*background:var\(--clean-soft\)[^}]*color:var\(--clean-ink\)[^}]*box-shadow:8px8px0var\(--clean-muted-red\)/,
-  'the profile hero must replace neon colors with the muted editorial palette',
+  /body\.popElectric\.profilePage\.profileGameHero\{[^}]*border:0[^}]*border-top:5pxsolidvar\(--clean-ink\)[^}]*border-radius:0[^}]*background:var\(--clean-paper\)[^}]*box-shadow:none/,
+  'the profile hero must use the same flat editorial structure as the latest public pages',
 );
 assert.match(
   compactEditorialCss,
@@ -142,8 +142,13 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.profilePage\.profileBadgesspan\{[^}]*border:1pxsolidvar\(--clean-sage\)[^}]*background:var\(--clean-sage-soft\)[^}]*color:var\(--clean-sage\)/,
-  'profile badges must use soft sage instead of lime neon',
+  /body\.popElectric\.profilePage\.profileBadgesspan\{[^}]*border:0[^}]*border-right:1pxsolidvar\(--clean-line\)[^}]*border-radius:0[^}]*background:transparent[^}]*color:var\(--clean-ink\)/,
+  'profile status labels must be flat editorial rows instead of rounded capsules',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.profilePage\.profileSection\{[^}]*border:0[^}]*border-top:5pxsolidvar\(--clean-ink\)[^}]*border-radius:0[^}]*background:transparent[^}]*box-shadow:none/,
+  'profile sections must use rules instead of bordered cards',
 );
 
 assert.match(
