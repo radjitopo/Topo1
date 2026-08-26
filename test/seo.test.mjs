@@ -21,6 +21,12 @@ const cinema = {
   createdAt: '2026-08-20T12:00:00.000Z',
   updatedAt: '2026-08-25T12:00:00.000Z',
   voteCount: 120,
+  options: [
+    { id: 1, label: 'O Poderoso Chefão', score: 50 },
+    { id: 2, label: 'Central do Brasil', score: 42 },
+    { id: 3, label: 'Cidade de Deus', score: 39 },
+    { id: 4, label: 'Bacurau', score: 35 },
+  ],
 };
 const local = {
   id: 'sushi-floripa',
@@ -79,6 +85,13 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(home, /href="\/categoria\/cinema"/);
   assert.match(home, /href="\/ranking\/filmes"/);
   assert.doesNotMatch(home, /href="\/ranking\/sushi-floripa"/);
+  assert.match(home, /class="categoryRankOverlay"/);
+  assert.match(home, /O Poderoso Chefão/);
+  assert.match(home, /Central do Brasil/);
+  assert.match(home, /Cidade de Deus/);
+  assert.doesNotMatch(home, /Bacurau/);
+  assert.match(home, /class="whatsappShare compact"/);
+  assert.match(home, /VER RANKING/);
 
   const category = renderGeneralCategoryPage(template, generalCategoryBySlug('cinema'), [
     cinema,
@@ -135,7 +148,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
   assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260826-38-optional-sorts/);
+  assert.match(index, /\/app\.js\?v=20260826-39-votable-cards/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.match(
     editorialCss,

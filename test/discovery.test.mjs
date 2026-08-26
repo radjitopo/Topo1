@@ -68,10 +68,15 @@ assert.match(
 
 const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
 assert.ok(categoryCardSource, 'the ranking discovery card must remain testable');
-assert.doesNotMatch(
+assert.match(
   categoryCardSource,
-  /previewVoteActionsHTML|categoryVoteList|Top 3/,
-  'discovery cards must open rankings instead of imitating a vote or revealing the leaders',
+  /categoryVoteListHTML\(r\)/,
+  'discovery cards must expose the first three items for immediate voting',
+);
+assert.match(
+  categoryCardSource,
+  /categoryRankOverlay/,
+  'ranking questions must sit over the compact photo treatment',
 );
 assert.match(
   categoryCardSource,

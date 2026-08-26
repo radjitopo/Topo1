@@ -1,14 +1,19 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
 import { compactSource, extractTopLevelDeclaration } from './source-helpers.mjs';
 
-const [api, app, style] = await Promise.all([
+const [api, app, style, editorial, page] = await Promise.all([
   readFile(new URL('../api.js', import.meta.url), 'utf8'),
   readFile(new URL('../app.js', import.meta.url), 'utf8'),
   readFile(new URL('../style.css', import.meta.url), 'utf8'),
+  readFile(new URL('../editorial-clean.css', import.meta.url), 'utf8'),
+  readFile(new URL('../page.js', import.meta.url), 'utf8'),
 ]);
 const compactApp = compactSource(app);
 const compactStyle = compactSource(style);
+const compactEditorial = compactSource(editorial);
+const compactPage = compactSource(page);
 
 assert.match(
   api,
@@ -18,41 +23,79 @@ assert.match(
 assert.match(compactApp, /rankingLimit:20/, 'the interface fallback must match the API limit');
 assert.match(
   compactApp,
-  /functionpreviewVoteActionsHTML\(r,o,wrapperClass=/,
-  'ranking previews must render vote arrows',
+  /functioncategoryVoteActionsHTML\(o\)/,
+  'ranking previews must render their own vote controls',
 );
 assert.match(
   compactApp,
-  /data-preview-ranking=/,
-  'preview arrows must retain the ranking destination',
+  /class="reactup[^>]*data-mine=/,
+  'preview arrows must use the same direct-vote state as full rankings',
 );
 assert.match(
   compactApp,
-  /functionpreviewReact\(b\)/,
-  'preview arrows must have a dedicated open-and-highlight flow',
+  /aria-pressed="\$\{upSelected\}"/,
+  'preview arrows must expose their selected state to assistive technology',
 );
-const previewFlow = extractTopLevelDeclaration(app, 'previewReact');
-assert.ok(previewFlow, 'the preview navigation flow must be identifiable');
-assert.doesNotMatch(previewFlow, /fetch\(/, 'preview arrows must not send a vote');
+const voteList = extractTopLevelDeclaration(app, 'categoryVoteListHTML');
+assert.ok(voteList, 'the three-item voting preview must remain testable');
 assert.match(
-  compactSource(previewFlow),
-  /openPreviewRanking\(rankingId,optionId,direction,label\)/,
-  'preview arrows must open the full ranking with the selected option',
+  compactSource(voteList),
+  /\(r\.opts\|\|\[\]\)\.slice\(0,3\)/,
+  'each discovery card must expose exactly the first three ranking items',
 );
-assert.match(
+assert.doesNotMatch(
   compactApp,
-  /topo_preview_vote_intent/,
-  'the intended option and direction must survive navigation',
+  /previewVoteIntent|topo_preview_vote_intent|data-preview-ranking/,
+  'card votes must no longer be deferred through a navigation intent',
 );
+
+const bindVotes = extractTopLevelDeclaration(app, 'bindVotes');
+assert.ok(bindVotes, 'vote binding must remain testable');
 assert.match(
-  compactApp,
-  /previewVotePrompt/,
-  'the ranking must explain that the vote still needs confirmation',
+  compactSource(bindVotes),
+  /querySelectorAll\('\.react'\).*react\(b\)/,
+  'every preview arrow must submit through the direct vote flow',
 );
+
+const reactFlow = extractTopLevelDeclaration(app, 'react');
+assert.ok(reactFlow, 'the direct vote toggle must remain testable');
 assert.match(
-  compactApp,
-  /data-option-id=/,
-  'the selected option must be addressable for highlighting',
+  compactSource(reactFlow),
+  /direction=mine===clicked\?0:clicked/,
+  'tapping a selected arrow again must remove that vote',
+);
+const voteContext = vm.createContext({ Number });
+vm.runInContext(
+  `
+function submitVoteChange(button, payload) { globalThis.lastVote = payload; }
+${reactFlow}
+globalThis.voteFromCard = react;
+`,
+  voteContext,
+);
+voteContext.voteFromCard({ dataset: { id: '42', mine: '0', dir: '1' } });
+assert.deepEqual(
+  { ...voteContext.lastVote },
+  { optionId: 42, direction: 1, weight: 1, showHelp: true },
+  'an unselected up arrow must submit a positive vote immediately',
+);
+voteContext.voteFromCard({ dataset: { id: '42', mine: '1', dir: '1' } });
+assert.equal(voteContext.lastVote.direction, 0, 'a selected arrow must submit vote removal');
+
+const previewRefresh = extractTopLevelDeclaration(app, 'updateRankingPreviewCards');
+assert.ok(previewRefresh, 'targeted preview updates must remain testable');
+assert.match(
+  compactSource(previewRefresh),
+  /card\.replaceWith\(template\.content\.firstElementChild\)/,
+  'a successful vote must refresh only its ranking card',
+);
+
+const resultFlow = extractTopLevelDeclaration(app, 'applyVoteResult');
+assert.ok(resultFlow, 'vote result handling must remain testable');
+assert.match(
+  compactSource(resultFlow),
+  /elseif\(!updateRankingPreviewCards\(ranking\)\)renderHome\(\)/,
+  'category cards must stay in place after voting instead of re-sorting the full page',
 );
 assert.match(
   compactApp,
@@ -71,9 +114,19 @@ assert.doesNotMatch(
 );
 
 assert.match(
-  compactStyle,
-  /\.categoryVoteOption\{[^}]*grid-template-columns:20pxminmax\(0,1fr\)auto/,
-  'category cards must leave room for quick-vote arrows',
+  compactEditorial,
+  /body\.popElectric\.categoryVoteOption\{[^}]*grid-template-columns:24pxminmax\(0,1fr\)auto/,
+  'category cards must leave balanced room for direct-vote arrows',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.categoryRankCard\.react\.up\{[^}]*color:var\(--clean-sage\)/,
+  'up votes in previews must use the muted sage color',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.categoryRankCard\.react\.down\{[^}]*color:var\(--clean-muted-red\)/,
+  'down votes in previews must use the muted red color',
 );
 assert.doesNotMatch(
   compactStyle,
@@ -81,6 +134,15 @@ assert.doesNotMatch(
   'the removed evaluation progress must not leave stale styles',
 );
 
-console.log(
-  'Ranking voting flow passed: no completion pressure, preview intent and complete list.',
+assert.match(
+  compactPage,
+  /\(ranking\.options\|\|\[\]\)\.slice\(0,3\)/,
+  'server-rendered discovery cards must include the same three-item preview',
 );
+assert.match(
+  compactPage,
+  /\$\{whatsAppShare\(ranking\)\}/,
+  'server-rendered discovery cards must preserve WhatsApp sharing',
+);
+
+console.log('Ranking voting flow passed: direct card votes, stable previews and complete lists.');

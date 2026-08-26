@@ -97,7 +97,7 @@ test('catalog importer and page assets include the sixth batch', async () => {
   assert.match(importer, /newRankings\.length !== 173/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 213/);
   assert.match(index, /editorial-14\.js/);
-  assert.match(index, /app\.js\?v=20260826-38-optional-sorts/);
+  assert.match(index, /app\.js\?v=20260826-39-votable-cards/);
   assert.match(compactSource(app), /\['Pessoas','Famosos'\]\.includes\(r\.cat\)/);
 });
 

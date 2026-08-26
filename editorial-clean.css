@@ -2496,3 +2496,334 @@ body.popElectric .moderationEmpty {
     font-size: 26px;
   }
 }
+
+/* Votable ranking previews */
+body.popElectric .categoryRankGrid,
+body.popElectric .popHomeGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 18px;
+}
+
+body.popElectric .searchRankList {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 18px;
+}
+
+body.popElectric .categoryRankCard,
+body.popElectric .seoRankingCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+}
+
+body.popElectric .categoryRankMedia,
+body.popElectric .searchRankList .categoryRankMedia {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  min-height: 190px;
+  overflow: hidden;
+  aspect-ratio: auto;
+  background: var(--clean-soft);
+}
+
+body.popElectric .categoryRankImageLink {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+}
+
+body.popElectric .categoryRankImageLink img,
+body.popElectric .categoryRankImageLink .portalImageFallback {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 180ms ease;
+}
+
+body.popElectric .categoryRankCard:hover .categoryRankImageLink img {
+  transform: scale(1.015);
+}
+
+body.popElectric .categoryRankMedia::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.04) 15%,
+    rgba(0, 0, 0, 0.18) 46%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  content: '';
+  pointer-events: none;
+}
+
+body.popElectric .categoryRankOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 15px 16px 16px;
+  pointer-events: none;
+}
+
+body.popElectric .categoryRankOverlay a {
+  pointer-events: auto;
+}
+
+body.popElectric .categoryRankOverlay .categoryRankMeta {
+  padding: 0 0 8px;
+  color: var(--clean-paper);
+}
+
+body.popElectric .categoryRankOverlay .category,
+body.popElectric .categoryRankOverlay .categoryRankMeta .category {
+  color: var(--clean-paper);
+}
+
+body.popElectric .categoryRankOverlay .categoryRankTitle {
+  display: block;
+  color: var(--clean-paper);
+  text-decoration: none;
+}
+
+body.popElectric .categoryRankOverlay .categoryRankTitle h2,
+body.popElectric .searchRankList .categoryRankOverlay .categoryRankTitle h2,
+body.popElectric .popHomeGrid .categoryRankOverlay .categoryRankTitle h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  margin: 0;
+  padding: 0;
+  color: var(--clean-paper);
+  font:
+    800 clamp(21px, 2vw, 28px) / 0.98 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .categoryVoteList {
+  padding: 0;
+  border-top: 1px solid var(--clean-ink);
+  background: var(--clean-paper);
+}
+
+body.popElectric .categoryVoteOption {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--clean-line);
+}
+
+body.popElectric .categoryVoteOption:last-child {
+  border-bottom: 0;
+}
+
+body.popElectric .categoryVoteOption:has(.react.selected) {
+  background: #fafafa;
+}
+
+body.popElectric .categoryVotePos {
+  color: var(--clean-ink);
+  font:
+    800 20px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .categoryVoteName {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--clean-ink);
+  text-decoration: none;
+}
+
+body.popElectric .categoryVoteName strong {
+  min-width: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font:
+    750 14px/1.12 Arial,
+    Helvetica,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .categoryVoteName:hover strong,
+body.popElectric .categoryVoteName:focus-visible strong {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+body.popElectric .categoryVoteName .doubleVoteBadge {
+  flex: 0 0 auto;
+}
+
+body.popElectric .categoryVoteActions,
+body.popElectric .categoryRankCard .actions {
+  display: flex;
+  gap: 6px;
+}
+
+body.popElectric .categoryRankCard .react,
+body.popElectric .categoryRankCard .seoPreviewReact {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: var(--clean-paper);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+body.popElectric .categoryRankCard .react.up {
+  border-color: var(--clean-sage);
+  background: var(--clean-paper);
+  color: var(--clean-sage);
+}
+
+body.popElectric .categoryRankCard .react.down {
+  border-color: var(--clean-muted-red);
+  background: var(--clean-paper);
+  color: var(--clean-muted-red);
+}
+
+body.popElectric .categoryRankCard .react.up:hover,
+body.popElectric .categoryRankCard .react.up:focus-visible,
+body.popElectric .categoryRankCard .react.up.selected {
+  outline: 0;
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric .categoryRankCard .react.down:hover,
+body.popElectric .categoryRankCard .react.down:focus-visible,
+body.popElectric .categoryRankCard .react.down.selected {
+  outline: 0;
+  background: var(--clean-muted-red);
+  color: var(--clean-paper);
+}
+
+body.popElectric .categoryRankCard .react:disabled {
+  cursor: wait;
+  opacity: 0.48;
+}
+
+body.popElectric .categoryRankFooter,
+body.popElectric .categoryRankLinks.categoryRankFooter {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  border-top: 1px solid var(--clean-ink);
+  padding: 8px 12px;
+}
+
+body.popElectric .categoryRankFooter .categoryVoteCta {
+  margin-left: auto;
+}
+
+@media (max-width: 980px) {
+  body.popElectric .categoryRankGrid,
+  body.popElectric .popHomeGrid,
+  body.popElectric .searchRankList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body.popElectric .categoryRankGrid,
+  body.popElectric .popHomeGrid,
+  body.popElectric .searchRankList {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  body.popElectric .categoryRankMedia,
+  body.popElectric .searchRankList .categoryRankMedia {
+    height: 180px;
+    min-height: 180px;
+  }
+
+  body.popElectric .categoryRankOverlay .categoryRankTitle h2,
+  body.popElectric .searchRankList .categoryRankOverlay .categoryRankTitle h2,
+  body.popElectric .popHomeGrid .categoryRankOverlay .categoryRankTitle h2 {
+    font-size: clamp(23px, 6.8vw, 29px);
+  }
+}
+
+@media (max-width: 480px) {
+  body.popElectric .categoryRankMedia,
+  body.popElectric .searchRankList .categoryRankMedia {
+    height: 172px;
+    min-height: 172px;
+  }
+
+  body.popElectric .categoryRankOverlay {
+    padding: 13px 13px 14px;
+  }
+
+  body.popElectric .categoryRankOverlay .categoryRankMeta {
+    padding-bottom: 6px;
+  }
+
+  body.popElectric .categoryVoteOption {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 8px;
+    min-height: 58px;
+    padding: 8px 10px;
+  }
+
+  body.popElectric .categoryVotePos {
+    font-size: 18px;
+  }
+
+  body.popElectric .categoryVoteName strong {
+    font-size: 13px;
+  }
+
+  body.popElectric .categoryVoteActions,
+  body.popElectric .categoryRankCard .actions {
+    gap: 5px;
+  }
+
+  body.popElectric .categoryRankCard .react,
+  body.popElectric .categoryRankCard .seoPreviewReact {
+    width: 34px;
+    height: 34px;
+    font-size: 21px;
+  }
+
+  body.popElectric .categoryRankFooter,
+  body.popElectric .categoryRankLinks.categoryRankFooter {
+    min-height: 44px;
+    padding: 6px 10px;
+  }
+}

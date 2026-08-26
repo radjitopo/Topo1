@@ -11,8 +11,7 @@ const feed = document.getElementById('feed'),
   storeKey = 'topo_device_id',
   cityStoreKey = 'topo_local_city',
   firstShowKey = 'topo_first_show_seen',
-  lastHeroKey = 'topo_last_home_hero',
-  previewIntentKey = 'topo_preview_vote_intent';
+  lastHeroKey = 'topo_last_home_hero';
 function newDeviceId() {
   return crypto.randomUUID
     ? crypto.randomUUID()
@@ -840,10 +839,12 @@ function doubleVoteActionHTML(o, direction) {
   const label = escapeHTML(o.label);
   return `<button class="doubleVoteAction ${active ? 'active' : ''}" type="button" data-double-vote data-id="${o.id}" data-dir="${direction}" data-active="${active ? '1' : '0'}" aria-pressed="${active}" aria-label="${active ? 'Voltar ao voto simples em' : 'Usar voto duplo em'} ${label}">2×</button>`;
 }
-function previewVoteActionsHTML(r, o, wrapperClass = 'portalVoteActions') {
-  const rankingId = escapeHTML(r.id),
-    label = escapeHTML(o.label);
-  return `<span class="${wrapperClass}"><button class="homeReact up ${o.mine === 1 ? 'selected' : ''}" type="button" data-id="${o.id}" data-dir="1" data-preview-ranking="${rankingId}" data-preview-label="${label}" aria-label="Abrir o ranking com ${label} em destaque para confirmar voto para cima">↑</button><button class="homeReact down ${o.mine === -1 ? 'selected' : ''}" type="button" data-id="${o.id}" data-dir="-1" data-preview-ranking="${rankingId}" data-preview-label="${label}" aria-label="Abrir o ranking com ${label} em destaque para confirmar voto para baixo">↓</button></span>`;
+function categoryVoteActionsHTML(o) {
+  const mine = Number(o?.mine || 0),
+    label = escapeHTML(o.label),
+    upSelected = mine === 1,
+    downSelected = mine === -1;
+  return `<span class="actions categoryVoteActions"><button class="react up ${upSelected ? 'selected' : ''}" type="button" data-id="${o.id}" data-mine="${mine}" data-dir="1" aria-pressed="${upSelected}" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}">↑</button><button class="react down ${downSelected ? 'selected' : ''}" type="button" data-id="${o.id}" data-mine="${mine}" data-dir="-1" aria-pressed="${downSelected}" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}">↓</button></span>`;
 }
 function rankMark(i) {
   const n = i + 1;
@@ -958,9 +959,19 @@ function categorySortedRankings(list) {
     return sortForExperience(list, (a, b) => Number(b.votes || 0) - Number(a.votes || 0));
   return categoryPriorityRankings(list);
 }
+function categoryVoteOptionHTML(r, o, index) {
+  const voteHref = `${rankingPath(r.id)}#votar`,
+    label = escapeHTML(o.label);
+  return `<div class="categoryVoteOption" data-option-id="${o.id}"><span class="categoryVotePos">${index + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${label}</strong>${doubleVoteBadgeHTML(o)}</a>${categoryVoteActionsHTML(o)}</div>`;
+}
+function categoryVoteListHTML(r) {
+  const options = (r.opts || []).slice(0, 3);
+  return `<div class="categoryVoteList" aria-label="Três primeiros itens de ${escapeHTML(r.q)}">${options.map((option, index) => categoryVoteOptionHTML(r, option, index)).join('')}</div>`;
+}
 function categoryRankCardHTML(r) {
-  const voteHref = `${rankingPath(r.id)}#votar`;
-  return `<article class="categoryRankCard"><a class="categoryRankMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="categoryRankCopy"><div class="categoryRankMeta"><span class="categoryWrap"><a class="category" href="${rankingCategoryPath(r)}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span>${voteCountText(r.votes)}</span></div><a class="categoryRankTitle" href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="categoryRankLinks">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${voteHref}">VER RANKING <b>→</b></a></div></div></article>`;
+  const path = rankingPath(r.id),
+    rankingId = escapeHTML(r.id);
+  return `<article class="categoryRankCard" data-ranking-id="${rankingId}"><div class="categoryRankMedia"><a class="categoryRankImageLink" href="${path}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="categoryRankOverlay"><div class="categoryRankMeta"><span class="categoryWrap"><a class="category" href="${rankingCategoryPath(r)}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span></div><a class="categoryRankTitle" href="${path}"><h2>${escapeHTML(r.q)}</h2></a></div></div>${categoryVoteListHTML(r)}<div class="categoryRankLinks categoryRankFooter">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div></article>`;
 }
 function categoryRankCardsHTML(list) {
   return list.map(categoryRankCardHTML).join('');
@@ -2354,62 +2365,11 @@ function replaceBrokenRankingImage(image) {
 }
 document.addEventListener('error', (event) => replaceBrokenRankingImage(event.target), true);
 function bindVotes() {
-  document
-    .querySelectorAll('.react,.homeReact')
-    .forEach((b) => (b.onclick = () => (b.dataset.previewRanking ? previewReact(b) : react(b))));
+  document.querySelectorAll('.react').forEach((b) => (b.onclick = () => react(b)));
   document
     .querySelectorAll('[data-double-vote]')
     .forEach((b) => (b.onclick = () => toggleDoubleVote(b)));
   mountInternalShare();
-}
-function openPreviewRanking(rankingId, optionId, direction, label) {
-  try {
-    sessionStorage.setItem(
-      previewIntentKey,
-      JSON.stringify({ rankingId, optionId, direction, label }),
-    );
-  } catch {}
-  location.assign(`${rankingPath(rankingId)}#votar`);
-}
-function showPendingPreviewVoteIntent() {
-  if (pageKind() !== 'ranking') return;
-  let intent = null;
-  try {
-    intent = JSON.parse(sessionStorage.getItem(previewIntentKey) || 'null');
-    sessionStorage.removeItem(previewIntentKey);
-  } catch {}
-  const optionId = Number(intent?.optionId),
-    direction = Number(intent?.direction),
-    rankingId = String(intent?.rankingId || '');
-  if (!Number.isInteger(optionId) || ![1, -1].includes(direction) || rankingId !== internalId())
-    return;
-  const ranking = rankings.find((r) => r.id === rankingId),
-    optionIndex = ranking?.opts?.findIndex((o) => Number(o.id) === optionId) ?? -1;
-  if (optionIndex >= 10 && !allItemsOpen) {
-    allItemsOpen = true;
-    renderInternal();
-  }
-  const arrow = document.querySelector(
-      `.rankingMain .react[data-id="${optionId}"][data-dir="${direction}"]`,
-    ),
-    row = arrow?.closest('.option');
-  if (!row) return;
-  const prompt = document.createElement('div'),
-    label = String(intent?.label || row.dataset.optionLabel || 'esta opção');
-  prompt.className = 'previewVotePrompt';
-  prompt.textContent = `O voto ainda não foi computado. Toque na seta ${direction === 1 ? '↑' : '↓'} destacada para confirmar em ${label}.`;
-  row.before(prompt);
-  row.classList.add('previewFocus');
-  arrow.classList.add('previewIntent');
-  setTimeout(() => prompt.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
-}
-function previewReact(b) {
-  const optionId = Number(b.dataset.id),
-    direction = Number(b.dataset.dir),
-    rankingId = String(b.dataset.previewRanking || ''),
-    label = String(b.dataset.previewLabel || '');
-  if (!rankingId || !Number.isInteger(optionId) || ![1, -1].includes(direction)) return;
-  openPreviewRanking(rankingId, optionId, direction, label);
 }
 async function refreshVoteState(rankOrder) {
   const fresh = await fetchBootstrap(),
@@ -2422,6 +2382,20 @@ async function refreshVoteState(rankOrder) {
   renderCommunityPulse();
   if (pageKind() === 'ranking') renderInternal();
   else renderHome();
+}
+
+function updateRankingPreviewCards(ranking) {
+  const cards = [...document.querySelectorAll('.categoryRankCard[data-ranking-id]')].filter(
+    (card) => card.dataset.rankingId === ranking.id,
+  );
+  if (!cards.length) return false;
+  cards.forEach((card) => {
+    const template = document.createElement('template');
+    template.innerHTML = categoryRankCardHTML(ranking).trim();
+    card.replaceWith(template.content.firstElementChild);
+  });
+  bindVotes();
+  return true;
 }
 
 function applyVoteResult(optionId, result) {
@@ -2455,7 +2429,7 @@ function applyVoteResult(optionId, result) {
   renderAccount();
   renderCommunityPulse();
   if (pageKind() === 'ranking') renderInternal();
-  else renderHome();
+  else if (!updateRankingPreviewCards(ranking)) renderHome();
   return true;
 }
 
@@ -2504,6 +2478,12 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
     }
     if (!res.ok) throw result;
     if (!applyVoteResult(optionId, result)) await refreshVoteState(rankOrder);
+    else if (pageKind() !== 'ranking')
+      document
+        .querySelector(
+          `.categoryRankCard .react[data-id="${optionId}"][data-dir="${button.dataset.dir}"]`,
+        )
+        ?.focus();
     if (viewer.registered) void loadNotifications({ force: true });
     if (showHelp && direction !== 0) showVoteHelp();
   } catch (e) {
@@ -2797,6 +2777,5 @@ async function boot() {
   if (kind === 'auth' || kind === 'profile' || kind === 'moderation' || hasClerkSession)
     await initClerk();
   await load();
-  showPendingPreviewVoteIntent();
 }
 boot();

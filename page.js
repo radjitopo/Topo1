@@ -48,6 +48,14 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString('pt-BR');
 }
 
+function whatsAppShare(ranking) {
+  const path = `/ranking/${encodeURIComponent(ranking.id)}`;
+  const leader = ranking.options?.[0]?.label || '';
+  const text = `*${rankingQuestion(ranking.id, ranking.question)}*\n${leader ? `🥇 ${leader} está no topo agora.\n` : ''}Vote e mude o ranking no TOPO:\n${BASE_URL}${path}`;
+  const href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  return `<a class="whatsappShare compact" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHtml(rankingQuestion(ranking.id, ranking.question))} no WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.4 11.8a8.4 8.4 0 0 1-12.5 7.4L3 20.5l1.3-4.7a8.4 8.4 0 1 1 16.1-4Z"></path><path d="M8.1 7.7c.4 3.5 2.7 5.8 6.2 6.3.7.1 1.4-.9 1-1.4l-1.1-1c-.3-.3-.7-.3-1 0l-.7.5a7.2 7.2 0 0 1-2.7-2.7l.5-.7c.2-.3.2-.7 0-1L9.4 6.6c-.5-.5-1.4.3-1.3 1.1Z"></path></svg></a>`;
+}
+
 function queryValue(req, key) {
   const value = req.query?.[key];
   return String(Array.isArray(value) ? value[0] || '' : value || '');
@@ -154,16 +162,27 @@ function rankingCard(ranking) {
   const category = isSeoLocalRanking(ranking)
     ? localGroupForRanking(ranking)?.label || ranking.category
     : generalCategoryForRanking(ranking)?.label || ranking.category;
+  const path = `/ranking/${encodeURIComponent(ranking.id)}`;
   const media = ranking.imageUrl
     ? `<img src="${escapeHtml(ranking.imageUrl)}" alt="" loading="lazy" decoding="async">`
     : '<span class="portalImageFallback">TOPO</span>';
-  return `<article class="categoryRankCard seoRankingCard">
-    <a class="categoryRankMedia" href="/ranking/${encodeURIComponent(ranking.id)}">${media}</a>
-    <div class="categoryRankCopy">
-      <div class="categoryRankMeta"><span class="category">${escapeHtml(category)}</span><span>${formatNumber(ranking.voteCount)} votos</span></div>
-      <a class="categoryRankTitle" href="/ranking/${encodeURIComponent(ranking.id)}"><h2>${escapeHtml(question)}</h2></a>
-      <div class="categoryRankLinks"><a class="categoryVoteCta" href="/ranking/${encodeURIComponent(ranking.id)}">VER RANKING <b>→</b></a></div>
+  const preview = (ranking.options || [])
+    .slice(0, 3)
+    .map(
+      (option, index) => `<div class="categoryVoteOption">
+        <span class="categoryVotePos">${index + 1}</span>
+        <a class="categoryVoteName" href="${path}#votar"><strong>${escapeHtml(option.label)}</strong></a>
+        <span class="actions categoryVoteActions"><a class="react up seoPreviewReact" href="${path}#votar" aria-label="Abrir o ranking para fazer ${escapeHtml(option.label)} subir">↑</a><a class="react down seoPreviewReact" href="${path}#votar" aria-label="Abrir o ranking para fazer ${escapeHtml(option.label)} descer">↓</a></span>
+      </div>`,
+    )
+    .join('');
+  return `<article class="categoryRankCard seoRankingCard" data-ranking-id="${escapeHtml(ranking.id)}">
+    <div class="categoryRankMedia">
+      <a class="categoryRankImageLink" href="${path}" aria-label="Abrir ${escapeHtml(question)}">${media}</a>
+      <div class="categoryRankOverlay"><div class="categoryRankMeta"><span class="category">${escapeHtml(category)}</span></div><a class="categoryRankTitle" href="${path}"><h2>${escapeHtml(question)}</h2></a></div>
     </div>
+    <div class="categoryVoteList" aria-label="Três primeiros itens de ${escapeHtml(question)}">${preview}</div>
+    <div class="categoryRankLinks categoryRankFooter">${whatsAppShare(ranking)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div>
   </article>`;
 }
 
@@ -478,22 +497,71 @@ export function renderRankingPage(template, ranking) {
 
 async function fetchRankingSummaries(sql) {
   const rows = await sql.query(`
-    WITH live_vote_activity AS (
+    WITH vote_totals AS (
       SELECT
-        option.ranking_id,
-        COUNT(vote.option_id)::int AS live_votes,
-        MAX(vote.updated_at) AS last_vote_at
-      FROM ranking_options option
-      LEFT JOIN votes vote ON vote.option_id = option.id
-      GROUP BY option.ranking_id
+        option_id,
+        COUNT(*)::int AS live_votes,
+        COALESCE(SUM(direction), 0)::int AS score_delta,
+        MAX(updated_at) AS last_vote_at
+      FROM votes
+      GROUP BY option_id
     ),
-    double_vote_activity AS (
+    double_vote_totals AS (
+      SELECT
+        option_id,
+        COALESCE(SUM(direction), 0)::int AS score_delta,
+        MAX(updated_at) AS last_double_vote_at
+      FROM user_double_votes
+      GROUP BY option_id
+    ),
+    option_scores AS (
       SELECT
         option.ranking_id,
-        MAX(double_vote.updated_at) AS last_double_vote_at
+        option.id,
+        option.label,
+        option.position,
+        option.baseline_score
+          + COALESCE(vote.score_delta, 0)::int
+          + COALESCE(double_vote.score_delta, 0)::int AS score,
+        COALESCE(vote.live_votes, 0)::int AS live_votes,
+        vote.last_vote_at,
+        double_vote.last_double_vote_at,
+        ROW_NUMBER() OVER (
+          PARTITION BY option.ranking_id
+          ORDER BY
+            option.baseline_score
+              + COALESCE(vote.score_delta, 0)::int
+              + COALESCE(double_vote.score_delta, 0)::int DESC,
+            option.position
+        ) AS rank_position
       FROM ranking_options option
-      LEFT JOIN user_double_votes double_vote ON double_vote.option_id = option.id
-      GROUP BY option.ranking_id
+      LEFT JOIN vote_totals vote ON vote.option_id = option.id
+      LEFT JOIN double_vote_totals double_vote ON double_vote.option_id = option.id
+    ),
+    ranking_activity AS (
+      SELECT
+        ranking_id,
+        SUM(live_votes)::int AS live_votes,
+        MAX(last_vote_at) AS last_vote_at,
+        MAX(last_double_vote_at) AS last_double_vote_at
+      FROM option_scores
+      GROUP BY ranking_id
+    ),
+    ranking_previews AS (
+      SELECT
+        ranking_id,
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'id', id,
+            'label', label,
+            'position', position,
+            'score', score
+          )
+          ORDER BY score DESC, position
+        ) AS options
+      FROM option_scores
+      WHERE rank_position <= 3
+      GROUP BY ranking_id
     )
     SELECT
       ranking.id,
@@ -501,15 +569,16 @@ async function fetchRankingSummaries(sql) {
       ranking.question,
       ranking.image_url,
       ranking.created_at,
-      (ranking.baseline_votes + COALESCE(live.live_votes, 0))::int AS vote_count,
+      (ranking.baseline_votes + COALESCE(activity.live_votes, 0))::int AS vote_count,
       GREATEST(
         ranking.created_at,
-        COALESCE(live.last_vote_at, ranking.created_at),
-        COALESCE(double_activity.last_double_vote_at, ranking.created_at)
-      ) AS updated_at
+        COALESCE(activity.last_vote_at, ranking.created_at),
+        COALESCE(activity.last_double_vote_at, ranking.created_at)
+      ) AS updated_at,
+      COALESCE(preview.options, '[]'::json) AS options
     FROM rankings ranking
-    LEFT JOIN live_vote_activity live ON live.ranking_id = ranking.id
-    LEFT JOIN double_vote_activity double_activity ON double_activity.ranking_id = ranking.id
+    LEFT JOIN ranking_activity activity ON activity.ranking_id = ranking.id
+    LEFT JOIN ranking_previews preview ON preview.ranking_id = ranking.id
     WHERE ranking.is_active = true
     ORDER BY ranking.created_at DESC, ranking.id
   `);
@@ -521,6 +590,12 @@ async function fetchRankingSummaries(sql) {
     createdAt: row.created_at,
     updatedAt: row.updated_at || row.created_at,
     voteCount: Number(row.vote_count || 0),
+    options: (Array.isArray(row.options) ? row.options : []).map((option) => ({
+      id: Number(option.id),
+      label: option.label,
+      position: Number(option.position),
+      score: Number(option.score || 0),
+    })),
   }));
 }
 

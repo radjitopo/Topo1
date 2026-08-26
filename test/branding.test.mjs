@@ -49,9 +49,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-15-compact-categories'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-16-votable-cards'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-15-compact-categories'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-16-votable-cards'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -176,9 +176,9 @@ assert.match(
   'mobile category headers must keep the title and ranking count in one compact composition',
 );
 assert.match(
-  compactPopCss,
-  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categoryRankCard\{[^}]*display:flex;flex-direction:column[\s\S]*\.popElectric\.categoryRankTitleh2[^}]*-webkit-line-clamp:unset/,
-  'compact cards must stack vertically and show their complete title',
+  compactEditorialCss,
+  /body\.popElectric\.categoryRankMedia,body\.popElectric\.searchRankList\.categoryRankMedia\{[^}]*height:190px[^}]*min-height:190px/,
+  'ranking previews must use a shallow photo so the vote controls appear sooner',
 );
 assert.match(
   compactPopCss,
@@ -192,8 +192,8 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /@media\(max-width:480px\)[\s\S]*body\.popElectric\.popHomeGrid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
-  'the compact mobile home must show two ranking cards per row',
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.categoryRankGrid,body\.popElectric\.popHomeGrid,body\.popElectric\.searchRankList\{grid-template-columns:minmax\(0,1fr\)/,
+  'votable ranking cards must use one readable column on mobile',
 );
 assert.doesNotMatch(
   compactEditorialCss,
