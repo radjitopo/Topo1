@@ -55,6 +55,16 @@ assert.match(
   /class="categoryShuffleIcon"[\s\S]*class="categoryShuffleLabel"/,
   'the category shuffle action needs a compact icon treatment on mobile',
 );
+assert.doesNotMatch(
+  source,
+  /\['priority',\s*isAll\s*\?\s*'Recomendados'\s*:\s*'Para votar'\]/,
+  'the natural unvoted-first order must not occupy a category filter button',
+);
+assert.match(
+  source,
+  /categorySort\s*=\s*categorySort\s*===\s*button\.dataset\.categorySort\s*\?\s*'priority'\s*:\s*button\.dataset\.categorySort/,
+  'clicking the active category sort again must restore the natural unvoted-first order',
+);
 
 const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
 assert.ok(categoryCardSource, 'the ranking discovery card must remain testable');

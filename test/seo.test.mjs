@@ -135,7 +135,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
   assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260826-37-compact-categories/);
+  assert.match(index, /\/app\.js\?v=20260826-38-optional-sorts/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.match(
     editorialCss,

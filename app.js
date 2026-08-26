@@ -992,7 +992,8 @@ function bindCategoryControls() {
   document.querySelectorAll('[data-category-sort]').forEach(
     (button) =>
       (button.onclick = () => {
-        categorySort = button.dataset.categorySort;
+        categorySort =
+          categorySort === button.dataset.categorySort ? 'priority' : button.dataset.categorySort;
         categoryVisibleCount = CATEGORY_PAGE_SIZE;
         renderHome();
       }),
@@ -1022,7 +1023,6 @@ function renderCategoryHome(visible) {
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : `${activeGroup} — rankings no TOPO`;
   feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section><div class="categoryListBar"><div class="categorySorts" aria-label="Ordenar rankings">${[
-    ['priority', isAll ? 'Recomendados' : 'Para votar'],
     ['hot', 'Em alta'],
     ['new', 'Novos'],
     ['votes', 'Mais votados'],
