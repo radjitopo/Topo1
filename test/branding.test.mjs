@@ -49,10 +49,10 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-17-ranking-editor'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-18-related-cards'));
 assert.ok(index.includes('/app.js?v=20260826-41-preview-navigation'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-17-ranking-editor'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-18-related-cards'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -68,6 +68,11 @@ assert.match(
   compactEditorialCss,
   /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:none/,
   'the dedicated footer logo must keep its white and sage colors unchanged',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.rankingPage\.rankingContinuation\.relatedTitle\{font-size:15px;font-weight:800;line-height:1\.08;letter-spacing:-0\.025em/,
+  'related ranking titles must use the current compact sans-serif treatment',
 );
 
 assert.match(

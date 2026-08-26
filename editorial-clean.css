@@ -1227,6 +1227,18 @@ body.popElectric.rankingPage .commentsTitle {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body.popElectric.rankingPage .rankingContinuation .relatedCat,
+body.popElectric.rankingPage .rankingContinuation .relatedTitle {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.popElectric.rankingPage .rankingContinuation .relatedTitle {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
 body.popElectric.rankingPage .curioCard,
 body.popElectric.rankingPage .relatedCard,
 body.popElectric.rankingPage .commentCard,
