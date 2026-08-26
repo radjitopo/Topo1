@@ -412,7 +412,7 @@ body.popElectric .editorialHomeLead .portalHero {
   position: relative;
 }
 
-body.popElectric .editorialHomeLead .portalHero > .whatsappShare.compact {
+body.popElectric .editorialHomeLead .portalHero > .shareActions.compact {
   position: absolute;
   right: 12px;
   bottom: 12px;
@@ -607,7 +607,7 @@ body.popElectric .popHomeGrid .categoryRankTitle h2 {
   font-size: clamp(18px, 1.65vw, 23px);
 }
 
-body.popElectric .popHomeGrid .whatsappShare.compact {
+body.popElectric .popHomeGrid .shareActions.compact {
   display: inline-flex;
 }
 
@@ -615,6 +615,65 @@ body.popElectric .categoryRankLinks {
   justify-content: flex-start;
   gap: 12px;
   margin-top: 0;
+}
+
+body.popElectric .shareActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+}
+
+body.popElectric .shareActions.compact {
+  gap: 7px;
+}
+
+body.popElectric .whatsappShare svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+body.popElectric .nativeShare {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 7px 10px;
+  font:
+    800 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  cursor: pointer;
+}
+
+body.popElectric .nativeShare svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.popElectric .nativeShare.compact {
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  flex: 0 0 30px;
+  border-radius: 50%;
+  padding: 0;
+}
+
+body.popElectric .nativeShare:hover,
+body.popElectric .nativeShare:focus-visible {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
 }
 
 body.popElectric .categoryRankLinks .categoryVoteCta {
@@ -634,6 +693,12 @@ body.popElectric .categoryRankLinks .whatsappShare.compact {
   border-radius: 50%;
   background: var(--clean-whatsapp);
   color: var(--clean-paper);
+}
+
+body.popElectric .categoryRankLinks .nativeShare.compact {
+  border-color: var(--clean-ink);
+  background: var(--clean-paper);
+  color: var(--clean-ink);
 }
 
 body.popElectric .popLocalCallout {
@@ -758,7 +823,10 @@ body.popElectric .portalSideFoot {
 
 body.popElectric .editorialHomeLead .whatsappShare.compact,
 body.popElectric .portalStoryActions .whatsappShare.compact,
-body.popElectric .portalSideFoot .whatsappShare.compact {
+body.popElectric .portalSideFoot .whatsappShare.compact,
+body.popElectric .editorialHomeLead .nativeShare.compact,
+body.popElectric .portalStoryActions .nativeShare.compact,
+body.popElectric .portalSideFoot .nativeShare.compact {
   width: 30px;
   height: 30px;
   flex: 0 0 30px;
@@ -768,6 +836,14 @@ body.popElectric .portalSideFoot .whatsappShare.compact {
   color: var(--clean-paper);
   padding: 0;
   text-decoration: none;
+}
+
+body.popElectric .editorialHomeLead .nativeShare.compact,
+body.popElectric .portalStoryActions .nativeShare.compact,
+body.popElectric .portalSideFoot .nativeShare.compact {
+  border-color: var(--clean-paper);
+  background: var(--clean-paper);
+  color: var(--clean-ink);
 }
 
 body.popElectric .categoryRankLinks .whatsappShare.compact:hover,
@@ -948,8 +1024,25 @@ body.popElectric.rankingPage .rankingShareRow .whatsappShare {
   font-size: 11px;
 }
 
+body.popElectric.rankingPage .rankingShareRow .shareActions {
+  flex-wrap: wrap;
+}
+
+body.popElectric.rankingPage .rankingShareRow .nativeShare {
+  min-height: 32px;
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 5px 0;
+  font-size: 11px;
+}
+
 body.popElectric.rankingPage .rankingShareRow .whatsappShare:hover,
-body.popElectric.rankingPage .rankingShareRow .whatsappShare:focus-visible {
+body.popElectric.rankingPage .rankingShareRow .whatsappShare:focus-visible,
+body.popElectric.rankingPage .rankingShareRow .nativeShare:hover,
+body.popElectric.rankingPage .rankingShareRow .nativeShare:focus-visible {
   border-color: var(--clean-coral);
   background: transparent;
   color: var(--clean-coral);

@@ -49,10 +49,10 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-18-related-cards'));
-assert.ok(index.includes('/app.js?v=20260826-41-preview-navigation'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-19-share-actions'));
+assert.ok(index.includes('/app.js?v=20260826-42-share-actions'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-18-related-cards'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-19-share-actions'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,

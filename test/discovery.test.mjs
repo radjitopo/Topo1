@@ -80,17 +80,29 @@ assert.match(
 );
 assert.match(
   categoryCardSource,
-  /whatsAppShareHTML\(r,\s*true\)/,
-  'ranking discovery cards must keep their WhatsApp share action',
+  /shareActionsHTML\(r,\s*true\)/,
+  'ranking discovery cards must expose WhatsApp and native sharing',
 );
 for (const renderer of ['portalHeroHTML', 'portalStoryHTML', 'portalSideStoryHTML']) {
   const rendererSource = extractTopLevelDeclaration(source, renderer);
   assert.match(
     rendererSource,
-    /whatsAppShareHTML\(r,\s*true\)/,
-    `${renderer} must keep a compact WhatsApp share action on the home`,
+    /shareActionsHTML\(r,\s*true\)/,
+    `${renderer} must keep compact WhatsApp and native share actions on the home`,
   );
 }
+
+assert.match(source, /navigator\.share\(data\)/, 'native sharing must use the device share sheet');
+assert.match(
+  source,
+  /navigator\.clipboard\.writeText\(url\)/,
+  'native sharing must fall back to copying the ranking link',
+);
+assert.match(
+  source,
+  /\[data-native-share\]/,
+  'native share controls must be bound after rendering',
+);
 
 const wanted = [
   'homeContextOnlyRankingIds',

@@ -873,6 +873,12 @@ function portalImageHTML(r, eager = false) {
   if (!r?.img) return '<span class="portalImageFallback">TOPO</span>';
   return `<img data-ranking-image src="${escapeHTML(r.img)}" alt="" ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
 }
+function whatsAppIconHTML() {
+  return '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12.04 2C6.53 2 2.06 6.36 2.06 11.74c0 1.71.46 3.39 1.34 4.86L2 22l5.56-1.36a10.18 10.18 0 0 0 4.48 1.03h.01c5.5 0 9.98-4.37 9.98-9.74C22.02 6.36 17.55 2 12.04 2Zm0 17.77c-1.42 0-2.81-.37-4.03-1.07l-.29-.17-3.3.8.88-3.13-.19-.3a7.6 7.6 0 0 1-1.22-4.16c0-4.31 3.65-7.82 8.15-7.82 4.49 0 8.14 3.51 8.14 7.82 0 4.31-3.65 7.82-8.14 7.82Zm4.47-5.86c-.24-.12-1.45-.69-1.68-.77-.23-.08-.4-.12-.57.12-.16.24-.64.77-.79.93-.14.16-.29.18-.53.06-.25-.12-1.04-.37-1.98-1.18-.73-.63-1.23-1.42-1.37-1.66-.14-.24-.02-.37.11-.49.11-.11.24-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.57-1.32-.78-1.81-.2-.47-.41-.41-.57-.42h-.48c-.16 0-.43.06-.65.3-.22.24-.85.81-.85 1.97s.87 2.29.99 2.45c.12.16 1.71 2.52 4.14 3.53.58.24 1.03.38 1.38.49.58.18 1.11.15 1.53.09.47-.07 1.45-.57 1.65-1.13.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.47-.28Z"></path></svg>';
+}
+function nativeShareIconHTML() {
+  return '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 11v8h14v-8"></path></svg>';
+}
 function whatsAppShareURL(r) {
   const leader = r?.opts?.[0]?.label || '',
     url = location.origin + rankingPath(r.id),
@@ -880,10 +886,16 @@ function whatsAppShareURL(r) {
   return 'https://wa.me/?text=' + encodeURIComponent(text);
 }
 function whatsAppShareHTML(r, compact = false) {
-  return `<a class="whatsappShare ${compact ? 'compact' : ''}" href="${escapeHTML(whatsAppShareURL(r))}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHTML(r.q)} no WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.4 11.8a8.4 8.4 0 0 1-12.5 7.4L3 20.5l1.3-4.7a8.4 8.4 0 1 1 16.1-4Z"></path><path d="M8.1 7.7c.4 3.5 2.7 5.8 6.2 6.3.7.1 1.4-.9 1-1.4l-1.1-1c-.3-.3-.7-.3-1 0l-.7.5a7.2 7.2 0 0 1-2.7-2.7l.5-.7c.2-.3.2-.7 0-1L9.4 6.6c-.5-.5-1.4.3-1.3 1.1Z"></path></svg>${compact ? '' : '<span>Compartilhar no WhatsApp</span>'}</a>`;
+  return `<a class="whatsappShare ${compact ? 'compact' : ''}" href="${escapeHTML(whatsAppShareURL(r))}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHTML(r.q)} no WhatsApp">${whatsAppIconHTML()}${compact ? '' : '<span>WhatsApp</span>'}</a>`;
+}
+function nativeShareHTML(r, compact = false) {
+  return `<button class="nativeShare ${compact ? 'compact' : ''}" type="button" data-native-share="${escapeHTML(r.id)}" title="Instagram e outros" aria-label="Compartilhar ${escapeHTML(r.q)} no Instagram ou em outro aplicativo">${nativeShareIconHTML()}${compact ? '' : '<span>Instagram e outros</span>'}</button>`;
+}
+function shareActionsHTML(r, compact = false) {
+  return `<span class="shareActions ${compact ? 'compact' : ''}" role="group" aria-label="Opções para compartilhar">${whatsAppShareHTML(r, compact)}${nativeShareHTML(r, compact)}</span>`;
 }
 function portalHeroHTML(r) {
-  return `<article class="portalHero"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, true)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">RANKING DO MOMENTO</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><h1>${escapeHTML(r.q)}</h1><span class="portalHeroAction">abrir ranking →</span></span></a>${whatsAppShareHTML(r, true)}</article>`;
+  return `<article class="portalHero"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, true)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">RANKING DO MOMENTO</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span><h1>${escapeHTML(r.q)}</h1><span class="portalHeroAction">abrir ranking →</span></span></a>${shareActionsHTML(r, true)}</article>`;
 }
 function popHomeLeadHTML(hero) {
   return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">trocar destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Ranking em destaque">${portalHeroHTML(hero)}</section>`;
@@ -892,14 +904,14 @@ function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
 }
 function portalSideStoryHTML(r) {
-  return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${whatsAppShareHTML(r, true)}</div></div></article>`;
+  return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;
 }
 function portalListHTML(title, list, tone = '') {
   return `<section class="portalRankPanel ${tone}"><div class="portalPanelTitle">${title}</div><ol>${list.map((r, i) => `<li><span class="portalListNum">${String(i + 1).padStart(2, '0')}</span><a href="${rankingPath(r.id)}"><strong>${escapeHTML(r.q)}</strong><small>${tone === 'disputed' ? escapeHTML(gapText(r)) : voteCountText(r.votes)}</small></a></li>`).join('')}</ol></section>`;
 }
 function portalStoryHTML(r, i) {
   const variant = !r.img || i % 4 === 2 ? 'compact' : i % 4 === 0 ? 'feature' : 'row';
-  return `<article class="portalStory ${variant}">${variant !== 'compact' ? `<a class="portalStoryMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a>` : ''}<div class="portalStoryCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalStoryFoot"><span>${voteCountText(r.votes)}</span><div class="portalStoryActions">${whatsAppShareHTML(r, true)}<a href="${rankingPath(r.id)}">abrir ranking →</a></div></div></div></article>`;
+  return `<article class="portalStory ${variant}">${variant !== 'compact' ? `<a class="portalStoryMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a>` : ''}<div class="portalStoryCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalStoryFoot"><span>${voteCountText(r.votes)}</span><div class="portalStoryActions">${shareActionsHTML(r, true)}<a href="${rankingPath(r.id)}">abrir ranking →</a></div></div></div></article>`;
 }
 function cityPriorityDelta(a, b) {
   if (!isLocalExperience() || !selectedCity) return 0;
@@ -973,7 +985,7 @@ function categoryVoteListHTML(r) {
 function categoryRankCardHTML(r) {
   const path = rankingPath(r.id),
     rankingId = escapeHTML(r.id);
-  return `<article class="categoryRankCard" data-ranking-id="${rankingId}"><div class="categoryRankMedia"><a class="categoryRankImageLink" href="${path}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="categoryRankOverlay"><div class="categoryRankMeta"><span class="categoryWrap"><a class="category" href="${rankingCategoryPath(r)}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span></div><a class="categoryRankTitle" href="${path}"><h2>${escapeHTML(r.q)}</h2></a></div></div>${categoryVoteListHTML(r)}<div class="categoryRankLinks categoryRankFooter">${whatsAppShareHTML(r, true)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div></article>`;
+  return `<article class="categoryRankCard" data-ranking-id="${rankingId}"><div class="categoryRankMedia"><a class="categoryRankImageLink" href="${path}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="categoryRankOverlay"><div class="categoryRankMeta"><span class="categoryWrap"><a class="category" href="${rankingCategoryPath(r)}">${escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span></div><a class="categoryRankTitle" href="${path}"><h2>${escapeHTML(r.q)}</h2></a></div></div>${categoryVoteListHTML(r)}<div class="categoryRankLinks categoryRankFooter">${shareActionsHTML(r, true)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div></article>`;
 }
 function categoryRankCardsHTML(list) {
   return list.map(categoryRankCardHTML).join('');
@@ -2594,8 +2606,39 @@ function mountInternalShare() {
   if (r && anchor)
     anchor.insertAdjacentHTML(
       'afterend',
-      `<div class="rankingShareRow">${whatsAppShareHTML(r)}</div>`,
+      `<div class="rankingShareRow">${shareActionsHTML(r)}</div>`,
     );
+}
+async function shareRanking(button) {
+  const r = rankings.find((ranking) => ranking.id === button.dataset.nativeShare);
+  if (!r) return;
+  const url = location.origin + rankingPath(r.id),
+    leader = r.opts?.[0]?.label || '',
+    data = {
+      title: r.q,
+      text: `${r.q}${leader ? `\n🥇 ${leader} está no topo agora.` : ''}\nVote e mude o ranking no TOPO:`,
+      url,
+    };
+  if (navigator.share) {
+    try {
+      await navigator.share(data);
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(url);
+    toast('Link copiado. Agora é só colar no Instagram.');
+  } catch {
+    toast('Não consegui abrir o compartilhamento neste navegador.');
+  }
+}
+function bindNativeShares() {
+  document
+    .querySelectorAll('[data-native-share]')
+    .forEach((button) => (button.onclick = () => shareRanking(button)));
 }
 function replaceBrokenRankingImage(image) {
   if (!image?.matches?.('img[data-ranking-image]') || image.dataset.fallbackApplied) return;
@@ -2612,6 +2655,7 @@ function bindVotes() {
     .querySelectorAll('[data-double-vote]')
     .forEach((b) => (b.onclick = () => toggleDoubleVote(b)));
   mountInternalShare();
+  bindNativeShares();
 }
 async function refreshVoteState(rankOrder) {
   const fresh = await fetchBootstrap(),

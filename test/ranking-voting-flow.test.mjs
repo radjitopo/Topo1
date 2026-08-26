@@ -151,8 +151,8 @@ assert.match(
 );
 assert.match(
   compactPage,
-  /\$\{whatsAppShare\(ranking\)\}/,
-  'server-rendered discovery cards must preserve WhatsApp sharing',
+  /\$\{shareActions\(ranking\)\}/,
+  'server-rendered discovery cards must preserve WhatsApp and native sharing',
 );
 
 console.log('Ranking voting flow passed: preview navigation, ranking votes and complete lists.');

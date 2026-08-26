@@ -53,7 +53,16 @@ function whatsAppShare(ranking) {
   const leader = ranking.options?.[0]?.label || '';
   const text = `*${rankingQuestion(ranking.id, ranking.question)}*\n${leader ? `🥇 ${leader} está no topo agora.\n` : ''}Vote e mude o ranking no TOPO:\n${BASE_URL}${path}`;
   const href = `https://wa.me/?text=${encodeURIComponent(text)}`;
-  return `<a class="whatsappShare compact" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHtml(rankingQuestion(ranking.id, ranking.question))} no WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.4 11.8a8.4 8.4 0 0 1-12.5 7.4L3 20.5l1.3-4.7a8.4 8.4 0 1 1 16.1-4Z"></path><path d="M8.1 7.7c.4 3.5 2.7 5.8 6.2 6.3.7.1 1.4-.9 1-1.4l-1.1-1c-.3-.3-.7-.3-1 0l-.7.5a7.2 7.2 0 0 1-2.7-2.7l.5-.7c.2-.3.2-.7 0-1L9.4 6.6c-.5-.5-1.4.3-1.3 1.1Z"></path></svg></a>`;
+  return `<a class="whatsappShare compact" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHtml(rankingQuestion(ranking.id, ranking.question))} no WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12.04 2C6.53 2 2.06 6.36 2.06 11.74c0 1.71.46 3.39 1.34 4.86L2 22l5.56-1.36a10.18 10.18 0 0 0 4.48 1.03h.01c5.5 0 9.98-4.37 9.98-9.74C22.02 6.36 17.55 2 12.04 2Zm0 17.77c-1.42 0-2.81-.37-4.03-1.07l-.29-.17-3.3.8.88-3.13-.19-.3a7.6 7.6 0 0 1-1.22-4.16c0-4.31 3.65-7.82 8.15-7.82 4.49 0 8.14 3.51 8.14 7.82 0 4.31-3.65 7.82-8.14 7.82Zm4.47-5.86c-.24-.12-1.45-.69-1.68-.77-.23-.08-.4-.12-.57.12-.16.24-.64.77-.79.93-.14.16-.29.18-.53.06-.25-.12-1.04-.37-1.98-1.18-.73-.63-1.23-1.42-1.37-1.66-.14-.24-.02-.37.11-.49.11-.11.24-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.57-1.32-.78-1.81-.2-.47-.41-.41-.57-.42h-.48c-.16 0-.43.06-.65.3-.22.24-.85.81-.85 1.97s.87 2.29.99 2.45c.12.16 1.71 2.52 4.14 3.53.58.24 1.03.38 1.38.49.58.18 1.11.15 1.53.09.47-.07 1.45-.57 1.65-1.13.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.47-.28Z"></path></svg></a>`;
+}
+
+function nativeShare(ranking) {
+  const question = escapeHtml(rankingQuestion(ranking.id, ranking.question));
+  return `<button class="nativeShare compact" type="button" data-native-share="${escapeHtml(ranking.id)}" title="Instagram e outros" aria-label="Compartilhar ${question} no Instagram ou em outro aplicativo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 11v8h14v-8"></path></svg></button>`;
+}
+
+function shareActions(ranking) {
+  return `<span class="shareActions compact" role="group" aria-label="Opções para compartilhar">${whatsAppShare(ranking)}${nativeShare(ranking)}</span>`;
 }
 
 function queryValue(req, key) {
@@ -182,7 +191,7 @@ function rankingCard(ranking) {
       <div class="categoryRankOverlay"><div class="categoryRankMeta"><span class="category">${escapeHtml(category)}</span></div><a class="categoryRankTitle" href="${path}"><h2>${escapeHtml(question)}</h2></a></div>
     </div>
     <div class="categoryVoteList" aria-label="Três primeiros itens de ${escapeHtml(question)}">${preview}</div>
-    <div class="categoryRankLinks categoryRankFooter">${whatsAppShare(ranking)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div>
+    <div class="categoryRankLinks categoryRankFooter">${shareActions(ranking)}<a class="categoryVoteCta" href="${path}#votar">VER RANKING <b>→</b></a></div>
   </article>`;
 }
 

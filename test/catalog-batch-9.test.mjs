@@ -126,7 +126,7 @@ test('Nostalgia is wired into catalog, navigation, moderation and SEO', async ()
   assert.match(importer, /newRankings\.length !== 173/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 213/);
   assert.match(index, /editorial-17\.js\?v=20260826-1-vagalume/);
-  assert.match(index, /app\.js\?v=20260826-41-preview-navigation/);
+  assert.match(index, /app\.js\?v=20260826-42-share-actions/);
   assert.match(app, /Nostalgia: 'nostalgia'/);
   assert.match(app, /'Nostalgia'/);
   assert.match(api, /'Nostalgia'/);
