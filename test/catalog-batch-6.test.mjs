@@ -94,10 +94,10 @@ test('catalog importer and page assets include the sixth batch', async () => {
 
   assert.match(importer, /rankings-batch-6\.json/);
   assert.match(importer, /sixthBatchRankings\.length !== 20/);
-  assert.match(importer, /newRankings\.length !== 162/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 202/);
+  assert.match(importer, /newRankings\.length !== 172/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 212/);
   assert.match(index, /editorial-14\.js/);
-  assert.match(index, /app\.js\?v=20260826-35-whatsapp-home/);
+  assert.match(index, /app\.js\?v=20260826-36-nostalgia/);
   assert.match(compactSource(app), /\['Pessoas','Famosos'\]\.includes\(r\.cat\)/);
 });
 

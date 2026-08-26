@@ -16,6 +16,7 @@ const [
   sixthBatchRankings,
   seventhBatchRankings,
   eighthBatchRankings,
+  ninthBatchRankings,
   titles,
 ] = await Promise.all([
   readFile(new URL('../data/new-rankings.json', import.meta.url), 'utf8').then(JSON.parse),
@@ -26,6 +27,7 @@ const [
   readFile(new URL('../data/rankings-batch-6.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-7.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/rankings-batch-8.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../data/rankings-batch-9.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../data/titles.json', import.meta.url), 'utf8').then(JSON.parse),
 ]);
 
@@ -38,6 +40,7 @@ const newRankings = [
   ...sixthBatchRankings,
   ...seventhBatchRankings,
   ...eighthBatchRankings,
+  ...ninthBatchRankings,
 ];
 const catalogTitles = {
   ...titles,
@@ -48,6 +51,7 @@ const catalogTitles = {
   ...Object.fromEntries(sixthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(seventhBatchRankings.map((ranking) => [ranking.id, ranking.question])),
   ...Object.fromEntries(eighthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
+  ...Object.fromEntries(ninthBatchRankings.map((ranking) => [ranking.id, ranking.question])),
 };
 const allTitles = {
   ...catalogTitles,
@@ -65,8 +69,9 @@ if (
   sixthBatchRankings.length !== 20 ||
   seventhBatchRankings.length !== 61 ||
   eighthBatchRankings.length !== 1 ||
-  newRankings.length !== 162 ||
-  Object.keys(allTitles).length !== 202 ||
+  ninthBatchRankings.length !== 10 ||
+  newRankings.length !== 172 ||
+  Object.keys(allTitles).length !== 212 ||
   new Set(newRankings.map((ranking) => ranking.id)).size !== newRankings.length
 ) {
   throw new Error('Unexpected catalog data');
@@ -223,11 +228,11 @@ const [validation] = await sql.query(
 
 if (
   Number(validation?.valid_titles) !== Object.keys(allTitles).length ||
-  Number(validation?.valid_new_rankings) !== 162
+  Number(validation?.valid_new_rankings) !== 172
 ) {
   throw new Error(`Catalog validation failed: ${JSON.stringify(validation)}`);
 }
 
 console.log(
-  `Catalog applied: ${Object.keys(allTitles).length} titles and 162 new rankings validated.`,
+  `Catalog applied: ${Object.keys(allTitles).length} titles and 172 new rankings validated.`,
 );

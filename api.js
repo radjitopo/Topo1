@@ -52,6 +52,7 @@ const SUGGESTION_CATEGORY_VALUES = Object.freeze([
   'Cinema',
   'Música',
   'TV & Séries',
+  'Nostalgia',
   'Livros',
   'Arte',
   'Moda',

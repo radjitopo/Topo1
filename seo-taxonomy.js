@@ -30,6 +30,10 @@ export const GENERAL_CATEGORIES = Object.freeze(
       'Séries, programas, novelas, animações e personagens para descobrir, comparar e votar.',
     ],
     [
+      'Nostalgia',
+      'Brinquedos, programas, objetos, sons e hábitos que marcaram diferentes gerações.',
+    ],
+    [
       'Livros',
       'Livros, autores, personagens e histórias que seguem conquistando leitores de diferentes gerações.',
     ],
@@ -120,6 +124,7 @@ export function generalCategoryForRanking(ranking) {
       'Tecnologia',
       'Produtos',
       'TV & Séries',
+      'Nostalgia',
     ].includes(category)
   )
     return generalCategoryByLabel(category);

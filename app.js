@@ -34,6 +34,7 @@ const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
   Música: 'musica',
   'TV & Séries': 'tv-e-series',
+  Nostalgia: 'nostalgia',
   Livros: 'livros',
   Arte: 'arte',
   Moda: 'moda',
@@ -95,6 +96,7 @@ const groupNames = [
     'Cinema',
     'Música',
     'TV & Séries',
+    'Nostalgia',
     'Livros',
     'Arte',
     'Moda',
@@ -351,6 +353,7 @@ function groupOf(r) {
       'Tecnologia',
       'Produtos',
       'TV & Séries',
+      'Nostalgia',
     ].includes(r.cat)
   )
     return r.cat;

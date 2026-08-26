@@ -4,35 +4,15 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const root = new URL('../', import.meta.url);
-const batch = JSON.parse(await readFile(new URL('data/rankings-batch-7.json', root), 'utf8'));
-const expectedCategoryCounts = {
-  Cinema: 5,
-  'TV & Séries': 3,
-  Livros: 10,
-  Arte: 9,
-  Moda: 5,
-  Famosos: 5,
-  Natureza: 2,
-  Motores: 10,
-  Jogos: 3,
-  Tecnologia: 6,
-  Produtos: 3,
-};
+const batch = JSON.parse(await readFile(new URL('data/rankings-batch-9.json', root), 'utf8'));
 
-test('seventh batch contains the planned 61 Top 20 rankings', () => {
-  assert.equal(batch.length, 61);
-  assert.equal(new Set(batch.map((ranking) => ranking.id)).size, 61);
-  assert.equal(new Set(batch.map((ranking) => ranking.image_url)).size, 61);
-
-  const categoryCounts = Object.fromEntries(
-    Object.keys(expectedCategoryCounts).map((category) => [
-      category,
-      batch.filter((ranking) => ranking.category === category).length,
-    ]),
-  );
-  assert.deepEqual(categoryCounts, expectedCategoryCounts);
+test('ninth batch contains 10 complete Nostalgia rankings', () => {
+  assert.equal(batch.length, 10);
+  assert.equal(new Set(batch.map((ranking) => ranking.id)).size, 10);
+  assert.equal(new Set(batch.map((ranking) => ranking.image_url)).size, 10);
 
   for (const ranking of batch) {
+    assert.equal(ranking.category, 'Nostalgia');
     assert.match(ranking.id, /^[a-z0-9-]+$/);
     assert.match(ranking.question, /\?$/);
     assert.match(ranking.image_url, /^https:\/\/images\.unsplash\.com\/photo-/);
@@ -51,7 +31,7 @@ test('seventh batch contains the planned 61 Top 20 rankings', () => {
   }
 });
 
-test('seventh batch ids do not collide with the earlier catalog', async () => {
+test('Nostalgia ids and titles do not collide with the earlier catalog', async () => {
   const earlierFiles = [
     'data/new-rankings.json',
     'data/rankings-batch-2.json',
@@ -59,6 +39,8 @@ test('seventh batch ids do not collide with the earlier catalog', async () => {
     'data/rankings-batch-4.json',
     'data/rankings-batch-5.json',
     'data/rankings-batch-6.json',
+    'data/rankings-batch-7.json',
+    'data/rankings-batch-8.json',
   ];
   const earlier = (
     await Promise.all(
@@ -66,18 +48,26 @@ test('seventh batch ids do not collide with the earlier catalog', async () => {
     )
   ).flat();
   const earlierIds = new Set(earlier.map((ranking) => ranking.id));
+  const earlierQuestions = new Set(
+    earlier.map((ranking) => ranking.question.toLocaleLowerCase('pt-BR')),
+  );
+
   for (const ranking of batch) {
-    assert.ok(!earlierIds.has(ranking.id), `${ranking.id} already exists in an earlier batch`);
+    assert.ok(!earlierIds.has(ranking.id), `${ranking.id} already exists`);
+    assert.ok(
+      !earlierQuestions.has(ranking.question.toLocaleLowerCase('pt-BR')),
+      `${ranking.question} repeats an earlier title`,
+    );
   }
 });
 
-test('every seventh-batch ranking has complete editorial metadata', async () => {
-  const source = await readFile(new URL('editorial-15.js', root), 'utf8');
+test('every Nostalgia ranking has complete editorial metadata', async () => {
+  const source = await readFile(new URL('editorial-17.js', root), 'utf8');
   const context = vm.createContext({ editorial: {} });
   vm.runInContext(source, context);
-
-  assert.deepEqual(Object.keys(context.editorial).sort(), batch.map(({ id }) => id).sort());
   const batchIds = new Set(batch.map(({ id }) => id));
+
+  assert.deepEqual(Object.keys(context.editorial).sort(), [...batchIds].sort());
   for (const ranking of batch) {
     const entry = context.editorial[ranking.id];
     assert.ok(entry.about.length > 180, `${ranking.id} needs a useful introduction`);
@@ -86,27 +76,28 @@ test('every seventh-batch ranking has complete editorial metadata', async () => 
     assert.equal(new Set(entry.related).size, 3);
     assert.ok(!entry.related.includes(ranking.id));
     for (const relatedId of entry.related) {
-      if (expectedCategoryCounts[ranking.category] >= 4) {
-        assert.ok(batchIds.has(relatedId), `${ranking.id} has an unknown related ranking`);
-      }
+      assert.ok(batchIds.has(relatedId), `${ranking.id} has an unknown related ranking`);
     }
   }
 });
 
-test('catalog importer and page assets include the seventh batch', async () => {
-  const [importer, index, app] = await Promise.all([
+test('Nostalgia is wired into catalog, navigation, moderation and SEO', async () => {
+  const [importer, index, app, api, taxonomy] = await Promise.all([
     readFile(new URL('scripts/apply-catalog.mjs', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('seo-taxonomy.js', root), 'utf8'),
   ]);
 
-  assert.match(importer, /rankings-batch-7\.json/);
-  assert.match(importer, /seventhBatchRankings\.length !== 61/);
+  assert.match(importer, /rankings-batch-9\.json/);
+  assert.match(importer, /ninthBatchRankings\.length !== 10/);
   assert.match(importer, /newRankings\.length !== 172/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 212/);
-  assert.match(index, /editorial-15\.js/);
+  assert.match(index, /editorial-17\.js/);
   assert.match(index, /app\.js\?v=20260826-36-nostalgia/);
-  for (const category of ['Arte', 'Motores', 'Tecnologia', 'Produtos', 'TV & Séries']) {
-    assert.ok(app.includes(`'${category}'`), `app must preserve the ${category} group`);
-  }
+  assert.match(app, /Nostalgia: 'nostalgia'/);
+  assert.match(app, /'Nostalgia'/);
+  assert.match(api, /'Nostalgia'/);
+  assert.match(taxonomy, /'Nostalgia'/);
 });

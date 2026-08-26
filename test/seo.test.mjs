@@ -40,7 +40,12 @@ function structuredData(html) {
 
 test('SEO taxonomy creates stable category, city and local collection URLs', () => {
   assert.equal(generalCategoryBySlug('tv-e-series')?.label, 'TV & Séries');
+  assert.equal(generalCategoryBySlug('nostalgia')?.label, 'Nostalgia');
   assert.equal(generalCategoryForRanking(cinema)?.slug, 'cinema');
+  assert.equal(
+    generalCategoryForRanking({ id: 'brinquedos-nostalgicos', category: 'Nostalgia' })?.slug,
+    'nostalgia',
+  );
   assert.equal(localCityBySlug('florianopolis')?.label, 'Florianópolis');
   assert.equal(localGroupForRanking(local)?.slug, 'sushi-japones');
   assert.equal(
@@ -130,7 +135,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
   assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260826-35-whatsapp-home/);
+  assert.match(index, /\/app\.js\?v=20260826-36-nostalgia/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.match(
     editorialCss,
