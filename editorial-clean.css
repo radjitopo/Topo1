@@ -134,20 +134,21 @@ body.popElectric .accountLink {
 }
 
 body.popElectric .accountEnter {
-  min-height: 38px;
-  border: 0;
-  border-bottom: 1px solid var(--clean-ink);
+  min-height: 46px;
+  border: 1px solid var(--clean-ink);
   border-radius: 0;
-  background: transparent;
-  color: var(--clean-ink);
-  padding: 8px 0 4px;
+  background: var(--clean-ink);
+  color: #fff;
+  padding: 11px 22px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 body.popElectric .accountEnter:hover,
 body.popElectric .accountEnter:focus-visible {
-  background: transparent;
-  color: var(--clean-coral);
-  border-color: var(--clean-coral);
+  background: var(--clean-sage);
+  color: #fff;
+  border-color: var(--clean-sage);
 }
 
 body.popElectric .notificationButton {
@@ -2410,7 +2411,10 @@ body.popElectric .moderationEmpty {
   }
 
   body.popElectric .accountEnter {
-    display: none;
+    display: inline-flex;
+    min-height: 44px;
+    padding: 10px 17px;
+    font-size: 13px;
   }
 
   body.popElectric .groups,

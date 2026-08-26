@@ -49,10 +49,10 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-20-profile-editorial'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-21-login-cta'));
 assert.ok(index.includes('/app.js?v=20260826-43-profile-editorial'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-20-profile-editorial'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-21-login-cta'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -195,6 +195,16 @@ assert.match(
   compactPopCss,
   /@media\(max-width:700px\)[\s\S]*\.popElectric\.accountLink:not\(\.accountEnter\)\{[^}]*display:inline-flex[^}]*font-size:11px/,
   'signed-in mobile users must keep a visible profile entry beside the bell',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.accountEnter\{[^}]*min-height:46px[^}]*background:var\(--clean-ink\)[^}]*color:#fff/,
+  'signed-out visitors need a prominent editorial login call to action',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.accountEnter\{[^}]*display:inline-flex[^}]*min-height:44px[^}]*font-size:13px/,
+  'the login call to action must remain visible on phones',
 );
 assert.match(
   compactPopCss,
