@@ -53,6 +53,19 @@ assert.doesNotMatch(
   /previewVoteActionsHTML|categoryVoteList|Top 3/,
   'discovery cards must open rankings instead of imitating a vote or revealing the leaders',
 );
+assert.match(
+  categoryCardSource,
+  /whatsAppShareHTML\(r,\s*true\)/,
+  'ranking discovery cards must keep their WhatsApp share action',
+);
+for (const renderer of ['portalHeroHTML', 'portalStoryHTML', 'portalSideStoryHTML']) {
+  const rendererSource = extractTopLevelDeclaration(source, renderer);
+  assert.match(
+    rendererSource,
+    /whatsAppShareHTML\(r,\s*true\)/,
+    `${renderer} must keep a compact WhatsApp share action on the home`,
+  );
+}
 
 const wanted = [
   'homeContextOnlyRankingIds',

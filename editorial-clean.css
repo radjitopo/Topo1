@@ -17,6 +17,8 @@
   --clean-sage-soft: #eef1ef;
   --clean-muted-red: #a8645d;
   --clean-muted-red-soft: #f5ecea;
+  --clean-whatsapp: #247554;
+  --clean-whatsapp-hover: #195d41;
 }
 
 body.popElectric,
@@ -406,6 +408,17 @@ body.popElectric .editorialHomeLead .portalHeroMedia img {
   object-fit: cover;
 }
 
+body.popElectric .editorialHomeLead .portalHero {
+  position: relative;
+}
+
+body.popElectric .editorialHomeLead .portalHero > .whatsappShare.compact {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+}
+
 body.popElectric .portalTrending,
 body.popElectric.localMode .portalTrending {
   grid-template-columns: 112px minmax(0, 1fr);
@@ -595,7 +608,7 @@ body.popElectric .popHomeGrid .categoryRankTitle h2 {
 }
 
 body.popElectric .popHomeGrid .whatsappShare.compact {
-  display: none;
+  display: inline-flex;
 }
 
 body.popElectric .categoryRankLinks {
@@ -617,10 +630,10 @@ body.popElectric .categoryRankLinks .categoryVoteCta {
 body.popElectric .categoryRankLinks .whatsappShare.compact {
   width: 30px;
   height: 30px;
-  border: 1px solid var(--clean-ink);
+  border: 1px solid var(--clean-whatsapp);
   border-radius: 50%;
-  background: var(--clean-paper);
-  color: var(--clean-ink);
+  background: var(--clean-whatsapp);
+  color: var(--clean-paper);
 }
 
 body.popElectric .popLocalCallout {
@@ -725,6 +738,49 @@ body.popElectric .portalStory.feature h2 {
 body.popElectric .portalStoryFoot a {
   color: var(--clean-ink);
   text-decoration: underline;
+}
+
+body.popElectric .portalStoryActions,
+body.popElectric .portalSideFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.popElectric .portalStoryActions {
+  justify-content: flex-end;
+}
+
+body.popElectric .portalSideFoot {
+  margin-top: 10px;
+}
+
+body.popElectric .editorialHomeLead .whatsappShare.compact,
+body.popElectric .portalStoryActions .whatsappShare.compact,
+body.popElectric .portalSideFoot .whatsappShare.compact {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 1px solid var(--clean-whatsapp);
+  border-radius: 50%;
+  background: var(--clean-whatsapp);
+  color: var(--clean-paper);
+  padding: 0;
+  text-decoration: none;
+}
+
+body.popElectric .categoryRankLinks .whatsappShare.compact:hover,
+body.popElectric .categoryRankLinks .whatsappShare.compact:focus-visible,
+body.popElectric .editorialHomeLead .whatsappShare.compact:hover,
+body.popElectric .editorialHomeLead .whatsappShare.compact:focus-visible,
+body.popElectric .portalStoryActions .whatsappShare.compact:hover,
+body.popElectric .portalStoryActions .whatsappShare.compact:focus-visible,
+body.popElectric .portalSideFoot .whatsappShare.compact:hover,
+body.popElectric .portalSideFoot .whatsappShare.compact:focus-visible {
+  border-color: var(--clean-whatsapp-hover);
+  background: var(--clean-whatsapp-hover);
+  color: var(--clean-paper);
 }
 
 body.popElectric .portalRankPanel {
