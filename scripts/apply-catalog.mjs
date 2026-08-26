@@ -69,9 +69,9 @@ if (
   sixthBatchRankings.length !== 20 ||
   seventhBatchRankings.length !== 61 ||
   eighthBatchRankings.length !== 1 ||
-  ninthBatchRankings.length !== 10 ||
-  newRankings.length !== 172 ||
-  Object.keys(allTitles).length !== 212 ||
+  ninthBatchRankings.length !== 11 ||
+  newRankings.length !== 173 ||
+  Object.keys(allTitles).length !== 213 ||
   new Set(newRankings.map((ranking) => ranking.id)).size !== newRankings.length
 ) {
   throw new Error('Unexpected catalog data');
@@ -228,11 +228,11 @@ const [validation] = await sql.query(
 
 if (
   Number(validation?.valid_titles) !== Object.keys(allTitles).length ||
-  Number(validation?.valid_new_rankings) !== 172
+  Number(validation?.valid_new_rankings) !== 173
 ) {
   throw new Error(`Catalog validation failed: ${JSON.stringify(validation)}`);
 }
 
 console.log(
-  `Catalog applied: ${Object.keys(allTitles).length} titles and 172 new rankings validated.`,
+  `Catalog applied: ${Object.keys(allTitles).length} titles and 173 new rankings validated.`,
 );

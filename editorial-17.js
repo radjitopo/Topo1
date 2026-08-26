@@ -89,4 +89,13 @@ Object.assign(editorial, {
     ],
     related: ['tecnologias-antigas', 'sons-nostalgicos', 'revistas-gibis-nostalgicos'],
   },
+  'livros-colecao-vaga-lume': {
+    about:
+      'Entre mistérios, aventuras e dramas, a Coleção Vaga-Lume transformou a biblioteca da escola em ponto de partida para muitas viagens. Este ranking reúne vinte títulos clássicos para descobrir qual história continua mais viva na memória dos leitores.',
+    facts: [
+      'A Editora Ática lançou a Coleção Vaga-Lume em 1973, tendo A Ilha Perdida entre os títulos que abriram a série.',
+      'A coleção reuniu dezenas de obras infantojuvenis e se tornou uma presença marcante em bibliotecas e leituras escolares brasileiras.',
+    ],
+    related: ['revistas-gibis-nostalgicos', 'materiais-escolares-nostalgicos', 'habitos-vida-analogica'],
+  },
 });

@@ -308,5 +308,36 @@
       { "label": "Ligar para pedir música no rádio", "position": 19, "baseline_score": 0 },
       { "label": "Assoprar cartucho de videogame", "position": 20, "baseline_score": 0 }
     ]
+  },
+  {
+    "id": "livros-colecao-vaga-lume",
+    "category": "Nostalgia",
+    "question": "Qual livro da Coleção Vaga-Lume mais marcou você?",
+    "image_url": "https://images.unsplash.com/photo-1674709329702-6f302c7bb236?auto=format&fit=crop&w=1200&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-08-26T20:00:10.000Z",
+    "opts": [
+      { "label": "A Ilha Perdida", "position": 1, "baseline_score": 0 },
+      { "label": "O Escaravelho do Diabo", "position": 2, "baseline_score": 0 },
+      { "label": "O Mistério do Cinco Estrelas", "position": 3, "baseline_score": 0 },
+      { "label": "A Turma da Rua Quinze", "position": 4, "baseline_score": 0 },
+      { "label": "O Caso da Borboleta Atíria", "position": 5, "baseline_score": 0 },
+      { "label": "O Rapto do Garoto de Ouro", "position": 6, "baseline_score": 0 },
+      { "label": "Um Cadáver Ouve Rádio", "position": 7, "baseline_score": 0 },
+      { "label": "Sozinha no Mundo", "position": 8, "baseline_score": 0 },
+      { "label": "Meninos sem Pátria", "position": 9, "baseline_score": 0 },
+      { "label": "Açúcar Amargo", "position": 10, "baseline_score": 0 },
+      { "label": "A Árvore que Dava Dinheiro", "position": 11, "baseline_score": 0 },
+      { "label": "Spharion", "position": 12, "baseline_score": 0 },
+      { "label": "O Feijão e o Sonho", "position": 13, "baseline_score": 0 },
+      { "label": "A Serra dos Dois Meninos", "position": 14, "baseline_score": 0 },
+      { "label": "Zezinho, o Dono da Porquinha Preta", "position": 15, "baseline_score": 0 },
+      { "label": "Os Barcos de Papel", "position": 16, "baseline_score": 0 },
+      { "label": "Menino de Asas", "position": 17, "baseline_score": 0 },
+      { "label": "Éramos Seis", "position": 18, "baseline_score": 0 },
+      { "label": "Coração de Onça", "position": 19, "baseline_score": 0 },
+      { "label": "O Gigante de Botas", "position": 20, "baseline_score": 0 }
+    ]
   }
 ]

@@ -6,10 +6,10 @@ import vm from 'node:vm';
 const root = new URL('../', import.meta.url);
 const batch = JSON.parse(await readFile(new URL('data/rankings-batch-9.json', root), 'utf8'));
 
-test('ninth batch contains 10 complete Nostalgia rankings', () => {
-  assert.equal(batch.length, 10);
-  assert.equal(new Set(batch.map((ranking) => ranking.id)).size, 10);
-  assert.equal(new Set(batch.map((ranking) => ranking.image_url)).size, 10);
+test('ninth batch contains 11 complete Nostalgia rankings', () => {
+  assert.equal(batch.length, 11);
+  assert.equal(new Set(batch.map((ranking) => ranking.id)).size, 11);
+  assert.equal(new Set(batch.map((ranking) => ranking.image_url)).size, 11);
 
   for (const ranking of batch) {
     assert.equal(ranking.category, 'Nostalgia');
@@ -29,6 +29,37 @@ test('ninth batch contains 10 complete Nostalgia rankings', () => {
       Array.from({ length: 20 }, (_, index) => index + 1),
     );
   }
+});
+
+test('Coleção Vaga-Lume ranking contains 20 verified classic titles', () => {
+  const ranking = batch.find(({ id }) => id === 'livros-colecao-vaga-lume');
+  assert.ok(ranking);
+  assert.equal(ranking.question, 'Qual livro da Coleção Vaga-Lume mais marcou você?');
+  assert.deepEqual(
+    ranking.opts.map(({ label }) => label),
+    [
+      'A Ilha Perdida',
+      'O Escaravelho do Diabo',
+      'O Mistério do Cinco Estrelas',
+      'A Turma da Rua Quinze',
+      'O Caso da Borboleta Atíria',
+      'O Rapto do Garoto de Ouro',
+      'Um Cadáver Ouve Rádio',
+      'Sozinha no Mundo',
+      'Meninos sem Pátria',
+      'Açúcar Amargo',
+      'A Árvore que Dava Dinheiro',
+      'Spharion',
+      'O Feijão e o Sonho',
+      'A Serra dos Dois Meninos',
+      'Zezinho, o Dono da Porquinha Preta',
+      'Os Barcos de Papel',
+      'Menino de Asas',
+      'Éramos Seis',
+      'Coração de Onça',
+      'O Gigante de Botas',
+    ],
+  );
 });
 
 test('Nostalgia ids and titles do not collide with the earlier catalog', async () => {
@@ -91,10 +122,10 @@ test('Nostalgia is wired into catalog, navigation, moderation and SEO', async ()
   ]);
 
   assert.match(importer, /rankings-batch-9\.json/);
-  assert.match(importer, /ninthBatchRankings\.length !== 10/);
-  assert.match(importer, /newRankings\.length !== 172/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 212/);
-  assert.match(index, /editorial-17\.js/);
+  assert.match(importer, /ninthBatchRankings\.length !== 11/);
+  assert.match(importer, /newRankings\.length !== 173/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 213/);
+  assert.match(index, /editorial-17\.js\?v=20260826-1-vagalume/);
   assert.match(index, /app\.js\?v=20260826-36-nostalgia/);
   assert.match(app, /Nostalgia: 'nostalgia'/);
   assert.match(app, /'Nostalgia'/);
