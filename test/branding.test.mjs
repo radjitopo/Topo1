@@ -50,6 +50,7 @@ for (const shell of [index, institutional, page]) {
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(index.includes('/editorial-clean.css?v=20260826-17-ranking-editor'));
+assert.ok(index.includes('/app.js?v=20260826-41-preview-navigation'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(institutional.includes('/editorial-clean.css?v=20260826-17-ranking-editor'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);

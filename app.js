@@ -840,12 +840,13 @@ function doubleVoteActionHTML(o, direction) {
   const label = escapeHTML(o.label);
   return `<button class="doubleVoteAction ${active ? 'active' : ''}" type="button" data-double-vote data-id="${o.id}" data-dir="${direction}" data-active="${active ? '1' : '0'}" aria-pressed="${active}" aria-label="${active ? 'Voltar ao voto simples em' : 'Usar voto duplo em'} ${label}">2×</button>`;
 }
-function categoryVoteActionsHTML(o) {
-  const mine = Number(o?.mine || 0),
+function categoryVoteActionsHTML(r, o) {
+  const path = `${rankingPath(r.id)}#votar`,
+    mine = Number(o?.mine || 0),
     label = escapeHTML(o.label),
     upSelected = mine === 1,
     downSelected = mine === -1;
-  return `<span class="actions categoryVoteActions"><button class="react up ${upSelected ? 'selected' : ''}" type="button" data-id="${o.id}" data-mine="${mine}" data-dir="1" aria-pressed="${upSelected}" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}">↑</button><button class="react down ${downSelected ? 'selected' : ''}" type="button" data-id="${o.id}" data-mine="${mine}" data-dir="-1" aria-pressed="${downSelected}" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}">↓</button></span>`;
+  return `<span class="actions categoryVoteActions"><a class="react up ${upSelected ? 'selected' : ''} categoryPreviewReact" href="${path}" aria-label="Abrir o ranking para ${upSelected ? 'alterar o voto em' : `fazer ${label} subir`}">↑</a><a class="react down ${downSelected ? 'selected' : ''} categoryPreviewReact" href="${path}" aria-label="Abrir o ranking para ${downSelected ? 'alterar o voto em' : `fazer ${label} descer`}">↓</a></span>`;
 }
 function rankMark(i) {
   const n = i + 1;
@@ -963,7 +964,7 @@ function categorySortedRankings(list) {
 function categoryVoteOptionHTML(r, o, index) {
   const voteHref = `${rankingPath(r.id)}#votar`,
     label = escapeHTML(o.label);
-  return `<div class="categoryVoteOption" data-option-id="${o.id}"><span class="categoryVotePos">${index + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${label}</strong>${doubleVoteBadgeHTML(o)}</a>${categoryVoteActionsHTML(o)}</div>`;
+  return `<div class="categoryVoteOption" data-option-id="${o.id}"><span class="categoryVotePos">${index + 1}</span><a class="categoryVoteName" href="${voteHref}"><strong>${label}</strong>${doubleVoteBadgeHTML(o)}</a>${categoryVoteActionsHTML(r, o)}</div>`;
 }
 function categoryVoteListHTML(r) {
   const options = (r.opts || []).slice(0, 3);
@@ -2606,7 +2607,7 @@ function replaceBrokenRankingImage(image) {
 }
 document.addEventListener('error', (event) => replaceBrokenRankingImage(event.target), true);
 function bindVotes() {
-  document.querySelectorAll('.react').forEach((b) => (b.onclick = () => react(b)));
+  document.querySelectorAll('button.react').forEach((b) => (b.onclick = () => react(b)));
   document
     .querySelectorAll('[data-double-vote]')
     .forEach((b) => (b.onclick = () => toggleDoubleVote(b)));

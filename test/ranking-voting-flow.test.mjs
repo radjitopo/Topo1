@@ -23,18 +23,18 @@ assert.match(
 assert.match(compactApp, /rankingLimit:20/, 'the interface fallback must match the API limit');
 assert.match(
   compactApp,
-  /functioncategoryVoteActionsHTML\(o\)/,
-  'ranking previews must render their own vote controls',
+  /functioncategoryVoteActionsHTML\(r,o\)/,
+  'ranking previews must render their own navigation controls',
 );
 assert.match(
   compactApp,
-  /class="reactup[^>]*data-mine=/,
-  'preview arrows must use the same direct-vote state as full rankings',
+  /categoryPreviewReact"href="\$\{path\}"/,
+  'preview arrows must link to the ranking voting area',
 );
 assert.match(
   compactApp,
-  /aria-pressed="\$\{upSelected\}"/,
-  'preview arrows must expose their selected state to assistive technology',
+  /Abrirorankingpara\$\{upSelected\?'alterarovotoem':`fazer\$\{label\}subir`\}/,
+  'preview arrows must explain that voting happens inside the ranking',
 );
 const voteList = extractTopLevelDeclaration(app, 'categoryVoteListHTML');
 assert.ok(voteList, 'the three-item voting preview must remain testable');
@@ -46,15 +46,20 @@ assert.match(
 assert.doesNotMatch(
   compactApp,
   /previewVoteIntent|topo_preview_vote_intent|data-preview-ranking/,
-  'card votes must no longer be deferred through a navigation intent',
+  'preview navigation must work with ordinary links instead of deferred JavaScript state',
 );
 
 const bindVotes = extractTopLevelDeclaration(app, 'bindVotes');
 assert.ok(bindVotes, 'vote binding must remain testable');
 assert.match(
   compactSource(bindVotes),
-  /querySelectorAll\('\.react'\).*react\(b\)/,
-  'every preview arrow must submit through the direct vote flow',
+  /querySelectorAll\('button\.react'\).*react\(b\)/,
+  'only buttons inside a ranking may submit votes',
+);
+assert.doesNotMatch(
+  compactSource(bindVotes),
+  /querySelectorAll\('\.react'\)/,
+  'preview links must never be intercepted by the direct vote binding',
 );
 
 const reactFlow = extractTopLevelDeclaration(app, 'react');
@@ -77,7 +82,7 @@ voteContext.voteFromCard({ dataset: { id: '42', mine: '0', dir: '1' } });
 assert.deepEqual(
   { ...voteContext.lastVote },
   { optionId: 42, direction: 1, weight: 1, showHelp: true },
-  'an unselected up arrow must submit a positive vote immediately',
+  'an unselected arrow inside the ranking must submit a positive vote immediately',
 );
 voteContext.voteFromCard({ dataset: { id: '42', mine: '1', dir: '1' } });
 assert.equal(voteContext.lastVote.direction, 0, 'a selected arrow must submit vote removal');
@@ -141,8 +146,13 @@ assert.match(
 );
 assert.match(
   compactPage,
+  /class="reactupseoPreviewReact"href="\$\{path\}#votar"/,
+  'server-rendered preview arrows must also open the ranking voting area',
+);
+assert.match(
+  compactPage,
   /\$\{whatsAppShare\(ranking\)\}/,
   'server-rendered discovery cards must preserve WhatsApp sharing',
 );
 
-console.log('Ranking voting flow passed: direct card votes, stable previews and complete lists.');
+console.log('Ranking voting flow passed: preview navigation, ranking votes and complete lists.');
