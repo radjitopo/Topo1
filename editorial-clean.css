@@ -1280,6 +1280,179 @@ body.legalShell .siteFooterColumn strong {
   color: var(--clean-lime);
 }
 
+/* Perfil */
+body.popElectric.profilePage {
+  background: var(--clean-paper);
+}
+
+body.popElectric.profilePage .internalHead {
+  border-bottom: 1px solid var(--clean-line);
+  padding-bottom: 12px;
+}
+
+body.popElectric.profilePage .logoutBtn {
+  border: 1px solid var(--clean-sage);
+  background: var(--clean-paper);
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .logoutBtn:hover,
+body.popElectric.profilePage .logoutBtn:focus-visible {
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileGameHero {
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-soft);
+  color: var(--clean-ink);
+  box-shadow: 8px 8px 0 var(--clean-muted-red);
+}
+
+body.popElectric.profilePage .profileHeroCopy .profileName {
+  color: var(--clean-ink);
+}
+
+body.popElectric.profilePage .profileHeroCopy .profileEmail,
+body.popElectric.profilePage .profileProgressText {
+  color: var(--clean-muted);
+}
+
+body.popElectric.profilePage .profileGameHero .authEyebrow,
+body.popElectric.profilePage .profileProgressText strong,
+body.popElectric.profilePage .profileNameCooldown {
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profileAvatarRing {
+  background: conic-gradient(
+    from -90deg,
+    var(--clean-sage) var(--profile-progress),
+    var(--clean-line) 0
+  );
+}
+
+body.popElectric.profilePage .profileAvatar {
+  border: 5px solid var(--clean-paper);
+  background: var(--clean-paper);
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profileProgressCount {
+  border-color: var(--clean-soft);
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileIdentityPanel {
+  border: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
+body.popElectric.profilePage .profileNameForm input {
+  border: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileNameForm input:focus {
+  border-color: var(--clean-sage);
+  box-shadow: 0 0 0 3px var(--clean-sage-soft);
+}
+
+body.popElectric.profilePage .profileNameForm button {
+  border: 1px solid var(--clean-sage);
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileBadges span {
+  border: 1px solid var(--clean-sage);
+  background: var(--clean-sage-soft);
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profileMetrics > span {
+  border: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileMetrics strong {
+  color: var(--clean-ink);
+}
+
+body.popElectric.profilePage .profileMetrics small {
+  color: var(--clean-muted);
+}
+
+body.popElectric.profilePage .profileSection {
+  border: 1px solid var(--clean-line);
+  background: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profileSectionHead .sectionLabel {
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profilePowerIcon.unlocked,
+body.popElectric.profilePage .profileLeaderboardPerson em,
+body.popElectric.profilePage .recentDoubleVote,
+body.popElectric.profilePage .doubleVoteBadge {
+  border-color: var(--clean-sage);
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profilePowerIcon.next {
+  border-color: var(--clean-muted-red);
+  background: var(--clean-muted-red-soft);
+  color: var(--clean-muted-red);
+}
+
+body.popElectric.profilePage .profilePowerStatus.available,
+body.popElectric.profilePage .profilePhotoStatus {
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profilePowerStatus.inUse,
+body.popElectric.profilePage .profileNameStatus {
+  color: var(--clean-muted-red);
+}
+
+body.popElectric.profilePage .profileComingSoon {
+  border-left-color: var(--clean-sage);
+  background: var(--clean-sage-soft);
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profilePhotoActions button {
+  border: 1px solid var(--clean-sage);
+  background: var(--clean-paper);
+  color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profilePhotoActions button:first-of-type {
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.profilePage .profilePhotoCheck input {
+  accent-color: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profileCategoryTrack {
+  background: var(--clean-sage-soft);
+}
+
+body.popElectric.profilePage .profileCategoryTrack span {
+  background: var(--clean-sage);
+}
+
+body.popElectric.profilePage .profileLeaderboardRow.current {
+  background: var(--clean-sage-soft);
+  box-shadow: inset 3px 0 0 var(--clean-sage);
+}
+
 /* Moderação */
 body.popElectric.moderationPage {
   background: var(--clean-paper);

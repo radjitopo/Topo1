@@ -49,9 +49,9 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(index.includes('/editorial-clean.css?v=20260826-13-whatsapp-home'));
+assert.ok(index.includes('/editorial-clean.css?v=20260826-14-profile-palette'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260825-12-seo'));
-assert.ok(institutional.includes('/editorial-clean.css?v=20260826-13-whatsapp-home'));
+assert.ok(institutional.includes('/editorial-clean.css?v=20260826-14-profile-palette'));
 assert.match(index, /name="theme-color" content="#fffdf8"/);
 assert.match(
   compactPopCss,
@@ -123,6 +123,21 @@ assert.match(
   compactEditorialCss,
   /body\.popElectric\.rankingPage\.react\.down:hover,[^{]*\.react\.down\.selected\{[^}]*background:var\(--clean-muted-red\)[^}]*color:var\(--clean-paper\)/,
   'selected negative votes must fill with muted red',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.profilePage\.profileGameHero\{[^}]*background:var\(--clean-soft\)[^}]*color:var\(--clean-ink\)[^}]*box-shadow:8px8px0var\(--clean-muted-red\)/,
+  'the profile hero must replace neon colors with the muted editorial palette',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.profilePage\.profileAvatarRing\{background:conic-gradient\(from-90deg,var\(--clean-sage\)var\(--profile-progress\),var\(--clean-line\)0\)/,
+  'profile progress must use the sage ring and preserve real progress',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.profilePage\.profileBadgesspan\{[^}]*border:1pxsolidvar\(--clean-sage\)[^}]*background:var\(--clean-sage-soft\)[^}]*color:var\(--clean-sage\)/,
+  'profile badges must use soft sage instead of lime neon',
 );
 
 assert.match(
