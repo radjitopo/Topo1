@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { renderGeneralCategoryPage, renderHomePage, renderRankingPage } from '../page.js';
+import {
+  renderGeneralCategoryPage,
+  renderHomePage,
+  renderRankingPage,
+  renderVipRankingPage,
+} from '../page.js';
 import {
   generalCategoryBySlug,
   generalCategoryForRanking,
@@ -96,11 +101,13 @@ test('ranking HTML contains its content, canonical URL, H1 and structured result
 });
 
 test('home and category pages expose crawlable ranking and category links', () => {
-  const home = renderHomePage(template, [cinema, local]);
+  const vip = { ...cinema, id: 'amigos-vip', isVip: true };
+  const home = renderHomePage(template, [cinema, local, vip]);
   assert.match(home, /<h1>Rankings para votar e descobrir<\/h1>/);
   assert.match(home, /href="\/categoria\/cinema"/);
   assert.match(home, /href="\/ranking\/filmes"/);
   assert.doesNotMatch(home, /href="\/ranking\/sushi-floripa"/);
+  assert.doesNotMatch(home, /href="\/ranking\/amigos-vip"/);
   assert.match(home, /class="categoryRankOverlay"/);
   assert.match(home, /O Poderoso Chefão/);
   assert.match(home, /Central do Brasil/);
@@ -121,6 +128,20 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(search, /name="robots" content="noindex,follow"/);
 });
 
+test('VIP ranking shell is noindex and never renders protected options', () => {
+  const html = renderVipRankingPage(template, {
+    ...cinema,
+    id: 'amigos-vip',
+    question: 'Quem é a maior lenda deste grupo?',
+    options: [{ id: 99, label: 'Nome protegido', score: 10 }],
+  });
+  assert.match(html, /name="robots" content="noindex,follow"/);
+  assert.match(html, /Área VIP/);
+  assert.match(html, /Quem é a maior lenda deste grupo\?/);
+  assert.doesNotMatch(html, /Nome protegido/);
+  assert.doesNotMatch(html, /ItemList/);
+});
+
 test('sitemap includes canonical category, city, local topic and ranking URLs', () => {
   const xml = buildSitemap([
     {
@@ -137,11 +158,20 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
       created_at: local.createdAt,
       updated_at: local.updatedAt,
     },
+    {
+      id: 'amigos-vip',
+      category: 'Vida',
+      question: 'Quem é a maior lenda deste grupo?',
+      created_at: cinema.createdAt,
+      updated_at: cinema.updatedAt,
+      is_vip: true,
+    },
   ]);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis\/sushi-japones/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/ranking\/filmes/);
+  assert.doesNotMatch(xml, /amigos-vip/);
   assert.doesNotMatch(xml, /\/perfil|\/entrar|\/moderacao/);
 });
 
@@ -164,7 +194,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
   assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260826-44-registration-10/);
+  assert.match(index, /\/app\.js\?v=20260827-1-vip-area/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.match(
     editorialCss,

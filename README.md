@@ -56,6 +56,7 @@ npm run db:notifications
 npm run db:profile-names
 npm run db:suggestions
 npm run db:ranking-editor
+npm run db:vip-area
 ```
 
 As migrações são idempotentes. Nunca coloque credenciais reais no repositório; use variáveis locais e as configurações protegidas da Vercel.

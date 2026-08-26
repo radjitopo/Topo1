@@ -72,6 +72,7 @@ export function buildSitemap(rankings) {
   const localGroupActivity = new Map();
 
   for (const ranking of rankings) {
+    if (ranking.isVip || ranking.is_vip) continue;
     const updatedAt = ranking.updated_at || ranking.created_at;
     homeLastModified = latestDate(homeLastModified, updatedAt);
     addUrl(urls, `/ranking/${encodeURIComponent(ranking.id)}`, updatedAt);
@@ -147,6 +148,7 @@ export default async function handler(_req, res) {
       LEFT JOIN live_vote_activity live ON live.ranking_id = ranking.id
       LEFT JOIN double_vote_activity double_activity ON double_activity.ranking_id = ranking.id
       WHERE ranking.is_active = true
+        AND ranking.is_vip = false
       ORDER BY ranking.created_at DESC, ranking.id
     `);
     const xml = buildSitemap(rankings);

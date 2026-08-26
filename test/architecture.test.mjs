@@ -4,11 +4,14 @@ import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
 
-test('production requests do not run schema migrations or legacy password code', async () => {
+test('production requests do not run schema migrations or legacy account password code', async () => {
   const api = await readFile(new URL('api.js', root), 'utf8');
 
   assert.doesNotMatch(api, /CREATE TABLE|ALTER TABLE|CREATE INDEX/);
-  assert.doesNotMatch(api, /scryptSync|timingSafeEqual|function signup|function login/);
+  assert.doesNotMatch(api, /function signup|function login/);
+  assert.match(api, /function hashVipPassword/);
+  assert.match(api, /scryptSync/);
+  assert.match(api, /timingSafeEqual/);
   assert.doesNotMatch(api, /ensureClerkSchema|ensureSuggestionSchema/);
   assert.match(api, /legacy_auth_disabled/);
   assert.match(api, /password_auth_disabled/);

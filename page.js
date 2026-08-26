@@ -228,7 +228,9 @@ function itemListSchema(rankings, name, id) {
 }
 
 export function renderHomePage(template, rankings, search = '') {
-  const publicRankings = rankings.filter((ranking) => !isSeoLocalRanking(ranking));
+  const publicRankings = rankings.filter(
+    (ranking) => !ranking.isVip && !ranking.is_vip && !isSeoLocalRanking(ranking),
+  );
   const featured = [...publicRankings]
     .sort(
       (a, b) =>
@@ -286,7 +288,10 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
   const selected = rankings
     .filter(
       (ranking) =>
-        !isSeoLocalRanking(ranking) && generalCategoryForRanking(ranking)?.slug === category.slug,
+        !ranking.isVip &&
+        !ranking.is_vip &&
+        !isSeoLocalRanking(ranking) &&
+        generalCategoryForRanking(ranking)?.slug === category.slug,
     )
     .sort(
       (a, b) =>
@@ -342,7 +347,9 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
 }
 
 export function renderLocalPage(template, rankings, city = null, group = null, search = '') {
-  const localRankings = rankings.filter(isSeoLocalRanking);
+  const localRankings = rankings.filter(
+    (ranking) => !ranking.isVip && !ranking.is_vip && isSeoLocalRanking(ranking),
+  );
   const selected = localRankings
     .filter((ranking) => !city || localCityByLabel(ranking.category)?.slug === city.slug)
     .filter((ranking) => !group || localGroupForRanking(ranking)?.slug === group.slug)
@@ -504,6 +511,23 @@ export function renderRankingPage(template, ranking) {
   });
 }
 
+export function renderVipRankingPage(template, ranking) {
+  const question = rankingQuestion(ranking.id, ranking.question);
+  const canonical = `${BASE_URL}/ranking/${encodeURIComponent(ranking.id)}`;
+  const content = `<section class="vipGate vipGateServer"><span class="vipGateIcon" aria-hidden="true">🔒</span><span class="portalKicker">Área VIP</span><h1>${escapeHtml(question)}</h1><p>Este ranking é protegido. Digite a senha para ver as opções e votar.</p><div class="vipGateLoading">Preparando o acesso seguro…</div><noscript><p>Ative o JavaScript para informar a senha deste ranking.</p></noscript></section>`;
+  return withPage(template, {
+    metadata: {
+      title: `Ranking da Área VIP — TOPO`,
+      description: 'Ranking protegido por senha na Área VIP do TOPO.',
+      canonical,
+      image: `${BASE_URL}/og-topo-v2.png`,
+      index: false,
+    },
+    content,
+    bodyClass: 'rankingPage vipPage',
+  });
+}
+
 async function fetchRankingSummaries(sql) {
   const rows = await sql.query(`
     WITH vote_totals AS (
@@ -591,6 +615,7 @@ async function fetchRankingSummaries(sql) {
     LEFT JOIN ranking_activity activity ON activity.ranking_id = ranking.id
     LEFT JOIN ranking_previews preview ON preview.ranking_id = ranking.id
     WHERE ranking.is_active = true
+      AND ranking.is_vip = false
     ORDER BY ranking.created_at DESC, ranking.id
   `);
   return rows.map((row) => ({
@@ -611,6 +636,38 @@ async function fetchRankingSummaries(sql) {
 }
 
 async function fetchRanking(sql, id) {
+  const [metadata] = await sql.query(
+    `
+      SELECT
+        id,
+        category,
+        question,
+        image_url,
+        created_at,
+        content_updated_at,
+        is_vip AS "isVip"
+      FROM rankings
+      WHERE id = $1
+        AND is_active = true
+      LIMIT 1
+    `,
+    [id],
+  );
+  if (!metadata) return null;
+  if (metadata.isVip === true) {
+    return {
+      id: metadata.id,
+      category: metadata.category,
+      question: rankingQuestion(metadata.id, metadata.question),
+      imageUrl: null,
+      createdAt: metadata.created_at,
+      updatedAt: metadata.content_updated_at || metadata.created_at,
+      voteCount: 0,
+      options: [],
+      isVip: true,
+    };
+  }
+
   const rows = await sql.query(
     `
       WITH vote_totals AS (
@@ -657,6 +714,7 @@ async function fetchRanking(sql, id) {
       LEFT JOIN double_vote_totals double_vote ON double_vote.option_id = option.id
       WHERE ranking.id = $1
         AND ranking.is_active = true
+        AND ranking.is_vip = false
       ORDER BY score DESC, option.position
     `,
     [id],
@@ -694,6 +752,7 @@ function privatePageMetadata(kind) {
       entrar: ['Entrar — TOPO', 'Entre no TOPO com um código enviado por e-mail.'],
       perfil: ['Perfil — TOPO', 'Acesse seu perfil, seus votos e suas conquistas no TOPO.'],
       moderacao: ['Moderação — TOPO', 'Área privada de moderação do TOPO.'],
+      vip: ['Área VIP — TOPO', 'Rankings protegidos por senha no TOPO.'],
       'recuperar-senha': ['Acesso — TOPO', 'Recupere o acesso à sua conta no TOPO.'],
       'redefinir-senha': ['Acesso — TOPO', 'Conclua a recuperação de acesso à sua conta no TOPO.'],
       'sso-callback': ['Concluindo acesso — TOPO', 'Concluindo seu acesso seguro ao TOPO.'],
@@ -712,7 +771,14 @@ function renderPrivatePage(template, kind) {
       index: false,
     },
     content: '<div class="loading">carregando…</div>',
-    bodyClass: kind === 'perfil' ? 'profilePage' : kind === 'moderacao' ? 'moderationPage' : '',
+    bodyClass:
+      kind === 'perfil'
+        ? 'profilePage'
+        : kind === 'moderacao'
+          ? 'moderationPage'
+          : kind === 'vip'
+            ? 'vipPage'
+            : '',
   });
 }
 
@@ -794,6 +860,12 @@ export default async function handler(req, res) {
         cache: false,
         index: false,
       });
+    if (ranking.isVip) {
+      return sendHtml(res, 200, renderVipRankingPage(template, ranking), {
+        cache: false,
+        index: false,
+      });
+    }
     return sendHtml(res, 200, renderRankingPage(template, ranking));
   } catch (error) {
     console.error('Public page rendering failed', error);

@@ -3887,3 +3887,443 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
     flex: 1;
   }
 }
+
+/* Área VIP --------------------------------------------------------------- */
+
+body.popElectric .experienceLink .vipMark {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+body.popElectric .experienceLink.vip.active {
+  border-color: #b58e30;
+  background: transparent;
+  color: var(--clean-ink);
+}
+
+body.popElectric.vipPage .groupsWrap {
+  display: none;
+}
+
+body.popElectric .vipHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+  gap: 28px;
+  align-items: end;
+  border-bottom: 2px solid var(--clean-ink);
+  padding: 46px 0 28px;
+}
+
+body.popElectric .vipHero h1 {
+  grid-column: 1;
+  max-width: 780px;
+  margin: 7px 0 0;
+  color: var(--clean-ink);
+  font:
+    900 clamp(48px, 7vw, 92px) / 0.88 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.075em;
+}
+
+body.popElectric .vipHero p {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    700 17px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 28px 0 54px;
+}
+
+body.popElectric .vipCard {
+  overflow: hidden;
+  border: 1px solid var(--clean-line-strong);
+  background: #fff;
+}
+
+body.popElectric .vipCardMedia {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #e9e3d2;
+  color: var(--clean-ink);
+}
+
+body.popElectric .vipCardMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 180ms ease;
+}
+
+body.popElectric .vipCard:hover .vipCardMedia img {
+  transform: scale(1.025);
+}
+
+body.popElectric .vipCardFallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: repeating-linear-gradient(-45deg, #f0ead8 0 12px, #e5dcc5 12px 24px);
+  font:
+    900 44px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.08em;
+}
+
+body.popElectric .vipCardLock {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  background: rgba(20, 19, 16, 0.88);
+  color: #fff;
+  font-size: 17px;
+  backdrop-filter: blur(7px);
+}
+
+body.popElectric .vipCardBody {
+  padding: 18px;
+}
+
+body.popElectric .vipCardStatus {
+  display: inline-block;
+  color: #7b5a12;
+  font:
+    800 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric .vipCardStatus.unlocked {
+  color: #3c6b55;
+}
+
+body.popElectric .vipCard h2 {
+  min-height: 2.3em;
+  margin: 8px 0 20px;
+  font:
+    900 25px/1.05 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric .vipCard h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body.popElectric .vipCardAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--clean-line);
+  padding-top: 13px;
+  color: var(--clean-ink);
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+body.popElectric .vipEmpty {
+  margin: 30px 0 60px;
+  border: 1px solid var(--clean-line-strong);
+  background: #f7f2e4;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+body.popElectric .vipEmpty > span {
+  font-size: 32px;
+}
+
+body.popElectric .vipEmpty h2 {
+  margin: 13px 0 5px;
+  font:
+    900 29px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipEmpty p {
+  margin: 0;
+  color: var(--clean-muted);
+}
+
+body.popElectric .vipGate {
+  width: min(100%, 650px);
+  margin: 44px auto 70px;
+  border: 1px solid var(--clean-line-strong);
+  border-top: 5px solid #1e1b14;
+  background: #fff;
+  padding: clamp(26px, 6vw, 52px);
+  text-align: center;
+  box-shadow: 0 18px 55px rgba(28, 24, 16, 0.08);
+}
+
+body.popElectric .vipGateIcon {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f1e7c9;
+  color: #3c2e0d;
+  font-size: 27px;
+}
+
+body.popElectric .vipGateIcon svg {
+  width: 29px;
+  height: 29px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+body.popElectric .vipGate h1 {
+  margin: 10px auto 12px;
+  font:
+    900 clamp(34px, 6vw, 54px) / 0.98 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .vipGate > p,
+body.popElectric .vipGate > small {
+  color: var(--clean-muted);
+  font:
+    600 15px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipGateForm {
+  margin: 30px 0 17px;
+  text-align: left;
+}
+
+body.popElectric .vipGateForm > label {
+  display: block;
+  margin-bottom: 7px;
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+body.popElectric .vipGateForm > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+body.popElectric .vipGateForm input,
+body.popElectric .vipGateForm button {
+  min-height: 52px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  font:
+    800 15px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipGateForm input {
+  min-width: 0;
+  padding: 12px 14px;
+}
+
+body.popElectric .vipGateForm input:focus {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid rgba(181, 142, 48, 0.25);
+  outline-offset: 0;
+}
+
+body.popElectric .vipGateForm button {
+  margin-left: -1px;
+  background: var(--clean-ink);
+  color: #fff;
+  padding: 0 24px;
+  cursor: pointer;
+}
+
+body.popElectric .vipGateForm button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+body.popElectric .vipGateStatus {
+  display: block;
+  min-height: 20px;
+  padding-top: 8px;
+  color: var(--clean-muted);
+  font:
+    700 12px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipGateStatus.error {
+  color: #a33b34;
+}
+
+body.popElectric .vipGateLoading {
+  margin-top: 24px;
+  color: var(--clean-muted);
+  font-size: 13px;
+}
+
+body.popElectric.rankingPage .rankingEditorVip {
+  border: 1px solid #cfc4a6;
+  background: #fbf7eb;
+  padding: 20px;
+}
+
+body.popElectric.rankingPage .rankingEditorVip.enabled {
+  border-color: #8f702c;
+  box-shadow: inset 4px 0 0 #b58e30;
+}
+
+body.popElectric.rankingPage .rankingEditorVipToggle {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 18px 0;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .rankingEditorVipToggle input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: #1e1b14;
+}
+
+body.popElectric.rankingPage .rankingEditorVipToggle > span {
+  display: grid;
+  gap: 5px;
+}
+
+body.popElectric.rankingPage .rankingEditorVipToggle strong {
+  font:
+    800 15px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorVipToggle small {
+  color: var(--clean-muted);
+  font:
+    600 12px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
+  background: #eeeae0;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 860px) {
+  body.popElectric .vipGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body.popElectric .experienceLink .vipMark {
+    width: 16px;
+    height: 16px;
+  }
+
+  body.popElectric .vipHero {
+    display: block;
+    padding: 29px 0 22px;
+  }
+
+  body.popElectric .vipHero h1 {
+    font-size: 54px;
+  }
+
+  body.popElectric .vipHero p {
+    margin-top: 17px;
+    font-size: 15px;
+  }
+
+  body.popElectric .vipGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding-top: 18px;
+  }
+
+  body.popElectric .vipCard {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+  }
+
+  body.popElectric .vipCardMedia {
+    height: 100%;
+    min-height: 168px;
+    aspect-ratio: auto;
+  }
+
+  body.popElectric .vipCardBody {
+    padding: 15px;
+  }
+
+  body.popElectric .vipCard h2 {
+    min-height: 0;
+    margin: 8px 0 18px;
+    font-size: 21px;
+  }
+
+  body.popElectric .vipGate {
+    margin-top: 24px;
+    padding: 28px 20px;
+  }
+
+  body.popElectric .vipGateForm > div {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  body.popElectric .vipGateForm button {
+    width: 100%;
+    margin: 0;
+  }
+
+  body.popElectric.rankingPage .rankingEditorVip {
+    padding: 17px;
+  }
+}

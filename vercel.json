@@ -43,7 +43,7 @@
     { "src": "/sitemap.xml", "dest": "/sitemap.js" },
     { "src": "/", "dest": "/page.js?view=home" },
     {
-      "src": "/(entrar|perfil|moderacao|recuperar-senha|redefinir-senha|sso-callback)/?",
+      "src": "/(entrar|perfil|moderacao|vip|recuperar-senha|redefinir-senha|sso-callback)/?",
       "dest": "/page.js?view=private&kind=$1"
     },
     {

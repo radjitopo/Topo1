@@ -35,6 +35,6 @@ test('the notification center is persisted, generated and visible beside the pro
   );
   assert.match(css, /\.notificationPanel/);
   assert.match(css, /\.notificationBadge/);
-  assert.match(index, /app\.js\?v=20260826-44-registration-10/);
+  assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(index, /style\.css\?v=20260825-9-seo/);
 });
