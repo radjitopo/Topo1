@@ -11,9 +11,15 @@ const categoryExamples = [
   ['hamburguer-brasilia', 'Quem faz o melhor hambúrguer em Brasília?', 'Hambúrguer'],
   ['sushi-brasilia', 'Qual é o melhor sushi em Brasília?', 'Sushi/Japonês'],
   ['cafes-brasilia', 'Qual é o melhor café em Brasília?', 'Café/Cafeteria'],
+  ['bares-brasilia', 'Qual é o melhor bar em Brasília?', 'Bares'],
   ['saloes-beleza-brasilia', 'Qual é o melhor salão de beleza em Brasília?', 'Salão de beleza'],
   ['barbearias-brasilia', 'Qual é a melhor barbearia em Brasília?', 'Barbearia'],
   ['academias-brasilia', 'Qual é a melhor academia em Brasília?', 'Academia'],
+  [
+    'eventos-esportivos-brasilia',
+    'Qual tipo de evento esportivo é o favorito em Brasília?',
+    'Eventos esportivos',
+  ],
   ['pet-shops-brasilia', 'Qual é o melhor pet shop em Brasília?', 'Pet shop'],
   [
     'restaurantes-italianos-brasilia',
@@ -65,7 +71,7 @@ const rankings = [
   },
 ];
 
-test('the exact 14 Topo Local categories classify independently', () => {
+test('the exact 16 Topo Local categories classify independently', () => {
   assert.deepEqual(local.groupOrder, ['Todos', ...categoryExamples.map(([, , group]) => group)]);
   for (const [id, , expected] of categoryExamples) {
     const ranking = rankings.find((item) => item.id === id);

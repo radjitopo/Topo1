@@ -10,7 +10,7 @@ const OUTPUT_URL = new URL('../data/local-catalog.json', import.meta.url);
 const cities = Object.freeze([
   { name: 'São Paulo', state: 'SP', slug: 'sp' },
   { name: 'Rio de Janeiro', state: 'RJ', slug: 'rio' },
-  { name: 'Brasília', state: 'DF', slug: 'brasilia' },
+  { name: 'Brasília', state: 'DF', slug: 'brasilia', relationId: 421151 },
   { name: 'Fortaleza', state: 'CE', slug: 'fortaleza' },
   { name: 'Salvador', state: 'BA', slug: 'salvador' },
   { name: 'Belo Horizonte', state: 'MG', slug: 'belo-horizonte' },
@@ -41,11 +41,14 @@ const images = Object.freeze({
   sushi:
     'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82',
   cafe: 'https://images.unsplash.com/photo-1561522983-385a76fbb4cb?auto=format&fit=crop&crop=entropy&w=1200&q=82',
+  bar: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=82',
   beauty:
     'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=82',
   barber:
     'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=82',
   gym: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=82',
+  sportsEvents:
+    'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=82',
   pet: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=82',
   italian:
     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=82',
@@ -64,6 +67,7 @@ const patterns = Object.freeze({
   burger: /\b(?:burger|burguer|hamburguer|hamburgueria|hamburger)\b/,
   sushi: /\b(?:sushi|temaki|temakeria|japa|japones|japanese|izakaya|ramen|yakisoba|nikkei|kappo)\b/,
   cafe: /\b(?:cafe|cafeteria|coffee|cafes)\b/,
+  bar: /\b(?:bar|bares|pub|boteco|botequim|cervejaria|choperia|taproom|beer|bier)\b/,
   barber: /\b(?:barber|barbearia|barbeiro|barbershop|cavalheiros?)\b/,
   beauty: /\b(?:salao|beleza|beauty|cabeleireir|hair|esmalteria|estetica|studio)\b/,
   gym: /\b(?:academia|fitness|crossfit|cross training|gym|pilates|musculacao)\b/,
@@ -74,6 +78,29 @@ const patterns = Object.freeze({
   vegan: /\b(?:vegano|vegana|vegan|vegetariano|vegetariana|vegetarian|plant based|plant-based)\b/,
   thrift: /\b(?:brecho|bazar|thrift|second hand|segunda mao|reuso)\b/,
 });
+
+const sportsEventOptions = Object.freeze([
+  'Jogos de futebol',
+  'Corridas de rua',
+  'Maratonas e meias maratonas',
+  'Torneios de futsal',
+  'Jogos de vôlei',
+  'Jogos de basquete',
+  'Provas de ciclismo',
+  'Competições de natação',
+  'Torneios de tênis',
+  'Competições de artes marciais',
+  'Triatlo',
+  'Competições de skate',
+  'Jogos universitários',
+  'Campeonatos escolares',
+  'Eventos de esportes adaptados',
+  'E-sports',
+  'Competições de ginástica',
+  'Provas de atletismo',
+  'Torneios de handebol',
+  'Eventos de rugby',
+]);
 
 const existingIds = new Set([
   'sushi-floripa',
@@ -139,9 +166,11 @@ function categoryId(key, city) {
     burger: `hamburguer-${city.slug}`,
     sushi: `sushi-${city.slug}`,
     cafe: `cafes-${city.slug}`,
+    bar: `bares-${city.slug}`,
     beauty: `saloes-beleza-${city.slug}`,
     barber: `barbearias-${city.slug}`,
     gym: `academias-${city.slug}`,
+    sportsEvents: `eventos-esportivos-${city.slug}`,
     pet: `pet-shops-${city.slug}`,
     italian: `restaurantes-italianos-${city.slug}`,
     bakery: `padarias-${city.slug}`,
@@ -199,6 +228,16 @@ const categories = Object.freeze([
       (isFoodEstablishment(place) && patterns.cafe.test(searchable(place))),
   },
   {
+    key: 'bar',
+    label: 'Bares',
+    question: (city) => `Qual é o melhor bar em ${city.name}?`,
+    image: images.bar,
+    match: (place) =>
+      ['bar', 'pub', 'biergarten'].includes(place.tags.amenity) ||
+      (['restaurant', 'cafe', 'nightclub'].includes(place.tags.amenity) &&
+        patterns.bar.test(searchable(place))),
+  },
+  {
     key: 'beauty',
     label: 'Salão de beleza',
     question: (city) => `Qual é o melhor salão de beleza em ${city.name}?`,
@@ -225,6 +264,13 @@ const categories = Object.freeze([
     image: images.gym,
     match: (place) =>
       place.tags.leisure === 'fitness_centre' || patterns.gym.test(searchable(place)),
+  },
+  {
+    key: 'sportsEvents',
+    label: 'Eventos esportivos',
+    question: (city) => `Qual tipo de evento esportivo é o favorito em ${city.name}?`,
+    image: images.sportsEvents,
+    fixedOptions: sportsEventOptions,
   },
   {
     key: 'pet',
@@ -304,6 +350,7 @@ async function fetchJson(url, options = {}, attempts = 5) {
 }
 
 async function resolveRelation(city) {
+  if (city.relationId) return city.relationId;
   const query = encodeURIComponent(`${city.name}, ${city.state}, Brasil`);
   const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&q=${query}`;
   const results = await fetchJson(url);
@@ -331,6 +378,8 @@ nwr["amenity"="fast_food"]["name"](area.city)->.fastfood;
 .fastfood out tags 900;
 nwr["amenity"="cafe"]["name"](area.city)->.cafes;
 .cafes out tags 700;
+nwr["amenity"~"^(bar|pub|biergarten)$"]["name"](area.city)->.bars;
+.bars out tags 900;
 nwr["shop"~"^(hairdresser|beauty)$"]["name"](area.city)->.beauty;
 .beauty out tags 900;
 nwr["leisure"="fitness_centre"]["name"](area.city)->.gyms;
@@ -343,12 +392,22 @@ nwr["shop"~"^(health_food|organic|second_hand|charity)$"]["name"](area.city)->.s
 .specialshops out tags 500;
 nwr["shop"="clothes"]["second_hand"]["name"](area.city)->.secondhand;
 .secondhand out tags 500;
-nwr["name"~"pizza|pizzaria|pizzeria|burger|burguer|hamburg|sushi|temaki|japon|izakaya|ramen|barbear|barber|academia|fitness|crossfit|pet.?shop|italian|trattoria|osteria|cantina|ristorante|padaria|panificadora|boulangerie|quilo|buffet|self.?service|vegano|vegan|vegetariano|brech.|bazar",i](area.city)->.named;
+nwr["name"~"pizza|pizzaria|pizzeria|burger|burguer|hamburg|sushi|temaki|japon|izakaya|ramen|bar|pub|boteco|botequim|cervejaria|choperia|barbear|barber|academia|fitness|crossfit|pet.?shop|italian|trattoria|osteria|cantina|ristorante|padaria|panificadora|boulangerie|quilo|buffet|self.?service|vegano|vegan|vegetariano|brech.|bazar",i](area.city)->.named;
 .named out tags 1800;`;
 }
 
-async function fetchPlaces(city, relationId, cityIndex) {
-  const body = new URLSearchParams({ data: overpassQuery(relationId) });
+function barsOverpassQuery(relationId) {
+  const areaId = 3600000000 + Number(relationId);
+  return `[out:json][timeout:120];
+area(${areaId})->.city;
+nwr["amenity"~"^(bar|pub|biergarten)$"]["name"](area.city)->.bars;
+.bars out tags 1200;
+nwr["amenity"~"^(restaurant|cafe|nightclub)$"]["name"~"bar|pub|boteco|botequim|cervejaria|choperia|taproom",i](area.city)->.namedbars;
+.namedbars out tags 700;`;
+}
+
+async function fetchPlaces(city, relationId, cityIndex, query = overpassQuery) {
+  const body = new URLSearchParams({ data: query(relationId) });
   let lastError;
   for (let attempt = 0; attempt < 6; attempt += 1) {
     const endpoint = OVERPASS_ENDPOINTS[(cityIndex + attempt) % OVERPASS_ENDPOINTS.length];
@@ -380,7 +439,7 @@ function cleanPlace(element) {
   if (!name || name.length < 3 || name.length > 80) return null;
   if (!/[a-z]/.test(normalized) || /^\d+$/.test(normalized)) return null;
   if (
-    /^(?:restaurante|lanchonete|pizzaria|padaria|academia|barbearia|salao|brecho|bazar|cafe|pet shop)$/i.test(
+    /^(?:restaurante|lanchonete|pizzaria|padaria|academia|barbearia|salao|brecho|bazar|cafe|pet shop|bar|pub|boteco)$/i.test(
       normalized,
     )
   )
@@ -409,6 +468,7 @@ function placeScore(place, category) {
   if (tags.cuisine) score += 2;
   if (category.key === 'restaurants' && tags.amenity === 'restaurant') score += 8;
   if (category.key === 'cafe' && tags.amenity === 'cafe') score += 8;
+  if (category.key === 'bar' && ['bar', 'pub', 'biergarten'].includes(tags.amenity)) score += 10;
   if (category.key === 'beauty' && tags.shop === 'beauty') score += 7;
   if (category.key === 'barber' && fold(tags.hairdresser) === 'male') score += 9;
   if (category.key === 'gym' && tags.leisure === 'fitness_centre') score += 9;
@@ -458,7 +518,13 @@ function makeRanking(city, category, labels) {
 }
 
 function makeRankings(city, elements) {
-  return categories.map((category) => makeRanking(city, category, bestOptions(elements, category)));
+  return categories.map((category) =>
+    makeRanking(
+      city,
+      category,
+      category.fixedOptions ? [...category.fixedOptions] : bestOptions(elements, category),
+    ),
+  );
 }
 
 function rankingsFromSeed(seed) {
@@ -467,7 +533,7 @@ function rankingsFromSeed(seed) {
   }
   return cities.flatMap((city) =>
     categories.map((category) => {
-      const labels = seed.cities?.[city.slug]?.[category.key];
+      const labels = category.fixedOptions || seed.cities?.[city.slug]?.[category.key];
       if (!Array.isArray(labels)) {
         throw new Error(`Sementes ausentes para ${city.slug}/${category.key}.`);
       }
@@ -476,8 +542,8 @@ function rankingsFromSeed(seed) {
   );
 }
 
-function validate(rankings, allowIncomplete = false) {
-  if (rankings.length !== cities.length * categories.length) {
+function validate(rankings, allowIncomplete = false, requireCompleteMatrix = true) {
+  if (requireCompleteMatrix && rankings.length !== cities.length * categories.length) {
     throw new Error(
       `O catálogo tem ${rankings.length} rankings; deveria ter ${cities.length * categories.length}.`,
     );
@@ -499,8 +565,8 @@ function validate(rankings, allowIncomplete = false) {
   return incomplete;
 }
 
-function sqlStatements(rankings) {
-  validate(rankings);
+function sqlStatements(rankings, requireCompleteMatrix = true) {
+  validate(rankings, false, requireCompleteMatrix);
   const sqlText = String.raw;
   const rankingPayload = JSON.stringify(
     rankings.map(({ id, category, question, image_url, baseline_votes, is_active }) => ({
@@ -596,7 +662,18 @@ async function main() {
   const args = new Set(process.argv.slice(2));
   if (args.has('--sql')) {
     const rankings = JSON.parse(await readFile(OUTPUT_URL, 'utf8'));
-    process.stdout.write(JSON.stringify(sqlStatements(rankings)));
+    const requestedKeys = process.argv
+      .find((value) => value.startsWith('--categories='))
+      ?.slice(13)
+      .split(',')
+      .filter(Boolean);
+    const selectedRankings = requestedKeys?.length
+      ? rankings.filter((ranking) => requestedKeys.includes(ranking.localCategoryKey))
+      : rankings;
+    if (requestedKeys?.length && selectedRankings.length !== cities.length * requestedKeys.length) {
+      throw new Error(`Categorias locais incompletas: ${requestedKeys.join(', ')}.`);
+    }
+    process.stdout.write(JSON.stringify(sqlStatements(selectedRankings, !requestedKeys?.length)));
     return;
   }
 
@@ -605,7 +682,7 @@ async function main() {
     const seed = JSON.parse(await readFile(seedPath, 'utf8'));
     const rankings = rankingsFromSeed(seed);
     validate(rankings);
-    await writeFile(OUTPUT_URL, `${JSON.stringify(rankings, null, 2)}\n`);
+    await writeFile(OUTPUT_URL, `${JSON.stringify(rankings)}\n`);
     console.error(
       `Catálogo salvo em ${OUTPUT_URL.pathname}: ${rankings.length} rankings, ` +
         `${rankings.reduce((total, ranking) => total + ranking.opts.length, 0)} opções.`,
@@ -614,6 +691,9 @@ async function main() {
   }
 
   const requestedCity = process.argv.find((value) => value.startsWith('--city='))?.slice(7);
+  const augmentExisting = args.has('--augment');
+  const existingCatalog = augmentExisting ? JSON.parse(await readFile(OUTPUT_URL, 'utf8')) : [];
+  const existingById = new Map(existingCatalog.map((ranking) => [ranking.id, ranking]));
   const selectedCities = requestedCity
     ? cities.filter(
         (city) => fold(city.name) === fold(requestedCity) || city.slug === requestedCity,
@@ -623,16 +703,45 @@ async function main() {
 
   const rankings = [];
   for (const [index, city] of selectedCities.entries()) {
+    const missingCategories = categories.filter(
+      (category) => !existingById.has(categoryId(category.key, city)),
+    );
+    if (augmentExisting && !missingCategories.length) {
+      rankings.push(
+        ...categories.map((category) => existingById.get(categoryId(category.key, city))),
+      );
+      continue;
+    }
     console.error(
       `[${index + 1}/${selectedCities.length}] ${city.name}: resolvendo limite municipal...`,
     );
-    const relationId = await resolveRelation(city);
-    await delay(1100);
-    console.error(
-      `[${index + 1}/${selectedCities.length}] ${city.name}: buscando estabelecimentos...`,
-    );
-    const elements = await fetchPlaces(city, relationId, index);
-    const cityRankings = makeRankings(city, elements);
+    const dynamicCategories = augmentExisting
+      ? missingCategories.filter((category) => !category.fixedOptions)
+      : categories.filter((category) => !category.fixedOptions);
+    let elements = [];
+    if (dynamicCategories.length) {
+      const relationId = await resolveRelation(city);
+      await delay(1100);
+      console.error(
+        `[${index + 1}/${selectedCities.length}] ${city.name}: buscando estabelecimentos...`,
+      );
+      elements = await fetchPlaces(
+        city,
+        relationId,
+        index,
+        augmentExisting && dynamicCategories.every((category) => category.key === 'bar')
+          ? barsOverpassQuery
+          : overpassQuery,
+      );
+    }
+    const cityRankings = categories.map((category) => {
+      const existing = existingById.get(categoryId(category.key, city));
+      if (augmentExisting && existing) return existing;
+      const labels = category.fixedOptions
+        ? [...category.fixedOptions]
+        : bestOptions(elements, category);
+      return makeRanking(city, category, labels);
+    });
     rankings.push(...cityRankings);
     console.error(
       `[${index + 1}/${selectedCities.length}] ${city.name}: ${elements.length} registros; ` +
@@ -666,7 +775,7 @@ async function main() {
     return;
   }
 
-  await writeFile(OUTPUT_URL, `${JSON.stringify(rankings, null, 2)}\n`);
+  await writeFile(OUTPUT_URL, `${JSON.stringify(rankings)}\n`);
   console.error(`Catálogo salvo em ${OUTPUT_URL.pathname}.`);
   validate(rankings);
 }

@@ -30,9 +30,11 @@
     'Hambúrguer',
     'Sushi/Japonês',
     'Café/Cafeteria',
+    'Bares',
     'Salão de beleza',
     'Barbearia',
     'Academia',
+    'Eventos esportivos',
     'Pet shop',
     'Restaurante italiano',
     'Padaria',
@@ -112,6 +114,11 @@
       question: /\b(?:cafe|cafeteria)\b/,
     },
     {
+      name: 'Bares',
+      id: /^bares?(?:\s|$)/,
+      question: /\b(?:bar|bares|boteco|botequim|pub)\b/,
+    },
+    {
       name: 'Salão de beleza',
       id: /^(?:salao|saloes)\s+(?:de\s+)?beleza(?:\s|$)/,
       question: /\bsalao\s+de\s+beleza\b/,
@@ -125,6 +132,11 @@
       name: 'Academia',
       id: /^academias?(?:\s|$)/,
       question: /\bacademia\b/,
+    },
+    {
+      name: 'Eventos esportivos',
+      id: /^eventos?\s+esportivos?(?:\s|$)/,
+      question: /\bevento\s+esportivo\b/,
     },
     {
       name: 'Pet shop',

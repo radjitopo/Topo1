@@ -10,14 +10,14 @@ const catalog = JSON.parse(
 
 const expectedCategories = local.groupOrder.slice(1);
 
-test('the local seed is a complete 21 by 14 matrix', () => {
-  assert.equal(catalog.length, 294);
-  assert.equal(new Set(catalog.map((ranking) => ranking.id)).size, 294);
+test('the local seed is a complete 21 by 16 matrix', () => {
+  assert.equal(catalog.length, 336);
+  assert.equal(new Set(catalog.map((ranking) => ranking.id)).size, 336);
   assert.deepEqual([...new Set(catalog.map((ranking) => ranking.city))], local.cityOrder);
 
   for (const city of local.cityOrder) {
     const cityRankings = catalog.filter((ranking) => ranking.city === city);
-    assert.equal(cityRankings.length, 14, city);
+    assert.equal(cityRankings.length, 16, city);
     assert.deepEqual(
       cityRankings.map((ranking) => ranking.localCategory),
       expectedCategories,
@@ -26,10 +26,10 @@ test('the local seed is a complete 21 by 14 matrix', () => {
   }
 });
 
-test('all 5,861 starting options are usable and unique inside each ranking', () => {
+test('all 6,701 starting options are usable and unique inside each ranking', () => {
   assert.equal(
     catalog.reduce((total, ranking) => total + ranking.opts.length, 0),
-    5861,
+    6701,
   );
   for (const ranking of catalog) {
     assert.ok(ranking.opts.length >= 5 && ranking.opts.length <= 20, ranking.id);
