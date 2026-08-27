@@ -123,8 +123,8 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /Meus rankings privados/);
   assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
-  assert.match(style, /900 clamp\(42px, 5vw, 64px\)/);
-  assert.match(style, /font-size: 43px/);
+  assert.match(style, /900 clamp\(38px, 4\.4vw, 54px\)/);
+  assert.match(style, /font-size: 38px/);
 });
 
 test('only the creator can manage a private ranking and the profile exposes the complete flow', async () => {

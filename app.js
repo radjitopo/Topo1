@@ -341,6 +341,13 @@ function localRankingsForSelectedCity(list = experienceRankings()) {
   if (!isLocalExperience()) return list;
   return topoLocal.rankingsForCity(list, selectedCity);
 }
+function globalSearchRankings() {
+  return rankings.filter(
+    (ranking) =>
+      !ranking.vip &&
+      (!topoLocal.isLocalRanking(ranking) || topoLocal.cityMatches(ranking, selectedCity)),
+  );
+}
 const groupOverrides = {
   'lugares-date': 'Lugares',
   'coisas-fora-moda': 'Moda',
@@ -615,16 +622,12 @@ function syncExperienceNavigation() {
     if (active) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   });
-  if (searchForm) searchForm.action = local ? '/local' : '/';
+  if (searchForm) searchForm.action = '/';
   if (searchInput) {
-    searchInput.placeholder = local
-      ? `Buscar lugares em ${selectedCity || 'sua cidade'}`
-      : vip
-        ? 'Buscar nos rankings públicos'
-        : 'Buscar rankings, temas ou itens';
+    searchInput.placeholder = `Buscar no TOPO e em ${selectedCity || 'sua cidade'}`;
     searchInput.setAttribute(
       'aria-label',
-      local ? `Buscar rankings locais em ${selectedCity || 'sua cidade'}` : 'Buscar rankings',
+      `Buscar em todos os rankings públicos e nos rankings locais de ${selectedCity || 'sua cidade'}`,
     );
   }
   renderCityPicker();
@@ -696,7 +699,7 @@ function renderGroups() {
 }
 if (searchInput)
   searchInput.addEventListener('input', () => {
-    if (pageKind() !== 'home') return;
+    if (pageKind() !== 'home' || location.pathname !== '/') return;
     homeSearch = searchInput.value.trim();
     categoryVisibleCount = CATEGORY_PAGE_SIZE;
     syncHomeSearchURL();
@@ -713,7 +716,7 @@ if (searchForm)
       searchInput.focus();
       return;
     }
-    if (pageKind() !== 'home') return;
+    if (pageKind() !== 'home' || location.pathname !== '/') return;
     event.preventDefault();
     homeSearch = query;
     categoryVisibleCount = CATEGORY_PAGE_SIZE;
@@ -1103,7 +1106,7 @@ function visibleRankings() {
   const hasSearch = searchTerms(homeSearch).length > 0,
     experienceSource = localRankingsForSelectedCity(),
     source = hasSearch
-      ? experienceSource
+      ? globalSearchRankings()
       : activeGroup === 'Todos'
         ? experienceSource
         : experienceSource.filter((r) => belongsToGroup(r, activeGroup)),
@@ -1412,7 +1415,9 @@ function renderCategoryHome(visible) {
 function searchRelevance(r) {
   const needle = searchTerms(homeSearch).join(' '),
     title = searchTerms(r.q).join(' '),
-    category = `${r.cat} ${experienceGroupOf(r)}`,
+    category = topoLocal.isLocalRanking(r)
+      ? `${r.cat} ${topoLocal.groupForRanking(r)} TOPO LOCAL`
+      : `${r.cat} ${groupOf(r)} TOPO`,
     items = (r.opts || []).map((o) => o.label).join(' ');
   if (title.startsWith(needle)) return 4;
   if (searchMatches(r.q, homeSearch)) return 3;
@@ -1421,14 +1426,14 @@ function searchRelevance(r) {
   return 0;
 }
 function renderSearchResults(visible) {
-  const local = isLocalExperience(),
-    sorted = sortForExperience(
+  const sorted = sortForExperience(
       visible,
       (a, b) =>
         searchRelevance(b) - searchRelevance(a) || Number(b.votes || 0) - Number(a.votes || 0),
-    );
-  document.title = `Busca: ${homeSearch} — ${local ? 'TOPO LOCAL' : 'TOPO'}`;
-  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">${local ? `Busca no TOPO LOCAL · ${escapeHTML(selectedCity)}` : 'Busca em todo o TOPO'}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'}${local ? ` em ${escapeHTML(selectedCity)}` : ', em todas as categorias'}. Abra um ranking para ver os itens e votar.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+    ),
+    city = selectedCity || 'sua cidade';
+  document.title = `Busca: ${homeSearch} — TOPO`;
+  feed.innerHTML = `<section class="searchResultsHead"><div><span class="portalKicker">TOPO + TOPO LOCAL · ${escapeHTML(city)}</span><h1>Resultados para “${escapeHTML(homeSearch)}”</h1><p>${fmt(sorted.length)} ranking${sorted.length === 1 ? ' encontrado' : 's encontrados'} em todo o TOPO e nos rankings locais de ${escapeHTML(city)}. Abra um ranking para ver os itens e votar.</p></div><button id="clearHomeSearch" type="button">Limpar busca</button></section><section class="searchRankList">${sorted.map(categoryRankCardHTML).join('')}</section><div class="end">TOPO · tudo vira ranking</div>`;
   document.getElementById('clearHomeSearch')?.addEventListener('click', clearHomeSearch);
   bindVotes();
 }

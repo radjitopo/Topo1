@@ -126,6 +126,7 @@ const wanted = [
   'experienceGroupOf',
   'experienceRankings',
   'localRankingsForSelectedCity',
+  'globalSearchRankings',
   'belongsToGroup',
   'visibleRankings',
   'homeEligibleRankings',
@@ -178,11 +179,12 @@ context.setDiscoveryState({
   rankings: [cinema, sushi],
   activeGroup: 'Cinema',
   homeSearch: 'sushi',
+  selectedCity: 'Florianópolis',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
-  [],
-  'the general search must not mix in commercial city rankings',
+  ['sushi-floripa'],
+  'the global search must include local rankings from the selected city',
 );
 
 context.setDiscoveryState({
@@ -257,6 +259,7 @@ context.setDiscoveryState({
   activeGroup: 'Todos',
   homeSearch: 'hotel',
   localExperience: false,
+  selectedCity: 'Rio de Janeiro',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
