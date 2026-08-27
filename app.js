@@ -740,8 +740,209 @@ function vipCardHTML(ranking) {
     media = ranking.img
       ? `<img src="${escapeHTML(ranking.img)}" alt="" loading="lazy" decoding="async">`
       : '<span class="vipCardFallback" aria-hidden="true">VIP</span>',
-    status = ranking.locked ? 'Protegido por senha' : 'Acesso liberado neste aparelho';
-  return `<article class="vipCard"><a class="vipCardMedia" href="${path}">${media}<span class="vipCardLock" aria-hidden="true">${ranking.locked ? '🔒' : '✓'}</span></a><div class="vipCardBody"><span class="vipCardStatus ${ranking.locked ? '' : 'unlocked'}">${status}</span><h2><a href="${path}">${escapeHTML(ranking.q)}</a></h2><a class="vipCardAction" href="${path}">${ranking.locked ? 'DIGITAR SENHA' : 'ABRIR RANKING'} <b>→</b></a></div></article>`;
+    status = ranking.owned
+      ? 'Seu ranking privado'
+      : ranking.locked
+        ? 'Protegido por senha'
+        : 'Acesso liberado neste aparelho',
+    ownerActions = ranking.owned
+      ? `<div class="vipOwnerActions"><button type="button" data-copy-vip="${escapeHTML(ranking.id)}">COPIAR LINK</button><button class="danger" type="button" data-delete-vip="${escapeHTML(ranking.id)}">APAGAR</button></div>`
+      : '';
+  return `<article class="vipCard" data-vip-card="${escapeHTML(ranking.id)}"><a class="vipCardMedia" href="${path}">${media}<span class="vipCardLock" aria-hidden="true">${ranking.locked ? '🔒' : '✓'}</span></a><div class="vipCardBody"><span class="vipCardStatus ${ranking.locked ? '' : 'unlocked'}">${status}</span><h2><a href="${path}">${escapeHTML(ranking.q)}</a></h2><a class="vipCardAction" href="${path}">${ranking.locked ? 'DIGITAR SENHA' : 'ABRIR RANKING'} <b>→</b></a>${ownerActions}</div></article>`;
+}
+
+function vipBaseRankings() {
+  return rankings
+    .filter(
+      (ranking) => ranking.vip !== true && ranking.opts?.length >= 3 && ranking.opts.length <= 20,
+    )
+    .sort((left, right) => left.q.localeCompare(right.q, 'pt-BR'));
+}
+
+function vipRankingMatchesHTML(query = '') {
+  const source = vipBaseRankings(),
+    matches = (
+      query ? source.filter((ranking) => searchMatches(rankingSearchText(ranking), query)) : source
+    ).slice(0, 8);
+  if (!matches.length) {
+    return '<div class="vipPickerEmpty">Nenhum ranking encontrado. Tente outro termo.</div>';
+  }
+  return matches
+    .map(
+      (ranking) =>
+        `<button class="vipPickerResult" type="button" role="option" data-vip-source="${escapeHTML(ranking.id)}"><span>${escapeHTML(categoryLabel(ranking))}</span><strong>${escapeHTML(ranking.q)}</strong><small>${ranking.opts.length} opções</small></button>`,
+    )
+    .join('');
+}
+
+function vipCreatePanelHTML(open = false) {
+  return `<section class="vipCreatePanel" id="vipCreatePanel" ${open ? '' : 'hidden'}><div class="vipCreateIntro"><span class="portalKicker">Só para o seu grupo</span><h2>Crie uma cópia privada</h2><p>Escolha um ranking que já existe. A cópia começa com o placar zerado e não aparece na Home, na busca nem no Google.</p></div><form class="vipCreateForm" id="vipCreateForm"><label for="vipRankingPicker">Ranking-base</label><div class="vipRankingPicker"><input id="vipRankingPicker" type="search" autocomplete="off" placeholder="Busque pelo nome, categoria ou opção" aria-autocomplete="list" aria-controls="vipRankingMatches"><input id="vipSourceRankingId" name="sourceRankingId" type="hidden"><div class="vipRankingMatches" id="vipRankingMatches" role="listbox"></div><div class="vipSelectedRanking" id="vipSelectedRanking" hidden><span>Ranking escolhido</span><strong id="vipSelectedRankingTitle"></strong><button id="vipChangeRanking" type="button">trocar</button></div></div><label for="vipCreatePassword">Senha para os convidados</label><div class="vipCreatePasswordRow"><input id="vipCreatePassword" name="password" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="No mínimo 4 caracteres" required><button id="vipPasswordVisibility" type="button" aria-label="Mostrar senha">MOSTRAR</button></div><small class="vipCreateHint">Guarde essa senha: depois de criada, ela não pode ser exibida, somente compartilhada por você.</small><span class="vipCreateStatus" id="vipCreateStatus" role="status" aria-live="polite"></span><div class="vipCreateSubmitRow"><button class="secondary" id="vipCreateCancel" type="button">CANCELAR</button><button class="primary" type="submit">CRIAR RANKING VIP</button></div></form></section>`;
+}
+
+function vipCreateErrorText(error) {
+  return (
+    {
+      invalid_source_ranking: 'Escolha um ranking da lista.',
+      source_ranking_not_found: 'Esse ranking-base não está mais disponível.',
+      invalid_vip_password: 'Crie uma senha com 4 a 80 caracteres.',
+      user_vip_ranking_limit:
+        'Você chegou ao limite de 20 rankings VIP. Apague um para criar outro.',
+      vip_not_configured: 'A proteção por senha está indisponível agora.',
+    }[error] || 'Não consegui criar agora. Tente novamente.'
+  );
+}
+
+function bindVipRankingPicker() {
+  const input = document.getElementById('vipRankingPicker'),
+    matches = document.getElementById('vipRankingMatches'),
+    sourceInput = document.getElementById('vipSourceRankingId'),
+    selected = document.getElementById('vipSelectedRanking'),
+    selectedTitle = document.getElementById('vipSelectedRankingTitle');
+  if (!input || !matches || !sourceInput || !selected || !selectedTitle) return;
+
+  const renderMatches = () => {
+    sourceInput.value = '';
+    selected.hidden = true;
+    matches.innerHTML = vipRankingMatchesHTML(input.value.trim());
+    input.setAttribute('aria-expanded', 'true');
+    matches.querySelectorAll('[data-vip-source]').forEach((button) => {
+      button.onclick = () => {
+        const ranking = vipBaseRankings().find((item) => item.id === button.dataset.vipSource);
+        if (!ranking) return;
+        sourceInput.value = ranking.id;
+        input.value = ranking.q;
+        matches.innerHTML = '';
+        input.setAttribute('aria-expanded', 'false');
+        selectedTitle.textContent = ranking.q;
+        selected.hidden = false;
+      };
+    });
+  };
+
+  input.onfocus = renderMatches;
+  input.oninput = renderMatches;
+  document.getElementById('vipChangeRanking').onclick = () => {
+    sourceInput.value = '';
+    selected.hidden = true;
+    input.focus();
+    input.select();
+    renderMatches();
+  };
+}
+
+function bindVipCreateForm() {
+  const panel = document.getElementById('vipCreatePanel'),
+    toggle = document.getElementById('vipCreateToggle'),
+    cancel = document.getElementById('vipCreateCancel'),
+    form = document.getElementById('vipCreateForm'),
+    password = document.getElementById('vipCreatePassword'),
+    visibility = document.getElementById('vipPasswordVisibility');
+  if (!panel || !form || !password || !visibility) return;
+
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    toggle?.setAttribute('aria-expanded', String(open));
+    if (open) document.getElementById('vipRankingPicker')?.focus();
+  };
+  toggle?.addEventListener('click', () => setOpen(panel.hidden));
+  cancel?.addEventListener('click', () => setOpen(false));
+  visibility.onclick = () => {
+    const showing = password.type === 'text';
+    password.type = showing ? 'password' : 'text';
+    visibility.textContent = showing ? 'MOSTRAR' : 'OCULTAR';
+    visibility.setAttribute('aria-label', showing ? 'Mostrar senha' : 'Ocultar senha');
+  };
+
+  form.onsubmit = async (event) => {
+    event.preventDefault();
+    const sourceRankingId = document.getElementById('vipSourceRankingId').value,
+      status = document.getElementById('vipCreateStatus'),
+      submit = form.querySelector('button[type=submit]');
+    if (!sourceRankingId) {
+      status.className = 'vipCreateStatus error';
+      status.textContent = 'Escolha um ranking nos resultados da busca.';
+      document.getElementById('vipRankingPicker').focus();
+      return;
+    }
+    submit.disabled = true;
+    status.className = 'vipCreateStatus';
+    status.textContent = 'Criando sua cópia privada…';
+    try {
+      const response = await fetch('/api?action=vip-rankings', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ sourceRankingId, password: password.value }),
+        }),
+        result = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        location.assign(`/entrar?voltar=${encodeURIComponent('/vip?criar=1')}`);
+        return;
+      }
+      if (!response.ok) throw result;
+      status.classList.add('success');
+      status.textContent = 'Ranking criado. Abrindo…';
+      toast('Seu ranking VIP está pronto');
+      location.assign(result.path || rankingPath(result.ranking.id));
+    } catch (error) {
+      status.className = 'vipCreateStatus error';
+      status.textContent = vipCreateErrorText(error?.error);
+      submit.disabled = false;
+    }
+  };
+}
+
+async function copyVipRankingLink(rankingId) {
+  const url = location.origin + rankingPath(rankingId);
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url);
+      toast('Link VIP copiado');
+      return;
+    }
+    if (navigator.share) {
+      await navigator.share({ title: 'Ranking VIP — TOPO', url });
+      return;
+    }
+    throw new Error('sharing_unavailable');
+  } catch (error) {
+    if (error?.name !== 'AbortError') toast('Não consegui copiar o link neste navegador');
+  }
+}
+
+function bindVipOwnerActions() {
+  document
+    .querySelectorAll('[data-copy-vip]')
+    .forEach((button) => (button.onclick = () => copyVipRankingLink(button.dataset.copyVip)));
+  document.querySelectorAll('[data-delete-vip]').forEach((button) => {
+    button.onclick = async () => {
+      const ranking = vipRankings.find((item) => item.id === button.dataset.deleteVip);
+      if (!ranking) return;
+      if (
+        !window.confirm(
+          `Apagar “${ranking.q}”? Os votos e comentários desta cópia também serão apagados.`,
+        )
+      )
+        return;
+      button.disabled = true;
+      try {
+        const response = await fetch(
+            `/api?action=vip-rankings&ranking_id=${encodeURIComponent(ranking.id)}`,
+            { method: 'DELETE' },
+          ),
+          result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          location.assign(`/entrar?voltar=${encodeURIComponent('/vip')}`);
+          return;
+        }
+        if (!response.ok) throw result;
+        toast('Ranking VIP apagado');
+        await loadVipArea();
+      } catch {
+        button.disabled = false;
+        toast('Não consegui apagar agora');
+      }
+    };
+  });
 }
 
 async function loadVipArea() {
@@ -752,10 +953,23 @@ async function loadVipArea() {
     data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error('vip_catalog');
   vipRankings = Array.isArray(data.rankings) ? data.rankings : [];
-  const cards = vipRankings.length
-    ? `<div class="vipGrid">${vipRankings.map(vipCardHTML).join('')}</div>`
-    : '<section class="vipEmpty"><span aria-hidden="true">🔒</span><h2>Nenhum ranking VIP ainda.</h2><p>Quando o site proteger um ranking com senha, ele aparecerá aqui.</p></section>';
-  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Conteúdo reservado</span><h1>Área VIP</h1><p>Cada ranking tem sua própria senha. Escolha um deles e use a senha que você recebeu.</p></section>${cards}`;
+  const owned = vipRankings.filter((ranking) => ranking.owned),
+    curated = vipRankings.filter((ranking) => !ranking.owned),
+    loginPath = `/entrar?voltar=${encodeURIComponent('/vip?criar=1')}`,
+    createAction = viewer.registered
+      ? '<button class="vipHeroAction" id="vipCreateToggle" type="button" aria-expanded="false">CRIAR RANKING PROTEGIDO</button>'
+      : `<a class="vipHeroAction" href="${loginPath}">ENTRAR PARA CRIAR</a>`,
+    ownedCards = owned.length
+      ? `<div class="vipGrid vipOwnedGrid">${owned.map(vipCardHTML).join('')}</div>`
+      : '<div class="vipOwnedEmpty"><strong>Você ainda não criou nenhum.</strong><span>Escolha um ranking do TOPO, defina a senha e compartilhe com seu grupo.</span></div>',
+    curatedCards = curated.length
+      ? `<div class="vipGrid">${curated.map(vipCardHTML).join('')}</div>`
+      : '<section class="vipEmpty"><span aria-hidden="true">🔒</span><h2>Nenhum ranking VIP do TOPO agora.</h2><p>Os seus rankings privados continuam aparecendo somente para você.</p></section>',
+    createOpen = viewer.registered && queryParams.get('criar') === '1';
+  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Conteúdo reservado</span><h1>Área VIP</h1><p>Crie uma cópia privada de qualquer ranking, proteja com senha e compartilhe o link com quem você quiser.</p>${createAction}</section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}${viewer.registered ? `<section class="vipCollection vipOwnedCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Só aparecem para você</span><h2>Seus rankings VIP</h2></div><small>${owned.length}/${Number(data.userRankingLimit || 20)} criados</small></div>${ownedCards}</section>` : ''}<section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Acesso com senha</span><h2>Rankings VIP do TOPO</h2></div></div>${curatedCards}</section>`;
+  bindVipRankingPicker();
+  bindVipCreateForm();
+  bindVipOwnerActions();
 }
 
 function vipGateErrorText(error, result = {}) {
@@ -1931,7 +2145,7 @@ function renderInternal() {
     categoryPath = rankingCategoryPath(r);
   syncExperienceNavigation();
   document.title = `${r.q} — ${homeLabel}`;
-  if (viewer.isModerator && rankingEditorState?.rankingId === r.id) {
+  if (viewer.isModerator && !r.vipUserCreated && rankingEditorState?.rankingId === r.id) {
     renderRankingEditorScreen(r, homePath, homeLabel, categoryPath);
     return;
   }
@@ -1940,12 +2154,14 @@ function renderInternal() {
     visibleOptions = r.opts.slice(0, visibleLimit);
   feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'VIP · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div><article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Área VIP' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h1>${escapeHTML(r.q)}</h1>${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i)).join('')}</div><div class="rankFoot"><span>Até ${viewer.rankingLimit || 20} votos por ranking.</span><span>${viewer.registered ? 'Vote normalmente · 2× reforça' : '↑ sobe · ↓ desce'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${vip ? 'a Área VIP' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   if (viewer.isModerator) {
-    feed
-      .querySelector('.internalHead')
-      ?.insertAdjacentHTML('afterend', moderatorRankingBarHTML(false));
-    document
-      .getElementById('rankingEditStart')
-      ?.addEventListener('click', () => beginRankingEdit(r));
+    if (!r.vipUserCreated) {
+      feed
+        .querySelector('.internalHead')
+        ?.insertAdjacentHTML('afterend', moderatorRankingBarHTML(false));
+      document
+        .getElementById('rankingEditStart')
+        ?.addEventListener('click', () => beginRankingEdit(r));
+    }
   }
   bindVotes();
   bindAllItems(r);

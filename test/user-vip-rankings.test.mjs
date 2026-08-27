@@ -1,0 +1,102 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+import { compactSource } from './source-helpers.mjs';
+
+const root = new URL('../', import.meta.url);
+
+test('user VIP copies store owner and source with safe deletion rules', async () => {
+  const [migration, script, packageJson] = await Promise.all([
+    readFile(new URL('migrations/20260827_user_vip_rankings.sql', root), 'utf8'),
+    readFile(new URL('scripts/apply-user-vip-rankings.mjs', root), 'utf8'),
+    readFile(new URL('package.json', root), 'utf8'),
+  ]);
+
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS vip_owner_user_id uuid/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS vip_source_ranking_id text/);
+  assert.match(migration, /REFERENCES users\(id\) ON DELETE CASCADE/);
+  assert.match(migration, /REFERENCES rankings\(id\) ON DELETE SET NULL/);
+  assert.match(migration, /CHECK \(vip_owner_user_id IS NULL OR is_vip = true\)/);
+  assert.match(migration, /rankings_vip_owner_created_idx/);
+  assert.match(script, /20260827_user_vip_rankings\.sql/);
+  assert.match(script, /splitSqlStatements/);
+  assert.match(packageJson, /"db:user-vip-rankings"/);
+});
+
+test('authenticated users create a zeroed private copy from a public ranking', async () => {
+  const api = await readFile(new URL('api.js', root), 'utf8');
+  const create = api.slice(
+    api.indexOf('async function createUserVipRanking'),
+    api.indexOf('async function deleteUserVipRanking'),
+  );
+  const compact = compactSource(api);
+
+  assert.match(create, /const user = await sessionUser\(req\)/);
+  assert.match(create, /authentication_required/);
+  assert.match(create, /r\.is_vip = false/);
+  assert.match(create, /HAVING COUNT\(o\.id\) BETWEEN 3 AND \$2/);
+  assert.match(create, /const passwordHash = hashVipPassword\(password\)/);
+  assert.match(create, /vip_owner_user_id/);
+  assert.match(create, /vip_source_ranking_id/);
+  assert.match(create, /baseline_votes/);
+  assert.match(create, /SELECT \$1, source_option\.label, source_option\.position, 0/);
+  assert.match(create, /USER_VIP_RANKING_LIMIT/);
+  assert.match(create, /isolationLevel: 'Serializable'/);
+  assert.match(compact, /action==='vip-rankings'\)returncreateUserVipRanking/);
+});
+
+test('private copies are visible to their owner but stay out of public discovery', async () => {
+  const api = await readFile(new URL('api.js', root), 'utf8');
+  const access = api.slice(
+    api.indexOf('function hasVipAccess'),
+    api.indexOf('function vipCookieIsSecure'),
+  );
+  const meta = api.slice(
+    api.indexOf('function vipRankingMeta'),
+    api.indexOf('async function vipCatalog'),
+  );
+  const vipCatalog = api.slice(
+    api.indexOf('async function vipCatalog'),
+    api.indexOf('async function vipRanking'),
+  );
+  const publicCatalog = api.slice(
+    api.indexOf('async function catalog'),
+    api.indexOf('function vipRankingMeta'),
+  );
+
+  assert.match(access, /String\(user\.id\) === String\(ownerUserId\)/);
+  assert.match(vipCatalog, /vip_owner_user_id IS NULL OR vip_owner_user_id = \$1::uuid/);
+  assert.match(meta, /owned:/);
+  assert.match(publicCatalog, /r\.is_vip = false OR r\.vip_owner_user_id IS NULL/);
+  assert.doesNotMatch(vipCatalog, /vip_password_hash AS/);
+});
+
+test('only the creator can delete a user VIP copy and the UI exposes create, share and delete', async () => {
+  const [api, app, style, index] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+    readFile(new URL('index.html', root), 'utf8'),
+  ]);
+  const remove = api.slice(
+    api.indexOf('async function deleteUserVipRanking'),
+    api.indexOf('async function unlockVipRanking'),
+  );
+  const compact = compactSource(api);
+
+  assert.match(remove, /const user = await sessionUser\(req\)/);
+  assert.match(remove, /DELETE FROM rankings/);
+  assert.match(remove, /vip_owner_user_id = \$2/);
+  assert.match(remove, /\[rankingId, user\.id\]/);
+  assert.match(compact, /method==='DELETE'/);
+  assert.match(compact, /action==='vip-rankings'\)returndeleteUserVipRanking/);
+  assert.match(app, /id="vipCreateForm"/);
+  assert.match(app, /id="vipRankingPicker"/);
+  assert.match(app, /data-copy-vip/);
+  assert.match(app, /data-delete-vip/);
+  assert.match(app, /method: 'DELETE'/);
+  assert.match(app, /window\.confirm/);
+  assert.match(style, /\.vipCreatePanel/);
+  assert.match(style, /\.vipOwnerActions/);
+  assert.match(index, /vip-area-moderation-users-user-create/);
+});

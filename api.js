@@ -57,6 +57,7 @@ const VIP_PASSWORD_MAX_LENGTH = 80;
 const VIP_ACCESS_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 const VIP_UNLOCK_WINDOW_MINUTES = 15;
 const VIP_UNLOCK_ATTEMPT_LIMIT = 8;
+const USER_VIP_RANKING_LIMIT = 20;
 const VIP_COOKIE_PREFIX = 'topo_vip_';
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
@@ -238,7 +239,9 @@ function vipCookieAccess(req, ranking) {
 
 function hasVipAccess(req, user, ranking) {
   const isVip = ranking?.isVip === true || ranking?.is_vip === true;
-  return !isVip || isModerator(user) || vipCookieAccess(req, ranking);
+  const ownerUserId = ranking?.vipOwnerUserId ?? ranking?.vip_owner_user_id;
+  const isOwner = Boolean(user?.id && ownerUserId && String(user.id) === String(ownerUserId));
+  return !isVip || isModerator(user) || isOwner || vipCookieAccess(req, ranking);
 }
 
 function vipCookieIsSecure(req) {
@@ -1093,6 +1096,7 @@ async function catalog(req, res) {
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
     WHERE r.is_active = true
       AND (r.is_vip = false OR $4::boolean = true)
+      AND (r.is_vip = false OR r.vip_owner_user_id IS NULL)
     ORDER BY r.created_at, r.id, o.position
   `,
       [deviceId, user?.id || null, votingRequiresAccount, isModerator(user)],
@@ -1150,7 +1154,8 @@ async function catalog(req, res) {
   });
 }
 
-function vipRankingMeta(row, unlocked = false) {
+function vipRankingMeta(row, unlocked = false, user = null) {
+  const ownerUserId = row.vipOwnerUserId ?? row.vip_owner_user_id ?? null;
   return {
     id: row.id,
     q: rankingQuestion(row.id, row.question),
@@ -1158,28 +1163,39 @@ function vipRankingMeta(row, unlocked = false) {
     createdAt: row.createdAt || row.created_at || null,
     locked: !unlocked,
     vip: true,
+    owned: Boolean(user?.id && ownerUserId && String(user.id) === String(ownerUserId)),
+    userCreated: Boolean(ownerUserId),
   };
 }
 
 async function vipCatalog(req, res) {
   const user = await sessionUser(req);
-  const rows = await sql.query(`
-    SELECT
-      id,
-      question,
-      image_url AS "imageUrl",
-      created_at AS "createdAt",
-      is_vip AS "isVip",
-      vip_password_version AS "vipPasswordVersion"
-    FROM rankings
-    WHERE is_active = true
-      AND is_vip = true
-      AND vip_password_hash IS NOT NULL
-    ORDER BY created_at DESC, id
-  `);
+  const rows = await sql.query(
+    `
+      SELECT
+        id,
+        question,
+        image_url AS "imageUrl",
+        created_at AS "createdAt",
+        is_vip AS "isVip",
+        vip_password_version AS "vipPasswordVersion",
+        vip_owner_user_id AS "vipOwnerUserId"
+      FROM rankings
+      WHERE is_active = true
+        AND is_vip = true
+        AND vip_password_hash IS NOT NULL
+        AND (vip_owner_user_id IS NULL OR vip_owner_user_id = $1::uuid)
+      ORDER BY created_at DESC, id
+    `,
+    [user?.id || null],
+  );
 
   return json(res, 200, {
-    rankings: rows.map((ranking) => vipRankingMeta(ranking, hasVipAccess(req, user, ranking))),
+    rankings: rows.map((ranking) =>
+      vipRankingMeta(ranking, hasVipAccess(req, user, ranking), user),
+    ),
+    canCreate: Boolean(user),
+    userRankingLimit: USER_VIP_RANKING_LIMIT,
   });
 }
 
@@ -1197,7 +1213,8 @@ async function vipRanking(req, res) {
         image_url AS "imageUrl",
         created_at AS "createdAt",
         is_vip AS "isVip",
-        vip_password_version AS "vipPasswordVersion"
+        vip_password_version AS "vipPasswordVersion",
+        vip_owner_user_id AS "vipOwnerUserId"
       FROM rankings
       WHERE id = $1
         AND is_active = true
@@ -1211,7 +1228,7 @@ async function vipRanking(req, res) {
   if (!hasVipAccess(req, user, ranking)) {
     return json(res, 423, {
       error: 'vip_password_required',
-      ranking: vipRankingMeta(ranking),
+      ranking: vipRankingMeta(ranking, false, user),
     });
   }
 
@@ -1302,6 +1319,10 @@ async function vipRanking(req, res) {
     vip: true,
     vipUnlocked: true,
     vipHasPassword: true,
+    vipOwned: Boolean(
+      user?.id && ranking.vipOwnerUserId && String(user.id) === String(ranking.vipOwnerUserId),
+    ),
+    vipUserCreated: Boolean(ranking.vipOwnerUserId),
     opts: [],
   };
   for (const row of rows) {
@@ -1324,6 +1345,177 @@ async function vipRanking(req, res) {
   });
 }
 
+function userVipRankingId(sourceRankingId) {
+  const base = String(sourceRankingId || '')
+    .slice(0, 70)
+    .replace(/[._-]+$/g, '');
+  return `${base || 'ranking'}-vip-${randomBytes(8).toString('hex')}`;
+}
+
+async function createUserVipRanking(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const sourceRankingId = String(body.sourceRankingId || '').trim();
+  const password = vipPassword(body.password);
+  if (!isValidRankingId(sourceRankingId)) {
+    return json(res, 400, { error: 'invalid_source_ranking' });
+  }
+  if (!password) return json(res, 400, { error: 'invalid_vip_password' });
+  if (!vipSigningKey()) return json(res, 503, { error: 'vip_not_configured' });
+
+  const [source] = await sql.query(
+    `
+      SELECT
+        r.id,
+        r.category,
+        r.question,
+        r.image_url AS "imageUrl",
+        COUNT(o.id)::int AS "optionCount"
+      FROM rankings r
+      JOIN ranking_options o ON o.ranking_id = r.id
+      WHERE r.id = $1
+        AND r.is_active = true
+        AND r.is_vip = false
+      GROUP BY r.id, r.category, r.question, r.image_url
+      HAVING COUNT(o.id) BETWEEN 3 AND $2
+      LIMIT 1
+    `,
+    [sourceRankingId, PUBLISHED_RANKING_OPTION_LIMIT],
+  );
+  if (!source) return json(res, 404, { error: 'source_ranking_not_found' });
+
+  const passwordHash = hashVipPassword(password);
+  const question = rankingQuestion(source.id, source.question);
+  let created = null;
+
+  for (let attempt = 0; attempt < 3 && !created; attempt += 1) {
+    const rankingId = userVipRankingId(sourceRankingId);
+    try {
+      const results = await sql.transaction(
+        [
+          sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [user.id]),
+          sql.query(
+            `
+              INSERT INTO rankings (
+                id,
+                category,
+                question,
+                image_url,
+                baseline_votes,
+                is_active,
+                created_at,
+                is_vip,
+                vip_password_hash,
+                vip_password_version,
+                vip_updated_at,
+                vip_owner_user_id,
+                vip_source_ranking_id
+              )
+              SELECT $1, $2, $3, $4, 0, true, now(), true, $5, 1, now(), $6, $7
+              WHERE (
+                SELECT COUNT(*)
+                FROM rankings
+                WHERE vip_owner_user_id = $6
+                  AND is_active = true
+                  AND is_vip = true
+              ) < $8
+                AND EXISTS (
+                  SELECT 1
+                  FROM rankings source_ranking
+                  WHERE source_ranking.id = $7
+                    AND source_ranking.is_active = true
+                    AND source_ranking.is_vip = false
+                    AND (
+                      SELECT COUNT(*)
+                      FROM ranking_options source_option
+                      WHERE source_option.ranking_id = source_ranking.id
+                    ) BETWEEN 3 AND $9
+                )
+              RETURNING
+                id,
+                question,
+                image_url AS "imageUrl",
+                created_at AS "createdAt",
+                is_vip AS "isVip",
+                vip_password_version AS "vipPasswordVersion",
+                vip_owner_user_id AS "vipOwnerUserId"
+            `,
+            [
+              rankingId,
+              source.category,
+              question,
+              source.imageUrl || null,
+              passwordHash,
+              user.id,
+              sourceRankingId,
+              USER_VIP_RANKING_LIMIT,
+              PUBLISHED_RANKING_OPTION_LIMIT,
+            ],
+          ),
+          sql.query(
+            `
+              INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
+              SELECT $1, source_option.label, source_option.position, 0
+              FROM ranking_options source_option
+              WHERE source_option.ranking_id = $2
+                AND EXISTS (
+                  SELECT 1
+                  FROM rankings destination
+                  WHERE destination.id = $1
+                    AND destination.vip_owner_user_id = $3
+                    AND destination.vip_source_ranking_id = $2
+                    AND destination.vip_password_hash = $4
+                )
+              ORDER BY source_option.position
+              RETURNING id
+            `,
+            [rankingId, sourceRankingId, user.id, passwordHash],
+          ),
+        ],
+        { isolationLevel: 'Serializable' },
+      );
+
+      created = results?.[1]?.[0] || null;
+      if (!created) return json(res, 409, { error: 'user_vip_ranking_limit' });
+    } catch (error) {
+      if (error?.code === '23505' && attempt < 2) continue;
+      if (error?.code === '23503') {
+        return json(res, 404, { error: 'source_ranking_not_found' });
+      }
+      throw error;
+    }
+  }
+
+  if (!created) throw new Error('user_vip_ranking_id_failed');
+  return json(res, 201, {
+    ok: true,
+    ranking: vipRankingMeta(created, true, user),
+    path: `/ranking/${created.id}`,
+  });
+}
+
+async function deleteUserVipRanking(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const rankingId = queryValue(req, 'ranking_id').trim();
+  if (!isValidRankingId(rankingId)) return json(res, 400, { error: 'invalid_ranking' });
+
+  const deleted = await sql.query(
+    `
+      DELETE FROM rankings
+      WHERE id = $1
+        AND vip_owner_user_id = $2
+        AND is_vip = true
+      RETURNING id
+    `,
+    [rankingId, user.id],
+  );
+  if (!deleted[0]) return json(res, 404, { error: 'ranking_not_found' });
+  return json(res, 200, { ok: true, rankingId: deleted[0].id });
+}
+
 async function unlockVipRanking(req, res, body) {
   const rankingId = String(body.rankingId || '').trim();
   const password = vipPassword(body.password);
@@ -1339,7 +1531,8 @@ async function unlockVipRanking(req, res, body) {
         id,
         is_vip AS "isVip",
         vip_password_hash AS "vipPasswordHash",
-        vip_password_version AS "vipPasswordVersion"
+        vip_password_version AS "vipPasswordVersion",
+        vip_owner_user_id AS "vipOwnerUserId"
       FROM rankings
       WHERE id = $1
         AND is_active = true
@@ -1351,7 +1544,10 @@ async function unlockVipRanking(req, res, body) {
   if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
   if (!ranking.vipPasswordHash) return json(res, 503, { error: 'vip_not_configured' });
 
-  if (!isModerator(user)) {
+  const isOwner = Boolean(
+    user?.id && ranking.vipOwnerUserId && String(user.id) === String(ranking.vipOwnerUserId),
+  );
+  if (!isModerator(user) && !isOwner) {
     const clientKey = vipClientKey(req);
     const [attemptRows] = await Promise.all([
       sql.query(
@@ -1926,7 +2122,8 @@ async function activeRanking(rankingId) {
     SELECT
       id,
       is_vip AS "isVip",
-      vip_password_version AS "vipPasswordVersion"
+      vip_password_version AS "vipPasswordVersion",
+      vip_owner_user_id AS "vipOwnerUserId"
     FROM rankings
     WHERE id = $1
       AND is_active = true
@@ -2050,7 +2247,8 @@ async function writeComment(req, res, body, editing = false) {
     SELECT
       o.id,
       r.is_vip AS "isVip",
-      r.vip_password_version AS "vipPasswordVersion"
+      r.vip_password_version AS "vipPasswordVersion",
+      r.vip_owner_user_id AS "vipOwnerUserId"
     FROM ranking_options o
     JOIN rankings r ON r.id = o.ranking_id
     WHERE o.ranking_id = $1
@@ -2287,7 +2485,8 @@ async function createSuggestion(req, res, body) {
         id,
         question,
         is_vip AS "isVip",
-        vip_password_version AS "vipPasswordVersion"
+        vip_password_version AS "vipPasswordVersion",
+        vip_owner_user_id AS "vipOwnerUserId"
       FROM rankings
       WHERE id = $1 AND is_active = true
       LIMIT 1
@@ -2550,7 +2749,8 @@ async function updateRankingContent(req, res, body) {
           content_updated_at AS "contentUpdatedAt",
           is_vip AS "isVip",
           vip_password_hash AS "vipPasswordHash",
-          vip_password_version AS "vipPasswordVersion"
+          vip_password_version AS "vipPasswordVersion",
+          vip_owner_user_id AS "vipOwnerUserId"
         FROM rankings
         WHERE id = $1 AND is_active = true
         LIMIT 1
@@ -2569,6 +2769,9 @@ async function updateRankingContent(req, res, body) {
   ]);
   const ranking = rankingRows[0];
   if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
+  if (ranking.vipOwnerUserId) {
+    return json(res, 403, { error: 'user_vip_ranking_managed_by_owner' });
+  }
   if (submittedOptions.length !== optionRows.length) {
     return json(res, 409, { error: 'ranking_options_changed' });
   }
@@ -3405,7 +3608,8 @@ async function vote(req, res, body) {
       o.id,
       o.ranking_id,
       r.is_vip AS "isVip",
-      r.vip_password_version AS "vipPasswordVersion"
+      r.vip_password_version AS "vipPasswordVersion",
+      r.vip_owner_user_id AS "vipOwnerUserId"
     FROM ranking_options o
     JOIN rankings r ON r.id = o.ranking_id
     WHERE o.id = $1
@@ -3800,6 +4004,7 @@ export default async function handler(req, res) {
         }
         if (action === 'logout') return logout(req, res);
         if (action === 'vip-unlock') return unlockVipRanking(req, res, body);
+        if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);
         if (action === 'notifications') return notifications(req, res, body);
@@ -3820,6 +4025,11 @@ export default async function handler(req, res) {
       if (method === 'PATCH' && action === 'ranking-content') {
         return updateRankingContent(req, res, body);
       }
+      return json(res, 404, { error: 'action_not_found' });
+    }
+
+    if (method === 'DELETE') {
+      if (action === 'vip-rankings') return deleteUserVipRanking(req, res);
       return json(res, 404, { error: 'action_not_found' });
     }
 
