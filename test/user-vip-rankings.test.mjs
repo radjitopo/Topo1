@@ -81,7 +81,7 @@ test('registered users create a private ranking from a title and their own optio
   assert.match(create, /isolationLevel: 'Serializable'/);
 });
 
-test('private copies are visible to their owner but stay out of public discovery', async () => {
+test('private rankings are listed only for their owner and stay out of public discovery', async () => {
   const api = await readFile(new URL('api.js', root), 'utf8');
   const access = api.slice(
     api.indexOf('function hasVipAccess'),
@@ -101,10 +101,30 @@ test('private copies are visible to their owner but stay out of public discovery
   );
 
   assert.match(access, /String\(user\.id\) === String\(ownerUserId\)/);
-  assert.match(vipCatalog, /vip_owner_user_id IS NULL OR vip_owner_user_id = \$1::uuid/);
+  assert.match(vipCatalog, /if \(!user\)/);
+  assert.match(vipCatalog, /vip_owner_user_id = \$1::uuid/);
+  assert.doesNotMatch(vipCatalog, /vip_owner_user_id IS NULL/);
   assert.match(meta, /owned:/);
   assert.match(publicCatalog, /r\.is_vip = false OR r\.vip_owner_user_id IS NULL/);
   assert.doesNotMatch(vipCatalog, /vip_password_hash AS/);
+});
+
+test('the VIP area is compact and renders only rankings created by the signed-in user', async () => {
+  const [app, style] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+  ]);
+  const vipArea = app.slice(
+    app.indexOf('async function loadVipArea'),
+    app.indexOf('function vipGateErrorText'),
+  );
+
+  assert.match(vipArea, /filter\(\(ranking\) => ranking\.owned\)/);
+  assert.match(vipArea, /Meus rankings privados/);
+  assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
+  assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
+  assert.match(style, /900 clamp\(42px, 5vw, 64px\)/);
+  assert.match(style, /font-size: 43px/);
 });
 
 test('only the creator can manage a private ranking and the profile exposes the complete flow', async () => {

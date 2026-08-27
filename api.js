@@ -1176,6 +1176,13 @@ function vipRankingMeta(row, unlocked = false, user = null) {
 
 async function vipCatalog(req, res) {
   const user = await sessionUser(req);
+  if (!user) {
+    return json(res, 200, {
+      rankings: [],
+      canCreate: false,
+      userRankingLimit: USER_VIP_RANKING_LIMIT,
+    });
+  }
   const rows = await sql.query(
     `
       SELECT
@@ -1203,10 +1210,10 @@ async function vipCatalog(req, res) {
       WHERE is_active = true
         AND is_vip = true
         AND vip_password_hash IS NOT NULL
-        AND (vip_owner_user_id IS NULL OR vip_owner_user_id = $1::uuid)
+        AND vip_owner_user_id = $1::uuid
       ORDER BY created_at DESC, id
     `,
-    [user?.id || null],
+    [user.id],
   );
 
   return json(res, 200, {

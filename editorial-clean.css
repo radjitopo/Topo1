@@ -4186,23 +4186,23 @@ body.popElectric.vipPage .groupsWrap {
 
 body.popElectric .vipHero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
-  gap: 28px;
-  align-items: end;
+  grid-template-columns: minmax(0, 0.9fr) minmax(300px, 0.7fr);
+  gap: 24px;
+  align-items: center;
   border-bottom: 2px solid var(--clean-ink);
-  padding: 46px 0 28px;
+  padding: 28px 0 20px;
 }
 
 body.popElectric .vipHero h1 {
   grid-column: 1;
   max-width: 780px;
-  margin: 7px 0 0;
+  margin: 5px 0 0;
   color: var(--clean-ink);
   font:
-    900 clamp(48px, 7vw, 92px) / 0.88 Arial,
+    900 clamp(42px, 5vw, 64px) / 0.9 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.07em;
 }
 
 body.popElectric .vipHero p {
@@ -4211,7 +4211,7 @@ body.popElectric .vipHero p {
   margin: 0;
   color: var(--clean-muted);
   font:
-    700 17px/1.45 Arial,
+    700 15px/1.4 Arial,
     Helvetica,
     sans-serif;
 }
@@ -4220,14 +4220,14 @@ body.popElectric .vipHeroAction {
   grid-column: 2;
   grid-row: 3;
   justify-self: start;
-  min-height: 44px;
+  min-height: 40px;
   border: 1px solid var(--clean-ink);
   border-radius: 0;
   background: var(--clean-ink);
   color: #fff;
-  padding: 0 19px;
+  padding: 0 17px;
   font:
-    900 11px/42px Arial,
+    900 10px/38px Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0.045em;
@@ -4236,7 +4236,7 @@ body.popElectric .vipHeroAction {
 }
 
 body.popElectric .vipCollection {
-  padding-top: 36px;
+  padding-top: 24px;
 }
 
 body.popElectric .vipCollection + .vipCollection {
@@ -5440,25 +5440,25 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
 
   body.popElectric .vipHero {
     display: block;
-    padding: 29px 0 22px;
+    padding: 20px 0 16px;
   }
 
   body.popElectric .vipHero h1 {
-    font-size: 54px;
+    font-size: 43px;
   }
 
   body.popElectric .vipHero p {
-    margin-top: 17px;
-    font-size: 15px;
+    margin-top: 10px;
+    font-size: 14px;
   }
 
   body.popElectric .vipHeroAction {
     display: inline-block;
-    margin-top: 18px;
+    margin-top: 14px;
   }
 
   body.popElectric .vipCollection {
-    padding-top: 28px;
+    padding-top: 22px;
   }
 
   body.popElectric .vipCollectionHead {

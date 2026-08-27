@@ -944,15 +944,20 @@ async function loadVipArea() {
     data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error('vip_catalog');
   vipRankings = Array.isArray(data.rankings) ? data.rankings : [];
-  const curated = vipRankings.filter((ranking) => !ranking.owned),
+  const ownedVipRankings = vipRankings.filter((ranking) => ranking.owned),
     loginPath = `/entrar?voltar=${encodeURIComponent('/perfil?criar=1')}`,
     createAction = viewer.registered
-      ? '<a class="vipHeroAction" href="/perfil?criar=1#rankings-privados">MEUS RANKINGS PRIVADOS</a>'
+      ? '<a class="vipHeroAction" href="/perfil?criar=1#rankings-privados">CRIAR NOVO RANKING</a>'
       : `<a class="vipHeroAction" href="${loginPath}">ENTRAR PARA CRIAR</a>`,
-    curatedCards = curated.length
-      ? `<div class="vipGrid">${curated.map(vipCardHTML).join('')}</div>`
-      : '<section class="vipEmpty"><span aria-hidden="true">🔒</span><h2>Nenhum ranking VIP do TOPO agora.</h2><p>Os seus rankings privados continuam aparecendo somente para você.</p></section>';
-  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Conteúdo reservado</span><h1>Área VIP</h1><p>Crie no seu perfil um ranking só para o seu grupo, proteja com senha e compartilhe o link com quem quiser.</p>${createAction}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Acesso com senha</span><h2>Rankings VIP do TOPO</h2></div></div>${curatedCards}</section>`;
+    privateCards = !viewer.registered
+      ? '<section class="vipEmpty"><span aria-hidden="true">🔒</span><h2>Entre para ver seus rankings privados.</h2><p>Somente o criador encontra os rankings nesta área.</p></section>'
+      : ownedVipRankings.length
+        ? `<div class="vipGrid vipOwnedGrid">${ownedVipRankings.map(vipCardHTML).join('')}</div>`
+        : '<section class="vipEmpty"><span aria-hidden="true">＋</span><h2>Você ainda não criou nenhum ranking privado.</h2><p>Crie o primeiro no seu perfil e compartilhe o link e a senha com o seu grupo.</p></section>',
+    createdCount = viewer.registered
+      ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
+      : '';
+  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seu espaço privado</span><h1>Área VIP</h1><p>Crie e acompanhe os rankings protegidos que você compartilha com o seu grupo.</p>${createAction}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
   bindVipOwnerActions();
 }
 
