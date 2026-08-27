@@ -6,6 +6,9 @@ const OVERPASS_ENDPOINTS = [
   'https://overpass.kumi.systems/api/interpreter',
 ];
 const OUTPUT_URL = new URL('../data/local-catalog.json', import.meta.url);
+const exclusions = JSON.parse(
+  await readFile(new URL('../data/local-option-exclusions.json', import.meta.url), 'utf8'),
+);
 
 const cities = Object.freeze([
   { name: 'São Paulo', state: 'SP', slug: 'sp' },
@@ -305,8 +308,8 @@ const categories = Object.freeze([
   },
   {
     key: 'vegan',
-    label: 'Restaurante/estabelecimento vegano',
-    question: (city) => `Qual é o melhor restaurante ou estabelecimento vegano em ${city.name}?`,
+    label: 'Restaurante vegano',
+    question: (city) => `Qual é o melhor restaurante vegano em ${city.name}?`,
     image: images.vegan,
     match: (place) =>
       (isFoodEstablishment(place) || ['health_food', 'organic'].includes(place.tags.shop)) &&
@@ -496,6 +499,8 @@ function bestOptions(elements, category) {
 
 function makeRanking(city, category, labels) {
   const id = categoryId(category.key, city);
+  const rejected = new Set(exclusions[id] || []);
+  const curatedLabels = labels.filter((label) => !rejected.has(label));
   return {
     id,
     city: city.name,
@@ -509,7 +514,7 @@ function makeRanking(city, category, labels) {
     baseline_votes: 0,
     is_active: true,
     preserveExistingOptions: existingIds.has(id),
-    opts: labels.map((label, index) => ({
+    opts: curatedLabels.map((label, index) => ({
       label,
       position: index + 1,
       baseline_score: 0,

@@ -26,6 +26,7 @@
     "db:user-vip-rankings": "node scripts/apply-user-vip-rankings.mjs",
     "db:user-vip-custom-rankings": "node scripts/apply-user-vip-custom-rankings.mjs",
     "db:vote-identity": "node scripts/apply-vote-identity.mjs",
+    "db:local-content-quality": "node scripts/apply-local-content-quality.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",
     "test:priority": "node test/priority.test.mjs",

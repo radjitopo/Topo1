@@ -83,8 +83,8 @@ if (
 }
 
 for (const ranking of newRankings) {
-  if (ranking.opts?.length !== 20) {
-    throw new Error(`Ranking ${ranking.id} must contain 20 options`);
+  if (!Array.isArray(ranking.opts) || ranking.opts.length < 5) {
+    throw new Error(`Ranking ${ranking.id} must contain at least 5 options`);
   }
 }
 
@@ -106,6 +106,9 @@ console.log(`Catalog image audit passed: ${imageAudit.checked} covers checked.`)
 const sql = neon(process.env.DATABASE_URL);
 const rankingsJson = JSON.stringify(newRankings);
 const titlesJson = JSON.stringify(allTitles);
+const expectedOptionsJson = JSON.stringify(
+  newRankings.map((ranking) => ({ id: ranking.id, options: ranking.opts.length })),
+);
 
 await sql.transaction(
   [
@@ -203,9 +206,9 @@ const [validation] = await sql.query(
     SELECT key AS id, value AS question
     FROM jsonb_each_text($1::jsonb)
   ),
-  new_ids AS (
-    SELECT value::text AS id
-    FROM jsonb_array_elements_text($2::jsonb)
+  expected_options AS (
+    SELECT *
+    FROM jsonb_to_recordset($2::jsonb) AS expected(id text, options integer)
   ),
   option_counts AS (
     SELECT ranking_id, COUNT(*)::int AS options
@@ -219,16 +222,16 @@ const [validation] = await sql.query(
     )::int AS valid_titles,
     (
       SELECT COUNT(*)::int
-      FROM new_ids
-      JOIN rankings ranking ON ranking.id = new_ids.id
+      FROM expected_options expected
+      JOIN rankings ranking ON ranking.id = expected.id
       JOIN option_counts counts ON counts.ranking_id = ranking.id
       WHERE ranking.is_active = true
-        AND counts.options = 20
+        AND counts.options = expected.options
     ) AS valid_new_rankings
   FROM expected_titles expected
   LEFT JOIN rankings ranking ON ranking.id = expected.id
 `,
-  [titlesJson, JSON.stringify(newRankings.map((ranking) => ranking.id))],
+  [titlesJson, expectedOptionsJson],
 );
 
 if (

@@ -181,7 +181,7 @@ export function localCityBySlug(slug) {
 
 const localGroupDefinitions = [
   {
-    label: 'Restaurante/estabelecimento vegano',
+    label: 'Restaurante vegano',
     description:
       'Restaurantes e estabelecimentos veganos escolhidos por quem conhece a cena local.',
     id: /^(?:restaurantes?\s+veganos?|veganos?)(?:\s|$)/,

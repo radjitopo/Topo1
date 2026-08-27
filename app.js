@@ -71,7 +71,7 @@ let rankings = [],
   homeSearch = (queryParams.get('busca') || '').trim(),
   categorySort = 'priority',
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
-  allItemsOpen = false,
+  visibleOptionCount = 10,
   rankingEditorState = null,
   vipOwnerEditorState = null,
   activeVipRankingId = '',
@@ -1876,14 +1876,16 @@ function rankingVoteRowHTML(o, i, extraClass = '', votingOpen = true) {
 }
 function allItemsExplorerHTML(r) {
   const total = r.opts.length;
-  if (total <= 10) return '';
-  return `<section class="allItemsExplorer"><button class="allItemsToggle" id="allItemsToggle" type="button" aria-expanded="${allItemsOpen}"><span><strong>${allItemsOpen ? 'Voltar ao Top 10' : `Ver ranking completo — ${total} opções`}</strong><small>${allItemsOpen ? 'Mostrar somente os dez primeiros' : 'Mostrar todas as posições e avaliar qualquer item'}</small></span><b aria-hidden="true">${allItemsOpen ? '−' : '+'}</b></button></section>`;
+  const shown = Math.min(visibleOptionCount, total);
+  if (shown >= total) return '';
+  const next = Math.min(10, total - shown);
+  return `<section class="allItemsExplorer"><button class="allItemsToggle" id="allItemsToggle" type="button"><span><strong>Ver mais ${next}</strong><small>${shown} de ${total} opções abertas</small></span><b aria-hidden="true">+</b></button></section>`;
 }
 function bindAllItems(r) {
   const toggle = document.getElementById('allItemsToggle');
   if (!toggle) return;
   toggle.onclick = () => {
-    allItemsOpen = !allItemsOpen;
+    visibleOptionCount = Math.min(r.opts.length, visibleOptionCount + 10);
     renderInternal();
   };
 }
@@ -1965,7 +1967,6 @@ function beginRankingEdit(r) {
     imageData: '',
     imageUrl: String(r.img || '').startsWith('https://') ? r.img : '',
   };
-  allItemsOpen = true;
   renderInternal();
 }
 
@@ -2069,7 +2070,7 @@ function bindRankingEditor(r) {
   document.getElementById('rankingEditorTitle')?.focus();
   document.getElementById('rankingEditorCancel').onclick = () => {
     rankingEditorState = null;
-    allItemsOpen = false;
+    visibleOptionCount = 10;
     renderInternal();
   };
   document.getElementById('rankingEditorKeepPhoto').onclick = () => {
@@ -2189,7 +2190,7 @@ function bindRankingEditor(r) {
         if (labels.has(Number(option.id))) option.label = labels.get(Number(option.id));
       });
       rankingEditorState = null;
-      allItemsOpen = false;
+      visibleOptionCount = 10;
       renderInternal();
       toast(result.unchanged ? 'Nada foi alterado' : 'Ranking atualizado');
     } catch (error) {
@@ -2373,7 +2374,7 @@ function renderInternal() {
     return;
   }
   if (rankingEditorState?.rankingId === r.id) rankingEditorState = null;
-  const visibleLimit = allItemsOpen ? r.opts.length : Math.min(10, r.opts.length),
+  const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
     visibleOptions = r.opts.slice(0, visibleLimit),
     votingOpen = !vip || r.vipVotingOpen !== false,
     ownerBar = r.vipOwned ? vipOwnerBarHTML(r) : '',

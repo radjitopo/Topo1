@@ -296,11 +296,8 @@ const rankings = [
       'Mamma Veg – Córrego Grande',
       'Espaço Nutrir – Campeche',
       'Kulturas',
-      'Orgânicos & Orgânicos',
       'Komtodos Restaurante Vegetariano',
-      'Vega Açaí',
       'Lalu’s Veggie',
-      'Artesano Pizza Bar – Lagoa',
       'Mandarina Culinária Vegana',
     ],
   ),
@@ -828,8 +825,8 @@ function validate() {
 
   for (const item of rankings) {
     if (!item.image) throw new Error(`${item.id} não tem imagem válida.`);
-    if (item.options.length !== 20) {
-      throw new Error(`${item.id} tem ${item.options.length} opções; deveria ter 20.`);
+    if (item.options.length < 5) {
+      throw new Error(`${item.id} tem ${item.options.length} opções; o mínimo é 5.`);
     }
     if (new Set(item.options).size !== item.options.length) {
       throw new Error(`${item.id} tem opções repetidas.`);

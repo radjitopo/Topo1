@@ -102,15 +102,16 @@ assert.match(
   /elseif\(!updateRankingPreviewCards\(ranking\)\)renderHome\(\)/,
   'category cards must stay in place after voting instead of re-sorting the full page',
 );
+assert.match(compactApp, /Vermais\$\{next\}/, 'the first ten must offer the next batch');
 assert.match(
   compactApp,
-  /Verrankingcompleto—\$\{total\}opções/,
-  'the first ten must offer the complete ranking',
+  /visibleOptionCount=Math\.min\(r\.opts\.length,visibleOptionCount\+10\)/,
+  'each plus click must open at most ten more options',
 );
 assert.match(
   compactApp,
-  /constvisibleLimit=allItemsOpen\?r\.opts\.length:Math\.min\(10,r\.opts\.length\)/,
-  'the full view must not impose a display-only cap',
+  /constvisibleLimit=Math\.min\(visibleOptionCount,r\.opts\.length\)/,
+  'the full view must support any ranking length',
 );
 assert.doesNotMatch(
   compactApp,

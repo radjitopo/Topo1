@@ -7,6 +7,9 @@ const local = globalThis.TopoLocal;
 const catalog = JSON.parse(
   await readFile(new URL('../data/local-catalog.json', import.meta.url), 'utf8'),
 );
+const exclusions = JSON.parse(
+  await readFile(new URL('../data/local-option-exclusions.json', import.meta.url), 'utf8'),
+);
 
 const expectedCategories = local.groupOrder.slice(1);
 
@@ -26,10 +29,10 @@ test('the local seed is a complete 21 by 16 matrix', () => {
   }
 });
 
-test('all 6,701 starting options are usable and unique inside each ranking', () => {
+test('the curated local options are usable and unique inside each ranking', () => {
   assert.equal(
     catalog.reduce((total, ranking) => total + ranking.opts.length, 0),
-    6701,
+    6605,
   );
   for (const ranking of catalog) {
     assert.ok(ranking.opts.length >= 5 && ranking.opts.length <= 20, ranking.id);
@@ -42,22 +45,33 @@ test('all 6,701 starting options are usable and unique inside each ranking', () 
       ranking.opts.every((option) => option.label.trim().length >= 3),
       ranking.id,
     );
-    assert.deepEqual(
-      ranking.opts.map((option) => option.position),
-      Array.from({ length: ranking.opts.length }, (_, index) => index + 1),
+    const positions = ranking.opts.map((option) => option.position);
+    assert.ok(
+      positions.every(
+        (position, index) =>
+          Number.isInteger(position) &&
+          position > 0 &&
+          (index === 0 || position > positions[index - 1]),
+      ),
       ranking.id,
     );
   }
-  assert.deepEqual(
-    catalog
-      .filter((ranking) => ranking.opts.length < 20)
-      .map((ranking) => [ranking.id, ranking.opts.length]),
-    [
-      ['restaurantes-veganos-manaus', 19],
-      ['restaurantes-veganos-guarulhos', 16],
-      ['restaurantes-veganos-sao-goncalo', 6],
-    ],
+  assert.equal(
+    catalog.find((ranking) => ranking.id === 'restaurantes-veganos-manaus').opts.length,
+    5,
   );
+  assert.equal(
+    catalog.find((ranking) => ranking.id === 'restaurantes-veganos-guarulhos').opts.length,
+    5,
+  );
+});
+
+test('the editorial exclusion list cannot return to the local catalog', () => {
+  const byId = new Map(catalog.map((ranking) => [ranking.id, ranking]));
+  for (const [rankingId, labels] of Object.entries(exclusions)) {
+    const visible = new Set((byId.get(rankingId)?.opts || []).map((option) => option.label));
+    for (const label of labels) assert.equal(visible.has(label), false, `${rankingId}: ${label}`);
+  }
 });
 
 test('the frontend taxonomy recognizes every generated ranking', () => {
