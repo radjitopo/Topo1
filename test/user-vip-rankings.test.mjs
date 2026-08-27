@@ -161,6 +161,9 @@ test('only the creator can manage a private ranking and the profile exposes the 
   assert.match(app, /data-copy-vip/);
   assert.match(app, /data-delete-vip/);
   assert.match(app, /id="vipOwnerEditorForm"/);
+  assert.match(app, /class="vipOwnerEditorHead"/);
+  assert.match(app, /Foto do topo/);
+  assert.match(app, /vipRankingCover/);
   assert.match(app, /vipCoverEditorHTML\('vipOwner'/);
   assert.match(app, /bindVipCoverPicker\('vipOwner'/);
   assert.match(app, /method: 'PATCH'/);
@@ -170,6 +173,8 @@ test('only the creator can manage a private ranking and the profile exposes the 
   assert.match(style, /\.vipOwnerActions/);
   assert.match(style, /\.profileVipRankings/);
   assert.match(style, /\.vipOwnerEditor/);
+  assert.match(style, /\.vipOwnerEditor > \.vipOwnerEditorHead/);
+  assert.match(style, /\.vipRankingCover/);
   assert.match(index, /vip-custom-rankings/);
 });
 

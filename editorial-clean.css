@@ -4907,16 +4907,56 @@ body.popElectric .vipCoverEditor {
 }
 
 body.popElectric .vipOwnerEditor .vipCoverEditor {
-  margin-top: 28px;
-  border-top: 1px solid var(--clean-line-strong);
-  padding-top: 4px;
+  margin-top: 20px;
+  border: 1px solid var(--clean-line-strong);
+  background: #fff;
+  padding: 14px;
 }
 
-body.popElectric .vipCoverEditor .vipOptionEditorHead label small {
+body.popElectric .vipCoverEditorHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 9px;
+}
+
+body.popElectric .vipCoverEditorHead > div {
+  display: grid;
+  gap: 4px;
+}
+
+body.popElectric .vipCoverEditorHead label {
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+body.popElectric .vipCoverEditorHead label small {
   color: var(--clean-muted);
   font-weight: 650;
   letter-spacing: 0;
   text-transform: none;
+}
+
+body.popElectric .vipCoverEditorHead p,
+body.popElectric .vipCoverEditorHead > small {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 11px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipCoverEditorHead > small {
+  flex: 0 0 auto;
+  font-size: 9px;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
 }
 
 body.popElectric .vipCoverPreview {
@@ -4944,6 +4984,24 @@ body.popElectric .vipCoverPreview > span {
     sans-serif;
   letter-spacing: 0.07em;
   text-transform: uppercase;
+}
+
+body.popElectric .vipCoverEmpty {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}
+
+body.popElectric .vipCoverEmpty b {
+  color: var(--clean-ink);
+  font:
+    400 30px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .vipCoverEmpty small {
+  font: inherit;
 }
 
 body.popElectric .vipCoverActions {
@@ -5224,37 +5282,43 @@ body.popElectric .vipOwnerBack {
 }
 
 body.popElectric .vipOwnerEditor {
-  max-width: 900px;
-  margin: 18px auto 70px;
+  max-width: 760px;
+  margin: 14px auto 56px;
   border: 1px solid var(--clean-ink);
-  border-top: 7px solid var(--clean-ink);
+  border-top: 5px solid var(--clean-ink);
   background: #fbf8ef;
-  padding: clamp(22px, 5vw, 52px);
+  padding: clamp(20px, 4vw, 34px);
 }
 
-body.popElectric .vipOwnerEditor header h1 {
-  margin: 9px 0 12px;
+body.popElectric .vipOwnerEditor > .vipOwnerEditorHead {
+  display: block;
+  height: auto;
+  padding: 0;
+}
+
+body.popElectric .vipOwnerEditorHead h1 {
+  margin: 5px 0 8px;
   font:
-    900 clamp(38px, 6vw, 68px) / 0.92 Arial,
+    900 clamp(34px, 5vw, 48px) / 0.96 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.05em;
 }
 
-body.popElectric .vipOwnerEditor header p {
-  max-width: 680px;
-  margin: 0 0 30px;
+body.popElectric .vipOwnerEditorHead p {
+  max-width: 600px;
+  margin: 0 0 20px;
   color: var(--clean-muted);
   font:
-    650 14px/1.5 Arial,
+    650 13px/1.45 Arial,
     Helvetica,
     sans-serif;
 }
 
 body.popElectric .vipOwnerField {
   display: grid;
-  gap: 7px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 16px;
 }
 
 body.popElectric .vipOwnerField > span {
@@ -5268,7 +5332,7 @@ body.popElectric .vipOwnerField > span {
 
 body.popElectric .vipOwnerOptions,
 body.popElectric .vipOwnerAccess {
-  margin-top: 28px;
+  margin-top: 22px;
   border-top: 1px solid var(--clean-line-strong);
   padding-top: 4px;
 }
@@ -5347,6 +5411,11 @@ body.popElectric .vipOwnerEditorActions button.danger {
 body.popElectric .vipOwnerEditorActions button:disabled {
   cursor: wait;
   opacity: 0.55;
+}
+
+body.popElectric.rankingPage .vipRankingCover {
+  margin-bottom: 22px;
+  aspect-ratio: 16 / 7;
 }
 
 body.popElectric .vipRankingDescription {
@@ -5438,6 +5507,35 @@ body.popElectric .option .react:disabled {
 
   body.popElectric .vipOwnerEditorActions > button.danger {
     width: 100%;
+  }
+
+  body.popElectric .vipOwnerEditor {
+    margin-top: 10px;
+    padding: 19px 17px 22px;
+  }
+
+  body.popElectric .vipOwnerEditorHead h1 {
+    font-size: 34px;
+  }
+
+  body.popElectric .vipOwnerEditorHead p {
+    margin-bottom: 17px;
+    font-size: 12px;
+  }
+
+  body.popElectric .vipCoverEditorHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  body.popElectric .vipOwnerEditor .vipCoverPreview {
+    aspect-ratio: 16 / 9;
+  }
+
+  body.popElectric.rankingPage .vipRankingCover {
+    margin-bottom: 18px;
+    aspect-ratio: 4 / 3;
   }
 }
 
