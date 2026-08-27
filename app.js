@@ -349,6 +349,7 @@ function groupPath(group) {
 }
 document.body.classList.toggle('homePage', pageKind() === 'home');
 document.body.classList.toggle('rankingPage', pageKind() === 'ranking');
+document.body.classList.toggle('authPage', pageKind() === 'auth');
 document.body.classList.toggle('profilePage', pageKind() === 'profile');
 document.body.classList.toggle('moderationPage', pageKind() === 'moderation');
 document.body.classList.toggle('favoritesPage', pageKind() === 'favorites');

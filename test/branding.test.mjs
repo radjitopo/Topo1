@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { compactSource } from './source-helpers.mjs';
 
-const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page] =
+const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page, app] =
   await Promise.all(
     [
       '../logo-topo-v4.svg',
@@ -13,10 +13,12 @@ const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page]
       '../index.html',
       '../institutional.js',
       '../page.js',
+      '../app.js',
     ].map((path) => readFile(new URL(path, import.meta.url), 'utf8')),
   );
 const compactPopCss = compactSource(popCss);
 const compactEditorialCss = compactSource(editorialCss);
+const compactApp = compactSource(app);
 
 assert.match(logo, /id="wordmark" fill="#0a0a0a"/, 'the master wordmark must be black');
 assert.match(
@@ -56,7 +58,7 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260827-2-no-server-page-flash'));
+assert.ok(index.includes('/editorial-clean.css?v=20260827-3-clean-auth'));
 assert.ok(index.includes('/app.js?v=20260827-1-vip-area'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(institutional.includes('/editorial-clean.css?v=20260826-21-login-cta'));
@@ -227,6 +229,31 @@ assert.match(
   compactEditorialCss,
   /body\.popElectric\.accountEnter\{[^}]*min-height:46px[^}]*background:var\(--clean-ink\)[^}]*color:#fff/,
   'signed-out visitors need a prominent editorial login call to action',
+);
+assert.match(
+  compactApp,
+  /document\.body\.classList\.toggle\('authPage',pageKind\(\)==='auth'\)/,
+  'the sign-in route needs its own current-design scope',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.authPage\.authCard\{[^}]*border:0[^}]*border-top:6pxsolidvar\(--clean-ink\)[^}]*background:transparent/,
+  'sign-in must use the flat editorial composition instead of the old bordered card',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.authPage\.clerkAuthMount\{[^}]*min-height:0[^}]*display:block/,
+  'sign-in must not preserve the old empty 300px form area',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.authPage\.primaryBtn\{[^}]*border-radius:0[^}]*background:var\(--clean-ink\)[^}]*color:#fff/,
+  'the sign-in action must use the current black primary button',
+);
+assert.match(
+  compactEditorialCss,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.authPage\.authCard\{[^}]*display:block[^}]*border-top-width:4px[\s\S]*body\.popElectric\.authPage\.clerkAuthMount\{[^}]*min-height:0/,
+  'the current sign-in composition must stack compactly on mobile',
 );
 assert.match(
   compactEditorialCss,

@@ -1762,6 +1762,243 @@ body.legalShell .siteFooterColumn strong {
   color: var(--clean-lime);
 }
 
+/* Entrar */
+body.popElectric.authPage .feed {
+  width: min(920px, calc(100% - 48px));
+  padding-top: 48px;
+  padding-bottom: 84px;
+}
+
+body.popElectric.authPage .authShell {
+  max-width: none;
+  margin: 0;
+}
+
+body.popElectric.authPage .authCard {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(340px, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  column-gap: clamp(42px, 7vw, 92px);
+  border: 0;
+  border-top: 6px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-line);
+  background: transparent;
+  padding: 30px 0 36px;
+}
+
+body.popElectric.authPage .authEyebrow {
+  grid-column: 1;
+  grid-row: 1;
+  color: var(--clean-sage);
+  font:
+    850 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.14em;
+}
+
+body.popElectric.authPage .authTitle {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 10px 0 15px;
+  color: var(--clean-ink);
+  font:
+    850 clamp(46px, 6.2vw, 64px) / 0.93 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric.authPage .authIntro {
+  grid-column: 1;
+  grid-row: 3;
+  max-width: 390px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    600 15px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .authNote {
+  grid-column: 1;
+  grid-row: 4;
+  margin: 26px 0 0;
+  border-left: 3px solid var(--clean-sage);
+  color: var(--clean-muted);
+  padding: 2px 0 2px 12px;
+  font:
+    650 12px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .clerkAuthMount {
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  min-height: 0;
+  display: block;
+}
+
+body.popElectric.authPage .passwordlessAuth {
+  width: 100%;
+  padding: 0;
+}
+
+body.popElectric.authPage .field {
+  margin-bottom: 15px;
+}
+
+body.popElectric.authPage .field span {
+  margin-bottom: 8px;
+  color: var(--clean-ink);
+  font:
+    850 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric.authPage .field input {
+  width: 100%;
+  min-height: 56px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 13px 15px;
+  font:
+    650 16px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .field input:focus {
+  border-color: var(--clean-sage);
+  outline: 3px solid var(--clean-sage-soft);
+  outline-offset: 0;
+}
+
+body.popElectric.authPage .primaryBtn {
+  min-height: 56px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-ink);
+  color: #fff;
+  padding: 13px 18px;
+  font:
+    850 13px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .primaryBtn:hover,
+body.popElectric.authPage .primaryBtn:focus-visible {
+  border-color: var(--clean-sage);
+  background: var(--clean-sage);
+}
+
+body.popElectric.authPage .authFine {
+  margin: 12px 0 0;
+  color: var(--clean-muted);
+  text-align: left;
+  font:
+    600 12px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .clerkFlowError {
+  color: var(--clean-muted-red);
+  font-size: 12px;
+}
+
+body.popElectric.authPage .codeSentMark {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 14px;
+  border-radius: 0;
+  background: var(--clean-sage);
+  color: #fff;
+}
+
+body.popElectric.authPage .clerkCodeStep h2 {
+  margin-bottom: 9px;
+  font:
+    850 34px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric.authPage .clerkCodeStep > p {
+  margin-bottom: 18px;
+  color: var(--clean-muted);
+  font:
+    600 13px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.authPage .codeStepActions button {
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  color: var(--clean-ink);
+  font-size: 11px;
+}
+
+body.popElectric.authPage .authPreload strong {
+  font:
+    800 20px/1.05 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+@media (max-width: 700px) {
+  body.popElectric.authPage .feed {
+    width: min(560px, calc(100% - 32px));
+    padding-top: 28px;
+    padding-bottom: 58px;
+  }
+
+  body.popElectric.authPage .authCard {
+    display: block;
+    border-top-width: 4px;
+    padding: 22px 0 30px;
+  }
+
+  body.popElectric.authPage .authTitle {
+    margin: 9px 0 13px;
+    font-size: 44px;
+  }
+
+  body.popElectric.authPage .authIntro {
+    font-size: 14px;
+  }
+
+  body.popElectric.authPage .clerkAuthMount {
+    min-height: 0;
+    margin-top: 27px;
+  }
+
+  body.popElectric.authPage .authNote {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  body.popElectric.authPage .feed {
+    width: calc(100% - 24px);
+    padding-top: 22px;
+  }
+
+  body.popElectric.authPage .authTitle {
+    font-size: 40px;
+  }
+}
+
 /* Perfil */
 body.popElectric.profilePage {
   background: var(--clean-paper);
