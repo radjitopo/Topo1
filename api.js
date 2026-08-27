@@ -1650,6 +1650,9 @@ async function updateUserVipRanking(req, res, body) {
   const votingOpen = body.votingOpen;
   const submittedOptions = Array.isArray(body.options) ? body.options : null;
   const submittedNewOptions = Array.isArray(body.newOptions) ? body.newOptions : [];
+  const submittedRemovedOptionIds = Array.isArray(body.removedOptionIds)
+    ? body.removedOptionIds
+    : [];
   if (!isValidRankingId(rankingId) || !title || description === null || !submittedOptions) {
     return json(res, 400, { error: 'invalid_vip_content' });
   }
@@ -1666,6 +1669,8 @@ async function updateUserVipRanking(req, res, body) {
 
   const retained = [];
   const retainedIds = new Set();
+  const removedIds = [];
+  const removedIdSet = new Set();
   const normalizedLabels = new Set();
   for (const submitted of submittedOptions) {
     const id = Number(submitted?.id);
@@ -1680,6 +1685,15 @@ async function updateUserVipRanking(req, res, body) {
     retainedIds.add(id);
     normalizedLabels.add(normalized);
     retained.push({ id, label, normalized });
+  }
+
+  for (const value of submittedRemovedOptionIds) {
+    const id = Number(value);
+    if (!Number.isSafeInteger(id) || id <= 0 || retainedIds.has(id) || removedIdSet.has(id)) {
+      return json(res, 400, { error: 'invalid_vip_options' });
+    }
+    removedIdSet.add(id);
+    removedIds.push(id);
   }
 
   const newOptions = [];
@@ -1727,6 +1741,10 @@ async function updateUserVipRanking(req, res, body) {
         SELECT item.id, item.label, item.normalized
         FROM jsonb_to_recordset($7::jsonb) AS item(id bigint, label text, normalized text)
       ),
+      removed AS MATERIALIZED (
+        SELECT value::bigint AS id
+        FROM jsonb_array_elements_text($9::jsonb)
+      ),
       added AS MATERIALIZED (
         SELECT
           item.value->>'label' AS label,
@@ -1744,16 +1762,22 @@ async function updateUserVipRanking(req, res, body) {
           target.has_votes,
           (SELECT COUNT(*)::int FROM existing) AS existing_count,
           (SELECT COUNT(*)::int FROM submitted) AS submitted_count,
+          (SELECT COUNT(*)::int FROM removed) AS removed_count,
           (SELECT COUNT(*)::int FROM added) AS added_count,
           (
             SELECT COUNT(*)::int
-            FROM submitted
-            WHERE NOT EXISTS (SELECT 1 FROM existing WHERE existing.id = submitted.id)
+            FROM (
+              SELECT id FROM submitted
+              UNION ALL
+              SELECT id FROM removed
+            ) expected
+            WHERE NOT EXISTS (SELECT 1 FROM existing WHERE existing.id = expected.id)
           ) AS unknown_count,
           (
             SELECT COUNT(*)::int
             FROM existing
             WHERE NOT EXISTS (SELECT 1 FROM submitted WHERE submitted.id = existing.id)
+              AND NOT EXISTS (SELECT 1 FROM removed WHERE removed.id = existing.id)
           ) AS missing_count,
           (
             SELECT COUNT(*)::int
@@ -1776,12 +1800,9 @@ async function updateUserVipRanking(req, res, body) {
         FROM target
         JOIN checks ON true
         WHERE checks.unknown_count = 0
+          AND checks.missing_count = 0
           AND checks.duplicate_count = 0
-          AND checks.submitted_count + checks.added_count BETWEEN 3 AND $9
-          AND (
-            checks.has_votes = false
-            OR (checks.missing_count = 0 AND checks.renamed_count = 0)
-          )
+          AND checks.submitted_count + checks.added_count BETWEEN 3 AND $10
       ),
       updated AS (
         UPDATE rankings ranking
@@ -1799,10 +1820,9 @@ async function updateUserVipRanking(req, res, body) {
       ),
       deleted AS (
         DELETE FROM ranking_options option
-        USING updated, allowed
+        USING removed, updated
         WHERE option.ranking_id = updated.id
-          AND allowed.has_votes = false
-          AND NOT EXISTS (SELECT 1 FROM submitted WHERE submitted.id = option.id)
+          AND option.id = removed.id
         RETURNING option.id
       ),
       renamed AS (
@@ -1811,7 +1831,6 @@ async function updateUserVipRanking(req, res, body) {
         FROM submitted, updated, allowed
         WHERE option.id = submitted.id
           AND option.ranking_id = updated.id
-          AND (allowed.has_votes = false OR option.label = submitted.label)
         RETURNING option.id
       ),
       next_position AS MATERIALIZED (
@@ -1846,6 +1865,7 @@ async function updateUserVipRanking(req, res, body) {
         checks.duplicate_count AS "duplicateCount",
         checks.submitted_count + checks.added_count AS "optionCount",
         EXISTS (SELECT 1 FROM updated) AS updated,
+        (SELECT COUNT(*)::int FROM deleted) AS "deletedCount",
         (SELECT COUNT(*)::int FROM inserted) AS "insertedCount"
       FROM checks
     `,
@@ -1858,6 +1878,7 @@ async function updateUserVipRanking(req, res, body) {
       passwordHash,
       JSON.stringify(retained),
       JSON.stringify(newOptions),
+      JSON.stringify(removedIds),
       PUBLISHED_RANKING_OPTION_LIMIT,
     ],
   );
@@ -1867,11 +1888,8 @@ async function updateUserVipRanking(req, res, body) {
   if (Number(result.unknownCount || 0) > 0) {
     return json(res, 409, { error: 'vip_options_changed' });
   }
-  if (
-    result.hasVotes === true &&
-    (Number(result.missingCount || 0) > 0 || Number(result.renamedCount || 0) > 0)
-  ) {
-    return json(res, 409, { error: 'vip_options_locked' });
+  if (Number(result.missingCount || 0) > 0) {
+    return json(res, 409, { error: 'vip_options_changed' });
   }
   if (Number(result.duplicateCount || 0) > 0) {
     return json(res, 409, { error: 'duplicate_vip_option' });
@@ -1883,6 +1901,8 @@ async function updateUserVipRanking(req, res, body) {
     rankingId,
     hasVotes: result.hasVotes === true,
     optionCount: Number(result.optionCount || 0),
+    deletedCount: Number(result.deletedCount || 0),
+    renamedCount: Number(result.renamedCount || 0),
     insertedCount: Number(result.insertedCount || 0),
   });
 }

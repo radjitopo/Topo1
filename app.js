@@ -2145,15 +2145,14 @@ function vipOwnerEditorErrorText(error) {
       invalid_vip_options: 'O ranking precisa ter de 3 a 20 nomes diferentes.',
       duplicate_vip_option: 'Há nomes repetidos no ranking.',
       invalid_vip_password: 'A nova senha precisa ter de 4 a 80 caracteres.',
-      vip_options_locked: 'Depois do primeiro voto, os nomes existentes não podem ser alterados.',
       vip_options_changed: 'A lista mudou em outro acesso. Recarregue e tente novamente.',
       ranking_not_found: 'Este ranking não está mais disponível.',
     }[error] || 'Não consegui salvar agora. Tente novamente.'
   );
 }
 
-function vipOwnerOptionRowHTML(option, locked) {
-  return `<div class="vipOwnerOptionRow" data-vip-owner-option data-option-id="${option.id}"><span>${option.originalPosition}</span><input type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" ${locked ? 'readonly' : ''} aria-label="Nome ou opção ${option.originalPosition}">${locked ? '<small>travado</small>' : '<button type="button" data-remove-owner-option aria-label="Remover este nome">×</button>'}</div>`;
+function vipOwnerOptionRowHTML(option) {
+  return `<div class="vipOwnerOptionRow" data-vip-owner-option data-option-id="${option.id}"><span>${option.originalPosition}</span><input type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" aria-label="Nome ou opção ${option.originalPosition}"><button type="button" data-remove-owner-option aria-label="Apagar ${escapeHTML(option.label)}">APAGAR</button></div>`;
 }
 
 function closeVipOwnerEditor(r) {
@@ -2168,16 +2167,40 @@ function renderVipOwnerEditorScreen(r) {
       (left, right) => Number(left.originalPosition) - Number(right.originalPosition),
     );
   document.title = `Gerenciar ${r.q} — TOPO`;
-  feed.innerHTML = `<div class="internalHead"><button class="backLink vipOwnerBack" id="vipOwnerBack" type="button">← Voltar ao ranking</button><span class="internalMeta">Privado · ${fmt(r.votes || 0)} votos</span></div><form class="vipOwnerEditor" id="vipOwnerEditorForm"><header><span class="portalKicker">Meus rankings privados</span><h1>Gerenciar ranking</h1><p>${hasVotes ? 'A votação já começou. Os nomes existentes estão preservados, mas você pode incluir novos.' : 'Enquanto ninguém votou, você pode corrigir ou remover os nomes.'}</p></header><label class="vipOwnerField" for="vipOwnerTitle"><span>Pergunta ou título</span><input id="vipOwnerTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><label class="vipOwnerField" for="vipOwnerDescription"><span>Descrição <small>opcional</small></span><textarea id="vipOwnerDescription" maxlength="280" rows="3">${escapeHTML(r.vipDescription || '')}</textarea></label><section class="vipOwnerOptions"><div class="vipOptionEditorHead"><label>Nomes atuais</label><small>${orderedOptions.length}/20</small></div><div id="vipOwnerOptions">${orderedOptions.map((option) => vipOwnerOptionRowHTML(option, hasVotes)).join('')}</div><label class="vipOwnerField" for="vipOwnerNewOptions"><span>Adicionar novos nomes <small>um por linha</small></span><textarea id="vipOwnerNewOptions" maxlength="1700" rows="4" placeholder="Ex.:&#10;João&#10;Maria"></textarea></label>${hasVotes ? '<p class="vipOwnerLockedNote">Os novos nomes entram com zero votos e recebem o selo “Novo”.</p>' : ''}</section><section class="vipOwnerAccess"><label class="vipOwnerVotingToggle"><input id="vipOwnerVotingOpen" type="checkbox" ${r.vipVotingOpen === false ? '' : 'checked'}><span><strong>Votação aberta</strong><small>Desmarque para encerrar temporariamente.</small></span></label><label class="vipOwnerField" for="vipOwnerPassword"><span>Trocar a senha <small>opcional</small></span><input id="vipOwnerPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="Deixe vazio para manter a senha atual"></label></section><span class="vipCreateStatus" id="vipOwnerStatus" role="status" aria-live="polite"></span><div class="vipOwnerEditorActions"><button class="danger" id="vipOwnerDelete" type="button">APAGAR RANKING</button><div><button id="vipOwnerCancel" type="button">CANCELAR</button><button class="primary" type="submit">SALVAR ALTERAÇÕES</button></div></div></form>`;
+  feed.innerHTML = `<div class="internalHead"><button class="backLink vipOwnerBack" id="vipOwnerBack" type="button">← Voltar ao ranking</button><span class="internalMeta">Privado · ${fmt(r.votes || 0)} votos</span></div><form class="vipOwnerEditor" id="vipOwnerEditorForm"><header><span class="portalKicker">Meus rankings privados</span><h1>Gerenciar ranking</h1><p>Corrija qualquer nome sem perder os votos ou apague quem não deve fazer parte do ranking.</p></header><label class="vipOwnerField" for="vipOwnerTitle"><span>Pergunta ou título</span><input id="vipOwnerTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><label class="vipOwnerField" for="vipOwnerDescription"><span>Descrição <small>opcional</small></span><textarea id="vipOwnerDescription" maxlength="280" rows="3">${escapeHTML(r.vipDescription || '')}</textarea></label><section class="vipOwnerOptions"><div class="vipOptionEditorHead"><label>Nomes atuais</label><small id="vipOwnerOptionCount">${orderedOptions.length}/20</small></div><div id="vipOwnerOptions">${orderedOptions.map(vipOwnerOptionRowHTML).join('')}</div><p class="vipOwnerEditNote"><strong>Corrigir mantém os votos.</strong> Ao apagar, os votos e comentários ligados àquele nome também serão removidos quando você salvar.</p><label class="vipOwnerField" for="vipOwnerNewOptions"><span>Adicionar novos nomes <small>um por linha</small></span><textarea id="vipOwnerNewOptions" maxlength="1700" rows="4" placeholder="Ex.:&#10;João&#10;Maria"></textarea></label>${hasVotes ? '<p class="vipOwnerNewNote">Os novos nomes entram com zero votos e recebem o selo “Novo”.</p>' : ''}</section><section class="vipOwnerAccess"><label class="vipOwnerVotingToggle"><input id="vipOwnerVotingOpen" type="checkbox" ${r.vipVotingOpen === false ? '' : 'checked'}><span><strong>Votação aberta</strong><small>Desmarque para encerrar temporariamente.</small></span></label><label class="vipOwnerField" for="vipOwnerPassword"><span>Trocar a senha <small>opcional</small></span><input id="vipOwnerPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="Deixe vazio para manter a senha atual"></label></section><span class="vipCreateStatus" id="vipOwnerStatus" role="status" aria-live="polite"></span><div class="vipOwnerEditorActions"><button class="danger" id="vipOwnerDelete" type="button">APAGAR RANKING</button><div><button id="vipOwnerCancel" type="button">CANCELAR</button><button class="primary" type="submit">SALVAR ALTERAÇÕES</button></div></div></form>`;
 
   const form = document.getElementById('vipOwnerEditorForm'),
     options = document.getElementById('vipOwnerOptions'),
-    status = document.getElementById('vipOwnerStatus');
+    status = document.getElementById('vipOwnerStatus'),
+    newOptionsInput = document.getElementById('vipOwnerNewOptions'),
+    removedOptionIds = new Set(),
+    updateOptionCount = () => {
+      const newCount = newOptionsInput.value
+        .split(/\r?\n/)
+        .map((value) => value.trim())
+        .filter(Boolean).length;
+      document.getElementById('vipOwnerOptionCount').textContent =
+        `${options.querySelectorAll('[data-vip-owner-option]').length + newCount}/20`;
+    };
   document.getElementById('vipOwnerBack').onclick = () => closeVipOwnerEditor(r);
   document.getElementById('vipOwnerCancel').onclick = () => closeVipOwnerEditor(r);
   options.querySelectorAll('[data-remove-owner-option]').forEach((button) => {
-    button.onclick = () => button.closest('[data-vip-owner-option]')?.remove();
+    button.onclick = () => {
+      const row = button.closest('[data-vip-owner-option]'),
+        label = row?.querySelector('input')?.value.trim() || 'este nome';
+      if (
+        !row ||
+        !window.confirm(
+          `Apagar “${label}”? Ao salvar, os votos e comentários ligados a este nome também serão removidos.`,
+        )
+      )
+        return;
+      removedOptionIds.add(Number(row.dataset.optionId));
+      row.remove();
+      updateOptionCount();
+    };
   });
+  newOptionsInput.addEventListener('input', updateOptionCount);
   document.getElementById('vipOwnerDelete').onclick = async () => {
     if (!window.confirm(`Apagar “${r.q}”? Todos os votos e comentários também serão apagados.`)) {
       return;
@@ -2206,9 +2229,8 @@ function renderVipOwnerEditorScreen(r) {
         id: Number(row.dataset.optionId),
         label: row.querySelector('input').value.trim(),
       })),
-      newOptions = document
-        .getElementById('vipOwnerNewOptions')
-        .value.split(/\r?\n/)
+      newOptions = newOptionsInput.value
+        .split(/\r?\n/)
         .map((value) => value.trim())
         .filter(Boolean),
       payload = {
@@ -2219,6 +2241,7 @@ function renderVipOwnerEditorScreen(r) {
         password: document.getElementById('vipOwnerPassword').value,
         options: retained,
         newOptions,
+        removedOptionIds: [...removedOptionIds],
       };
     if (retained.length + newOptions.length < 3 || retained.length + newOptions.length > 20) {
       status.className = 'vipCreateStatus error';

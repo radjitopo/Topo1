@@ -164,7 +164,7 @@ test('only the creator can manage a private ranking and the profile exposes the 
   assert.match(index, /vip-custom-rankings/);
 });
 
-test('owners can add names, close voting and change the password without rewriting voted names', async () => {
+test('owners can correct or remove names while preserving every retained option vote', async () => {
   const [api, app] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
@@ -178,17 +178,25 @@ test('owners can add names, close voting and change the password without rewriti
 
   assert.match(update, /vip_owner_user_id = \$2/);
   assert.match(update, /AS has_votes/);
-  assert.match(update, /checks\.missing_count = 0 AND checks\.renamed_count = 0/);
+  assert.match(update, /submittedRemovedOptionIds/);
+  assert.match(update, /jsonb_array_elements_text\(\$9::jsonb\)/);
+  assert.match(update, /DELETE FROM ranking_options option/);
+  assert.match(update, /option\.id = removed\.id/);
   assert.match(update, /vip_added_later/);
   assert.match(update, /allowed\.has_votes/);
   assert.match(update, /vip_voting_open = \$5/);
   assert.match(update, /vip_password_version = ranking\.vip_password_version/);
-  assert.match(update, /vip_options_locked/);
+  assert.doesNotMatch(update, /vip_options_locked/);
+  assert.doesNotMatch(update, /allowed\.has_votes = false/);
   assert.match(compact, /method==='PATCH'&&action==='vip-rankings'/);
   assert.match(vote, /ranking_voting_closed/);
   assert.match(vote, /option\.isVip !== true && direction !== 0/);
   assert.match(vote, /viewerFor\(user, deviceId, false, option\.isVip === true\)/);
   assert.match(app, /Os novos nomes entram com zero votos/);
+  assert.match(app, /Corrigir mantém os votos/);
+  assert.match(app, /data-remove-owner-option/);
+  assert.match(app, /removedOptionIds/);
+  assert.doesNotMatch(app, /travado/);
   assert.match(app, /vipNewOption/);
   assert.match(app, /Votação encerrada/);
 });

@@ -4962,10 +4962,17 @@ body.popElectric #vipOwnerOptions {
 body.popElectric .vipOptionInputRow,
 body.popElectric .vipOwnerOptionRow {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 42px;
   align-items: center;
   border: 1px solid var(--clean-line-strong);
   background: #fff;
+}
+
+body.popElectric .vipOptionInputRow {
+  grid-template-columns: 30px minmax(0, 1fr) 42px;
+}
+
+body.popElectric .vipOwnerOptionRow {
+  grid-template-columns: 30px minmax(0, 1fr) 68px;
 }
 
 body.popElectric .vipOptionInputRow > span,
@@ -5006,6 +5013,16 @@ body.popElectric .vipOwnerOptionRow button {
     Helvetica,
     sans-serif;
   cursor: pointer;
+}
+
+body.popElectric .vipOwnerOptionRow button {
+  padding: 0 7px;
+  font:
+    900 8px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
 }
 
 body.popElectric .vipOptionInputRow button:disabled {
@@ -5185,28 +5202,18 @@ body.popElectric .vipOwnerAccess {
   padding-top: 4px;
 }
 
-body.popElectric .vipOwnerOptionRow input[readonly] {
-  background: #f0ece2;
-  color: var(--clean-muted);
-}
-
-body.popElectric .vipOwnerOptionRow > small {
-  color: var(--clean-muted);
-  font:
-    800 8px/1 Arial,
-    Helvetica,
-    sans-serif;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-body.popElectric .vipOwnerLockedNote {
+body.popElectric .vipOwnerEditNote,
+body.popElectric .vipOwnerNewNote {
   margin: 10px 0 0;
   color: #7b5a12;
   font:
     700 11px/1.4 Arial,
     Helvetica,
     sans-serif;
+}
+
+body.popElectric .vipOwnerEditNote strong {
+  color: var(--clean-ink);
 }
 
 body.popElectric .vipOwnerVotingToggle {
