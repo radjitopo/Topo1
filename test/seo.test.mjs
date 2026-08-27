@@ -207,7 +207,11 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Disallow: \/api/);
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
-  assert.doesNotMatch(index, /classList\.add\('clientBooting'\)/);
+  assert.match(index, /classList\.add\('clientBooting'\)/);
+  assert.match(
+    index,
+    /setTimeout\(\(\)=>document\.documentElement\.classList\.remove\('clientBooting'\),8000\)/,
+  );
   assert.match(
     index,
     /\/app\.js\?v=20260827-1-vip-area-[^"']*-navigation-loading-search-city-search-submit-city/,
@@ -215,10 +219,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(index, /\/topo-local\.js\?v=20260825-6-seo-legacy-city-routing/);
   assert.match(index, /id="searchCity" name="cidade" type="hidden"/);
   assert.doesNotMatch(index, /vote · veja · continue/);
-  assert.doesNotMatch(
-    editorialCss,
-    /html\.clientBooting body\.popElectric\.homePage #feed\[data-server-rendered='true'\]/,
-  );
+  assert.match(editorialCss, /html\.clientBooting #feed\[data-server-rendered='true'\]/);
   assert.match(
     app,
     /function revealClientPage\(\)[\s\S]*?removeAttribute\('data-server-rendered'\)/,
