@@ -58,6 +58,7 @@ const VIP_ACCESS_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 const VIP_UNLOCK_WINDOW_MINUTES = 15;
 const VIP_UNLOCK_ATTEMPT_LIMIT = 8;
 const USER_VIP_RANKING_LIMIT = 20;
+const VIP_DESCRIPTION_LIMIT = 280;
 const VIP_COOKIE_PREFIX = 'topo_vip_';
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
@@ -856,7 +857,7 @@ async function notifications(req, res, body = null) {
   });
 }
 
-async function viewerFor(user, deviceId, votingRequiresAccount = false) {
+async function viewerFor(user, deviceId, votingRequiresAccount = false, privateVoting = false) {
   const [used, doubleVotes] = await Promise.all([anonymousUsed(deviceId), doubleVoteState(user)]);
 
   return {
@@ -866,6 +867,7 @@ async function viewerFor(user, deviceId, votingRequiresAccount = false) {
     anonymousLimit: ANONYMOUS_LIMIT,
     rankingLimit: RANKING_LIMIT,
     votingRequiresAccount: !user && votingRequiresAccount,
+    privateVoting: privateVoting === true,
     doubleVotes,
   };
 }
@@ -1161,6 +1163,10 @@ function vipRankingMeta(row, unlocked = false, user = null) {
     q: rankingQuestion(row.id, row.question),
     img: row.imageUrl || row.image_url || null,
     createdAt: row.createdAt || row.created_at || null,
+    description: row.vipDescription ?? row.vip_description ?? '',
+    votingOpen: (row.vipVotingOpen ?? row.vip_voting_open) !== false,
+    optionCount: Number(row.optionCount ?? row.option_count ?? 0),
+    voteCount: Number(row.voteCount ?? row.vote_count ?? 0),
     locked: !unlocked,
     vip: true,
     owned: Boolean(user?.id && ownerUserId && String(user.id) === String(ownerUserId)),
@@ -1179,7 +1185,20 @@ async function vipCatalog(req, res) {
         created_at AS "createdAt",
         is_vip AS "isVip",
         vip_password_version AS "vipPasswordVersion",
-        vip_owner_user_id AS "vipOwnerUserId"
+        vip_owner_user_id AS "vipOwnerUserId",
+        vip_description AS "vipDescription",
+        vip_voting_open AS "vipVotingOpen",
+        (
+          SELECT COUNT(*)::int
+          FROM ranking_options option
+          WHERE option.ranking_id = rankings.id
+        ) AS "optionCount",
+        (
+          SELECT COUNT(*)::int
+          FROM votes vote
+          JOIN ranking_options option ON option.id = vote.option_id
+          WHERE option.ranking_id = rankings.id
+        ) AS "voteCount"
       FROM rankings
       WHERE is_active = true
         AND is_vip = true
@@ -1214,7 +1233,9 @@ async function vipRanking(req, res) {
         created_at AS "createdAt",
         is_vip AS "isVip",
         vip_password_version AS "vipPasswordVersion",
-        vip_owner_user_id AS "vipOwnerUserId"
+        vip_owner_user_id AS "vipOwnerUserId",
+        vip_description AS "vipDescription",
+        vip_voting_open AS "vipVotingOpen"
       FROM rankings
       WHERE id = $1
         AND is_active = true
@@ -1285,6 +1306,7 @@ async function vipRanking(req, res) {
         o.id AS option_id,
         o.label,
         o.position,
+        o.vip_added_later AS "vipAddedLater",
         o.baseline_score
           + COALESCE(vt.score_delta, 0)::int
           + COALESCE(dvt.score_delta, 0)::int AS score,
@@ -1319,6 +1341,8 @@ async function vipRanking(req, res) {
     vip: true,
     vipUnlocked: true,
     vipHasPassword: true,
+    vipDescription: ranking.vipDescription || '',
+    vipVotingOpen: ranking.vipVotingOpen !== false,
     vipOwned: Boolean(
       user?.id && ranking.vipOwnerUserId && String(user.id) === String(ranking.vipOwnerUserId),
     ),
@@ -1335,18 +1359,19 @@ async function vipRanking(req, res) {
       originalPosition: Number(row.position),
       mine: Number(row.my_direction || 0),
       mineWeight: Number(row.my_weight || 1),
+      isNew: row.vipAddedLater === true,
     });
   }
   payload.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition);
 
   return json(res, 200, {
     ranking: payload,
-    viewer: await viewerFor(user, deviceId, votingRequiresAccount),
+    viewer: await viewerFor(user, deviceId, false, true),
   });
 }
 
-function userVipRankingId(sourceRankingId) {
-  const base = String(sourceRankingId || '')
+function userVipRankingId(seed) {
+  const base = publishedRankingSlug(seed)
     .slice(0, 70)
     .replace(/[._-]+$/g, '');
   return `${base || 'ranking'}-vip-${randomBytes(8).toString('hex')}`;
@@ -1356,13 +1381,126 @@ async function createUserVipRanking(req, res, body) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
 
-  const sourceRankingId = String(body.sourceRankingId || '').trim();
   const password = vipPassword(body.password);
+  if (!password) return json(res, 400, { error: 'invalid_vip_password' });
+  if (!vipSigningKey()) return json(res, 503, { error: 'vip_not_configured' });
+
+  if (body.sourceRankingId) {
+    return createUserVipRankingCopy(res, body, user, password);
+  }
+
+  const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
+  const description = suggestionText(body.description ?? '', 0, VIP_DESCRIPTION_LIMIT);
+  const providedOptionCount = Array.isArray(body.options)
+    ? body.options.map((option) => String(option || '').trim()).filter(Boolean).length
+    : 0;
+  const options = publishedRankingOptions(body.options);
+  if (!title) return json(res, 400, { error: 'invalid_vip_title' });
+  if (description === null) return json(res, 400, { error: 'invalid_vip_description' });
+  if (!options) return json(res, 400, { error: 'invalid_vip_options' });
+  if (providedOptionCount !== options.length) {
+    return json(res, 409, { error: 'duplicate_vip_option' });
+  }
+
+  const passwordHash = hashVipPassword(password);
+  let created = null;
+
+  for (let attempt = 0; attempt < 3 && !created; attempt += 1) {
+    const rankingId = userVipRankingId(title);
+    try {
+      const results = await sql.transaction(
+        [
+          sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [user.id]),
+          sql.query(
+            `
+              INSERT INTO rankings (
+                id,
+                category,
+                question,
+                image_url,
+                baseline_votes,
+                is_active,
+                created_at,
+                is_vip,
+                vip_password_hash,
+                vip_password_version,
+                vip_updated_at,
+                vip_owner_user_id,
+                vip_source_ranking_id,
+                vip_description,
+                vip_voting_open
+              )
+              SELECT $1, 'Privado', $2, NULL, 0, true, now(), true, $3, 1, now(), $4, NULL, $5, true
+              WHERE (
+                SELECT COUNT(*)
+                FROM rankings
+                WHERE vip_owner_user_id = $4
+                  AND is_active = true
+                  AND is_vip = true
+              ) < $6
+              RETURNING
+                id,
+                question,
+                image_url AS "imageUrl",
+                created_at AS "createdAt",
+                is_vip AS "isVip",
+                vip_password_version AS "vipPasswordVersion",
+                vip_owner_user_id AS "vipOwnerUserId",
+                vip_description AS "vipDescription",
+                vip_voting_open AS "vipVotingOpen"
+            `,
+            [rankingId, title, passwordHash, user.id, description, USER_VIP_RANKING_LIMIT],
+          ),
+          sql.query(
+            `
+              INSERT INTO ranking_options (
+                ranking_id,
+                label,
+                position,
+                baseline_score,
+                vip_added_later
+              )
+              SELECT $1, option.label, option.position::int, 0, false
+              FROM jsonb_array_elements_text($2::jsonb) WITH ORDINALITY AS option(label, position)
+              WHERE EXISTS (
+                SELECT 1
+                FROM rankings destination
+                WHERE destination.id = $1
+                  AND destination.vip_owner_user_id = $3
+                  AND destination.vip_password_hash = $4
+              )
+              ORDER BY option.position
+              RETURNING id
+            `,
+            [rankingId, JSON.stringify(options), user.id, passwordHash],
+          ),
+        ],
+        { isolationLevel: 'Serializable' },
+      );
+
+      created = results?.[1]?.[0] || null;
+      if (!created) return json(res, 409, { error: 'user_vip_ranking_limit' });
+      created.optionCount = results?.[2]?.length || options.length;
+      created.voteCount = 0;
+    } catch (error) {
+      if (error?.code === '23505' && attempt < 2) continue;
+      throw error;
+    }
+  }
+
+  if (!created) throw new Error('user_vip_ranking_id_failed');
+  return json(res, 201, {
+    ok: true,
+    ranking: vipRankingMeta(created, true, user),
+    path: `/ranking/${created.id}`,
+  });
+}
+
+async function createUserVipRankingCopy(res, body, user, password) {
+  const sourceRankingId = String(body.sourceRankingId || '').trim();
   if (!isValidRankingId(sourceRankingId)) {
     return json(res, 400, { error: 'invalid_source_ranking' });
   }
-  if (!password) return json(res, 400, { error: 'invalid_vip_password' });
-  if (!vipSigningKey()) return json(res, 503, { error: 'vip_not_configured' });
 
   const [source] = await sql.query(
     `
@@ -1492,6 +1630,253 @@ async function createUserVipRanking(req, res, body) {
     ok: true,
     ranking: vipRankingMeta(created, true, user),
     path: `/ranking/${created.id}`,
+  });
+}
+
+async function updateUserVipRanking(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const rankingId = String(body.rankingId || '').trim();
+  const title = suggestionText(body.title, 8, SUGGESTION_TITLE_LIMIT);
+  const description = suggestionText(body.description ?? '', 0, VIP_DESCRIPTION_LIMIT);
+  const votingOpen = body.votingOpen;
+  const submittedOptions = Array.isArray(body.options) ? body.options : null;
+  const submittedNewOptions = Array.isArray(body.newOptions) ? body.newOptions : [];
+  if (!isValidRankingId(rankingId) || !title || description === null || !submittedOptions) {
+    return json(res, 400, { error: 'invalid_vip_content' });
+  }
+  if (typeof votingOpen !== 'boolean') {
+    return json(res, 400, { error: 'invalid_vip_voting_state' });
+  }
+
+  let passwordHash = null;
+  if (String(body.password || '').trim()) {
+    const password = vipPassword(body.password);
+    if (!password) return json(res, 400, { error: 'invalid_vip_password' });
+    passwordHash = hashVipPassword(password);
+  }
+
+  const retained = [];
+  const retainedIds = new Set();
+  const normalizedLabels = new Set();
+  for (const submitted of submittedOptions) {
+    const id = Number(submitted?.id);
+    const label = suggestionText(submitted?.label, 2, SUGGESTION_OPTION_LIMIT);
+    const normalized = normalizeSuggestion(label);
+    if (!Number.isSafeInteger(id) || id <= 0 || retainedIds.has(id) || !label || !normalized) {
+      return json(res, 400, { error: 'invalid_vip_options' });
+    }
+    if (normalizedLabels.has(normalized)) {
+      return json(res, 409, { error: 'duplicate_vip_option' });
+    }
+    retainedIds.add(id);
+    normalizedLabels.add(normalized);
+    retained.push({ id, label, normalized });
+  }
+
+  const newOptions = [];
+  for (const value of submittedNewOptions) {
+    const label = suggestionText(value, 2, SUGGESTION_OPTION_LIMIT);
+    const normalized = normalizeSuggestion(label);
+    if (!label || !normalized) return json(res, 400, { error: 'invalid_vip_options' });
+    if (normalizedLabels.has(normalized)) {
+      return json(res, 409, { error: 'duplicate_vip_option' });
+    }
+    normalizedLabels.add(normalized);
+    newOptions.push({ label, normalized });
+  }
+
+  if (
+    retained.length + newOptions.length < 3 ||
+    retained.length + newOptions.length > PUBLISHED_RANKING_OPTION_LIMIT
+  ) {
+    return json(res, 400, { error: 'invalid_vip_options' });
+  }
+
+  const rows = await sql.query(
+    `
+      WITH ranking_lock AS MATERIALIZED (
+        SELECT pg_advisory_xact_lock(hashtextextended($1::text, 17)) AS acquired
+      ),
+      target AS MATERIALIZED (
+        SELECT
+          ranking.id,
+          EXISTS (
+            SELECT 1
+            FROM votes vote
+            JOIN ranking_options option ON option.id = vote.option_id
+            WHERE option.ranking_id = ranking.id
+          ) AS has_votes
+        FROM rankings ranking
+        CROSS JOIN ranking_lock
+        WHERE ranking.id = $1
+          AND ranking.vip_owner_user_id = $2
+          AND ranking.is_vip = true
+          AND ranking.is_active = true
+        FOR UPDATE OF ranking
+      ),
+      submitted AS MATERIALIZED (
+        SELECT item.id, item.label, item.normalized
+        FROM jsonb_to_recordset($7::jsonb) AS item(id bigint, label text, normalized text)
+      ),
+      added AS MATERIALIZED (
+        SELECT
+          item.value->>'label' AS label,
+          item.value->>'normalized' AS normalized,
+          item.position::int
+        FROM jsonb_array_elements($8::jsonb) WITH ORDINALITY AS item(value, position)
+      ),
+      existing AS MATERIALIZED (
+        SELECT option.id, option.label, option.position
+        FROM ranking_options option
+        JOIN target ON target.id = option.ranking_id
+      ),
+      checks AS MATERIALIZED (
+        SELECT
+          target.has_votes,
+          (SELECT COUNT(*)::int FROM existing) AS existing_count,
+          (SELECT COUNT(*)::int FROM submitted) AS submitted_count,
+          (SELECT COUNT(*)::int FROM added) AS added_count,
+          (
+            SELECT COUNT(*)::int
+            FROM submitted
+            WHERE NOT EXISTS (SELECT 1 FROM existing WHERE existing.id = submitted.id)
+          ) AS unknown_count,
+          (
+            SELECT COUNT(*)::int
+            FROM existing
+            WHERE NOT EXISTS (SELECT 1 FROM submitted WHERE submitted.id = existing.id)
+          ) AS missing_count,
+          (
+            SELECT COUNT(*)::int
+            FROM existing
+            JOIN submitted ON submitted.id = existing.id
+            WHERE submitted.label <> existing.label
+          ) AS renamed_count,
+          (
+            SELECT COUNT(*)::int - COUNT(DISTINCT labels.normalized)::int
+            FROM (
+              SELECT normalized FROM submitted
+              UNION ALL
+              SELECT normalized FROM added
+            ) labels
+          ) AS duplicate_count
+        FROM target
+      ),
+      allowed AS MATERIALIZED (
+        SELECT target.id, checks.has_votes
+        FROM target
+        JOIN checks ON true
+        WHERE checks.unknown_count = 0
+          AND checks.duplicate_count = 0
+          AND checks.submitted_count + checks.added_count BETWEEN 3 AND $9
+          AND (
+            checks.has_votes = false
+            OR (checks.missing_count = 0 AND checks.renamed_count = 0)
+          )
+      ),
+      updated AS (
+        UPDATE rankings ranking
+        SET
+          question = $3,
+          vip_description = $4,
+          vip_voting_open = $5,
+          vip_password_hash = COALESCE($6, ranking.vip_password_hash),
+          vip_password_version = ranking.vip_password_version + CASE WHEN $6::text IS NULL THEN 0 ELSE 1 END,
+          vip_updated_at = CASE WHEN $6::text IS NULL THEN ranking.vip_updated_at ELSE now() END,
+          content_updated_at = now()
+        FROM allowed
+        WHERE ranking.id = allowed.id
+        RETURNING ranking.id
+      ),
+      deleted AS (
+        DELETE FROM ranking_options option
+        USING updated, allowed
+        WHERE option.ranking_id = updated.id
+          AND allowed.has_votes = false
+          AND NOT EXISTS (SELECT 1 FROM submitted WHERE submitted.id = option.id)
+        RETURNING option.id
+      ),
+      renamed AS (
+        UPDATE ranking_options option
+        SET label = submitted.label
+        FROM submitted, updated, allowed
+        WHERE option.id = submitted.id
+          AND option.ranking_id = updated.id
+          AND (allowed.has_votes = false OR option.label = submitted.label)
+        RETURNING option.id
+      ),
+      next_position AS MATERIALIZED (
+        SELECT COALESCE(MAX(existing.position), 0)::int AS value
+        FROM existing
+      ),
+      inserted AS (
+        INSERT INTO ranking_options (
+          ranking_id,
+          label,
+          position,
+          baseline_score,
+          vip_added_later
+        )
+        SELECT
+          updated.id,
+          added.label,
+          next_position.value + added.position,
+          0,
+          allowed.has_votes
+        FROM added
+        CROSS JOIN updated
+        CROSS JOIN allowed
+        CROSS JOIN next_position
+        RETURNING id
+      )
+      SELECT
+        checks.has_votes AS "hasVotes",
+        checks.unknown_count AS "unknownCount",
+        checks.missing_count AS "missingCount",
+        checks.renamed_count AS "renamedCount",
+        checks.duplicate_count AS "duplicateCount",
+        checks.submitted_count + checks.added_count AS "optionCount",
+        EXISTS (SELECT 1 FROM updated) AS updated,
+        (SELECT COUNT(*)::int FROM inserted) AS "insertedCount"
+      FROM checks
+    `,
+    [
+      rankingId,
+      user.id,
+      title,
+      description,
+      votingOpen,
+      passwordHash,
+      JSON.stringify(retained),
+      JSON.stringify(newOptions),
+      PUBLISHED_RANKING_OPTION_LIMIT,
+    ],
+  );
+
+  const result = rows[0];
+  if (!result) return json(res, 404, { error: 'ranking_not_found' });
+  if (Number(result.unknownCount || 0) > 0) {
+    return json(res, 409, { error: 'vip_options_changed' });
+  }
+  if (
+    result.hasVotes === true &&
+    (Number(result.missingCount || 0) > 0 || Number(result.renamedCount || 0) > 0)
+  ) {
+    return json(res, 409, { error: 'vip_options_locked' });
+  }
+  if (Number(result.duplicateCount || 0) > 0) {
+    return json(res, 409, { error: 'duplicate_vip_option' });
+  }
+  if (result.updated !== true) return json(res, 409, { error: 'invalid_vip_options' });
+
+  return json(res, 200, {
+    ok: true,
+    rankingId,
+    hasVotes: result.hasVotes === true,
+    optionCount: Number(result.optionCount || 0),
+    insertedCount: Number(result.insertedCount || 0),
   });
 }
 
@@ -3598,9 +3983,6 @@ async function vote(req, res, body) {
   if (user && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
-  if (!user && (await deviceAccountId(deviceId))) {
-    return json(res, 403, { error: 'account_required_on_this_device' });
-  }
 
   const [option] = await sql.query(
     `
@@ -3608,6 +3990,7 @@ async function vote(req, res, body) {
       o.id,
       o.ranking_id,
       r.is_vip AS "isVip",
+      r.vip_voting_open AS "vipVotingOpen",
       r.vip_password_version AS "vipPasswordVersion",
       r.vip_owner_user_id AS "vipOwnerUserId"
     FROM ranking_options o
@@ -3622,8 +4005,14 @@ async function vote(req, res, body) {
   if (!option) {
     return json(res, 404, { error: 'option_not_found' });
   }
+  if (!user && (await deviceAccountId(deviceId)) && option.isVip !== true) {
+    return json(res, 403, { error: 'account_required_on_this_device' });
+  }
   if (!hasVipAccess(req, user, { ...option, id: option.ranking_id })) {
     return json(res, 403, { error: 'vip_password_required' });
+  }
+  if (option.isVip === true && option.vipVotingOpen === false) {
+    return json(res, 409, { error: 'ranking_voting_closed' });
   }
 
   const currentVoteQuery = user
@@ -3687,7 +4076,8 @@ async function vote(req, res, body) {
     });
   }
 
-  const consumesAnonymousVote = !user && direction !== 0 && !hasCurrentVote;
+  const consumesAnonymousVote =
+    !user && option.isVip !== true && direction !== 0 && !hasCurrentVote;
 
   if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
     return json(res, 403, {
@@ -3798,6 +4188,9 @@ async function vote(req, res, body) {
     weight = 2;
   } else if (user) {
     const statements = [
+      sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 17))', [
+        option.ranking_id,
+      ]),
       sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 0))', [user.id]),
       sql.query(
         `
@@ -3841,12 +4234,17 @@ async function vote(req, res, body) {
 
     await sql.transaction(statements);
   } else if (direction === 0) {
-    await sql.query('DELETE FROM votes WHERE device_id = $1 AND option_id = $2', [
-      deviceId,
-      optionId,
+    await sql.transaction([
+      sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 17))', [
+        option.ranking_id,
+      ]),
+      sql.query('DELETE FROM votes WHERE device_id = $1 AND option_id = $2', [deviceId, optionId]),
     ]);
   } else if (consumesAnonymousVote) {
     await sql.transaction([
+      sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 17))', [
+        option.ranking_id,
+      ]),
       sql.query(
         `
         INSERT INTO votes (device_id, option_id, direction, updated_at)
@@ -3869,15 +4267,20 @@ async function vote(req, res, body) {
       ),
     ]);
   } else {
-    await sql.query(
-      `
-      INSERT INTO votes (device_id, option_id, direction, updated_at)
-      VALUES ($1, $2, $3, now())
-      ON CONFLICT (device_id, option_id)
-      DO UPDATE SET direction = EXCLUDED.direction, updated_at = now()
-    `,
-      [deviceId, optionId, direction],
-    );
+    await sql.transaction([
+      sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 17))', [
+        option.ranking_id,
+      ]),
+      sql.query(
+        `
+        INSERT INTO votes (device_id, option_id, direction, updated_at)
+        VALUES ($1, $2, $3, now())
+        ON CONFLICT (device_id, option_id)
+        DO UPDATE SET direction = EXCLUDED.direction, updated_at = now()
+      `,
+        [deviceId, optionId, direction],
+      ),
+    ]);
   }
 
   const [stateRows, updatedViewer, orderAfter] = await Promise.all([
@@ -3939,7 +4342,7 @@ async function vote(req, res, body) {
     `,
       [optionId],
     ),
-    viewerFor(user, deviceId),
+    viewerFor(user, deviceId, false, option.isVip === true),
     rankingOrderSignature(option.ranking_id),
   ]);
   const state = stateRows[0];
@@ -4018,6 +4421,9 @@ export default async function handler(req, res) {
       }
       if (method === 'PATCH' && action === 'profile') {
         return updateProfile(req, res, body);
+      }
+      if (method === 'PATCH' && action === 'vip-rankings') {
+        return updateUserVipRanking(req, res, body);
       }
       if (method === 'PATCH' && action === 'moderation') {
         return moderateSuggestion(req, res, body);

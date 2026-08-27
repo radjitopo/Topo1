@@ -24,6 +24,7 @@
     "db:ranking-editor": "node scripts/apply-ranking-editor.mjs",
     "db:vip-area": "node scripts/apply-vip-area.mjs",
     "db:user-vip-rankings": "node scripts/apply-user-vip-rankings.mjs",
+    "db:user-vip-custom-rankings": "node scripts/apply-user-vip-custom-rankings.mjs",
     "db:vote-identity": "node scripts/apply-vote-identity.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",
