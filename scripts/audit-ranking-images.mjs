@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { rejectedRankingCoverIssue } from '../ranking-image-policy.js';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(SCRIPT_DIR, '..');
@@ -73,6 +74,11 @@ function staticQualityIssues(ranking) {
     if (quality && quality < 75) issues.push(`qualidade solicitada baixa (${quality})`);
   }
   return issues;
+}
+
+function editorialIssues(ranking) {
+  const rejected = rejectedRankingCoverIssue(ranking.id, ranking.image);
+  return rejected ? [rejected] : [];
 }
 
 async function probeImage(ranking) {
@@ -163,6 +169,9 @@ export async function auditRankingImages(rankings, options = {}) {
     checked: results.length,
     broken: results.filter((result) => !result.ok),
     quality: results.filter((result) => result.qualityIssues.length),
+    editorial: normalized
+      .map((ranking) => ({ ...ranking, editorialIssues: editorialIssues(ranking) }))
+      .filter((ranking) => ranking.editorialIssues.length),
     duplicates: duplicatePhotoGroups(normalized),
     results,
   };
@@ -179,12 +188,17 @@ function printReport(report, sourceLabel) {
     for (const item of report.quality)
       console.log(`- ${item.id}: ${item.qualityIssues.join(', ')} — ${item.image}`);
   }
+  if (report.editorial.length) {
+    console.log('\nCapas reprovadas pelo critério editorial:');
+    for (const item of report.editorial)
+      console.log(`- ${item.id}: ${item.editorialIssues.join(', ')} — ${item.image}`);
+  }
   if (report.duplicates.length) {
     console.log('\nFotos repetidas (revisão editorial):');
     for (const group of report.duplicates) console.log(`- ${group.ids.join(', ')}`);
   }
-  if (!report.broken.length && !report.quality.length)
-    console.log('Nenhuma falha técnica encontrada.');
+  if (!report.broken.length && !report.quality.length && !report.editorial.length)
+    console.log('Nenhuma falha técnica ou editorial encontrada.');
 }
 
 async function main() {
@@ -192,7 +206,10 @@ async function main() {
   const rankings = site ? await rankingsFromSite(site) : await rankingsFromLocalData();
   const report = await auditRankingImages(rankings);
   printReport(report, site || 'arquivos locais');
-  if (report.broken.length || (process.argv.includes('--strict') && report.quality.length))
+  if (
+    report.broken.length ||
+    (process.argv.includes('--strict') && (report.quality.length || report.editorial.length))
+  )
     process.exitCode = 1;
 }
 

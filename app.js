@@ -2275,7 +2275,7 @@ function rankingEditorHTML(r, categoryPath) {
           `<label class="rankingEditorOption"><span>${index + 1}</span><input data-ranking-editor-option data-id="${option.id}" type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" required></label>`,
       )
       .join('');
-  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Meu Topo</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking no Meu Topo</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
+  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><button class="rankingEditorSuggestButton" id="rankingEditorSuggestPhotos" type="button">Buscar fotos que combinam</button><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><div class="rankingEditorSuggestions" id="rankingEditorSuggestions" aria-live="polite"></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Meu Topo</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking no Meu Topo</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
 }
 
 function renderRankingEditorScreen(r, homePath, homeLabel, categoryPath) {
@@ -2289,6 +2289,68 @@ function setRankingEditorPreview(source, alt) {
   preview.innerHTML = source
     ? `<img id="rankingEditorImagePreview" src="${escapeHTML(source)}" alt="${escapeHTML(alt)}">`
     : '<span class="rankingEditorPhotoEmpty" id="rankingEditorImagePreview">Sem foto</span>';
+}
+
+function rankingImageSuggestionsHTML(suggestions, brief) {
+  if (!suggestions.length) {
+    const fallbackUrl = `https://unsplash.com/s/photos/${encodeURIComponent(brief || 'editorial photography')}`;
+    return `<div class="rankingEditorSuggestionsEmpty"><strong>Nenhuma foto segura apareceu nessa busca.</strong><span>Não vou sugerir uma imagem só porque ela tem palavras parecidas.</span><a href="${escapeHTML(fallbackUrl)}" target="_blank" rel="noopener noreferrer">Abrir busca ampliada</a></div>`;
+  }
+  return `<div class="rankingEditorSuggestionsHead"><div><strong>Escolha pela imagem</strong><span>Busca guiada por: ${escapeHTML(brief)}</span></div><small>CC0 ou domínio público</small></div><div class="rankingEditorSuggestionGrid">${suggestions
+    .map(
+      (suggestion, index) =>
+        `<button type="button" data-ranking-image-suggestion="${index}" aria-pressed="false"><img src="${escapeHTML(suggestion.imageUrl)}" alt="${escapeHTML(suggestion.title)}" loading="lazy"><span>${escapeHTML(suggestion.title)}</span><small>${escapeHTML(suggestion.license)}</small></button>`,
+    )
+    .join('')}</div>`;
+}
+
+function bindRankingImageSuggestions(r, urlInput, status) {
+  const button = document.getElementById('rankingEditorSuggestPhotos'),
+    container = document.getElementById('rankingEditorSuggestions');
+  if (!button || !container) return;
+  button.onclick = async () => {
+    button.disabled = true;
+    button.textContent = 'Buscando pelo assunto…';
+    container.innerHTML =
+      '<div class="rankingEditorSuggestionsLoading">Analisando título, categoria e opções…</div>';
+    try {
+      const response = await fetch(
+          `/api?action=ranking-image-suggestions&ranking_id=${encodeURIComponent(r.id)}`,
+        ),
+        result = await response.json().catch(() => ({}));
+      if (!response.ok) throw result;
+      const suggestions = Array.isArray(result.suggestions) ? result.suggestions : [];
+      container.innerHTML = rankingImageSuggestionsHTML(suggestions, result.brief || r.q);
+      container.querySelectorAll('[data-ranking-image-suggestion]').forEach((candidate) => {
+        candidate.onclick = () => {
+          const suggestion = suggestions[Number(candidate.dataset.rankingImageSuggestion)];
+          if (!suggestion?.imageUrl?.startsWith('https://')) return;
+          rankingEditorState.imageMode = 'url';
+          rankingEditorState.imageData = '';
+          rankingEditorState.imageUrl = suggestion.imageUrl;
+          rankingEditorState.imagePreview = suggestion.imageUrl;
+          urlInput.value = suggestion.imageUrl;
+          setRankingEditorPreview(suggestion.imageUrl, r.q);
+          container.querySelectorAll('[data-ranking-image-suggestion]').forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === candidate));
+          });
+          status.textContent = 'Foto selecionada. Confira a prévia e salve para publicar.';
+        };
+      });
+      if (!suggestions.length && result.unavailable) {
+        status.textContent = 'A busca de fotos está indisponível agora. Tente novamente depois.';
+      }
+    } catch (error) {
+      container.innerHTML = '';
+      status.textContent =
+        error?.error === 'authentication_required'
+          ? 'Sua sessão terminou. Entre novamente.'
+          : 'Não consegui buscar fotos agora. A imagem atual não foi alterada.';
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Buscar fotos que combinam';
+    }
+  };
 }
 
 async function optimizeRankingPhoto(file) {
@@ -2371,6 +2433,7 @@ function bindRankingEditor(r) {
     visibleOptionCount = 10;
     renderInternal();
   };
+  bindRankingImageSuggestions(r, urlInput, status);
   document.getElementById('rankingEditorKeepPhoto').onclick = () => {
     rankingEditorState.imageMode = 'keep';
     rankingEditorState.imageData = '';

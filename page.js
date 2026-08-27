@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
+import { resolveRankingCover } from './ranking-image-policy.js';
 import { rankingQuestion } from './ranking-titles.js';
 import {
   GENERAL_CATEGORIES,
@@ -712,7 +713,7 @@ async function fetchRankingSummaries(sql, { scope = 'all', city = '' } = {}) {
     id: row.id,
     category: row.category,
     question: rankingQuestion(row.id, row.question),
-    imageUrl: row.image_url || null,
+    imageUrl: resolveRankingCover(row.id, row.image_url),
     createdAt: row.created_at,
     updatedAt: row.updated_at || row.created_at,
     searchText: row.search_text || '',
@@ -816,7 +817,7 @@ async function fetchRanking(sql, id) {
     id: first.id,
     category: first.category,
     question: rankingQuestion(first.id, first.question),
-    imageUrl: first.image_url || null,
+    imageUrl: resolveRankingCover(first.id, first.image_url),
     createdAt: first.created_at,
     updatedAt: rows.reduce(
       (latest, row) =>

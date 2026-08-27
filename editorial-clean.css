@@ -4360,6 +4360,17 @@ body.popElectric.rankingPage .rankingEditorFileButton {
   color: var(--clean-paper);
 }
 
+body.popElectric.rankingPage .rankingEditorPhotoActions .rankingEditorSuggestButton {
+  border-color: var(--clean-sage);
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .rankingEditorPhotoActions button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
 body.popElectric.rankingPage .rankingEditorFileButton input {
   position: absolute;
   width: 1px;
@@ -4371,6 +4382,118 @@ body.popElectric.rankingPage .rankingEditorFileButton input {
 body.popElectric.rankingPage #rankingEditorRemovePhoto {
   border-color: var(--clean-muted-red);
   color: var(--clean-muted-red);
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestions:not(:empty) {
+  margin: -2px 0 20px;
+  border: 1px solid var(--clean-line);
+  background: var(--clean-soft);
+  padding: 14px;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsHead > div {
+  display: grid;
+  gap: 4px;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsHead strong,
+body.popElectric.rankingPage .rankingEditorSuggestionsEmpty strong {
+  color: var(--clean-ink);
+  font:
+    800 14px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsHead span,
+body.popElectric.rankingPage .rankingEditorSuggestionsHead small,
+body.popElectric.rankingPage .rankingEditorSuggestionsEmpty span,
+body.popElectric.rankingPage .rankingEditorSuggestionsLoading {
+  color: var(--clean-muted);
+  font:
+    600 11px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid button {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+  border: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 0 0 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid button[aria-pressed='true'] {
+  border-color: var(--clean-sage);
+  box-shadow: inset 0 0 0 3px var(--clean-sage);
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid img {
+  grid-column: 1 / -1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+  background: var(--clean-line);
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid span {
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 8px;
+  font:
+    700 11px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionGrid small {
+  padding-right: 8px;
+  color: var(--clean-sage);
+  font:
+    800 9px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+  white-space: nowrap;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsEmpty {
+  display: grid;
+  gap: 5px;
+}
+
+body.popElectric.rankingPage .rankingEditorSuggestionsEmpty a {
+  width: fit-content;
+  margin-top: 4px;
+  color: var(--clean-sage);
+  font:
+    800 11px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  text-decoration: underline;
 }
 
 body.popElectric.rankingPage .rankingEditorUrlField input {
@@ -4494,6 +4617,16 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
 
   body.popElectric.rankingPage .rankingEditorPhotoActions > * {
     flex: 1 1 calc(50% - 8px);
+  }
+
+  body.popElectric.rankingPage .rankingEditorSuggestionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.popElectric.rankingPage .rankingEditorSuggestionsHead {
+    align-items: start;
+    flex-direction: column;
+    gap: 6px;
   }
 
   body.popElectric.rankingPage .rankingEditorSaveBar {

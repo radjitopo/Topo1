@@ -15,6 +15,7 @@ import {
   validateDisplayName,
 } from './profile-names.js';
 import { rankingQuestion } from './ranking-titles.js';
+import { rankingImageSearchQueries, resolveRankingCover } from './ranking-image-policy.js';
 import { LOCAL_CITIES, localCityByLabel, localCityBySlug } from './seo-taxonomy.js';
 
 const sql = neon(process.env.DATABASE_URL);
@@ -54,6 +55,8 @@ const PUBLISHED_RANKING_OPTION_LIMIT = 20;
 const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
 const RANKING_IMAGE_MAX_BYTES = 1500000;
 const RANKING_IMAGE_DATA_LIMIT = 2000000;
+const RANKING_IMAGE_SUGGESTION_LIMIT = 6;
+const RANKING_IMAGE_SEARCH_TIMEOUT_MS = 9000;
 const VIP_PASSWORD_MIN_LENGTH = 4;
 const VIP_PASSWORD_MAX_LENGTH = 80;
 const VIP_ACCESS_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
@@ -1200,7 +1203,7 @@ async function catalog(req, res) {
         id: row.ranking_id,
         cat: row.category,
         q: rankingQuestion(row.ranking_id, row.question),
-        img: row.image_url || null,
+        img: resolveRankingCover(row.ranking_id, row.image_url),
         votes: Number(row.baseline_votes || 0),
         todayVotes: 0,
         createdAt: row.created_at,
@@ -1245,10 +1248,11 @@ async function catalog(req, res) {
 
 function vipRankingMeta(row, unlocked = false, user = null) {
   const ownerUserId = row.vipOwnerUserId ?? row.vip_owner_user_id ?? null;
+  const imageUrl = row.imageUrl || row.image_url || null;
   return {
     id: row.id,
     q: rankingQuestion(row.id, row.question),
-    img: row.imageUrl || row.image_url || null,
+    img: resolveRankingCover(row.id, imageUrl),
     createdAt: row.createdAt || row.created_at || null,
     description: row.vipDescription ?? row.vip_description ?? '',
     votingOpen: (row.vipVotingOpen ?? row.vip_voting_open) !== false,
@@ -1428,7 +1432,7 @@ async function vipRanking(req, res) {
     id: first.ranking_id,
     cat: first.category,
     q: rankingQuestion(first.ranking_id, first.question),
-    img: first.image_url || null,
+    img: resolveRankingCover(first.ranking_id, first.image_url),
     votes: Number(first.baseline_votes || 0),
     todayVotes: 0,
     createdAt: first.created_at,
@@ -1712,7 +1716,7 @@ async function createUserVipRankingCopy(res, body, user, password) {
               rankingId,
               source.category,
               question,
-              source.imageUrl || null,
+              resolveRankingCover(source.id, source.imageUrl),
               passwordHash,
               user.id,
               sourceRankingId,
@@ -2170,11 +2174,12 @@ async function unlockVipRanking(req, res, body) {
 }
 
 function favoriteRankingPayload(row) {
+  const imageUrl = row.imageUrl || row.image_url || null;
   return {
     id: row.id,
     q: rankingQuestion(row.id, row.question),
     cat: row.category,
-    img: row.imageUrl || row.image_url || null,
+    img: resolveRankingCover(row.id, imageUrl),
     createdAt: row.createdAt || row.created_at || null,
     favoritedAt: row.favoritedAt || row.favorited_at || null,
     favorite: true,
@@ -3468,6 +3473,137 @@ async function rankingImage(req, res) {
   return res.status(200).send(image);
 }
 
+function plainCommonsText(value) {
+  return String(value || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function stableCommonsImageUrl(value) {
+  try {
+    const url = new URL(String(value || ''));
+    if (url.protocol !== 'https:' || url.hostname !== 'upload.wikimedia.org') return '';
+    for (const key of [...url.searchParams.keys()]) {
+      if (key.toLowerCase().startsWith('utm_')) url.searchParams.delete(key);
+    }
+    return url.href;
+  } catch {
+    return '';
+  }
+}
+
+function commonsImageSuggestion(page) {
+  const image = page?.imageinfo?.[0];
+  const metadata = image?.extmetadata || {};
+  const license = plainCommonsText(metadata.LicenseShortName?.value).toLowerCase();
+  if (!(license === 'cc0' || license === 'pdm' || license.includes('public domain'))) return null;
+  const width = Number(image?.width || 0);
+  const height = Number(image?.height || 0);
+  if (width < 1000 || height < 600 || width / height < 1.08) return null;
+  if (!/^image\/(?:jpeg|png|webp)$/i.test(String(image?.mime || ''))) return null;
+
+  const filename = String(page?.title || '').replace(/^File:/i, '');
+  if (
+    /\b(?:logo|logotipo|flag|bandeira|map|mapa|diagram|drawing|painting|poster|screenshot|svg|icon|coat of arms|bras[aã]o)\b/i.test(
+      filename,
+    )
+  ) {
+    return null;
+  }
+  const imageUrl = stableCommonsImageUrl(image.thumburl || image.url);
+  if (!imageUrl) return null;
+  return {
+    id: String(page.pageid || filename),
+    title: plainCommonsText(filename.replace(/\.(?:jpe?g|png|webp)$/i, '')) || 'Foto sugerida',
+    imageUrl,
+    sourceUrl: String(image.descriptionurl || ''),
+    license: license === 'cc0' ? 'CC0' : 'Domínio público',
+    width,
+    height,
+  };
+}
+
+async function searchCommonsImages(query) {
+  const url = new URL('https://commons.wikimedia.org/w/api.php');
+  url.searchParams.set('action', 'query');
+  url.searchParams.set('format', 'json');
+  url.searchParams.set('formatversion', '2');
+  url.searchParams.set('generator', 'search');
+  url.searchParams.set('gsrnamespace', '6');
+  url.searchParams.set('gsrsearch', `${query} filetype:bitmap`);
+  url.searchParams.set('gsrlimit', '24');
+  url.searchParams.set('gsrsort', 'relevance');
+  url.searchParams.set('prop', 'imageinfo');
+  url.searchParams.set('iiprop', 'url|size|mime|extmetadata');
+  url.searchParams.set('iiurlwidth', '1600');
+
+  const response = await fetch(url, {
+    headers: { 'user-agent': 'Somos TOPO semantic cover curator/1.0 (somostopo.com.br)' },
+    signal: AbortSignal.timeout(RANKING_IMAGE_SEARCH_TIMEOUT_MS),
+  });
+  if (!response.ok) throw new Error(`commons_search_${response.status}`);
+  const payload = await response.json();
+  return (payload?.query?.pages || []).map(commonsImageSuggestion).filter(Boolean);
+}
+
+async function rankingImageSuggestions(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(user)) return json(res, 403, { error: 'moderator_required' });
+
+  const rankingId = queryValue(req, 'ranking_id').trim();
+  if (!isValidRankingId(rankingId)) return json(res, 400, { error: 'invalid_ranking' });
+  const [rankingRows, optionRows] = await Promise.all([
+    sql.query(
+      `
+        SELECT id, category, question
+        FROM rankings
+        WHERE id = $1 AND is_active = true
+        LIMIT 1
+      `,
+      [rankingId],
+    ),
+    sql.query(
+      `
+        SELECT label
+        FROM ranking_options
+        WHERE ranking_id = $1
+        ORDER BY position
+        LIMIT 5
+      `,
+      [rankingId],
+    ),
+  ]);
+  const ranking = rankingRows[0];
+  if (!ranking) return json(res, 404, { error: 'ranking_not_found' });
+
+  const queries = rankingImageSearchQueries({ ...ranking, options: optionRows });
+  const searches = await Promise.allSettled(queries.map(searchCommonsImages));
+  const suggestions = [];
+  const seen = new Set();
+  for (const result of searches) {
+    if (result.status !== 'fulfilled') continue;
+    for (const suggestion of result.value) {
+      if (seen.has(suggestion.imageUrl)) continue;
+      seen.add(suggestion.imageUrl);
+      suggestions.push(suggestion);
+      if (suggestions.length >= RANKING_IMAGE_SUGGESTION_LIMIT) break;
+    }
+    if (suggestions.length >= RANKING_IMAGE_SUGGESTION_LIMIT) break;
+  }
+
+  return json(res, 200, {
+    suggestions,
+    brief: queries[0] || ranking.question,
+    unavailable: searches.length > 0 && searches.every((result) => result.status === 'rejected'),
+  });
+}
+
 async function updateRankingContent(req, res, body) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
@@ -3610,7 +3746,7 @@ async function updateRankingContent(req, res, body) {
       ranking: {
         id: rankingId,
         q: title,
-        img: nextImageUrl,
+        img: resolveRankingCover(rankingId, nextImageUrl),
         opts: sortedOptions,
         vip: nextIsVip,
         vipHasPassword: Boolean(nextVipPasswordHash),
@@ -3693,7 +3829,7 @@ async function updateRankingContent(req, res, body) {
     ranking: {
       id: rankingId,
       q: title,
-      img: nextImageUrl,
+      img: resolveRankingCover(rankingId, nextImageUrl),
       opts: sortedOptions,
       vip: nextIsVip,
       vipHasPassword: Boolean(nextVipPasswordHash),
@@ -4735,6 +4871,7 @@ export default async function handler(req, res) {
     if (method === 'GET') {
       if (!action) return catalog(req, res);
       if (action === 'ranking-image') return rankingImage(req, res);
+      if (action === 'ranking-image-suggestions') return rankingImageSuggestions(req, res);
       if (action === 'vip-catalog') return vipCatalog(req, res);
       if (action === 'vip-ranking') return vipRanking(req, res);
       if (action === 'favorites') return favorites(req, res);
