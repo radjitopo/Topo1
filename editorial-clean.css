@@ -237,31 +237,6 @@ body.popElectric.homePage .feed {
   padding: 0 0 80px;
 }
 
-html.clientBooting body.popElectric.homePage #feed[data-server-rendered='true'] {
-  position: relative;
-  min-height: 58vh;
-  max-height: 58vh;
-  overflow: hidden;
-}
-
-html.clientBooting body.popElectric.homePage #feed[data-server-rendered='true'] > * {
-  visibility: hidden;
-}
-
-html.clientBooting body.popElectric.homePage #feed[data-server-rendered='true']::before {
-  position: absolute;
-  top: 24px;
-  left: 0;
-  visibility: visible;
-  color: var(--clean-muted);
-  content: 'carregando rankings…';
-  font:
-    700 11px/1 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: 0.04em;
-}
-
 body.popElectric .popHomeStats {
   min-height: 50px;
   gap: 20px;

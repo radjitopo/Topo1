@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   renderGeneralCategoryPage,
   renderHomePage,
+  renderMissingPage,
   renderRankingPage,
   renderVipRankingPage,
 } from '../page.js';
@@ -126,6 +127,19 @@ test('home and category pages expose crawlable ranking and category links', () =
 
   const search = renderHomePage(template, [cinema], 'filmes');
   assert.match(search, /name="robots" content="noindex,follow"/);
+  assert.match(search, /Resultados para “filmes”/);
+  assert.match(search, /href="\/ranking\/filmes"/);
+
+  const localSearch = renderHomePage(template, [cinema, local], 'sushi', 'Florianópolis');
+  assert.match(localSearch, /TOPO \+ TOPO LOCAL · Florianópolis/);
+  assert.match(localSearch, /href="\/ranking\/sushi-floripa"/);
+});
+
+test('not-found HTML remains a not-found page after the client starts', () => {
+  const html = renderMissingPage(template);
+  assert.match(html, /<body class="popElectric notFoundPage">/);
+  assert.match(html, /<h1>Página não encontrada\.<\/h1>/);
+  assert.match(html, /name="robots" content="noindex,follow"/);
 });
 
 test('VIP ranking shell is noindex and never renders protected options', () => {
@@ -193,10 +207,11 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Disallow: \/api/);
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
-  assert.match(index, /document\.documentElement\.classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260827-1-vip-area/);
+  assert.doesNotMatch(index, /classList\.add\('clientBooting'\)/);
+  assert.match(index, /\/app\.js\?v=20260827-1-vip-area-[^"']*-navigation-loading-search-city/);
+  assert.match(index, /id="searchCity" name="cidade" type="hidden"/);
   assert.doesNotMatch(index, /vote · veja · continue/);
-  assert.match(
+  assert.doesNotMatch(
     editorialCss,
     /html\.clientBooting body\.popElectric\.homePage #feed\[data-server-rendered='true'\]/,
   );
@@ -205,5 +220,7 @@ test('Vercel routes every public collection and private account shell through SE
     /function revealClientPage\(\)[\s\S]*?removeAttribute\('data-server-rendered'\)/,
   );
   assert.match(app, /renderHome\(\);[\s\S]*?revealClientPage\(\);/);
+  assert.match(app, /document\.body\.classList\.contains\('notFoundPage'\)/);
+  assert.match(app, /if \(kind === 'not-found'\) \{[\s\S]*?revealClientPage\(\);[\s\S]*?return;/);
   assert.match(app, /href="\$\{escapeHTML\(groupPath\(g\)\)\}"/);
 });

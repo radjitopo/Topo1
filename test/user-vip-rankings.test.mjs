@@ -105,7 +105,7 @@ test('private rankings are listed only for their owner and stay out of public di
   assert.match(vipCatalog, /vip_owner_user_id = \$1::uuid/);
   assert.doesNotMatch(vipCatalog, /vip_owner_user_id IS NULL/);
   assert.match(meta, /owned:/);
-  assert.match(publicCatalog, /r\.is_vip = false OR r\.vip_owner_user_id IS NULL/);
+  assert.match(publicCatalog, /ranking\.is_vip = false OR ranking\.vip_owner_user_id IS NULL/);
   assert.doesNotMatch(vipCatalog, /vip_password_hash AS/);
 });
 

@@ -133,6 +133,10 @@ test('the selector has the 20 largest cities plus Florianópolis and keeps legac
 
 test('manual city wins, then detected city, then the launch default', () => {
   assert.equal(local.resolvePreferredCity(rankings, 'São Paulo', 'Rio de Janeiro'), 'São Paulo');
+  assert.equal(
+    local.resolvePreferredCity(rankings, 'Balneário Camboriú', 'Florianópolis'),
+    'Balneário Camboriú',
+  );
   assert.equal(local.resolvePreferredCity(rankings, '', 'Brasilia'), 'Brasília');
   assert.equal(local.resolvePreferredCity(rankings, '', 'Curitiba'), 'Florianópolis');
 });
@@ -161,7 +165,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(index, /pop-electric\.css\?v=20260826-13-compact-categories/);
   assert.match(api, /x-vercel-ip-city/);
-  assert.match(api, /location: \{ city: geolocationCity\(req\) \}/);
+  assert.match(api, /location: \{ city: geolocationCity\(req\), selectedCity \}/);
   assert.match(page, /TOPO LOCAL — rankings da sua cidade/);
   assert.match(vercel, /"src": "\/local\/\?"/);
   assert.match(sitemap, /'\/local'/);

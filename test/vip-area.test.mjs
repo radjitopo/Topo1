@@ -64,7 +64,7 @@ test('protected ranking data is excluded from public discovery and guarded on wr
     api.indexOf('async function mySuggestions'),
   );
 
-  assert.match(catalog, /r\.is_vip = false OR \$4::boolean = true/);
+  assert.match(catalog, /ranking\.is_vip = false OR \$4::boolean = true/);
   assert.match(catalog, /function vipRankingMeta/);
   assert.doesNotMatch(meta, /vipPasswordHash|vip_password_hash/);
   assert.match(voting, /hasVipAccess\(req, user/);

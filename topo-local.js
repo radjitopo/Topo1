@@ -217,8 +217,13 @@
 
   function resolvePreferredCity(rankings, savedCity, detectedCity) {
     const cities = availableCities(rankings),
-      supported = new Set(cities);
-    for (const candidate of [savedCity, detectedCity, 'Florianópolis', cities[0]]) {
+      supported = new Set(cities),
+      present = new Set(
+        (rankings || []).filter(isLocalRanking).map(cityForRanking).filter(Boolean),
+      ),
+      manual = normalizeCity(savedCity);
+    if (manual && present.has(manual)) return manual;
+    for (const candidate of [detectedCity, 'Florianópolis', cities[0]]) {
       const city = normalizeCity(candidate);
       if (city && supported.has(city)) return city;
     }

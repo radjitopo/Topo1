@@ -4,6 +4,7 @@ import { rankingQuestion } from './ranking-titles.js';
 import {
   GENERAL_CATEGORIES,
   LOCAL_CITIES,
+  foldSeoText,
   generalCategoryBySlug,
   generalCategoryForRanking,
   generalCategoryPath,
@@ -17,6 +18,7 @@ import {
 
 const templatePromise = readFile(new URL('./index.html', import.meta.url), 'utf8');
 const BASE_URL = 'https://somostopo.com.br';
+const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
 let sqlClient;
 
 function database() {
@@ -227,17 +229,66 @@ function itemListSchema(rankings, name, id) {
   };
 }
 
-export function renderHomePage(template, rankings, search = '') {
+function searchSingular(word) {
+  if (word.endsWith('oes') && word.length > 4) return word.slice(0, -3) + 'ao';
+  if (word.endsWith('aes') && word.length > 3) return word.slice(0, -3) + 'ao';
+  if (word.endsWith('ais') && word.length > 4) return word.slice(0, -3) + 'al';
+  if (word.endsWith('eis') && word.length > 4) return word.slice(0, -3) + 'el';
+  if (word.endsWith('ois') && word.length > 4) return word.slice(0, -3) + 'ol';
+  if (word.endsWith('ns') && word.length > 3) return word.slice(0, -2) + 'm';
+  if (word.endsWith('es') && word.length > 4 && /[rzs]/.test(word.at(-3))) {
+    return word.slice(0, -2);
+  }
+  if (word.endsWith('s') && word.length > 3) return word.slice(0, -1);
+  return word;
+}
+
+function searchTerms(value) {
+  return foldSeoText(value)
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+    .map(searchSingular);
+}
+
+function rankingMatchesSearch(ranking, search) {
+  const needles = searchTerms(search);
+  if (!needles.length) return true;
+  const words = searchTerms(
+    [
+      String(ranking.id || '').replace(/-/g, ' '),
+      rankingQuestion(ranking.id, ranking.question),
+      ranking.category,
+      ranking.searchText,
+      ...(ranking.options || []).map((option) => option.label),
+    ].join(' '),
+  );
+  return needles.every((needle) => words.some((word) => word.includes(needle)));
+}
+
+export function renderHomePage(template, rankings, search = '', searchCity = 'Florianópolis') {
+  const city =
+    (typeof searchCity === 'string'
+      ? localCityByLabel(searchCity) || localCityBySlug(searchCity)
+      : searchCity) || localCityByLabel('Florianópolis');
   const publicRankings = rankings.filter(
     (ranking) => !ranking.isVip && !ranking.is_vip && !isSeoLocalRanking(ranking),
   );
-  const featured = [...publicRankings]
+  const searchRankings = search
+    ? rankings.filter(
+        (ranking) =>
+          !ranking.isVip &&
+          !ranking.is_vip &&
+          (!isSeoLocalRanking(ranking) || localCityByLabel(ranking.category)?.slug === city.slug) &&
+          rankingMatchesSearch(ranking, search),
+      )
+    : publicRankings;
+  const featured = [...searchRankings]
     .sort(
       (a, b) =>
         Number(b.voteCount || 0) - Number(a.voteCount || 0) ||
         new Date(b.createdAt) - new Date(a.createdAt),
     )
-    .slice(0, 24);
+    .slice(0, search ? 36 : 24);
   const title = search ? `Busca por “${truncate(search, 42)}” — TOPO` : 'TOPO — Tudo vira ranking';
   const description = search
     ? `Resultados e rankings relacionados a ${truncate(search, 80)} no TOPO.`
@@ -263,7 +314,13 @@ export function renderHomePage(template, rankings, search = '') {
     },
     itemListSchema(featured, 'Rankings em destaque no TOPO', listId),
   ]);
-  const content = `<section class="categoryLandingHead seoLandingHead">
+  const content = search
+    ? `<section class="searchResultsHead seoSearchResultsHead"><div><span class="portalKicker">TOPO + TOPO LOCAL · ${escapeHtml(city.label)}</span><h1>Resultados para “${escapeHtml(search)}”</h1><p>${formatNumber(searchRankings.length)} ranking${searchRankings.length === 1 ? ' encontrado' : 's encontrados'} em todo o TOPO e nos rankings locais de ${escapeHtml(city.label)}.</p></div><a class="categoryVoteCta" href="/">Limpar busca</a></section>${
+        featured.length
+          ? `<section class="searchRankList">${featured.map(rankingCard).join('')}</section>`
+          : '<section class="portalEmpty"><h2>Nenhum ranking encontrado.</h2><p>Tente outro termo ou volte a ver todos os temas.</p></section>'
+      }`
+    : `<section class="categoryLandingHead seoLandingHead">
       <div><span class="portalKicker">Tudo vira ranking</span><h1>Rankings para votar e descobrir</h1><p>${escapeHtml(description)}</p></div>
       <div class="categoryLandingCount"><strong>${formatNumber(publicRankings.length)}</strong><span>rankings</span></div>
     </section>
@@ -528,24 +585,48 @@ export function renderVipRankingPage(template, ranking) {
   });
 }
 
-async function fetchRankingSummaries(sql) {
-  const rows = await sql.query(`
-    WITH vote_totals AS (
+async function fetchRankingSummaries(sql, { scope = 'all', city = '' } = {}) {
+  const rows = await sql.query(
+    `
+    WITH eligible_rankings AS MATERIALIZED (
+      SELECT ranking.*
+      FROM rankings ranking
+      WHERE ranking.is_active = true
+        AND ranking.is_vip = false
+        AND (
+          $1::text = 'all'
+          OR ($1::text = 'general' AND NOT (ranking.category = ANY($3::text[])))
+          OR ($1::text = 'local' AND ranking.category = ANY($3::text[]))
+          OR ($1::text = 'city' AND ranking.category = $2::text)
+          OR (
+            $1::text = 'search'
+            AND (
+              NOT (ranking.category = ANY($3::text[]))
+              OR ranking.category = $2::text
+            )
+          )
+        )
+    ),
+    vote_totals AS (
       SELECT
-        option_id,
+        vote.option_id,
         COUNT(*)::int AS live_votes,
-        COALESCE(SUM(direction), 0)::int AS score_delta,
-        MAX(updated_at) AS last_vote_at
-      FROM votes
-      GROUP BY option_id
+        COALESCE(SUM(vote.direction), 0)::int AS score_delta,
+        MAX(vote.updated_at) AS last_vote_at
+      FROM votes vote
+      JOIN ranking_options option ON option.id = vote.option_id
+      JOIN eligible_rankings ranking ON ranking.id = option.ranking_id
+      GROUP BY vote.option_id
     ),
     double_vote_totals AS (
       SELECT
-        option_id,
-        COALESCE(SUM(direction), 0)::int AS score_delta,
-        MAX(updated_at) AS last_double_vote_at
-      FROM user_double_votes
-      GROUP BY option_id
+        double_vote.option_id,
+        COALESCE(SUM(double_vote.direction), 0)::int AS score_delta,
+        MAX(double_vote.updated_at) AS last_double_vote_at
+      FROM user_double_votes double_vote
+      JOIN ranking_options option ON option.id = double_vote.option_id
+      JOIN eligible_rankings ranking ON ranking.id = option.ranking_id
+      GROUP BY double_vote.option_id
     ),
     option_scores AS (
       SELECT
@@ -567,7 +648,8 @@ async function fetchRankingSummaries(sql) {
               + COALESCE(double_vote.score_delta, 0)::int DESC,
             option.position
         ) AS rank_position
-      FROM ranking_options option
+      FROM eligible_rankings ranking
+      JOIN ranking_options option ON option.ranking_id = ranking.id
       LEFT JOIN vote_totals vote ON vote.option_id = option.id
       LEFT JOIN double_vote_totals double_vote ON double_vote.option_id = option.id
     ),
@@ -595,6 +677,12 @@ async function fetchRankingSummaries(sql) {
       FROM option_scores
       WHERE rank_position <= 3
       GROUP BY ranking_id
+    ),
+    ranking_search AS (
+      SELECT ranking_id, STRING_AGG(label, ' ' ORDER BY position) AS labels
+      FROM option_scores
+      WHERE $1::text = 'search'
+      GROUP BY ranking_id
     )
     SELECT
       ranking.id,
@@ -610,14 +698,16 @@ async function fetchRankingSummaries(sql) {
         COALESCE(activity.last_vote_at, ranking.created_at),
         COALESCE(activity.last_double_vote_at, ranking.created_at)
       ) AS updated_at,
+      COALESCE(search.labels, '') AS search_text,
       COALESCE(preview.options, '[]'::json) AS options
-    FROM rankings ranking
+    FROM eligible_rankings ranking
     LEFT JOIN ranking_activity activity ON activity.ranking_id = ranking.id
     LEFT JOIN ranking_previews preview ON preview.ranking_id = ranking.id
-    WHERE ranking.is_active = true
-      AND ranking.is_vip = false
+    LEFT JOIN ranking_search search ON search.ranking_id = ranking.id
     ORDER BY ranking.created_at DESC, ranking.id
-  `);
+  `,
+    [scope, city || null, LOCAL_CITY_LABELS],
+  );
   return rows.map((row) => ({
     id: row.id,
     category: row.category,
@@ -625,6 +715,7 @@ async function fetchRankingSummaries(sql) {
     imageUrl: row.image_url || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at || row.created_at,
+    searchText: row.search_text || '',
     voteCount: Number(row.vote_count || 0),
     options: (Array.isArray(row.options) ? row.options : []).map((option) => ({
       id: Number(option.id),
@@ -782,7 +873,7 @@ function renderPrivatePage(template, kind) {
   });
 }
 
-function renderMissingPage(template, title = 'Página não encontrada — TOPO') {
+export function renderMissingPage(template, title = 'Página não encontrada — TOPO') {
   return withPage(template, {
     metadata: {
       title,
@@ -793,6 +884,7 @@ function renderMissingPage(template, title = 'Página não encontrada — TOPO')
     },
     content:
       '<section class="portalEmpty"><span class="portalKicker">404</span><h1>Página não encontrada.</h1><p>Este endereço não está disponível.</p><a class="categoryVoteCta" href="/">Ver todos os rankings →</a></section>',
+    bodyClass: 'notFoundPage',
   });
 }
 
@@ -826,15 +918,21 @@ export default async function handler(req, res) {
   try {
     const sql = database();
     if (view === 'home') {
-      const rankings = await fetchRankingSummaries(sql);
-      return sendHtml(res, 200, renderHomePage(template, rankings, search), { index: !search });
+      const city = localCityBySlug(queryValue(req, 'cidade')) || localCityByLabel('Florianópolis');
+      const rankings = await fetchRankingSummaries(sql, {
+        scope: search ? 'search' : 'general',
+        city: city.label,
+      });
+      return sendHtml(res, 200, renderHomePage(template, rankings, search, city), {
+        index: !search,
+      });
     }
 
     if (view === 'category') {
       const category = generalCategoryBySlug(queryValue(req, 'category'));
       if (!category)
         return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
-      const rankings = await fetchRankingSummaries(sql);
+      const rankings = await fetchRankingSummaries(sql, { scope: 'general' });
       const rendered = renderGeneralCategoryPage(template, category, rankings, search);
       if (!rendered.count) return sendHtml(res, 404, rendered.html, { cache: false, index: false });
       return sendHtml(res, 200, rendered.html, { index: !search });
@@ -847,7 +945,10 @@ export default async function handler(req, res) {
       const group = rawGroup ? localGroupBySlug(rawGroup) : null;
       if ((rawCity && !city) || (rawGroup && !group) || (group && !city))
         return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
-      const rankings = await fetchRankingSummaries(sql);
+      const rankings = await fetchRankingSummaries(sql, {
+        scope: city ? 'city' : 'local',
+        city: city?.label || '',
+      });
       const rendered = renderLocalPage(template, rankings, city, group, search);
       if (!rendered.count) return sendHtml(res, 404, rendered.html, { cache: false, index: false });
       return sendHtml(res, 200, rendered.html, { index: !search });

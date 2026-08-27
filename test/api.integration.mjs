@@ -57,11 +57,13 @@ try {
   const bootstrap = await request({ query: { device_id: deviceId } });
   assert.equal(bootstrap.statusCode, 200);
   assert.ok(bootstrap.body.rankings.length > 0);
-  assert.equal(bootstrap.body.community.rankings, bootstrap.body.rankings.length);
-  assert.equal(
-    bootstrap.body.community.votes,
-    bootstrap.body.rankings.reduce((total, ranking) => total + Number(ranking.votes || 0), 0),
+  assert.ok(bootstrap.body.community.rankings >= bootstrap.body.rankings.length);
+  assert.ok(
+    bootstrap.body.community.votes >=
+      bootstrap.body.rankings.reduce((total, ranking) => total + Number(ranking.votes || 0), 0),
   );
+  assert.equal(bootstrap.body.location.selectedCity, 'Florianópolis');
+  assert.ok(bootstrap.body.localCities.some((entry) => entry.city === 'Florianópolis'));
   assert.equal(bootstrap.body.viewer.registered, false);
   assert.equal(bootstrap.body.viewer.anonymousLimit, 10);
   assert.equal(bootstrap.body.viewer.rankingLimit, 20);

@@ -15,8 +15,10 @@ import {
   validateDisplayName,
 } from './profile-names.js';
 import { rankingQuestion } from './ranking-titles.js';
+import { LOCAL_CITIES, localCityByLabel, localCityBySlug } from './seo-taxonomy.js';
 
 const sql = neon(process.env.DATABASE_URL);
+const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
 const CLERK_SECRET_KEY = String(process.env.CLERK_SECRET_KEY || '');
 const CLERK_PUBLISHABLE_KEY = String(
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY || '',
@@ -123,6 +125,17 @@ function geolocationCity(req) {
       .trim()
       .slice(0, 80);
   }
+}
+
+function preferredCatalogCity(req) {
+  const requested = queryValue(req, 'city').trim();
+  const detected = geolocationCity(req);
+  return (
+    localCityByLabel(requested) ||
+    localCityBySlug(requested) ||
+    localCityByLabel(detected) ||
+    localCityByLabel('Florianópolis')
+  ).label;
 }
 
 function isValidDevice(deviceId) {
@@ -1019,32 +1032,59 @@ async function ensureSessionDevice(user, deviceId) {
 
 async function catalog(req, res) {
   const deviceId = queryValue(req, 'device_id').slice(0, 100);
+  const selectedCity = preferredCatalogCity(req),
+    requestedRankingId = queryValue(req, 'ranking_id').trim(),
+    targetRankingId = isValidRankingId(requestedRankingId) ? requestedRankingId : '';
   const user = await sessionUser(req);
   if (user && isValidDevice(deviceId) && !(await ensureSessionDevice(user, deviceId))) {
     return json(res, 409, { error: 'device_rekey_required' });
   }
   const votingRequiresAccount = !user && Boolean(await deviceAccountId(deviceId));
 
-  const [rows, userCountRows] = await Promise.all([
+  const [rows, userCountRows, communityRows, localCityRows] = await Promise.all([
     sql.query(
       `
-    WITH vote_totals AS (
+    WITH eligible_rankings AS MATERIALIZED (
+      SELECT ranking.*
+      FROM rankings ranking
+      WHERE ranking.is_active = true
+        AND (ranking.is_vip = false OR $4::boolean = true)
+        AND (ranking.is_vip = false OR ranking.vip_owner_user_id IS NULL)
+        AND (
+          ranking.is_vip = true
+          OR NOT (ranking.category = ANY($5::text[]))
+          OR ranking.category = $6::text
+          OR ranking.category = (
+            SELECT target.category
+            FROM rankings target
+            WHERE target.id = $7::text
+              AND target.is_active = true
+              AND target.category = ANY($5::text[])
+            LIMIT 1
+          )
+        )
+    ),
+    vote_totals AS (
       SELECT
-        option_id,
-        COALESCE(SUM(direction), 0)::int AS score_delta,
+        vote.option_id,
+        COALESCE(SUM(vote.direction), 0)::int AS score_delta,
         COUNT(*)::int AS live_votes,
         COUNT(*) FILTER (
-          WHERE updated_at >= date_trunc('day', now())
+          WHERE vote.updated_at >= date_trunc('day', now())
         )::int AS today_votes
-      FROM votes
-      GROUP BY option_id
+      FROM votes vote
+      JOIN ranking_options option ON option.id = vote.option_id
+      JOIN eligible_rankings ranking ON ranking.id = option.ranking_id
+      GROUP BY vote.option_id
     ),
     double_vote_totals AS (
       SELECT
-        option_id,
-        COALESCE(SUM(direction), 0)::int AS score_delta
-      FROM user_double_votes
-      GROUP BY option_id
+        double_vote.option_id,
+        COALESCE(SUM(double_vote.direction), 0)::int AS score_delta
+      FROM user_double_votes double_vote
+      JOIN ranking_options option ON option.id = double_vote.option_id
+      JOIN eligible_rankings ranking ON ranking.id = option.ranking_id
+      GROUP BY double_vote.option_id
     ),
     my_votes AS (
       SELECT
@@ -1090,20 +1130,54 @@ async function catalog(req, res) {
         WHEN mdv.direction = mv.direction THEN 2
         ELSE 1
       END::int AS my_weight
-    FROM rankings r
+    FROM eligible_rankings r
     JOIN ranking_options o ON o.ranking_id = r.id
     LEFT JOIN vote_totals vt ON vt.option_id = o.id
     LEFT JOIN double_vote_totals dvt ON dvt.option_id = o.id
     LEFT JOIN my_votes mv ON mv.option_id = o.id
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
-    WHERE r.is_active = true
-      AND (r.is_vip = false OR $4::boolean = true)
-      AND (r.is_vip = false OR r.vip_owner_user_id IS NULL)
     ORDER BY r.created_at, r.id, o.position
   `,
-      [deviceId, user?.id || null, votingRequiresAccount, isModerator(user)],
+      [
+        deviceId,
+        user?.id || null,
+        votingRequiresAccount,
+        isModerator(user),
+        LOCAL_CITY_LABELS,
+        selectedCity,
+        targetRankingId,
+      ],
     ),
     sql.query('SELECT COUNT(*)::int AS total FROM users'),
+    sql.query(`
+      SELECT
+        COUNT(*)::int AS rankings,
+        (
+          COALESCE(SUM(ranking.baseline_votes), 0)
+          + (
+            SELECT COUNT(*)
+            FROM votes vote
+            JOIN ranking_options option ON option.id = vote.option_id
+            JOIN rankings voted_ranking ON voted_ranking.id = option.ranking_id
+            WHERE voted_ranking.is_active = true
+              AND voted_ranking.is_vip = false
+          )
+        )::bigint AS votes
+      FROM rankings ranking
+      WHERE ranking.is_active = true
+        AND ranking.is_vip = false
+    `),
+    sql.query(
+      `
+        SELECT category AS city, COUNT(*)::int AS total
+        FROM rankings
+        WHERE is_active = true
+          AND is_vip = false
+          AND category = ANY($1::text[])
+        GROUP BY category
+      `,
+      [LOCAL_CITY_LABELS],
+    ),
   ]);
 
   const byId = new Map();
@@ -1143,15 +1217,15 @@ async function catalog(req, res) {
     opts: ranking.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition),
   }));
 
-  const publicRankings = rankings.filter((ranking) => !ranking.vip);
   return json(res, 200, {
     rankings,
     community: {
-      rankings: publicRankings.length,
-      votes: publicRankings.reduce((total, ranking) => total + Number(ranking.votes || 0), 0),
+      rankings: Number(communityRows[0]?.rankings || 0),
+      votes: Number(communityRows[0]?.votes || 0),
       users: Number(userCountRows[0]?.total || 0),
     },
-    location: { city: geolocationCity(req) },
+    localCities: localCityRows.map((row) => ({ city: row.city, total: Number(row.total || 0) })),
+    location: { city: geolocationCity(req), selectedCity },
     viewer: await viewerFor(user, deviceId, votingRequiresAccount),
   });
 }

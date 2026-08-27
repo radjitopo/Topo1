@@ -4,6 +4,7 @@ const feed = document.getElementById('feed'),
   sitePulseEl = document.getElementById('sitePulse'),
   searchForm = document.getElementById('siteSearchForm'),
   searchInput = document.getElementById('rankingSearch'),
+  searchCityInput = document.getElementById('searchCity'),
   cityPickerEl = document.getElementById('cityPicker'),
   citySelectEl = document.getElementById('citySelect'),
   experienceLinks = [...document.querySelectorAll('[data-experience]')],
@@ -86,6 +87,7 @@ let rankings = [],
     votingRequiresAccount: false,
   },
   community = { rankings: 0, votes: 0, users: 0 },
+  localCityCatalog = [],
   clerkLoadPromise = null,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
@@ -285,6 +287,7 @@ function newBadgeHTML(r) {
   return isNewRanking(r) ? '<span class="newBadge">Novo</span>' : '';
 }
 function pageKind() {
+  if (document.body.classList.contains('notFoundPage')) return 'not-found';
   if (location.pathname.startsWith('/ranking/')) return 'ranking';
   if (
     ['/entrar', '/recuperar-senha', '/redefinir-senha', '/sso-callback'].includes(location.pathname)
@@ -596,9 +599,29 @@ function renderCommunityPulse() {
   if (sitePulseEl)
     sitePulseEl.innerHTML = `<span><strong>${fmt(community.rankings)}</strong> rankings</span><span><strong>${fmt(community.votes)}</strong> votos</span><span><strong>${fmt(community.users)}</strong> pessoas</span>`;
 }
+function catalogCities() {
+  const present = new Set(
+      localCityCatalog.map((entry) => topoLocal.normalizeCity(entry?.city)).filter(Boolean),
+    ),
+    cities = topoLocal.cityOrder.filter((city) => present.has(city));
+  return cities.length ? cities : topoLocal.availableCities(rankings);
+}
+function catalogCityCount(city) {
+  const normalized = topoLocal.normalizeCity(city),
+    entry = localCityCatalog.find(
+      (candidate) => topoLocal.normalizeCity(candidate?.city) === normalized,
+    );
+  return entry
+    ? Math.max(0, Number(entry.total || 0))
+    : topoLocal.rankingsForCity(rankings, city).length;
+}
 function renderCityPicker() {
-  const cities = topoLocal.availableCities(rankings),
-    shouldShow = isLocalExperience() && pageKind() === 'home' && cities.length > 0;
+  const cities = catalogCities(),
+    shouldShow =
+      isLocalExperience() &&
+      pageKind() === 'home' &&
+      topoLocal.cityOrder.includes(selectedCity) &&
+      cities.length > 0;
   if (!cityPickerEl || !citySelectEl) return;
   cityPickerEl.hidden = !shouldShow;
   if (!shouldShow) return;
@@ -623,6 +646,7 @@ function syncExperienceNavigation() {
     else link.removeAttribute('aria-current');
   });
   if (searchForm) searchForm.action = '/';
+  if (searchCityInput) searchCityInput.value = topoLocal.citySlug(selectedCity);
   if (searchInput) {
     searchInput.placeholder = `Buscar no TOPO e em ${selectedCity || 'sua cidade'}`;
     searchInput.setAttribute(
@@ -633,13 +657,22 @@ function syncExperienceNavigation() {
   renderCityPicker();
 }
 function initializeCity(locationData = {}) {
-  detectedCity = String(locationData.city || '');
-  const routeCity = localRouteState().city;
+  detectedCity = String(locationData.selectedCity || locationData.city || '');
+  const routeCity = localRouteState().city,
+    queryCity = topoLocal.cityFromSlug(queryParams.get('cidade') || ''),
+    rankingCity =
+      pageKind() === 'ranking'
+        ? topoLocal.cityForRanking(rankings.find((ranking) => ranking.id === internalId()))
+        : '';
   let savedCity = '';
   try {
     savedCity = localStorage.getItem(cityStoreKey) || '';
   } catch {}
-  selectedCity = topoLocal.resolvePreferredCity(rankings, routeCity || savedCity, detectedCity);
+  selectedCity = topoLocal.resolvePreferredCity(
+    rankings,
+    routeCity || queryCity || rankingCity || savedCity,
+    detectedCity,
+  );
   if (
     activeGroup !== 'Todos' &&
     !localRankingsForSelectedCity().some((ranking) => belongsToGroup(ranking, activeGroup))
@@ -680,11 +713,23 @@ function availableGroupNames() {
 function syncHomeSearchURL() {
   if (pageKind() !== 'home') return;
   const url = new URL(location.href);
-  if (homeSearch) url.searchParams.set('busca', homeSearch);
-  else url.searchParams.delete('busca');
+  if (homeSearch) {
+    url.searchParams.set('busca', homeSearch);
+    const city = topoLocal.citySlug(selectedCity);
+    if (city) url.searchParams.set('cidade', city);
+    else url.searchParams.delete('cidade');
+  } else {
+    url.searchParams.delete('busca');
+    url.searchParams.delete('cidade');
+  }
   history.replaceState(null, '', url.pathname + url.search + url.hash);
   queryParams.delete('busca');
-  if (homeSearch) queryParams.set('busca', homeSearch);
+  queryParams.delete('cidade');
+  if (homeSearch) {
+    queryParams.set('busca', homeSearch);
+    const city = topoLocal.citySlug(selectedCity);
+    if (city) queryParams.set('cidade', city);
+  }
 }
 function selectGroup(group) {
   location.assign(groupPath(group));
@@ -727,7 +772,17 @@ if (searchForm)
     }
   });
 async function fetchBootstrap(rekeyed = false) {
-  const res = await fetch('/api?device_id=' + encodeURIComponent(deviceId), { cache: 'no-store' });
+  const params = new URLSearchParams({ device_id: deviceId }),
+    routeCity = localRouteState().city,
+    queryCity = topoLocal.cityFromSlug(queryParams.get('cidade') || '');
+  let savedCity = '';
+  try {
+    savedCity = localStorage.getItem(cityStoreKey) || '';
+  } catch {}
+  const city = topoLocal.normalizeCity(routeCity || queryCity || savedCity);
+  if (city) params.set('city', city);
+  if (pageKind() === 'ranking') params.set('ranking_id', internalId());
+  const res = await fetch(`/api?${params}`, { cache: 'no-store' });
   if (res.status === 409 && !rekeyed) {
     const issue = await res.json().catch(() => ({}));
     if (issue.error === 'device_rekey_required') {
@@ -1070,6 +1125,7 @@ async function load() {
     const data = await fetchBootstrap();
     viewer = data.viewer || viewer;
     community = communityFrom(data);
+    localCityCatalog = Array.isArray(data.localCities) ? data.localCities : [];
     rankings = smartShuffle(data.rankings || []);
     initializeCity(data.location || {});
     renderAccount();
@@ -1342,11 +1398,11 @@ function categoryRankCardsHTML(list) {
 }
 function localCityExplorerHTML() {
   if (!isLocalExperience()) return '';
-  const cities = topoLocal.availableCities(rankings).filter((city) => city !== selectedCity);
+  const cities = catalogCities().filter((city) => city !== selectedCity);
   if (!cities.length) return '';
   return `<section class="localCatalogFooter"><div class="localCatalogFooterCopy"><span class="portalKicker">Trocar de lugar</span><h2>Quer explorar outra cidade?</h2><p>Escolha uma cidade para ver somente os rankings de lá.</p></div><button id="toggleLocalCityExplorer" class="localExploreButton" type="button" aria-expanded="false" aria-controls="localCityOptions">Explorar outra cidade</button><p class="localDataCredit">Dados iniciais: <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noreferrer">Overture Maps Foundation</a> e diretórios públicos locais. A ordem é definida pelos votos da comunidade.</p><div class="localCityOptions" id="localCityOptions" hidden>${cities
     .map((city) => {
-      const total = topoLocal.rankingsForCity(rankings, city).length;
+      const total = catalogCityCount(city);
       return `<a href="${topoLocal.collectionPath(city)}" data-local-city="${escapeHTML(city)}"><strong>${escapeHTML(city)}</strong><span>${fmt(total)} ranking${total === 1 ? '' : 's'}</span></a>`;
     })
     .join('')}</div></section>`;
@@ -3729,6 +3785,10 @@ async function boot() {
       .split(';')
       .some((part) => part.trim().startsWith('__session='));
   if (feed.dataset.serverRendered !== 'true') feed.innerHTML = pageLoadingHTML(kind);
+  if (kind === 'not-found') {
+    revealClientPage();
+    return;
+  }
   if (kind === 'auth' || kind === 'profile' || kind === 'moderation' || hasClerkSession)
     await initClerk();
   await load();
