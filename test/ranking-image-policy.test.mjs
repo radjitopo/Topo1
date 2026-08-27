@@ -12,8 +12,8 @@ import {
 
 const root = new URL('../', import.meta.url);
 
-test('the first semantic review replaces all known mismatched covers', () => {
-  assert.equal(CURATED_COVER_COUNT, 31);
+test('the semantic reviews replace all known weak or mismatched covers', () => {
+  assert.equal(CURATED_COVER_COUNT, 59);
   const replacements = Object.values(CURATED_COVER_RULES).map((coverRule) => {
     assert.match(coverRule.replacement, /^https:\/\//);
     return imageAssetKey(coverRule.replacement);
@@ -28,6 +28,10 @@ test('the first semantic review replaces all known mismatched covers', () => {
     'https://images.unsplash.com/photo-1736184766006-377f3e9827a1?auto=format&fit=crop&w=1200&q=82';
   assert.notEqual(resolveRankingCover('bandas-pagode', oldPagode), oldPagode);
   assert.match(rejectedRankingCoverIssue('bandas-pagode', oldPagode), /não representa/);
+
+  const oldFloripaBeach =
+    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=82';
+  assert.match(resolveRankingCover('praias', oldFloripaBeach), /1681157865251-2155d60882c0/);
 
   const moderatorChoice =
     'https://images.unsplash.com/photo-1500000000000-moderatorchoice?auto=format&fit=crop&w=1200&q=82';

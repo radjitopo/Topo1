@@ -155,6 +155,124 @@ export const CURATED_COVER_RULES = Object.freeze({
     coverUrl('1668195327624-06e596eb797c'),
     ['Florianopolis beach sports event Brazil', 'Brazil beach athlete sport'],
   ),
+  destinos: rule('1488646953014-85cb44e25828', coverUrl('1662997677426-2225712f97cd'), [
+    'iconic Brazilian travel destination landscape',
+    'Brazil natural destination editorial travel',
+  ]),
+  musica: rule('1511379938547-c1f69419868d', coverUrl('1632054553871-c2817a775d18'), [
+    'Brazilian singer live band performance',
+    'Brazil music artist on stage',
+  ]),
+  praias: rule('1507525428034-b723cf961d3e', coverUrl('1681157865251-2155d60882c0'), [
+    'Florianopolis beach aerial Santa Catarina',
+    'Florianopolis coastline Brazil',
+  ]),
+  cidades: rule('1477959858617-67f85cf4f1df', coverUrl('1783364690185-05db07c5f40d'), [
+    'Brazilian city aerial skyline',
+    'Brazil city urban landscape',
+  ]),
+  'bairros-floripa': rule('1449157291145-7efd050a4d0e', coverUrl('1565574337618-b08146e94992'), [
+    'Florianopolis neighborhood aerial Brazil',
+    'Beira Mar Norte Florianopolis city',
+  ]),
+  'carros-eletricos': rule('1503736334956-4c8f8e92946d', coverUrl('1593941707874-ef25b8b4a92b'), [
+    'electric car charging close up',
+    'modern EV charging station',
+  ]),
+  'lugares-date': rule('1519741497674-611481863552', coverUrl('1782022536439-f0ccc8fdd59f'), [
+    'couple romantic candlelight dinner date',
+    'intimate restaurant date night',
+  ]),
+  'filmes-80': rule('1485846234645-a62644f84728', coverUrl('1769397830996-c0e1a18c0a87'), [
+    '1980s movie VHS tape nostalgia',
+    'eighties cinema VHS collection',
+  ]),
+  'series-tv': rule('1522869635100-9f4c5e86aa37', coverUrl('1764194105737-952018cbef1d'), [
+    'person choosing a television series streaming',
+    'watching TV series at home remote',
+  ]),
+  'marcas-esportivas': rule('1517836357463-d25dfeac3438', coverUrl('1760302318631-a8d342cd4951'), [
+    'sportswear brands sneaker store',
+    'athletic shoes streetwear display',
+  ]),
+  'moda-polemica': rule('1771919383240-d0a30993fc38', coverUrl('1784850758006-21742e6553ad'), [
+    'controversial avant garde fashion runway',
+    'unusual repurposed clothing editorial',
+  ]),
+  dramas: rule('1766844649143-af98d71e346b', coverUrl('1758611973429-2dc4a2b75775'), [
+    'emotional viewer crying watching drama',
+    'sad television drama audience at home',
+  ]),
+  animes: rule('1612036782180-6f0b6cd846fe', coverUrl('1755973707772-f57eeaf78a05'), [
+    'anime characters Japanese animation display',
+    'anime character collection colorful',
+  ]),
+  'influencers-brasil': rule('1516321318423-f06f85e504b3', coverUrl('1745848413060-0827ec268cda'), [
+    'Brazil content creator filming social video',
+    'influencer camera studio creator',
+  ]),
+  'piores-pandemia': rule('1609767806693-65144bf78fcf', coverUrl('1609767726954-7297b60278d5'), [
+    'Covid lockdown masked person empty street',
+    'pandemic isolation face mask city',
+  ]),
+  'jogos-roblox': rule('1554410637-1a8267402b57', coverUrl('1656639969809-ebc544c96955'), [
+    'Roblox games laptop screen',
+    'playing Roblox computer',
+  ]),
+  'quarto-dos-sonhos': rule('1616486338812-3dadae4b4ace', coverUrl('1770941633927-b7a15557e0e1'), [
+    'dream bedroom cozy interior wide',
+    'large stylish bedroom interior',
+  ]),
+  'frases-adultos-irritantes': rule(
+    '1529156069898-49953e39b3ac',
+    coverUrl('1752652012419-ec5b0062eb51'),
+    ['parent scolding upset child at home', 'adult arguing with teenager family'],
+  ),
+  'restaurantes-floripa': rule(
+    '1504674900247-0877df9cc836',
+    coverUrl('1649424189596-48738f6cc597'),
+    ['Florianopolis restaurant interior Brazil', 'Florianopolis cafe dining local'],
+  ),
+  'brechos-floripa': rule('1445205170230-053b83016050', coverUrl('1778512408867-f657b926cc4f'), [
+    'thrift store shoppers browsing vintage clothes',
+    'second hand clothing circular fashion',
+  ]),
+  'filmes-ficcao-cientifica': rule(
+    '1517486518908-97a5f91b325f',
+    coverUrl('1694547278143-4c83c9d46b1e'),
+    ['science fiction cinema astronaut cinematic', 'surreal sci fi movie scene'],
+  ),
+  'series-comedia': rule('1615986200762-a1ed9610d3b1', coverUrl('1758525862263-af89b090fb56'), [
+    'friends laughing watching comedy TV series',
+    'funny show audience popcorn couch',
+  ]),
+  'artistas-visuais-brasileiros': rule(
+    '1774125553858-3f41e84d4e92',
+    coverUrl('1711809814870-72b7c756bd37'),
+    ['Brazilian visual artist paintings street exhibition', 'Brazil artist colorful canvases'],
+  ),
+  'acessorios-look': rule('1784850758006-21742e6553ad', coverUrl('1569388330292-79cc1ec67270'), [
+    'fashion accessories jewelry sunglasses editorial',
+    'accessories transform outfit flat lay',
+  ]),
+  'celebridades-estilosas': rule(
+    '1657412235086-c2de1a1176a9',
+    coverUrl('1584634407036-a403356514cd'),
+    ['stylish celebrities red carpet fashion', 'celebrity event formal style'],
+  ),
+  'personagens-videogame': rule(
+    '1760900954419-89f057caf7f2',
+    coverUrl('1566577134665-2c674085abf7'),
+    ['iconic video game character figures', 'famous gaming characters collection'],
+  ),
+  'trilhas-jogos': rule('1655029164758-51e484f5576b', coverUrl('1576074209600-499947598aed'), [
+    'video game controller headphones soundtrack',
+    'gaming music headphones console',
+  ]),
+  'gadgets-anos-2000': rule('1761906976176-0559a6d130dd', coverUrl('1773998240458-9a36e718c63a'), [
+    'early 2000s iPod MP3 player nostalgia',
+    'Y2K gadgets retro technology',
+  ]),
 });
 
 const CATEGORY_HINTS = Object.freeze({
