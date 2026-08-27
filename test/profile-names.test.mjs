@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { compactSource } from './source-helpers.mjs';
 import {
   defaultDisplayName,
   displayNameChangeState,
@@ -59,10 +60,19 @@ test('profile name API, reporting and moderation stay wired', async () => {
   assert.match(api, /async function createNameReport/);
   assert.match(api, /user_name_reports/);
   assert.match(app, /Escolha seu nome no TOPO/);
-  assert.ok(
-    app.indexOf('${profileNameEditorHTML(p.user)}') < app.indexOf('profileBadges'),
-    'the public name editor should appear near the top of the profile',
+  const profileRender = app.slice(
+      app.indexOf('async function renderProfile'),
+      app.indexOf('async function logout'),
+    ),
+    compactProfileRender = compactSource(profileRender);
+  assert.match(
+    compactProfileRender,
+    /profileGameHero[\s\S]*profileHeroIntro[\s\S]*profileMetrics[\s\S]*<\/section><sectionclass="profileSectionprofileVipRankings"/,
+    'profile numbers should follow the compact identity header immediately',
   );
+  assert.match(profileRender, /href="#perfil-publico">Editar perfil/);
+  assert.match(profileRender, /profileSettingsGrid">\$\{profileNameEditorHTML\(p\.user\)\}/);
+  assert.doesNotMatch(profileRender, /profileBadges|profileProgressText|profileEmail/);
   assert.match(app, /data-report-name/);
   assert.match(migration, /user_name_reports_pending_unique_idx/);
 });

@@ -58,7 +58,7 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260827-4-mobile-ranking-actions'));
+assert.ok(index.includes('/editorial-clean.css?v=20260827-5-compact-profile'));
 assert.ok(index.includes('/app.js?v=20260827-1-vip-area'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(institutional.includes('/editorial-clean.css?v=20260826-21-login-cta'));
@@ -141,18 +141,18 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.profilePage\.profileGameHero\{[^}]*border:0[^}]*border-top:5pxsolidvar\(--clean-ink\)[^}]*border-radius:0[^}]*background:var\(--clean-paper\)[^}]*box-shadow:none/,
-  'the profile hero must use the same flat editorial structure as the latest public pages',
+  /body\.popElectric\.profilePage\.profileGameHero\{[^}]*margin:0028px[^}]*border:0[^}]*border-bottom:1pxsolidvar\(--clean-ink\)[^}]*background:var\(--clean-paper\)[^}]*box-shadow:none/,
+  'the compact profile hero must remove the heavy black top strip',
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.profilePage\.profileAvatarRing\{background:conic-gradient\(from-90deg,var\(--clean-sage\)var\(--profile-progress\),var\(--clean-line\)0\)/,
-  'profile progress must use the sage ring and preserve real progress',
+  /body\.popElectric\.profilePage\.profileAvatarRing\{background:var\(--clean-lime\)/,
+  'the smaller profile photo must use the brand lime ring',
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.profilePage\.profileBadgesspan\{[^}]*border:0[^}]*border-right:1pxsolidvar\(--clean-line\)[^}]*border-radius:0[^}]*background:transparent[^}]*color:var\(--clean-ink\)/,
-  'profile status labels must be flat editorial rows instead of rounded capsules',
+  /body\.popElectric\.profilePage\.profileSettingsGrid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
+  'name and photo controls must remain available in a dedicated profile settings area',
 );
 assert.match(
   compactEditorialCss,
@@ -286,14 +286,9 @@ assert.doesNotMatch(
   'global header sizing must never affect internal headers such as moderation',
 );
 assert.match(
-  compactPopCss,
-  /\.popElectric\.profileProgressTextstrong\{[^}]*color:var\(--cream\)/,
-  'profile progress emphasis must remain readable over the near-black hero',
-);
-assert.match(
-  compactPopCss,
-  /@media\(max-width:480px\)[\s\S]*\.popElectric\.profileMetrics\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
-  'profile metrics must form a balanced two-by-two grid on phones',
+  compactEditorialCss,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.profilePage\.profileMetrics\{grid-template-columns:repeat\(auto-fit,minmax\(70px,1fr\)\)/,
+  'profile metrics must stay in one compact row when space allows on phones',
 );
 assert.match(
   compactPopCss,
