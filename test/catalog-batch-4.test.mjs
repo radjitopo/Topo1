@@ -46,8 +46,8 @@ test('catalog importer and editorial bundle include the fourth batch', async () 
   ]);
 
   assert.match(importer, /rankings-batch-4\.json/);
-  assert.match(importer, /newRankings\.length !== 175/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 215/);
+  assert.match(importer, /newRankings\.length !== 187/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
   assert.match(index, /editorial-12\.js/);
   assert.match(compactSource(app), /'pokemons-irados':'Jogos'/);
 

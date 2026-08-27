@@ -60,8 +60,8 @@ test('catalog importer, categories and editorial include the fifth batch', async
 
   assert.match(importer, /rankings-batch-5\.json/);
   assert.match(importer, /fifthBatchRankings\.length !== 20/);
-  assert.match(importer, /newRankings\.length !== 175/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 215/);
+  assert.match(importer, /newRankings\.length !== 187/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
   assert.match(index, /editorial-13\.js/);
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(compactSource(app), /'Jogos','Natureza'/);
