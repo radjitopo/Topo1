@@ -29,6 +29,10 @@ body.popElectric .rankingPersonalActions {
   gap: 16px;
 }
 
+body.popElectric .rankingPersonalActionsMobile {
+  display: none;
+}
+
 body.popElectric .favoriteToggle {
   display: inline-flex;
   min-height: 32px;
@@ -331,12 +335,6 @@ body.popElectric .favoritePublicEmpty a {
 }
 
 @media (max-width: 700px) {
-  body.popElectric .rankingPersonalActions {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
-  }
-
   body.popElectric .favoriteCollectionTools {
     align-items: flex-end;
     flex-direction: column;
@@ -3760,6 +3758,42 @@ body.popElectric .moderationUserFieldLabel {
     margin-bottom: 27px;
   }
 
+  body.popElectric.rankingPage .rankingPersonalActionsDesktop {
+    display: none;
+  }
+
+  body.popElectric.rankingPage .rankingPersonalActionsMobile {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: clamp(8px, 3vw, 13px);
+    margin: 0 0 27px;
+    padding: 12px 0 0;
+  }
+
+  body.popElectric.rankingPage .rankingPersonalActionsMobile .shareActions {
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: clamp(6px, 2vw, 9px);
+  }
+
+  body.popElectric.rankingPage .rankingPersonalActionsMobile .favoriteToggle,
+  body.popElectric.rankingPage .rankingPersonalActionsMobile .whatsappShare,
+  body.popElectric.rankingPage .rankingPersonalActionsMobile .nativeShare {
+    min-width: 0;
+    padding-right: 0;
+    padding-left: 0;
+    font-size: clamp(9px, 2.55vw, 10px);
+    white-space: nowrap;
+  }
+
+  body.popElectric.rankingPage .statsRow {
+    margin-bottom: 0;
+  }
+
   body.popElectric.rankingPage .statBox {
     min-height: 77px;
     padding: 13px 0;
@@ -3967,7 +4001,7 @@ body.popElectric .moderationUserFieldLabel {
   }
 
   body.popElectric.rankingPage .statsRow {
-    margin-bottom: 27px;
+    margin-bottom: 0;
   }
 
   body.popElectric.rankingPage .name {
