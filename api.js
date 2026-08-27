@@ -62,6 +62,7 @@ const VIP_UNLOCK_ATTEMPT_LIMIT = 8;
 const USER_VIP_RANKING_LIMIT = 20;
 const VIP_DESCRIPTION_LIMIT = 280;
 const VIP_COOKIE_PREFIX = 'topo_vip_';
+const FAVORITE_SHARE_TOKEN_PATTERN = /^[a-zA-Z0-9_-]{24,64}$/;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
 ]);
@@ -525,6 +526,11 @@ function rankingImageUpload(value) {
 
 function isValidRankingId(value) {
   return /^[a-z0-9][a-z0-9._-]{0,99}$/.test(String(value || ''));
+}
+
+function favoriteShareToken(value) {
+  const token = String(value || '').trim();
+  return FAVORITE_SHARE_TOKEN_PATTERN.test(token) ? token : '';
 }
 
 function publishedRankingSlug(value) {
@@ -1117,6 +1123,12 @@ async function catalog(req, res) {
       r.is_vip,
       (r.vip_password_hash IS NOT NULL) AS vip_has_password,
       r.vip_password_version,
+      EXISTS (
+        SELECT 1
+        FROM user_ranking_favorites favorite
+        WHERE favorite.user_id = $2::uuid
+          AND favorite.ranking_id = r.id
+      ) AS is_favorite,
       o.id AS option_id,
       o.label,
       o.position,
@@ -1193,6 +1205,7 @@ async function catalog(req, res) {
         todayVotes: 0,
         createdAt: row.created_at,
         vip: row.is_vip === true,
+        favorite: row.is_favorite === true,
         vipHasPassword: row.vip_has_password === true,
         vipUnlocked: row.is_vip === true ? true : undefined,
         opts: [],
@@ -2154,6 +2167,174 @@ async function unlockVipRanking(req, res, body) {
     return json(res, 503, { error: 'vip_not_configured' });
   }
   return json(res, 200, { ok: true, rankingId });
+}
+
+function favoriteRankingPayload(row) {
+  return {
+    id: row.id,
+    q: rankingQuestion(row.id, row.question),
+    cat: row.category,
+    img: row.imageUrl || row.image_url || null,
+    createdAt: row.createdAt || row.created_at || null,
+    favoritedAt: row.favoritedAt || row.favorited_at || null,
+    favorite: true,
+  };
+}
+
+async function favoriteRowsForUser(userId) {
+  return sql.query(
+    `
+      SELECT
+        ranking.id,
+        ranking.category,
+        ranking.question,
+        ranking.image_url AS "imageUrl",
+        ranking.created_at AS "createdAt",
+        favorite.created_at AS "favoritedAt"
+      FROM user_ranking_favorites favorite
+      JOIN rankings ranking ON ranking.id = favorite.ranking_id
+      WHERE favorite.user_id = $1::uuid
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+      ORDER BY favorite.created_at DESC, ranking.id
+    `,
+    [userId],
+  );
+}
+
+async function favorites(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const [rows, collectionRows] = await Promise.all([
+    favoriteRowsForUser(user.id),
+    sql.query(
+      `
+        SELECT share_token AS "shareToken"
+        FROM user_favorite_collections
+        WHERE user_id = $1::uuid
+        LIMIT 1
+      `,
+      [user.id],
+    ),
+  ]);
+  const shareToken = favoriteShareToken(collectionRows[0]?.shareToken);
+
+  return json(res, 200, {
+    favorites: rows.map(favoriteRankingPayload),
+    sharePath: shareToken ? `/favoritos/${shareToken}` : null,
+  });
+}
+
+async function addFavorite(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const rankingId = String(body.rankingId || '').trim();
+  if (!isValidRankingId(rankingId)) return json(res, 400, { error: 'invalid_ranking' });
+
+  const inserted = await sql.query(
+    `
+      INSERT INTO user_ranking_favorites (user_id, ranking_id)
+      SELECT $1::uuid, ranking.id
+      FROM rankings ranking
+      WHERE ranking.id = $2
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+      ON CONFLICT (user_id, ranking_id) DO UPDATE
+      SET created_at = user_ranking_favorites.created_at
+      RETURNING ranking_id AS "rankingId"
+    `,
+    [user.id, rankingId],
+  );
+  if (!inserted[0]) return json(res, 404, { error: 'ranking_not_found' });
+
+  return json(res, 200, { ok: true, rankingId, favorite: true });
+}
+
+async function removeFavorite(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const rankingId = queryValue(req, 'ranking_id').trim();
+  if (!isValidRankingId(rankingId)) return json(res, 400, { error: 'invalid_ranking' });
+
+  await sql.query(
+    `
+      DELETE FROM user_ranking_favorites
+      WHERE user_id = $1::uuid
+        AND ranking_id = $2
+    `,
+    [user.id, rankingId],
+  );
+  return json(res, 200, { ok: true, rankingId, favorite: false });
+}
+
+async function shareFavorites(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const countRows = await sql.query(
+    `
+      SELECT COUNT(*)::int AS total
+      FROM user_ranking_favorites favorite
+      JOIN rankings ranking ON ranking.id = favorite.ranking_id
+      WHERE favorite.user_id = $1::uuid
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+    `,
+    [user.id],
+  );
+  if (Number(countRows[0]?.total || 0) === 0) {
+    return json(res, 409, { error: 'favorites_empty' });
+  }
+
+  const generatedToken = randomBytes(24).toString('base64url');
+  const rows = await sql.query(
+    `
+      INSERT INTO user_favorite_collections (user_id, share_token)
+      VALUES ($1::uuid, $2)
+      ON CONFLICT (user_id) DO UPDATE
+      SET updated_at = now()
+      RETURNING share_token AS "shareToken"
+    `,
+    [user.id, generatedToken],
+  );
+  const shareToken = favoriteShareToken(rows[0]?.shareToken);
+  if (!shareToken) return json(res, 500, { error: 'favorite_share_failed' });
+
+  return json(res, 200, {
+    ok: true,
+    sharePath: `/favoritos/${shareToken}`,
+  });
+}
+
+async function favoriteCollection(req, res) {
+  const shareToken = favoriteShareToken(queryValue(req, 'token'));
+  if (!shareToken) return json(res, 400, { error: 'invalid_favorite_collection' });
+
+  const collectionRows = await sql.query(
+    `
+      SELECT
+        collection.user_id AS "userId",
+        users.display_name AS name,
+        collection.updated_at AS "updatedAt"
+      FROM user_favorite_collections collection
+      JOIN users ON users.id = collection.user_id
+      WHERE collection.share_token = $1
+      LIMIT 1
+    `,
+    [shareToken],
+  );
+  const collection = collectionRows[0];
+  if (!collection) return json(res, 404, { error: 'favorite_collection_not_found' });
+
+  const rows = await favoriteRowsForUser(collection.userId);
+  return json(res, 200, {
+    owner: { name: collection.name || 'Pessoa no TOPO' },
+    favorites: rows.map(favoriteRankingPayload),
+    updatedAt: collection.updatedAt || null,
+  });
 }
 
 function clerkConfig(req, res) {
@@ -4556,6 +4737,8 @@ export default async function handler(req, res) {
       if (action === 'ranking-image') return rankingImage(req, res);
       if (action === 'vip-catalog') return vipCatalog(req, res);
       if (action === 'vip-ranking') return vipRanking(req, res);
+      if (action === 'favorites') return favorites(req, res);
+      if (action === 'favorite-collection') return favoriteCollection(req, res);
       if (action === 'auth-config') return clerkConfig(req, res);
       if (action === 'notifications') return notifications(req, res);
       if (action === 'profile') return profile(req, res);
@@ -4583,6 +4766,8 @@ export default async function handler(req, res) {
         if (action === 'logout') return logout(req, res);
         if (action === 'vip-unlock') return unlockVipRanking(req, res, body);
         if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
+        if (action === 'favorites') return addFavorite(req, res, body);
+        if (action === 'favorite-share') return shareFavorites(req, res);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);
         if (action === 'notifications') return notifications(req, res, body);
@@ -4611,6 +4796,7 @@ export default async function handler(req, res) {
 
     if (method === 'DELETE') {
       if (action === 'vip-rankings') return deleteUserVipRanking(req, res);
+      if (action === 'favorites') return removeFavorite(req, res);
       return json(res, 404, { error: 'action_not_found' });
     }
 

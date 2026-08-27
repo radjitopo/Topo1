@@ -66,6 +66,7 @@ function localRouteState() {
 let renderHome;
 let rankings = [],
   vipRankings = [],
+  favoriteRankings = [],
   activeGroup = generalGroupFromRoute() || localRouteState().group || 'Todos',
   homePortal = !isLocalRoute() && !isCategoryRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
@@ -277,10 +278,31 @@ function priorityBucket(r) {
   if (n < limit) return 1;
   return 2;
 }
+function favoriteAffinity(r, favorites) {
+  if (r.favorite || !favorites.length) return 0;
+  if (favorites.some((favorite) => favorite.cat === r.cat)) return 3;
+  if (favorites.some((favorite) => groupOf(favorite) === groupOf(r))) return 2;
+  if (
+    topoLocal.isLocalRanking(r) &&
+    favorites.some(
+      (favorite) =>
+        topoLocal.isLocalRanking(favorite) &&
+        topoLocal.groupForRanking(favorite) === topoLocal.groupForRanking(r),
+    )
+  )
+    return 1;
+  return 0;
+}
 function smartShuffle(list) {
+  const favorites = list.filter((ranking) => ranking.favorite);
   return [...list]
-    .map((r) => ({ r, p: priorityBucket(r), x: Math.random() }))
-    .sort((a, b) => a.p - b.p || a.x - b.x)
+    .map((r) => ({
+      r,
+      p: priorityBucket(r),
+      affinity: favoriteAffinity(r, favorites),
+      x: Math.random(),
+    }))
+    .sort((a, b) => a.p - b.p || b.affinity - a.affinity || a.x - b.x)
     .map((x) => x.r);
 }
 function newBadgeHTML(r) {
@@ -296,6 +318,7 @@ function pageKind() {
   if (location.pathname === '/perfil') return 'profile';
   if (location.pathname === '/moderacao') return 'moderation';
   if (location.pathname === '/vip') return 'vip';
+  if (location.pathname.startsWith('/favoritos/')) return 'favorites';
   return 'home';
 }
 function isLocalRoute() {
@@ -305,7 +328,7 @@ function isCategoryRoute() {
   return location.pathname === '/categoria' || location.pathname.startsWith('/categoria/');
 }
 function isVipRoute() {
-  return location.pathname === '/vip';
+  return location.pathname === '/vip' || location.pathname.startsWith('/favoritos/');
 }
 function isVipExperience() {
   if (isVipRoute()) return true;
@@ -328,6 +351,7 @@ document.body.classList.toggle('homePage', pageKind() === 'home');
 document.body.classList.toggle('rankingPage', pageKind() === 'ranking');
 document.body.classList.toggle('profilePage', pageKind() === 'profile');
 document.body.classList.toggle('moderationPage', pageKind() === 'moderation');
+document.body.classList.toggle('favoritesPage', pageKind() === 'favorites');
 document.body.classList.toggle('localMode', isLocalRoute());
 document.body.classList.toggle('vipPage', isVipRoute());
 if (searchInput && homeSearch) searchInput.value = homeSearch;
@@ -826,6 +850,14 @@ function vipCardHTML(ranking) {
   return `<article class="vipCard" data-vip-card="${escapeHTML(ranking.id)}"><a class="vipCardMedia" href="${path}">${media}<span class="vipCardLock" aria-hidden="true">${ranking.locked ? '🔒' : '✓'}</span></a><div class="vipCardBody"><span class="vipCardStatus ${ranking.locked ? '' : 'unlocked'}">${status}</span><h2><a href="${path}">${escapeHTML(ranking.q)}</a></h2>${details}<a class="vipCardAction" href="${path}">${ranking.locked ? 'DIGITAR SENHA' : 'ABRIR RANKING'} <b>→</b></a>${ownerActions}</div></article>`;
 }
 
+function favoriteCardHTML(ranking, { editable = false } = {}) {
+  const path = rankingPath(ranking.id),
+    media = ranking.img
+      ? `<img data-ranking-image src="${escapeHTML(ranking.img)}" alt="" loading="lazy" decoding="async">`
+      : '<span class="favoriteCardFallback" aria-hidden="true">TOPO</span>';
+  return `<article class="favoriteCard"><a class="favoriteCardMedia" href="${path}">${media}<span class="favoriteCardHeart" aria-hidden="true">${favoriteIconHTML()}</span></a><div class="favoriteCardBody"><span class="favoriteCardCategory">${escapeHTML(categoryLabel(ranking))}</span><h2><a href="${path}">${escapeHTML(ranking.q)}</a></h2><div class="favoriteCardActions"><a href="${path}">ABRIR RANKING <b>→</b></a>${editable ? favoriteButtonHTML({ ...ranking, favorite: true }, { remove: true }) : ''}</div></div></article>`;
+}
+
 function vipOptionInputHTML(index, value = '') {
   return `<div class="vipOptionInputRow"><span>${index + 1}</span><input class="vipOptionInput" type="text" minlength="2" maxlength="80" autocomplete="off" value="${escapeHTML(value)}" placeholder="Nome ou opção ${index + 1}" aria-label="Nome ou opção ${index + 1}" required><button type="button" data-remove-vip-option aria-label="Remover nome ou opção ${index + 1}">×</button></div>`;
 }
@@ -1033,6 +1065,57 @@ async function copyVipRankingLink(rankingId) {
   }
 }
 
+async function shareFavoriteCollectionURL(url, title = 'Favoritos no TOPO') {
+  const data = {
+    title,
+    text: 'Separei meus rankings favoritos no TOPO.',
+    url,
+  };
+  if (navigator.share) {
+    try {
+      await navigator.share(data);
+      return true;
+    } catch (error) {
+      if (error?.name === 'AbortError') return false;
+    }
+  }
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(url);
+    toast('Link dos favoritos copiado');
+    return true;
+  } catch {
+    toast('Não consegui abrir o compartilhamento neste navegador');
+    return false;
+  }
+}
+
+async function shareMyFavorites(button) {
+  button.disabled = true;
+  try {
+    const response = await fetch('/api?action=favorite-share', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: '{}',
+      }),
+      result = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      location.assign(`/entrar?voltar=${encodeURIComponent('/vip')}`);
+      return;
+    }
+    if (!response.ok || !result.sharePath) throw result;
+    await shareFavoriteCollectionURL(location.origin + result.sharePath, 'Meus favoritos no TOPO');
+  } catch (error) {
+    toast(
+      error?.error === 'favorites_empty'
+        ? 'Favorite pelo menos um ranking primeiro'
+        : 'Não consegui compartilhar seus favoritos agora',
+    );
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function bindVipOwnerActions() {
   document
     .querySelectorAll('[data-copy-vip]')
@@ -1074,10 +1157,19 @@ async function loadVipArea() {
   syncExperienceNavigation();
   groupsEl.innerHTML = '';
   document.title = 'Meu Topo — TOPO';
-  const response = await fetch('/api?action=vip-catalog', { cache: 'no-store' }),
-    data = await response.json().catch(() => ({}));
+  const [response, favoriteResponse] = await Promise.all([
+      fetch('/api?action=vip-catalog', { cache: 'no-store' }),
+      viewer.registered
+        ? fetch('/api?action=favorites', { cache: 'no-store' })
+        : Promise.resolve(null),
+    ]),
+    data = await response.json().catch(() => ({})),
+    favoriteData = favoriteResponse?.ok
+      ? await favoriteResponse.json().catch(() => ({}))
+      : { favorites: [] };
   if (!response.ok) throw new Error('vip_catalog');
   vipRankings = Array.isArray(data.rankings) ? data.rankings : [];
+  favoriteRankings = Array.isArray(favoriteData.favorites) ? favoriteData.favorites : [];
   const ownedVipRankings = vipRankings.filter((ranking) => ranking.owned),
     loginPath = `/entrar?voltar=${encodeURIComponent('/perfil?criar=1')}`,
     createAction = viewer.registered
@@ -1088,11 +1180,69 @@ async function loadVipArea() {
       : ownedVipRankings.length
         ? `<div class="vipGrid vipOwnedGrid">${ownedVipRankings.map(vipCardHTML).join('')}</div>`
         : '<section class="vipEmpty"><span aria-hidden="true">＋</span><h2>Você ainda não criou nenhum ranking privado.</h2><p>Crie o primeiro no seu perfil e compartilhe o link e a senha com o seu grupo.</p></section>',
+    favoriteCards = !viewer.registered
+      ? '<section class="favoriteEmpty"><span aria-hidden="true">♡</span><h2>Entre para guardar seus rankings favoritos.</h2><p>Eles ficam reunidos aqui e podem ser compartilhados de uma vez.</p></section>'
+      : favoriteRankings.length
+        ? `<div class="favoriteGrid">${favoriteRankings.map((ranking) => favoriteCardHTML(ranking, { editable: true })).join('')}</div>`
+        : '<section class="favoriteEmpty"><span aria-hidden="true">♡</span><h2>Você ainda não favoritou nenhum ranking.</h2><p>Toque no coração de um ranking para guardar aqui.</p></section>',
+    favoriteAction = viewer.registered
+      ? `<button class="favoriteShareButton" id="favoriteShareButton" type="button" ${favoriteRankings.length ? '' : 'disabled'}>COMPARTILHAR FAVORITOS</button>`
+      : `<a class="favoriteShareButton" href="${escapeHTML(`/entrar?voltar=${encodeURIComponent('/vip')}`)}">ENTRAR PARA FAVORITAR</a>`,
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seu espaço privado</span><h1>Meu Topo</h1><p>Crie e acompanhe os rankings protegidos que você compartilha com o seu grupo.</p>${createAction}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
+  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seus gostos, seu espaço</span><h1>Meu Topo</h1><p>Guarde os rankings que você mais gosta e acompanhe os rankings privados do seu grupo.</p>${createAction}</section><section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
   bindVipOwnerActions();
+  bindFavoriteButtons();
+  bindNativeShares();
+  document
+    .getElementById('favoriteShareButton')
+    ?.addEventListener('click', (event) => shareMyFavorites(event.currentTarget));
+}
+
+function favoriteCollectionToken() {
+  const match = location.pathname.match(/^\/favoritos\/([^/]+)\/?$/);
+  if (!match) return '';
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return '';
+  }
+}
+
+async function loadFavoriteCollection() {
+  syncExperienceNavigation();
+  groupsEl.innerHTML = '';
+  const token = favoriteCollectionToken();
+  if (!token) {
+    feed.innerHTML =
+      '<section class="favoritePublicEmpty"><span class="portalKicker">Favoritos</span><h1>Este link não está completo.</h1><a href="/">Descobrir rankings →</a></section>';
+    return;
+  }
+  const response = await fetch(
+      `/api?action=favorite-collection&token=${encodeURIComponent(token)}`,
+      { cache: 'no-store' },
+    ),
+    data = await response.json().catch(() => ({}));
+  if (response.status === 404) {
+    document.title = 'Favoritos não encontrados — TOPO';
+    feed.innerHTML =
+      '<section class="favoritePublicEmpty"><span class="portalKicker">Favoritos</span><h1>Esta seleção não está disponível.</h1><p>O link pode ter mudado ou deixado de existir.</p><a href="/">Descobrir rankings →</a></section>';
+    return;
+  }
+  if (!response.ok) throw new Error('favorite_collection');
+  favoriteRankings = Array.isArray(data.favorites) ? data.favorites : [];
+  const ownerName = String(data.owner?.name || 'Pessoa no TOPO'),
+    cards = favoriteRankings.length
+      ? `<div class="favoriteGrid favoritePublicGrid">${favoriteRankings.map((ranking) => favoriteCardHTML(ranking)).join('')}</div>`
+      : '<section class="favoriteEmpty"><span aria-hidden="true">♡</span><h2>Esta seleção está vazia agora.</h2><p>Quando novos rankings forem favoritados, eles aparecerão neste mesmo link.</p></section>';
+  document.title = `Favoritos de ${ownerName} — TOPO`;
+  feed.innerHTML = `<section class="favoritePublicHero"><a class="backLink" href="/">← TOPO</a><span class="portalKicker">Uma seleção pessoal</span><h1>Favoritos de ${escapeHTML(ownerName)}</h1><p>Estes são os rankings que ${escapeHTML(ownerName)} guardou no Meu Topo.</p><button class="favoriteShareButton" id="favoritePublicShare" type="button">COMPARTILHAR ESTA SELEÇÃO</button></section><section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">No Meu Topo</span><h2>${favoriteRankings.length} favorito${favoriteRankings.length === 1 ? '' : 's'}</h2></div></div>${cards}</section>`;
+  document
+    .getElementById('favoritePublicShare')
+    ?.addEventListener('click', () =>
+      shareFavoriteCollectionURL(location.href, `Favoritos de ${ownerName} no TOPO`),
+    );
 }
 
 function vipGateErrorText(error, result = {}) {
@@ -1188,6 +1338,8 @@ function pageLoadingHTML(kind) {
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo a moderação…</strong></div>';
   if (kind === 'vip')
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo o Meu Topo…</strong></div>';
+  if (kind === 'favorites')
+    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo os favoritos…</strong></div>';
   return '<div class="loading">carregando…</div>';
 }
 function revealClientPage() {
@@ -1218,6 +1370,7 @@ async function load() {
       else if (kind === 'profile') await renderProfile();
       else if (kind === 'moderation') await renderModeration();
       else if (kind === 'vip') await loadVipArea();
+      else if (kind === 'favorites') await loadFavoriteCollection();
     }
     revealClientPage();
   } catch (e) {
@@ -1374,6 +1527,82 @@ function nativeShareHTML(r, compact = false) {
 }
 function shareActionsHTML(r, compact = false) {
   return `<span class="shareActions ${compact ? 'compact' : ''}" role="group" aria-label="Opções para compartilhar">${whatsAppShareHTML(r, compact)}${nativeShareHTML(r, compact)}</span>`;
+}
+function favoriteIconHTML() {
+  return '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 5.9l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.3 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>';
+}
+function favoriteButtonHTML(r, { remove = false } = {}) {
+  if (!r || r.vip) return '';
+  const active = r.favorite === true,
+    label = remove ? 'Remover' : active ? 'Favoritado' : 'Favoritar';
+  const ariaLabel =
+    remove || active ? `Remover ${r.q} dos favoritos` : `Adicionar ${r.q} aos favoritos`;
+  return `<button class="favoriteToggle ${active ? 'active' : ''}" type="button" data-favorite-ranking="${escapeHTML(r.id)}" ${remove ? 'data-favorite-remove="1"' : ''} aria-pressed="${active}" aria-label="${escapeHTML(ariaLabel)}">${favoriteIconHTML()}<span>${label}</span></button>`;
+}
+function rankingPersonalActionsHTML(r) {
+  if (r.vip) return '';
+  return `<div class="rankingShareRow rankingPersonalActions">${favoriteButtonHTML(r)}${shareActionsHTML(r)}</div>`;
+}
+function syncFavoriteButtons(rankingId, active) {
+  document.querySelectorAll('[data-favorite-ranking]').forEach((button) => {
+    if (button.dataset.favoriteRanking !== rankingId) return;
+    const remove = button.dataset.favoriteRemove === '1';
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+    const label = button.querySelector('span');
+    if (label) label.textContent = remove ? 'Remover' : active ? 'Favoritado' : 'Favoritar';
+  });
+}
+async function toggleFavorite(button) {
+  const rankingId = button.dataset.favoriteRanking,
+    ranking = rankings.find((item) => item.id === rankingId),
+    active = ranking?.favorite === true || button.classList.contains('active'),
+    next = !active;
+  if (!viewer.registered) {
+    location.assign(`/entrar?voltar=${encodeURIComponent(rankingPath(rankingId))}`);
+    return;
+  }
+  button.disabled = true;
+  try {
+    const response = await fetch(
+        next
+          ? '/api?action=favorites'
+          : `/api?action=favorites&ranking_id=${encodeURIComponent(rankingId)}`,
+        next
+          ? {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ rankingId }),
+            }
+          : { method: 'DELETE' },
+      ),
+      result = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      location.assign(`/entrar?voltar=${encodeURIComponent(rankingPath(rankingId))}`);
+      return;
+    }
+    if (!response.ok) throw result;
+    rankings.forEach((item) => {
+      if (item.id === rankingId) item.favorite = next;
+    });
+    favoriteRankings.forEach((item) => {
+      if (item.id === rankingId) item.favorite = next;
+    });
+    if (!next) favoriteRankings = favoriteRankings.filter((item) => item.id !== rankingId);
+    syncFavoriteButtons(rankingId, next);
+    toast(next ? 'Ranking salvo nos favoritos' : 'Ranking removido dos favoritos');
+    if (pageKind() === 'vip') await loadVipArea();
+  } catch {
+    button.disabled = false;
+    toast('Não consegui atualizar seus favoritos agora');
+  } finally {
+    button.disabled = false;
+  }
+}
+function bindFavoriteButtons() {
+  document
+    .querySelectorAll('[data-favorite-ranking]')
+    .forEach((button) => (button.onclick = () => toggleFavorite(button)));
 }
 function portalHeroHTML(r, secondary = false) {
   const heading = secondary ? `<h2>${escapeHTML(r.q)}</h2>` : `<h1>${escapeHTML(r.q)}</h1>`;
@@ -2471,7 +2700,7 @@ function renderInternal() {
   const cover = r.img
     ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
     : '';
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${description}${vip ? '' : cover}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r)}${description}${vip ? '' : cover}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
     document.getElementById('vipOwnerManage').onclick = () => {
@@ -3390,6 +3619,7 @@ function bindVotes() {
     .forEach((b) => (b.onclick = () => toggleDoubleVote(b)));
   mountInternalShare();
   bindNativeShares();
+  bindFavoriteButtons();
 }
 async function refreshVoteState(rankOrder) {
   const fresh = await fetchBootstrap(),

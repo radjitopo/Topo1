@@ -11,6 +11,7 @@ const selected = [
   'isFirstShowCandidate',
   'myVoteCount',
   'priorityBucket',
+  'favoriteAffinity',
   'smartShuffle',
   'cityPriorityDelta',
   'sortForExperience',
@@ -23,6 +24,11 @@ const context = vm.createContext({
   Date,
   Math,
   viewer: { rankingLimit: 20 },
+  groupOf: (ranking) => ranking.cat || '',
+  topoLocal: {
+    isLocalRanking: () => false,
+    groupForRanking: () => '',
+  },
 });
 vm.runInContext(
   `let selectedCity='';function isLocalExperience(){return false}${selected.join('\n')}\nglobalThis.smartShuffleForTest=smartShuffle;globalThis.priorityBucketForTest=priorityBucket;globalThis.isFirstShowCandidateForTest=isFirstShowCandidate;globalThis.categoryPriorityRankingsForTest=categoryPriorityRankings;`,

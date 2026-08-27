@@ -1,6 +1,6 @@
 # TOPO
 
-Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para baixo, usar votos duplos conquistados no perfil, escolher um nome público, comentar e sugerir novos rankings.
+Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para baixo, favoritar e compartilhar seus rankings preferidos, usar votos duplos conquistados no perfil, escolher um nome público, comentar e sugerir novos rankings.
 
 ## Arquitetura
 
@@ -57,6 +57,7 @@ npm run db:profile-names
 npm run db:suggestions
 npm run db:ranking-editor
 npm run db:vip-area
+npm run db:ranking-favorites
 npm run db:local-content-quality
 ```
 

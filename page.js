@@ -844,6 +844,7 @@ function privatePageMetadata(kind) {
       perfil: ['Perfil — TOPO', 'Acesse seu perfil, seus votos e suas conquistas no TOPO.'],
       moderacao: ['Moderação — TOPO', 'Área privada de moderação do TOPO.'],
       vip: ['Meu Topo — TOPO', 'Seus rankings protegidos por senha no TOPO.'],
+      favoritos: ['Favoritos — TOPO', 'Uma seleção de rankings favoritos no TOPO.'],
       'recuperar-senha': ['Acesso — TOPO', 'Recupere o acesso à sua conta no TOPO.'],
       'redefinir-senha': ['Acesso — TOPO', 'Conclua a recuperação de acesso à sua conta no TOPO.'],
       'sso-callback': ['Concluindo acesso — TOPO', 'Concluindo seu acesso seguro ao TOPO.'],
@@ -869,7 +870,9 @@ function renderPrivatePage(template, kind) {
           ? 'moderationPage'
           : kind === 'vip'
             ? 'vipPage'
-            : '',
+            : kind === 'favoritos'
+              ? 'vipPage favoritesPage'
+              : '',
   });
 }
 
