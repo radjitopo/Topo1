@@ -208,7 +208,11 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);
   assert.match(app, /feed\.dataset\.serverRendered !== 'true'/);
   assert.doesNotMatch(index, /classList\.add\('clientBooting'\)/);
-  assert.match(index, /\/app\.js\?v=20260827-1-vip-area-[^"']*-navigation-loading-search-city/);
+  assert.match(
+    index,
+    /\/app\.js\?v=20260827-1-vip-area-[^"']*-navigation-loading-search-city-search-submit-city/,
+  );
+  assert.match(index, /\/topo-local\.js\?v=20260825-6-seo-legacy-city-routing/);
   assert.match(index, /id="searchCity" name="cidade" type="hidden"/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.doesNotMatch(
@@ -222,5 +226,7 @@ test('Vercel routes every public collection and private account shell through SE
   assert.match(app, /renderHome\(\);[\s\S]*?revealClientPage\(\);/);
   assert.match(app, /document\.body\.classList\.contains\('notFoundPage'\)/);
   assert.match(app, /if \(kind === 'not-found'\) \{[\s\S]*?revealClientPage\(\);[\s\S]*?return;/);
+  assert.match(app, /searchCityInput\.defaultValue = city/);
+  assert.match(app, /location\.assign\(`\/\?\$\{params\}`\)/);
   assert.match(app, /href="\$\{escapeHTML\(groupPath\(g\)\)\}"/);
 });

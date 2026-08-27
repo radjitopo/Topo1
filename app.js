@@ -646,7 +646,11 @@ function syncExperienceNavigation() {
     else link.removeAttribute('aria-current');
   });
   if (searchForm) searchForm.action = '/';
-  if (searchCityInput) searchCityInput.value = topoLocal.citySlug(selectedCity);
+  if (searchCityInput) {
+    const city = topoLocal.citySlug(selectedCity);
+    searchCityInput.value = city;
+    searchCityInput.defaultValue = city;
+  }
   if (searchInput) {
     searchInput.placeholder = `Buscar no TOPO e em ${selectedCity || 'sua cidade'}`;
     searchInput.setAttribute(
@@ -761,7 +765,14 @@ if (searchForm)
       searchInput.focus();
       return;
     }
-    if (pageKind() !== 'home' || location.pathname !== '/') return;
+    if (pageKind() !== 'home' || location.pathname !== '/') {
+      event.preventDefault();
+      const params = new URLSearchParams({ busca: query }),
+        city = topoLocal.citySlug(selectedCity);
+      if (city) params.set('cidade', city);
+      location.assign(`/?${params}`);
+      return;
+    }
     event.preventDefault();
     homeSearch = query;
     categoryVisibleCount = CATEGORY_PAGE_SIZE;
