@@ -2197,6 +2197,211 @@ body.popElectric .moderationEmpty {
   text-align: left;
 }
 
+body.popElectric .moderationPanelTabs {
+  display: flex;
+  gap: 0;
+  margin: 0 0 38px;
+  border-bottom: 1px solid var(--clean-ink);
+}
+
+body.popElectric .moderationPanelTabs a {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--clean-line);
+  border-bottom: 0;
+  background: var(--clean-paper);
+  color: var(--clean-muted);
+  padding: 11px 17px;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+body.popElectric .moderationPanelTabs a + a {
+  border-left: 0;
+}
+
+body.popElectric .moderationPanelTabs a.active {
+  border-color: var(--clean-ink);
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .moderationUsersHero {
+  margin-bottom: 42px;
+}
+
+body.popElectric .moderationUserSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 26px;
+  border-top: 1px solid var(--clean-line);
+  border-bottom: 1px solid var(--clean-line);
+}
+
+body.popElectric .moderationUserSummary span {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-right: 1px solid var(--clean-line);
+  color: var(--clean-muted);
+  padding: 14px 16px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+body.popElectric .moderationUserSummary span:last-child {
+  border-right: 0;
+}
+
+body.popElectric .moderationUserSummary strong {
+  color: var(--clean-sage);
+  font-size: 24px;
+  line-height: 1;
+}
+
+body.popElectric .moderationUserSearch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 7px 16px;
+  padding: 20px 0 18px;
+  border-bottom: 1px solid var(--clean-line);
+}
+
+body.popElectric .moderationUserSearch label {
+  grid-column: 1 / -1;
+  color: var(--clean-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric .moderationUserSearch input {
+  width: 100%;
+  min-height: 45px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 0 13px;
+  font:
+    600 13px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .moderationUserSearch input:focus {
+  outline: 2px solid var(--clean-sage);
+  outline-offset: 2px;
+}
+
+body.popElectric .moderationUserSearch small {
+  min-width: 112px;
+  color: var(--clean-muted);
+  font-size: 10px;
+  text-align: right;
+}
+
+body.popElectric .moderationUserTableHead,
+body.popElectric .moderationUserRow {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.25fr) minmax(210px, 1.45fr) 130px 78px 78px;
+  gap: 16px;
+  align-items: center;
+}
+
+body.popElectric .moderationUserTableHead {
+  min-height: 38px;
+  border-bottom: 1px solid var(--clean-ink);
+  color: var(--clean-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric .moderationUserTableHead span:nth-last-child(-n + 2) {
+  text-align: right;
+}
+
+body.popElectric .moderationUserRow {
+  min-height: 76px;
+  border-bottom: 1px solid var(--clean-line);
+  color: var(--clean-ink);
+  padding: 14px 0;
+  font-size: 12px;
+}
+
+body.popElectric .moderationUserRow[hidden] {
+  display: none;
+}
+
+body.popElectric .moderationUserPerson {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+body.popElectric .moderationUserPerson > span:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+body.popElectric .moderationUserPerson strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.popElectric .moderationUserPerson small {
+  width: max-content;
+  color: var(--clean-sage);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric .moderationUserAvatar {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--clean-line);
+  background: var(--clean-soft);
+  color: var(--clean-sage);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+body.popElectric .moderationUserEmail,
+body.popElectric .moderationUserCreated {
+  min-width: 0;
+  color: var(--clean-muted);
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .moderationUserMetric {
+  text-align: right;
+}
+
+body.popElectric .moderationUserMetric strong {
+  font-size: 14px;
+}
+
+body.popElectric .moderationUserFieldLabel {
+  display: none;
+}
+
 /* Notebook: mais conteúdo útil na primeira tela, sem comprimir o mobile. */
 @media (min-width: 981px) and (max-width: 1440px) {
   body.popElectric .wrap,
@@ -2643,6 +2848,77 @@ body.popElectric .moderationEmpty {
 
   body.popElectric.moderationPage .moderationActions {
     grid-template-columns: 1fr;
+  }
+
+  body.popElectric .moderationPanelTabs {
+    margin-bottom: 30px;
+  }
+
+  body.popElectric .moderationPanelTabs a {
+    flex: 1 1 50%;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 8px;
+    font-size: 10px;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  body.popElectric .moderationUserSummary span {
+    min-height: 62px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 8px;
+    font-size: 9px;
+  }
+
+  body.popElectric .moderationUserSummary strong {
+    font-size: 20px;
+  }
+
+  body.popElectric .moderationUserSearch {
+    grid-template-columns: 1fr;
+  }
+
+  body.popElectric .moderationUserSearch small {
+    min-width: 0;
+    text-align: left;
+  }
+
+  body.popElectric .moderationUserTableHead {
+    display: none;
+  }
+
+  body.popElectric .moderationUserRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+    align-items: start;
+    padding: 19px 0;
+  }
+
+  body.popElectric .moderationUserPerson,
+  body.popElectric .moderationUserEmail {
+    grid-column: 1 / -1;
+  }
+
+  body.popElectric .moderationUserCreated {
+    grid-column: 1 / -1;
+  }
+
+  body.popElectric .moderationUserMetric {
+    text-align: left;
+  }
+
+  body.popElectric .moderationUserFieldLabel {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--clean-muted);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   body.popElectric .siteSearch,

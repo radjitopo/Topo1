@@ -13,6 +13,8 @@ const port = Number(process.env.PORT || 4173);
 const staticFiles = new Set([
   '/index.html',
   '/style.css',
+  '/pop-electric.css',
+  '/editorial-clean.css',
   '/app.js',
   '/editorial-base.js',
   '/editorial-1.js',

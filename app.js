@@ -3057,6 +3057,70 @@ function moderationNameCardHTML(item) {
 function moderationSectionHTML(title, items, emptyText) {
   return `<section class="moderationSection"><div class="moderationSectionHead"><h2>${title}</h2><span>${items.length}</span></div>${items.length ? `<div class="moderationList">${items.map((item) => (item.kind === 'name' ? moderationNameCardHTML(item) : moderationCardHTML(item))).join('')}</div>` : `<div class="moderationEmpty">${emptyText}</div>`}</section>`;
 }
+function moderationPanelTabsHTML(active) {
+  return `<nav class="moderationPanelTabs" aria-label="Áreas do painel privado"><a class="${active === 'queue' ? 'active' : ''}" href="/moderacao" ${active === 'queue' ? 'aria-current="page"' : ''}>Sugestões e denúncias</a><a class="${active === 'users' ? 'active' : ''}" href="/moderacao?aba=usuarios" ${active === 'users' ? 'aria-current="page"' : ''}>Usuários cadastrados</a></nav>`;
+}
+function moderationUserDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? 'Data indisponível'
+    : date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+}
+function moderationUserInitials(name) {
+  const parts = String(name || 'Pessoa')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  return `${parts[0]?.[0] || 'P'}${parts.length > 1 ? parts.at(-1)?.[0] || '' : ''}`
+    .toUpperCase()
+    .slice(0, 2);
+}
+function moderationUserRowHTML(user) {
+  const name = String(user.name || 'Pessoa no TOPO'),
+    email = String(user.email || ''),
+    votes = Math.max(0, Number(user.votes || 0)),
+    rankingsCount = Math.max(0, Number(user.rankings || 0)),
+    searchText = foldText(`${name} ${email}`);
+  return `<article class="moderationUserRow" data-moderation-user data-user-search="${escapeHTML(searchText)}"><div class="moderationUserPerson"><span class="moderationUserAvatar" aria-hidden="true">${escapeHTML(moderationUserInitials(name))}</span><span><strong>${escapeHTML(name)}</strong>${user.isModerator ? '<small>Moderador</small>' : ''}</span></div><div class="moderationUserEmail"><span class="moderationUserFieldLabel">E-mail</span><span>${escapeHTML(email)}</span></div><div class="moderationUserCreated"><span class="moderationUserFieldLabel">Cadastro</span><time datetime="${escapeHTML(user.createdAt || '')}">${moderationUserDate(user.createdAt)}</time></div><div class="moderationUserMetric"><span class="moderationUserFieldLabel">Votos</span><strong>${fmt(votes)}</strong></div><div class="moderationUserMetric"><span class="moderationUserFieldLabel">Rankings</span><strong>${fmt(rankingsCount)}</strong></div></article>`;
+}
+function moderationUsersPageHTML(data) {
+  const users = Array.isArray(data.users) ? data.users : [],
+    total = Math.max(0, Number(data.total ?? users.length)),
+    recentCutoff = Date.now() - 7 * 24 * 60 * 60 * 1000,
+    newUsers = users.filter((user) => {
+      const createdAt = new Date(user.createdAt).getTime();
+      return Number.isFinite(createdAt) && createdAt >= recentCutoff;
+    }).length,
+    votes = users.reduce((sum, user) => sum + Math.max(0, Number(user.votes || 0)), 0),
+    list = users.map(moderationUserRowHTML).join('');
+  return `<header class="moderationHero moderationUsersHero"><span class="suggestionEyebrow">Painel privado</span><h1>Usuários cadastrados</h1><p>Aqui estão todas as contas criadas no Somos Topo.</p><div class="moderationUserSummary"><span><strong>${fmt(total)}</strong> cadastrados</span><span><strong>${fmt(newUsers)}</strong> novos em 7 dias</span><span><strong>${fmt(votes)}</strong> votos dados</span></div></header><section class="moderationSection moderationUsersSection"><div class="moderationSectionHead"><h2>Todos os usuários</h2><span id="moderationUserResultCount">${fmt(users.length)}</span></div>${users.length ? `<form class="moderationUserSearch" id="moderationUserSearchForm" role="search"><label for="moderationUserSearch">Buscar cadastro</label><input id="moderationUserSearch" type="search" autocomplete="off" placeholder="Buscar por nome ou e-mail"><small id="moderationUserSearchStatus" aria-live="polite">${fmt(users.length)} de ${fmt(total)} pessoas</small></form><div class="moderationUserTableHead" aria-hidden="true"><span>Pessoa</span><span>E-mail</span><span>Cadastro</span><span>Votos</span><span>Rankings</span></div><div class="moderationUserList">${list}</div><div class="moderationEmpty" id="moderationUserNoResults" hidden>Nenhum cadastro encontrado.</div>` : '<div class="moderationEmpty">Ainda não há usuários cadastrados.</div>'}</section>`;
+}
+function bindModerationUserSearch() {
+  const form = document.getElementById('moderationUserSearchForm'),
+    input = document.getElementById('moderationUserSearch'),
+    status = document.getElementById('moderationUserSearchStatus'),
+    resultCount = document.getElementById('moderationUserResultCount'),
+    empty = document.getElementById('moderationUserNoResults'),
+    rows = [...document.querySelectorAll('[data-moderation-user]')];
+  if (!form || !input) return;
+  form.onsubmit = (event) => event.preventDefault();
+  input.oninput = () => {
+    const query = foldText(input.value.trim());
+    let visible = 0;
+    rows.forEach((row) => {
+      const matches = !query || String(row.dataset.userSearch || '').includes(query);
+      row.hidden = !matches;
+      if (matches) visible += 1;
+    });
+    if (status) status.textContent = `${fmt(visible)} de ${fmt(rows.length)} pessoas`;
+    if (resultCount) resultCount.textContent = fmt(visible);
+    if (empty) empty.hidden = visible !== 0;
+  };
+}
 function bindModerationActions() {
   document.querySelectorAll('[data-moderate]').forEach((button) => {
     button.onclick = async () => {
@@ -3181,14 +3245,16 @@ function bindModerationActions() {
   });
 }
 async function renderModeration() {
-  document.title = 'Moderação — TOPO';
+  const activeTab = queryParams.get('aba') === 'usuarios' ? 'users' : 'queue';
+  document.title = activeTab === 'users' ? 'Usuários cadastrados — TOPO' : 'Moderação — TOPO';
   if (!viewer.registered) {
     location.replace(`/entrar?voltar=${encodeURIComponent(location.pathname + location.search)}`);
     return;
   }
   feed.innerHTML = pageLoadingHTML('moderation');
   try {
-    const response = await fetch('/api?action=moderation', { cache: 'no-store' }),
+    const action = activeTab === 'users' ? 'moderation-users' : 'moderation',
+      response = await fetch(`/api?action=${action}`, { cache: 'no-store' }),
       data = await response.json().catch(() => ({}));
     if (response.status === 401) {
       location.replace(`/entrar?voltar=${encodeURIComponent(location.pathname + location.search)}`);
@@ -3200,6 +3266,12 @@ async function renderModeration() {
       return;
     }
     if (!response.ok) throw data;
+    const panelHead = `<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div>${moderationPanelTabsHTML(activeTab)}`;
+    if (activeTab === 'users') {
+      feed.innerHTML = `${panelHead}${moderationUsersPageHTML(data)}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
+      bindModerationUserSearch();
+      return;
+    }
     const optionPending = (data.options || []).filter((item) => item.status === 'pending'),
       rankingPending = (data.rankings || []).filter((item) => item.status === 'pending'),
       namePending = [
@@ -3225,7 +3297,7 @@ async function renderModeration() {
         : approvedRankings.length
           ? `${approvedRankings.length} ranking${approvedRankings.length === 1 ? ' está' : 's estão'} pronto${approvedRankings.length === 1 ? '' : 's'} para eu criar.`
           : 'Tudo analisado por enquanto.';
-    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div><header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
+    feed.innerHTML = `${panelHead}<header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
     bindModerationActions();
     const targetId = queryParams.get('id'),
       target = targetId ? document.getElementById(`sugestao-${targetId}`) : null;

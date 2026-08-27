@@ -2867,6 +2867,39 @@ async function moderationQueue(req, res) {
   });
 }
 
+async function moderationUsers(req, res) {
+  const moderator = await sessionUser(req);
+  if (!moderator) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(moderator)) return json(res, 403, { error: 'moderator_required' });
+
+  const rows = await sql.query(`
+    SELECT
+      u.display_name AS name,
+      u.email,
+      u.created_at AS "createdAt",
+      COUNT(history.option_id)::int AS votes,
+      COUNT(DISTINCT option.ranking_id)::int AS rankings
+    FROM users u
+    LEFT JOIN user_vote_history history ON history.user_id = u.id
+    LEFT JOIN ranking_options option ON option.id = history.option_id
+    GROUP BY u.id
+    ORDER BY u.created_at DESC, lower(u.display_name), lower(u.email)
+  `);
+
+  return json(res, 200, {
+    moderator: { name: moderator.display_name, email: moderator.email },
+    total: rows.length,
+    users: rows.map((user) => ({
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      votes: Number(user.votes || 0),
+      rankings: Number(user.rankings || 0),
+      isModerator: isModerator({ email: user.email }),
+    })),
+  });
+}
+
 async function moderateNameReport(res, moderator, id, decision, moderationNote) {
   const [report] = await sql.query(
     `
@@ -3748,6 +3781,7 @@ export default async function handler(req, res) {
       if (action === 'comments') return comments(req, res);
       if (action === 'suggestions') return mySuggestions(req, res);
       if (action === 'moderation') return moderationQueue(req, res);
+      if (action === 'moderation-users') return moderationUsers(req, res);
       return json(res, 404, { error: 'action_not_found' });
     }
 
