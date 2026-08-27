@@ -571,11 +571,11 @@ export function renderRankingPage(template, ranking) {
 export function renderVipRankingPage(template, ranking) {
   const question = rankingQuestion(ranking.id, ranking.question);
   const canonical = `${BASE_URL}/ranking/${encodeURIComponent(ranking.id)}`;
-  const content = `<section class="vipGate vipGateServer"><span class="vipGateIcon" aria-hidden="true">🔒</span><span class="portalKicker">Área VIP</span><h1>${escapeHtml(question)}</h1><p>Este ranking é protegido. Digite a senha para ver as opções e votar.</p><div class="vipGateLoading">Preparando o acesso seguro…</div><noscript><p>Ative o JavaScript para informar a senha deste ranking.</p></noscript></section>`;
+  const content = `<section class="vipGate vipGateServer"><span class="vipGateIcon" aria-hidden="true">🔒</span><span class="portalKicker">Meu Topo</span><h1>${escapeHtml(question)}</h1><p>Este ranking é protegido. Digite a senha para ver as opções e votar.</p><div class="vipGateLoading">Preparando o acesso seguro…</div><noscript><p>Ative o JavaScript para informar a senha deste ranking.</p></noscript></section>`;
   return withPage(template, {
     metadata: {
-      title: `Ranking da Área VIP — TOPO`,
-      description: 'Ranking protegido por senha na Área VIP do TOPO.',
+      title: `Ranking do Meu Topo — TOPO`,
+      description: 'Ranking protegido por senha no Meu Topo.',
       canonical,
       image: `${BASE_URL}/og-topo-v2.png`,
       index: false,
@@ -843,7 +843,7 @@ function privatePageMetadata(kind) {
       entrar: ['Entrar — TOPO', 'Entre no TOPO com um código enviado por e-mail.'],
       perfil: ['Perfil — TOPO', 'Acesse seu perfil, seus votos e suas conquistas no TOPO.'],
       moderacao: ['Moderação — TOPO', 'Área privada de moderação do TOPO.'],
-      vip: ['Área VIP — TOPO', 'Rankings protegidos por senha no TOPO.'],
+      vip: ['Meu Topo — TOPO', 'Seus rankings protegidos por senha no TOPO.'],
       'recuperar-senha': ['Acesso — TOPO', 'Recupere o acesso à sua conta no TOPO.'],
       'redefinir-senha': ['Acesso — TOPO', 'Conclua a recuperação de acesso à sua conta no TOPO.'],
       'sso-callback': ['Concluindo acesso — TOPO', 'Concluindo seu acesso seguro ao TOPO.'],

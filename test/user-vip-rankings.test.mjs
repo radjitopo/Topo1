@@ -76,6 +76,9 @@ test('registered users create a private ranking from a title and their own optio
   assert.match(create, /vip_description/);
   assert.match(create, /vip_voting_open/);
   assert.match(create, /vip_added_later/);
+  assert.match(create, /rankingImageUpload\(body\.imageData\)/);
+  assert.match(create, /INSERT INTO ranking_images/);
+  assert.match(create, /image_url AS "imageUrl"/);
   assert.match(create, /jsonb_array_elements_text/);
   assert.match(create, /USER_VIP_RANKING_LIMIT/);
   assert.match(create, /isolationLevel: 'Serializable'/);
@@ -122,6 +125,8 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /filter\(\(ranking\) => ranking\.owned\)/);
   assert.match(vipArea, /Meus rankings privados/);
   assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
+  assert.match(vipArea, /Meu Topo/);
+  assert.doesNotMatch(vipArea, /Área VIP/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
   assert.match(style, /900 clamp\(38px, 4\.4vw, 54px\)/);
   assert.match(style, /font-size: 38px/);
@@ -149,11 +154,15 @@ test('only the creator can manage a private ranking and the profile exposes the 
   assert.match(app, /id="vipCreateForm"/);
   assert.match(app, /id="vipCreateTitle"/);
   assert.match(app, /id="vipCreateDescription"/);
+  assert.match(app, /vipCoverEditorHTML\('vipCreate'\)/);
+  assert.match(app, /bindVipCoverPicker\('vipCreate'\)/);
   assert.match(app, /id="vipCreateOptions"/);
   assert.match(app, /id="rankings-privados"/);
   assert.match(app, /data-copy-vip/);
   assert.match(app, /data-delete-vip/);
   assert.match(app, /id="vipOwnerEditorForm"/);
+  assert.match(app, /vipCoverEditorHTML\('vipOwner'/);
+  assert.match(app, /bindVipCoverPicker\('vipOwner'/);
   assert.match(app, /method: 'PATCH'/);
   assert.match(app, /method: 'DELETE'/);
   assert.match(app, /window\.confirm/);
@@ -185,6 +194,9 @@ test('owners can correct or remove names while preserving every retained option 
   assert.match(update, /vip_added_later/);
   assert.match(update, /allowed\.has_votes/);
   assert.match(update, /vip_voting_open = \$5/);
+  assert.match(update, /INSERT INTO ranking_images/);
+  assert.match(update, /DELETE FROM ranking_images/);
+  assert.match(update, /removeImage/);
   assert.match(update, /vip_password_version = ranking\.vip_password_version/);
   assert.doesNotMatch(update, /vip_options_locked/);
   assert.doesNotMatch(update, /allowed\.has_votes = false/);

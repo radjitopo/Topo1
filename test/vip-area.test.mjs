@@ -97,7 +97,8 @@ test('moderators control VIP placement and passwords in the ranking editor', asy
   assert.doesNotMatch(editor, /afterContent[\s\S]{0,500}vipPasswordHash/);
   assert.match(app, /id="rankingEditorVip"/);
   assert.match(app, /id="rankingEditorVipPassword"/);
-  assert.match(app, /Colocar este ranking na Área VIP/);
+  assert.match(app, /Colocar este ranking no Meu Topo/);
+  assert.doesNotMatch(app, /Área VIP/);
   assert.match(app, /function renderVipGate/);
   assert.match(app, /function loadVipArea/);
   assert.match(index, /data-experience="vip" href="\/vip"/);

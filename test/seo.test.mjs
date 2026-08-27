@@ -150,7 +150,7 @@ test('VIP ranking shell is noindex and never renders protected options', () => {
     options: [{ id: 99, label: 'Nome protegido', score: 10 }],
   });
   assert.match(html, /name="robots" content="noindex,follow"/);
-  assert.match(html, /Área VIP/);
+  assert.match(html, /Meu Topo/);
   assert.match(html, /Quem é a maior lenda deste grupo\?/);
   assert.doesNotMatch(html, /Nome protegido/);
   assert.doesNotMatch(html, /ItemList/);

@@ -809,7 +809,7 @@ function vipCardHTML(ranking) {
   const path = rankingPath(ranking.id),
     media = ranking.img
       ? `<img src="${escapeHTML(ranking.img)}" alt="" loading="lazy" decoding="async">`
-      : '<span class="vipCardFallback" aria-hidden="true">VIP</span>',
+      : '<span class="vipCardFallback" aria-hidden="true">MEU TOPO</span>',
     status = ranking.owned
       ? ranking.votingOpen === false
         ? 'Votação encerrada'
@@ -834,8 +834,64 @@ function vipInitialOptionInputsHTML() {
   return ['', '', ''].map((value, index) => vipOptionInputHTML(index, value)).join('');
 }
 
+function vipCoverEditorHTML(prefix, imageUrl = '') {
+  const hasImage = Boolean(imageUrl);
+  return `<section class="vipCoverEditor"><div class="vipOptionEditorHead"><label for="${prefix}CoverInput">Foto de capa <small>opcional</small></label><small>JPG, PNG ou WebP</small></div><div class="vipCoverPreview" id="${prefix}CoverPreview">${hasImage ? `<img src="${escapeHTML(imageUrl)}" alt="Foto de capa do ranking">` : '<span>Sem foto</span>'}</div><div class="vipCoverActions"><label class="vipCoverChoose" for="${prefix}CoverInput">${hasImage ? 'TROCAR FOTO' : 'ESCOLHER FOTO'}<input id="${prefix}CoverInput" type="file" accept="image/jpeg,image/png,image/webp" hidden></label><button id="${prefix}CoverRemove" type="button" ${hasImage ? '' : 'hidden'}>REMOVER</button></div><small class="vipCoverHint">A imagem aparece no topo do ranking. Use uma foto que você tenha direito de publicar.</small><span class="vipCoverStatus" id="${prefix}CoverStatus" role="status" aria-live="polite"></span></section>`;
+}
+
+function setVipCoverPreview(prefix, source) {
+  const preview = document.getElementById(`${prefix}CoverPreview`);
+  if (!preview) return;
+  preview.innerHTML = source
+    ? `<img src="${escapeHTML(source)}" alt="Foto de capa do ranking">`
+    : '<span>Sem foto</span>';
+}
+
+function bindVipCoverPicker(prefix, initialImage = '') {
+  const input = document.getElementById(`${prefix}CoverInput`),
+    remove = document.getElementById(`${prefix}CoverRemove`),
+    status = document.getElementById(`${prefix}CoverStatus`),
+    state = { mode: 'keep', imageData: '', processing: false };
+  if (!input || !remove || !status) return state;
+
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    state.processing = true;
+    input.disabled = true;
+    remove.disabled = true;
+    status.textContent = 'Preparando a foto…';
+    try {
+      const imageData = await optimizeRankingPhoto(file);
+      state.mode = 'upload';
+      state.imageData = imageData;
+      setVipCoverPreview(prefix, imageData);
+      remove.hidden = false;
+      status.textContent = 'Foto pronta para salvar.';
+    } catch {
+      input.value = '';
+      status.textContent = 'Use uma imagem JPG, PNG ou WebP de até 8 MB.';
+    } finally {
+      state.processing = false;
+      input.disabled = false;
+      remove.disabled = false;
+    }
+  };
+  remove.onclick = () => {
+    state.mode = 'remove';
+    state.imageData = '';
+    input.value = '';
+    setVipCoverPreview(prefix, '');
+    remove.hidden = true;
+    status.textContent = initialImage
+      ? 'A foto será removida quando você salvar.'
+      : 'Foto removida.';
+  };
+  return state;
+}
+
 function vipCreatePanelHTML(open = false) {
-  return `<section class="vipCreatePanel" id="vipCreatePanel" ${open ? '' : 'hidden'}><div class="vipCreateIntro"><span class="portalKicker">Só para o seu grupo</span><h2>Crie seu ranking privado</h2><p>Escreva a pergunta, inclua os nomes e escolha a senha que você enviará para o grupo.</p></div><form class="vipCreateForm" id="vipCreateForm"><label for="vipCreateTitle">Pergunta ou título</label><input class="vipCreateText" id="vipCreateTitle" type="text" minlength="8" maxlength="120" autocomplete="off" placeholder="Ex.: Quem é o mais atrasado do trabalho?" required><label for="vipCreateDescription">Descrição <small>opcional</small></label><textarea class="vipCreateText" id="vipCreateDescription" maxlength="280" rows="3" placeholder="Explique a brincadeira ou combine as regras."></textarea><div class="vipOptionEditorHead"><label>Nomes ou opções</label><small>De 3 a 20</small></div><div class="vipOptionInputs" id="vipCreateOptions">${vipInitialOptionInputsHTML()}</div><button class="vipAddOption" id="vipAddOption" type="button">+ ADICIONAR OUTRO NOME</button><label for="vipCreatePassword">Senha para os convidados</label><div class="vipCreatePasswordRow"><input id="vipCreatePassword" name="password" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="No mínimo 4 caracteres" required><button id="vipPasswordVisibility" type="button" aria-label="Mostrar senha">MOSTRAR</button></div><small class="vipCreateHint">Guarde essa senha. Ela não será exibida pelo site depois da criação.</small><span class="vipCreateStatus" id="vipCreateStatus" role="status" aria-live="polite"></span><div class="vipCreateSubmitRow"><button class="secondary" id="vipCreateCancel" type="button">CANCELAR</button><button class="primary" type="submit">CRIAR RANKING PRIVADO</button></div></form></section>`;
+  return `<section class="vipCreatePanel" id="vipCreatePanel" ${open ? '' : 'hidden'}><div class="vipCreateIntro"><span class="portalKicker">Só para o seu grupo</span><h2>Crie seu ranking privado</h2><p>Escreva a pergunta, inclua os nomes e escolha a senha que você enviará para o grupo.</p></div><form class="vipCreateForm" id="vipCreateForm"><label for="vipCreateTitle">Pergunta ou título</label><input class="vipCreateText" id="vipCreateTitle" type="text" minlength="8" maxlength="120" autocomplete="off" placeholder="Ex.: Quem é o mais atrasado do trabalho?" required><label for="vipCreateDescription">Descrição <small>opcional</small></label><textarea class="vipCreateText" id="vipCreateDescription" maxlength="280" rows="3" placeholder="Explique a brincadeira ou combine as regras."></textarea>${vipCoverEditorHTML('vipCreate')}<div class="vipOptionEditorHead"><label>Nomes ou opções</label><small>De 3 a 20</small></div><div class="vipOptionInputs" id="vipCreateOptions">${vipInitialOptionInputsHTML()}</div><button class="vipAddOption" id="vipAddOption" type="button">+ ADICIONAR OUTRO NOME</button><label for="vipCreatePassword">Senha para os convidados</label><div class="vipCreatePasswordRow"><input id="vipCreatePassword" name="password" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="No mínimo 4 caracteres" required><button id="vipPasswordVisibility" type="button" aria-label="Mostrar senha">MOSTRAR</button></div><small class="vipCreateHint">Guarde essa senha. Ela não será exibida pelo site depois da criação.</small><span class="vipCreateStatus" id="vipCreateStatus" role="status" aria-live="polite"></span><div class="vipCreateSubmitRow"><button class="secondary" id="vipCreateCancel" type="button">CANCELAR</button><button class="primary" type="submit">CRIAR RANKING PRIVADO</button></div></form></section>`;
 }
 
 function vipCreateErrorText(error) {
@@ -846,8 +902,9 @@ function vipCreateErrorText(error) {
       invalid_vip_options: 'Inclua de 3 a 20 nomes diferentes.',
       duplicate_vip_option: 'Há nomes repetidos. Cada nome deve aparecer uma vez.',
       invalid_vip_password: 'Crie uma senha com 4 a 80 caracteres.',
+      invalid_ranking_image: 'Essa foto não pôde ser usada. Tente outra imagem.',
       user_vip_ranking_limit:
-        'Você chegou ao limite de 20 rankings VIP. Apague um para criar outro.',
+        'Você chegou ao limite de 20 rankings no Meu Topo. Apague um para criar outro.',
       vip_not_configured: 'A proteção por senha está indisponível agora.',
     }[error] || 'Não consegui criar agora. Tente novamente.'
   );
@@ -890,7 +947,8 @@ function bindVipCreateForm() {
     password = document.getElementById('vipCreatePassword'),
     visibility = document.getElementById('vipPasswordVisibility'),
     optionContainer = document.getElementById('vipCreateOptions'),
-    addOption = document.getElementById('vipAddOption');
+    addOption = document.getElementById('vipAddOption'),
+    cover = bindVipCoverPicker('vipCreate');
   if (!panel || !form || !password || !visibility) return;
 
   const setOpen = (open) => {
@@ -916,7 +974,13 @@ function bindVipCreateForm() {
         .map((input) => input.value.trim())
         .filter(Boolean),
       status = document.getElementById('vipCreateStatus'),
-      submit = form.querySelector('button[type=submit]');
+      submit = form.querySelector('button[type=submit]'),
+      payload = { title, description, options, password: password.value };
+    if (cover.processing) {
+      status.className = 'vipCreateStatus';
+      status.textContent = 'Espere a foto terminar de ser preparada.';
+      return;
+    }
     if (options.length < 3) {
       status.className = 'vipCreateStatus error';
       status.textContent = 'Inclua pelo menos 3 nomes ou opções.';
@@ -926,11 +990,12 @@ function bindVipCreateForm() {
     submit.disabled = true;
     status.className = 'vipCreateStatus';
     status.textContent = 'Criando seu ranking privado…';
+    if (cover.mode === 'upload') payload.imageData = cover.imageData;
     try {
       const response = await fetch('/api?action=vip-rankings', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ title, description, options, password: password.value }),
+          body: JSON.stringify(payload),
         }),
         result = await response.json().catch(() => ({}));
       if (response.status === 401) {
@@ -940,7 +1005,7 @@ function bindVipCreateForm() {
       if (!response.ok) throw result;
       status.classList.add('success');
       status.textContent = 'Ranking criado. Abrindo…';
-      toast('Seu ranking VIP está pronto');
+      toast('Seu ranking no Meu Topo está pronto');
       location.assign(result.path || rankingPath(result.ranking.id));
     } catch (error) {
       status.className = 'vipCreateStatus error';
@@ -955,11 +1020,11 @@ async function copyVipRankingLink(rankingId) {
   try {
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(url);
-      toast('Link VIP copiado');
+      toast('Link do Meu Topo copiado');
       return;
     }
     if (navigator.share) {
-      await navigator.share({ title: 'Ranking VIP — TOPO', url });
+      await navigator.share({ title: 'Ranking do Meu Topo — TOPO', url });
       return;
     }
     throw new Error('sharing_unavailable');
@@ -994,7 +1059,7 @@ function bindVipOwnerActions() {
           return;
         }
         if (!response.ok) throw result;
-        toast('Ranking VIP apagado');
+        toast('Ranking do Meu Topo apagado');
         if (pageKind() === 'profile') await renderProfile();
         else await loadVipArea();
       } catch {
@@ -1008,7 +1073,7 @@ function bindVipOwnerActions() {
 async function loadVipArea() {
   syncExperienceNavigation();
   groupsEl.innerHTML = '';
-  document.title = 'Área VIP — TOPO';
+  document.title = 'Meu Topo — TOPO';
   const response = await fetch('/api?action=vip-catalog', { cache: 'no-store' }),
     data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error('vip_catalog');
@@ -1026,7 +1091,7 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seu espaço privado</span><h1>Área VIP</h1><p>Crie e acompanhe os rankings protegidos que você compartilha com o seu grupo.</p>${createAction}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
+  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seu espaço privado</span><h1>Meu Topo</h1><p>Crie e acompanhe os rankings protegidos que você compartilha com o seu grupo.</p>${createAction}</section><section class="vipCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
   bindVipOwnerActions();
 }
 
@@ -1046,8 +1111,8 @@ function vipGateErrorText(error, result = {}) {
 function renderVipGate(ranking, message = '') {
   activeVipRankingId = ranking?.id || internalId();
   syncExperienceNavigation();
-  document.title = `Área VIP — TOPO`;
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/vip">← Área VIP</a><span class="internalMeta">Protegido</span></div><section class="vipGate"><span class="vipGateIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="11" rx="3"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15.5" r="1"></circle></svg></span><span class="portalKicker">Área VIP</span><h1>${escapeHTML(ranking?.q || 'Ranking protegido')}</h1><p>Digite a senha deste ranking para ver as opções e votar.</p><form class="vipGateForm" id="vipGateForm"><label for="vipPassword">Senha do ranking</label><div><input id="vipPassword" name="password" type="password" minlength="4" maxlength="80" autocomplete="current-password" placeholder="Digite a senha" required><button type="submit">ENTRAR</button></div><span class="vipGateStatus ${message ? 'error' : ''}" id="vipGateStatus" role="status" aria-live="polite">${escapeHTML(message)}</span></form><small>O acesso fica salvo neste aparelho por 30 dias.</small></section>`;
+  document.title = `Meu Topo — TOPO`;
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/vip">← Meu Topo</a><span class="internalMeta">Protegido</span></div><section class="vipGate"><span class="vipGateIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="11" rx="3"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15.5" r="1"></circle></svg></span><span class="portalKicker">Meu Topo</span><h1>${escapeHTML(ranking?.q || 'Ranking protegido')}</h1><p>Digite a senha deste ranking para ver as opções e votar.</p><form class="vipGateForm" id="vipGateForm"><label for="vipPassword">Senha do ranking</label><div><input id="vipPassword" name="password" type="password" minlength="4" maxlength="80" autocomplete="current-password" placeholder="Digite a senha" required><button type="submit">ENTRAR</button></div><span class="vipGateStatus ${message ? 'error' : ''}" id="vipGateStatus" role="status" aria-live="polite">${escapeHTML(message)}</span></form><small>O acesso fica salvo neste aparelho por 30 dias.</small></section>`;
   const form = document.getElementById('vipGateForm'),
     input = document.getElementById('vipPassword'),
     status = document.getElementById('vipGateStatus');
@@ -1093,7 +1158,7 @@ async function loadVipRanking(rankingId, rekeyed = false) {
   }
   if (response.status === 404) {
     feed.innerHTML =
-      '<div class="loading">Ranking não encontrado.<br><a class="backLink" href="/vip">← Voltar para a Área VIP</a></div>';
+      '<div class="loading">Ranking não encontrado.<br><a class="backLink" href="/vip">← Voltar para o Meu Topo</a></div>';
     return false;
   }
   if (!response.ok || !result.ranking) throw new Error('vip_ranking');
@@ -1122,7 +1187,7 @@ function pageLoadingHTML(kind) {
   if (kind === 'moderation')
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo a moderação…</strong></div>';
   if (kind === 'vip')
-    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo a Área VIP…</strong></div>';
+    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo o Meu Topo…</strong></div>';
   return '<div class="loading">carregando…</div>';
 }
 function revealClientPage() {
@@ -1981,7 +2046,7 @@ function rankingEditorHTML(r, categoryPath) {
           `<label class="rankingEditorOption"><span>${index + 1}</span><input data-ranking-editor-option data-id="${option.id}" type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" required></label>`,
       )
       .join('');
-  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Área VIP</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking na Área VIP</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
+  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Meu Topo</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking no Meu Topo</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
 }
 
 function renderRankingEditorScreen(r, homePath, homeLabel, categoryPath) {
@@ -2001,6 +2066,9 @@ async function optimizeRankingPhoto(file) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file?.type)) {
     throw new Error('unsupported_photo');
   }
+  if (Number(file.size || 0) > 8 * 1024 * 1024) {
+    throw new Error('photo_too_large');
+  }
   const objectUrl = URL.createObjectURL(file),
     image = new Image();
   try {
@@ -2009,6 +2077,7 @@ async function optimizeRankingPhoto(file) {
       image.onerror = reject;
       image.src = objectUrl;
     });
+    if (!image.naturalWidth || !image.naturalHeight) throw new Error('photo_processing');
     const scale = Math.min(1, 1280 / image.naturalWidth, 960 / image.naturalHeight),
       canvas = document.createElement('canvas');
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
@@ -2040,9 +2109,9 @@ function rankingEditorErrorText(error) {
       ranking_options_changed: 'As opções mudaram em outra tela. Recarregue antes de salvar.',
       invalid_ranking_image: 'Essa foto não pôde ser usada.',
       invalid_ranking_image_url: 'Use um link de imagem começando com https://.',
-      invalid_vip_settings: 'Confira a configuração da Área VIP.',
+      invalid_vip_settings: 'Confira a configuração do Meu Topo.',
       invalid_vip_password: 'A senha precisa ter entre 4 e 80 caracteres.',
-      vip_password_required: 'Crie uma senha para colocar este ranking na Área VIP.',
+      vip_password_required: 'Crie uma senha para colocar este ranking no Meu Topo.',
       moderator_required: 'Esta conta não tem acesso de moderador.',
       authentication_required: 'Sua sessão terminou. Entre novamente.',
     }[error] || 'Não consegui salvar agora. Tente novamente.'
@@ -2152,7 +2221,7 @@ function bindRankingEditor(r) {
       return;
     }
     if (isVip && !r.vipHasPassword && vipPassword.length < 4) {
-      status.textContent = 'Crie uma senha com pelo menos 4 caracteres para a Área VIP.';
+      status.textContent = 'Crie uma senha com pelo menos 4 caracteres para o Meu Topo.';
       vipPasswordInput.focus();
       return;
     }
@@ -2213,6 +2282,7 @@ function vipOwnerEditorErrorText(error) {
       invalid_vip_options: 'O ranking precisa ter de 3 a 20 nomes diferentes.',
       duplicate_vip_option: 'Há nomes repetidos no ranking.',
       invalid_vip_password: 'A nova senha precisa ter de 4 a 80 caracteres.',
+      invalid_ranking_image: 'Essa foto não pôde ser usada. Tente outra imagem.',
       vip_options_changed: 'A lista mudou em outro acesso. Recarregue e tente novamente.',
       ranking_not_found: 'Este ranking não está mais disponível.',
     }[error] || 'Não consegui salvar agora. Tente novamente.'
@@ -2235,13 +2305,14 @@ function renderVipOwnerEditorScreen(r) {
       (left, right) => Number(left.originalPosition) - Number(right.originalPosition),
     );
   document.title = `Gerenciar ${r.q} — TOPO`;
-  feed.innerHTML = `<div class="internalHead"><button class="backLink vipOwnerBack" id="vipOwnerBack" type="button">← Voltar ao ranking</button><span class="internalMeta">Privado · ${fmt(r.votes || 0)} votos</span></div><form class="vipOwnerEditor" id="vipOwnerEditorForm"><header><span class="portalKicker">Meus rankings privados</span><h1>Gerenciar ranking</h1><p>Corrija qualquer nome sem perder os votos ou apague quem não deve fazer parte do ranking.</p></header><label class="vipOwnerField" for="vipOwnerTitle"><span>Pergunta ou título</span><input id="vipOwnerTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><label class="vipOwnerField" for="vipOwnerDescription"><span>Descrição <small>opcional</small></span><textarea id="vipOwnerDescription" maxlength="280" rows="3">${escapeHTML(r.vipDescription || '')}</textarea></label><section class="vipOwnerOptions"><div class="vipOptionEditorHead"><label>Nomes atuais</label><small id="vipOwnerOptionCount">${orderedOptions.length}/20</small></div><div id="vipOwnerOptions">${orderedOptions.map(vipOwnerOptionRowHTML).join('')}</div><p class="vipOwnerEditNote"><strong>Corrigir mantém os votos.</strong> Ao apagar, os votos e comentários ligados àquele nome também serão removidos quando você salvar.</p><label class="vipOwnerField" for="vipOwnerNewOptions"><span>Adicionar novos nomes <small>um por linha</small></span><textarea id="vipOwnerNewOptions" maxlength="1700" rows="4" placeholder="Ex.:&#10;João&#10;Maria"></textarea></label>${hasVotes ? '<p class="vipOwnerNewNote">Os novos nomes entram com zero votos e recebem o selo “Novo”.</p>' : ''}</section><section class="vipOwnerAccess"><label class="vipOwnerVotingToggle"><input id="vipOwnerVotingOpen" type="checkbox" ${r.vipVotingOpen === false ? '' : 'checked'}><span><strong>Votação aberta</strong><small>Desmarque para encerrar temporariamente.</small></span></label><label class="vipOwnerField" for="vipOwnerPassword"><span>Trocar a senha <small>opcional</small></span><input id="vipOwnerPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="Deixe vazio para manter a senha atual"></label></section><span class="vipCreateStatus" id="vipOwnerStatus" role="status" aria-live="polite"></span><div class="vipOwnerEditorActions"><button class="danger" id="vipOwnerDelete" type="button">APAGAR RANKING</button><div><button id="vipOwnerCancel" type="button">CANCELAR</button><button class="primary" type="submit">SALVAR ALTERAÇÕES</button></div></div></form>`;
+  feed.innerHTML = `<div class="internalHead"><button class="backLink vipOwnerBack" id="vipOwnerBack" type="button">← Voltar ao ranking</button><span class="internalMeta">Privado · ${fmt(r.votes || 0)} votos</span></div><form class="vipOwnerEditor" id="vipOwnerEditorForm"><header><span class="portalKicker">Meus rankings privados</span><h1>Gerenciar ranking</h1><p>Atualize a pergunta, a foto e os nomes sem perder os votos já recebidos.</p></header><label class="vipOwnerField" for="vipOwnerTitle"><span>Pergunta ou título</span><input id="vipOwnerTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><label class="vipOwnerField" for="vipOwnerDescription"><span>Descrição <small>opcional</small></span><textarea id="vipOwnerDescription" maxlength="280" rows="3">${escapeHTML(r.vipDescription || '')}</textarea></label>${vipCoverEditorHTML('vipOwner', r.img || '')}<section class="vipOwnerOptions"><div class="vipOptionEditorHead"><label>Nomes atuais</label><small id="vipOwnerOptionCount">${orderedOptions.length}/20</small></div><div id="vipOwnerOptions">${orderedOptions.map(vipOwnerOptionRowHTML).join('')}</div><p class="vipOwnerEditNote"><strong>Corrigir mantém os votos.</strong> Ao apagar, os votos e comentários ligados àquele nome também serão removidos quando você salvar.</p><label class="vipOwnerField" for="vipOwnerNewOptions"><span>Adicionar novos nomes <small>um por linha</small></span><textarea id="vipOwnerNewOptions" maxlength="1700" rows="4" placeholder="Ex.:&#10;João&#10;Maria"></textarea></label>${hasVotes ? '<p class="vipOwnerNewNote">Os novos nomes entram com zero votos e recebem o selo “Novo”.</p>' : ''}</section><section class="vipOwnerAccess"><label class="vipOwnerVotingToggle"><input id="vipOwnerVotingOpen" type="checkbox" ${r.vipVotingOpen === false ? '' : 'checked'}><span><strong>Votação aberta</strong><small>Desmarque para encerrar temporariamente.</small></span></label><label class="vipOwnerField" for="vipOwnerPassword"><span>Trocar a senha <small>opcional</small></span><input id="vipOwnerPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="Deixe vazio para manter a senha atual"></label></section><span class="vipCreateStatus" id="vipOwnerStatus" role="status" aria-live="polite"></span><div class="vipOwnerEditorActions"><button class="danger" id="vipOwnerDelete" type="button">APAGAR RANKING</button><div><button id="vipOwnerCancel" type="button">CANCELAR</button><button class="primary" type="submit">SALVAR ALTERAÇÕES</button></div></div></form>`;
 
   const form = document.getElementById('vipOwnerEditorForm'),
     options = document.getElementById('vipOwnerOptions'),
     status = document.getElementById('vipOwnerStatus'),
     newOptionsInput = document.getElementById('vipOwnerNewOptions'),
     removedOptionIds = new Set(),
+    cover = bindVipCoverPicker('vipOwner', r.img || ''),
     updateOptionCount = () => {
       const newCount = newOptionsInput.value
         .split(/\r?\n/)
@@ -2311,6 +2382,13 @@ function renderVipOwnerEditorScreen(r) {
         newOptions,
         removedOptionIds: [...removedOptionIds],
       };
+    if (cover.processing) {
+      status.className = 'vipCreateStatus';
+      status.textContent = 'Espere a foto terminar de ser preparada.';
+      return;
+    }
+    if (cover.mode === 'upload') payload.imageData = cover.imageData;
+    if (cover.mode === 'remove') payload.removeImage = true;
     if (retained.length + newOptions.length < 3 || retained.length + newOptions.length > 20) {
       status.className = 'vipCreateStatus error';
       status.textContent = 'O ranking precisa ter de 3 a 20 nomes.';
@@ -2360,7 +2438,7 @@ function renderInternal() {
       : local
         ? topoLocal.collectionPath(topoLocal.cityForRanking(r))
         : '/',
-    homeLabel = vip ? (r.vipOwned ? 'Meus rankings' : 'Área VIP') : local ? 'TOPO LOCAL' : 'TOPO',
+    homeLabel = vip ? (r.vipOwned ? 'Meus rankings' : 'Meu Topo') : local ? 'TOPO LOCAL' : 'TOPO',
     categoryPath = rankingCategoryPath(r);
   syncExperienceNavigation();
   document.title = `${r.q} — ${homeLabel}`;
@@ -2390,7 +2468,7 @@ function renderInternal() {
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
       : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'VIP · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Área VIP' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h1>${escapeHTML(r.q)}</h1>${description}${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'a Área VIP' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div><h1>${escapeHTML(r.q)}</h1>${description}${r.img ? `<div class="imageStrip"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>` : ''}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div><div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
     document.getElementById('vipOwnerManage').onclick = () => {

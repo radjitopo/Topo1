@@ -1482,12 +1482,20 @@ async function createUserVipRanking(req, res, body) {
   if (providedOptionCount !== options.length) {
     return json(res, 409, { error: 'duplicate_vip_option' });
   }
+  const hasImageData = Object.hasOwn(body, 'imageData');
+  const uploadedImage = hasImageData ? rankingImageUpload(body.imageData) : null;
+  if (hasImageData && !uploadedImage) {
+    return json(res, 400, { error: 'invalid_ranking_image' });
+  }
 
   const passwordHash = hashVipPassword(password);
   let created = null;
 
   for (let attempt = 0; attempt < 3 && !created; attempt += 1) {
     const rankingId = userVipRankingId(title);
+    const imageUrl = uploadedImage
+      ? `/api?action=ranking-image&ranking_id=${encodeURIComponent(rankingId)}&v=${randomUUID()}`
+      : null;
     try {
       const results = await sql.transaction(
         [
@@ -1511,7 +1519,7 @@ async function createUserVipRanking(req, res, body) {
                 vip_description,
                 vip_voting_open
               )
-              SELECT $1, 'Privado', $2, NULL, 0, true, now(), true, $3, 1, now(), $4, NULL, $5, true
+              SELECT $1, 'Privado', $2, $7, 0, true, now(), true, $3, 1, now(), $4, NULL, $5, true
               WHERE (
                 SELECT COUNT(*)
                 FROM rankings
@@ -1530,7 +1538,15 @@ async function createUserVipRanking(req, res, body) {
                 vip_description AS "vipDescription",
                 vip_voting_open AS "vipVotingOpen"
             `,
-            [rankingId, title, passwordHash, user.id, description, USER_VIP_RANKING_LIMIT],
+            [
+              rankingId,
+              title,
+              passwordHash,
+              user.id,
+              description,
+              USER_VIP_RANKING_LIMIT,
+              imageUrl,
+            ],
           ),
           sql.query(
             `
@@ -1555,6 +1571,25 @@ async function createUserVipRanking(req, res, body) {
             `,
             [rankingId, JSON.stringify(options), user.id, passwordHash],
           ),
+          ...(uploadedImage
+            ? [
+                sql.query(
+                  `
+                    INSERT INTO ranking_images (ranking_id, mime_type, image_data, updated_at)
+                    SELECT $1, $2, $3, now()
+                    WHERE EXISTS (
+                      SELECT 1
+                      FROM rankings ranking
+                      WHERE ranking.id = $1
+                        AND ranking.vip_owner_user_id = $4
+                        AND ranking.is_vip = true
+                    )
+                    RETURNING ranking_id
+                  `,
+                  [rankingId, uploadedImage.mimeType, uploadedImage.base64, user.id],
+                ),
+              ]
+            : []),
         ],
         { isolationLevel: 'Serializable' },
       );
@@ -1733,6 +1768,18 @@ async function updateUserVipRanking(req, res, body) {
   if (typeof votingOpen !== 'boolean') {
     return json(res, 400, { error: 'invalid_vip_voting_state' });
   }
+  if (Object.hasOwn(body, 'removeImage') && typeof body.removeImage !== 'boolean') {
+    return json(res, 400, { error: 'invalid_ranking_image' });
+  }
+  const removeImage = body.removeImage === true;
+  const hasImageData = Object.hasOwn(body, 'imageData');
+  const uploadedImage = hasImageData ? rankingImageUpload(body.imageData) : null;
+  if ((hasImageData && !uploadedImage) || (removeImage && uploadedImage)) {
+    return json(res, 400, { error: 'invalid_ranking_image' });
+  }
+  const uploadedImageUrl = uploadedImage
+    ? `/api?action=ranking-image&ranking_id=${encodeURIComponent(rankingId)}&v=${randomUUID()}`
+    : null;
 
   let passwordHash = null;
   if (String(body.password || '').trim()) {
@@ -1884,6 +1931,11 @@ async function updateUserVipRanking(req, res, body) {
           question = $3,
           vip_description = $4,
           vip_voting_open = $5,
+          image_url = CASE
+            WHEN $14::boolean = true THEN NULL
+            WHEN $12::text IS NOT NULL THEN $11
+            ELSE ranking.image_url
+          END,
           vip_password_hash = COALESCE($6, ranking.vip_password_hash),
           vip_password_version = ranking.vip_password_version + CASE WHEN $6::text IS NULL THEN 0 ELSE 1 END,
           vip_updated_at = CASE WHEN $6::text IS NULL THEN ranking.vip_updated_at ELSE now() END,
@@ -1891,6 +1943,24 @@ async function updateUserVipRanking(req, res, body) {
         FROM allowed
         WHERE ranking.id = allowed.id
         RETURNING ranking.id
+      ),
+      removed_image AS (
+        DELETE FROM ranking_images image
+        USING updated
+        WHERE image.ranking_id = updated.id
+          AND $14::boolean = true
+        RETURNING image.ranking_id
+      ),
+      saved_image AS (
+        INSERT INTO ranking_images (ranking_id, mime_type, image_data, updated_at)
+        SELECT updated.id, $12, $13, now()
+        FROM updated
+        WHERE $12::text IS NOT NULL
+        ON CONFLICT (ranking_id) DO UPDATE SET
+          mime_type = EXCLUDED.mime_type,
+          image_data = EXCLUDED.image_data,
+          updated_at = EXCLUDED.updated_at
+        RETURNING ranking_id
       ),
       deleted AS (
         DELETE FROM ranking_options option
@@ -1954,6 +2024,10 @@ async function updateUserVipRanking(req, res, body) {
       JSON.stringify(newOptions),
       JSON.stringify(removedIds),
       PUBLISHED_RANKING_OPTION_LIMIT,
+      uploadedImageUrl,
+      uploadedImage?.mimeType || null,
+      uploadedImage?.base64 || null,
+      removeImage,
     ],
   );
 
