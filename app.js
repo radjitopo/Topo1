@@ -3160,8 +3160,10 @@ async function renderAuth() {
     await clerk.mountSignIn(mount, {
       routing: 'hash',
       withSignUp: true,
-      signInForceRedirectUrl: authReturn(),
+      forceRedirectUrl: authReturn(),
+      fallbackRedirectUrl: authReturn(),
       signUpForceRedirectUrl: authReturn(),
+      signUpFallbackRedirectUrl: authReturn(),
       appearance: {
         elements: {
           rootBox: { width: '100%' },

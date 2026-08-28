@@ -16,8 +16,11 @@ test('Clerk renders its embedded sign-in-or-up flow inside SomosTopo', async () 
   assert.match(app, /initClerk\(true\)/);
   assert.match(app, /routing: 'hash'/);
   assert.match(app, /withSignUp: true/);
-  assert.match(app, /signInForceRedirectUrl: authReturn\(\)/);
+  assert.match(app, /forceRedirectUrl: authReturn\(\)/);
+  assert.match(app, /fallbackRedirectUrl: authReturn\(\)/);
   assert.match(app, /signUpForceRedirectUrl: authReturn\(\)/);
+  assert.match(app, /signUpFallbackRedirectUrl: authReturn\(\)/);
+  assert.doesNotMatch(app, /signInForceRedirectUrl/);
   assert.match(page, /Google ou e-mail/);
 });
 
