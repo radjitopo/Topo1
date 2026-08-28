@@ -1845,6 +1845,80 @@ body.popElectric.authPage .passwordlessAuth {
   padding: 0;
 }
 
+body.popElectric.authPage .googleAuthButton {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 2px solid var(--clean-ink);
+  border-radius: 0;
+  background: #fff;
+  color: var(--clean-ink);
+  padding: 13px 18px;
+  font:
+    850 14px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  cursor: pointer;
+}
+
+body.popElectric.authPage .googleAuthButton:hover,
+body.popElectric.authPage .googleAuthButton:focus-visible {
+  border-color: var(--clean-sage);
+  background: var(--clean-sage-soft);
+  outline: 0;
+}
+
+body.popElectric.authPage .googleAuthButton:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+body.popElectric.authPage .googleAuthMark {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+}
+
+body.popElectric.authPage .clerkSocialError {
+  min-height: 0;
+  margin-top: 8px;
+  color: var(--clean-muted-red);
+  font-size: 12px;
+}
+
+body.popElectric.authPage .clerkSocialError:empty {
+  display: none;
+}
+
+body.popElectric.authPage .authChoiceDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 18px;
+  color: var(--clean-muted);
+  font:
+    750 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric.authPage .authChoiceDivider::before,
+body.popElectric.authPage .authChoiceDivider::after {
+  height: 1px;
+  flex: 1;
+  background: var(--clean-line);
+  content: '';
+}
+
+body.popElectric.authPage .authChoiceDivider span {
+  flex: 0 0 auto;
+}
+
 body.popElectric.authPage .field {
   margin-bottom: 15px;
 }

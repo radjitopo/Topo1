@@ -1332,7 +1332,7 @@ async function loadVipRanking(rankingId, rekeyed = false) {
 
 function pageLoadingHTML(kind) {
   if (kind === 'auth')
-    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo seu acesso por e-mail…</strong><span>Pode levar alguns segundos.</span></div>';
+    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo seu acesso…</strong><span>Pode levar alguns segundos.</span></div>';
   if (kind === 'profile')
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando seu perfil…</strong></div>';
   if (kind === 'moderation')
@@ -2919,6 +2919,12 @@ function clerkErrorText(error) {
       not_allowed_to_sign_up: 'Não foi possível criar a conta agora.',
       signup_rate_limit_exceeded: 'Muitas tentativas seguidas. Aguarde um pouco e tente novamente.',
       session_exists: 'Você já está conectado.',
+      oauth_access_denied: 'O acesso com Google foi cancelado.',
+      oauth_callback_error: 'Não consegui concluir o acesso com Google. Tente novamente.',
+      oauth_connection_not_enabled:
+        'O acesso com Google ainda não está disponível. Use o e-mail abaixo.',
+      external_account_exists:
+        'Este e-mail já está ligado a outra forma de acesso. Entre pelo e-mail abaixo.',
     }[code] || 'Não consegui concluir agora. Tente novamente.'
   );
 }
@@ -2960,11 +2966,38 @@ async function transferClerkSignUp(clerk) {
   }
   throw new Error('clerk_session_incomplete');
 }
+function googleMarkHTML() {
+  return `<svg class="googleAuthMark" aria-hidden="true" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.4-.18-2.07H12v3.92h5.38a4.6 4.6 0 0 1-2 3.02v2.54h3.24c1.9-1.75 2.98-4.33 2.98-7.41Z"></path><path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.36l-3.24-2.54c-.9.6-2.05.96-3.38.96-2.6 0-4.81-1.76-5.6-4.13H3.06v2.62A10 10 0 0 0 12 22Z"></path><path fill="#FBBC05" d="M6.4 13.93A6.02 6.02 0 0 1 6.08 12c0-.67.12-1.32.32-1.93V7.45H3.06A10 10 0 0 0 2 12c0 1.64.39 3.2 1.06 4.55l3.34-2.62Z"></path><path fill="#EA4335" d="M12 5.94c1.47 0 2.79.5 3.83 1.5l2.87-2.88A9.62 9.62 0 0 0 12 2a10 10 0 0 0-8.94 5.45l3.34 2.62c.79-2.37 3-4.13 5.6-4.13Z"></path></svg>`;
+}
+async function startClerkGoogle(clerk) {
+  const button = document.getElementById('clerkGoogleAuth'),
+    label = button?.querySelector('span'),
+    error = document.getElementById('clerkSocialError');
+  if (!button || !label || !error) return;
+  button.disabled = true;
+  label.textContent = 'Abrindo o Google…';
+  error.textContent = '';
+  try {
+    await clerk.client.signIn.authenticateWithRedirect({
+      strategy: 'oauth_google',
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: authReturn(),
+    });
+  } catch (problem) {
+    console.error('Não foi possível iniciar o acesso com Google.', problem);
+    button.disabled = false;
+    label.textContent = 'Continuar com Google';
+    error.textContent =
+      clerkErrorCode(problem) === 'strategy_for_user_invalid'
+        ? 'O acesso com Google ainda não está disponível. Use o e-mail abaixo.'
+        : clerkErrorText(problem);
+  }
+}
 function renderClerkStart(mount, clerk) {
-  mount.innerHTML = `<div class="passwordlessAuth"><form id="emailCodeStart"><label class="field"><span>E-mail</span><input id="clerkEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" placeholder="voce@email.com" value="${escapeHTML(clerkAuthFlow.email)}" required></label><div id="clerk-captcha"></div><div class="formError clerkFlowError" id="clerkFlowError" aria-live="polite"></div><button class="primaryBtn" type="submit">Receber código por e-mail</button></form><p class="authFine">Se for seu primeiro acesso, sua conta será criada automaticamente.</p></div>`;
+  mount.innerHTML = `<div class="passwordlessAuth"><button class="googleAuthButton" id="clerkGoogleAuth" type="button">${googleMarkHTML()}<span>Continuar com Google</span></button><div class="formError clerkSocialError" id="clerkSocialError" aria-live="polite"></div><div class="authChoiceDivider"><span>ou continue por e-mail</span></div><form id="emailCodeStart"><label class="field"><span>E-mail</span><input id="clerkEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" placeholder="voce@email.com" value="${escapeHTML(clerkAuthFlow.email)}" required></label><div id="clerk-captcha"></div><div class="formError clerkFlowError" id="clerkFlowError" aria-live="polite"></div><button class="primaryBtn" type="submit">Receber código por e-mail</button></form><p class="authFine">Se for seu primeiro acesso, sua conta será criada automaticamente.</p></div>`;
+  document.getElementById('clerkGoogleAuth').onclick = () => startClerkGoogle(clerk);
   document.getElementById('emailCodeStart').onsubmit = (event) =>
     startClerkEmail(event, clerk, mount);
-  document.getElementById('clerkEmail')?.focus();
 }
 function renderClerkCode(mount, clerk, message = 'Código enviado.') {
   mount.innerHTML = `<div class="passwordlessAuth clerkCodeStep"><div class="codeSentMark" aria-hidden="true">✓</div><h2>Confira seu e-mail.</h2><p>${escapeHTML(message)} Enviamos seis números para <strong>${escapeHTML(clerkAuthFlow.email)}</strong>.</p><form id="emailCodeVerify"><label class="field codeField"><span>Código de acesso</span><input id="clerkCode" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" minlength="6" maxlength="6" pattern="[0-9]{6}" placeholder="000000" required></label><div class="formError clerkFlowError" id="clerkFlowError" aria-live="polite"></div><button class="primaryBtn" type="submit">Entrar no TOPO</button></form><div class="codeStepActions"><button id="resendClerkCode" type="button">Reenviar código</button><button id="changeClerkEmail" type="button">Trocar e-mail</button></div></div>`;
@@ -3094,7 +3127,7 @@ async function renderAuth() {
     return;
   }
   document.title = 'Entrar — TOPO';
-  feed.innerHTML = `<div class="authShell clerkAuthShell"><div class="authCard clerkAuthCard"><div class="authEyebrow">Sua conta no TOPO</div><div class="authTitle">Entre sem senha.</div><p class="authIntro">Receba um código no seu e-mail. É rápido e você não precisa criar nem lembrar uma senha.</p><div class="clerkAuthMount" id="clerkAuthMount"><span class="commentsLoading">preparando acesso seguro…</span></div><div class="authNote">Seus votos deste aparelho serão ligados à sua conta quando você entrar.</div></div></div>`;
+  feed.innerHTML = `<div class="authShell clerkAuthShell"><div class="authCard clerkAuthCard"><div class="authEyebrow">Sua conta no TOPO</div><div class="authTitle">Entre em segundos.</div><p class="authIntro">Continue com Google ou use seu e-mail. Na primeira vez, sua conta é criada automaticamente.</p><div class="clerkAuthMount" id="clerkAuthMount"><span class="commentsLoading">preparando acesso seguro…</span></div><div class="authNote">Seus votos deste aparelho serão ligados à sua conta quando você entrar.</div></div></div>`;
   const clerk = await initClerk(),
     mount = document.getElementById('clerkAuthMount');
   if (!mount) return;
@@ -3109,7 +3142,7 @@ async function renderAuth() {
   }
   if (location.pathname === '/sso-callback') {
     mount.innerHTML =
-      '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span></div>';
+      '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span><div id="clerk-captcha"></div></div>';
     try {
       await clerk.handleRedirectCallback({
         signInFallbackRedirectUrl: authReturn(),
@@ -3608,7 +3641,7 @@ function showVoteHelp() {
 }
 function showRegistrationWall() {
   showModal(
-    `<div class="modalKicker">${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Entre com um código enviado ao seu e-mail. Sem senha e sem complicação.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
+    `<div class="modalKicker">${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Continue com Google em poucos segundos. Se preferir, receba um código por e-mail.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
   );
 }
 function showAccountRequired() {

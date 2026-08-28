@@ -14,7 +14,7 @@ Site brasileiro de rankings comunitários. A pessoa pode votar para cima ou para
 - `migrations/` e `scripts/`: alterações reproduzíveis do banco Neon.
 - `test/`: testes de contrato, conteúdo, interface e integrações opcionais.
 
-Produção usa Vercel Functions, Neon Postgres, Clerk para acesso por código de e-mail e Resend para avisos de moderação.
+Produção usa Vercel Functions, Neon Postgres, Clerk para acesso com Google ou código de e-mail e Resend para avisos de moderação.
 
 ## Desenvolvimento
 

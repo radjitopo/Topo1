@@ -246,7 +246,7 @@ const pages = {
     content: `
       <section class="legalSection">
         <h2>Proteja seu acesso</h2>
-        <ul><li>O TOPO envia código de acesso por e-mail e não pede que você compartilhe esse código.</li><li>Proteja a conta de e-mail usada no cadastro.</li><li>Saia da conta ao usar aparelho compartilhado.</li><li>Desconfie de mensagens prometendo votos, posições ou benefícios em nome do TOPO.</li></ul>
+        <ul><li>Você pode entrar com Google ou receber um código de acesso por e-mail.</li><li>O TOPO nunca pede que você compartilhe o código recebido nem a senha da sua conta Google.</li><li>Saia da conta ao usar aparelho compartilhado.</li><li>Desconfie de mensagens prometendo votos, posições ou benefícios em nome do TOPO.</li></ul>
       </section>
       <section class="legalSection">
         <h2>O que fazemos</h2>

@@ -3279,6 +3279,49 @@ h2,
   width: min(380px, 100%);
   padding: 3px 0 5px;
 }
+.googleAuthButton {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+.googleAuthButton:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+.googleAuthMark {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+.clerkSocialError:empty {
+  display: none;
+}
+.authChoiceDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 16px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.authChoiceDivider::before,
+.authChoiceDivider::after {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+  content: '';
+}
 .codeStepActions button:disabled {
   opacity: 0.55;
   cursor: wait;
