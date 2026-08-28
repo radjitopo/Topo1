@@ -94,7 +94,7 @@ test('ranking actions move below the stats in one mobile row while desktop stays
   assert.match(app, /rankingPersonalActionsHTML\(r, placement = 'desktop'\)/);
   assert.match(
     compactApp,
-    /<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}[\s\S]*<divclass="statsRow">[\s\S]*\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}<divclass="rankingResultHead">/,
+    /<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}[\s\S]*<divclass="statsRow">[\s\S]*\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}\$\{votingHTML\}/,
   );
   assert.match(compactStyle, /body\.popElectric\.rankingPersonalActionsMobile\{display:none;?\}/);
   assert.match(

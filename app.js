@@ -12,7 +12,8 @@ const feed = document.getElementById('feed'),
   storeKey = 'topo_device_id',
   cityStoreKey = 'topo_local_city',
   firstShowKey = 'topo_first_show_seen',
-  lastHeroKey = 'topo_last_home_hero';
+  lastHeroKey = 'topo_last_home_hero',
+  duelPairStoreKey = 'topo_duel_pairs_v1';
 function newDeviceId() {
   return crypto.randomUUID
     ? crypto.randomUUID()
@@ -89,6 +90,7 @@ let rankings = [],
   },
   community = { rankings: 0, votes: 0, users: 0 },
   localCityCatalog = [],
+  duelState = null,
   clerkLoadPromise = null,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
@@ -280,6 +282,88 @@ function isFirstShowCandidate(r) {
 }
 function myVoteCount(r) {
   return (r?.opts || []).reduce((n, o) => n + (Number(o.mine) !== 0 ? 1 : 0), 0);
+}
+function duelEligibleOptions(r) {
+  return (r?.opts || []).filter((option) => Number(option.mine) === 0);
+}
+function duelPairKey(first, second) {
+  return [Number(first?.id || first), Number(second?.id || second)].sort((a, b) => a - b).join(':');
+}
+function buildBalancedDuelPairs(options, seenPairs = new Set(), limit = 5, random = Math.random) {
+  const pool = (options || [])
+      .filter((option) => Number(option.mine) === 0)
+      .map((option) => ({ option, order: Number(random()) || 0 }))
+      .sort((a, b) => a.order - b.order || Number(a.option.id) - Number(b.option.id)),
+    pairs = [],
+    maxPairs = Math.max(1, Math.min(5, Number(limit) || 5));
+
+  while (pool.length > 1 && pairs.length < maxPairs) {
+    let match = null;
+    for (let left = 0; left < pool.length - 1 && !match; left += 1) {
+      for (let right = left + 1; right < pool.length; right += 1) {
+        if (!seenPairs.has(duelPairKey(pool[left].option, pool[right].option))) {
+          match = [left, right];
+          break;
+        }
+      }
+    }
+    const [leftIndex, rightIndex] = match || [0, 1],
+      rightEntry = pool.splice(rightIndex, 1)[0],
+      leftEntry = pool.splice(leftIndex, 1)[0];
+    let first = leftEntry.option,
+      second = rightEntry.option;
+    if (random() < 0.5) [first, second] = [second, first];
+    pairs.push([first, second]);
+  }
+  return pairs;
+}
+function duelPairHistory() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(duelPairStoreKey) || '{}');
+    return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+  } catch {
+    return {};
+  }
+}
+function seenDuelPairs(rankingId) {
+  const history = duelPairHistory(),
+    pairs = Array.isArray(history[rankingId]) ? history[rankingId] : [];
+  return new Set(pairs.map(String));
+}
+function rememberDuelPair(rankingId, pair) {
+  try {
+    const history = duelPairHistory(),
+      key = duelPairKey(pair[0], pair[1]),
+      stored = Array.isArray(history[rankingId]) ? history[rankingId] : [];
+    history[rankingId] = [...new Set([...stored, key])].slice(-220);
+    const rankingIds = Object.keys(history);
+    rankingIds.slice(0, Math.max(0, rankingIds.length - 80)).forEach((id) => delete history[id]);
+    localStorage.setItem(duelPairStoreKey, JSON.stringify(history));
+  } catch {}
+}
+function startDuelRound(r) {
+  const previousRound = duelState?.rankingId === r.id ? Number(duelState.round || 0) : 0,
+    pairs = buildBalancedDuelPairs(duelEligibleOptions(r), seenDuelPairs(r.id), 5).map(
+      ([first, second]) => [Number(first.id), Number(second.id)],
+    );
+  duelState = { rankingId: r.id, pairs, index: 0, round: previousRound + 1 };
+  return duelState;
+}
+function duelStateFor(r) {
+  if (!duelState || duelState.rankingId !== r.id) return startDuelRound(r);
+  return duelState;
+}
+function duelModeActive() {
+  return pageKind() === 'ranking' && queryParams.get('modo') === 'duelo';
+}
+function randomDuelRanking(excludeRankingId = '') {
+  const available = homeEligibleRankings(rankings).filter(
+      (ranking) =>
+        !ranking.vip && ranking.id !== excludeRankingId && duelEligibleOptions(ranking).length >= 2,
+    ),
+    untouched = available.filter((ranking) => myVoteCount(ranking) === 0),
+    pool = untouched.length ? untouched : available;
+  return pool[Math.floor(Math.random() * pool.length)] || null;
 }
 function priorityBucket(r) {
   const n = myVoteCount(r),
@@ -1849,6 +1933,22 @@ function renderSearchResults(visible) {
   document.getElementById('clearHomeSearch')?.addEventListener('click', clearHomeSearch);
   bindVotes();
 }
+function duelHomeCalloutHTML() {
+  return `<section class="duelHomeCallout"><div><span class="portalKicker">Novo jeito de votar</span><h2>Duelo aleatório</h2><p>Duas opções do mesmo ranking. Uma escolha por vez.</p></div><button type="button" data-start-random-duel>COMEÇAR</button></section>`;
+}
+function launchRandomDuel(excludeRankingId = '') {
+  const ranking = randomDuelRanking(excludeRankingId);
+  if (!ranking) {
+    toast('Você já votou em quase tudo. Volte às flechas para rever suas escolhas.');
+    return;
+  }
+  location.assign(`${rankingPath(ranking.id)}?modo=duelo#votar`);
+}
+function bindDuelLaunchers() {
+  document.querySelectorAll('[data-start-random-duel]').forEach((button) => {
+    button.onclick = () => launchRandomDuel(button.dataset.excludeRanking || '');
+  });
+}
 renderHome = function () {
   const local = isLocalExperience(),
     visible = visibleRankings();
@@ -1887,7 +1987,7 @@ renderHome = function () {
       : portalVisible.filter((r) => r.id !== hero.id),
     stories = storySource.slice(0, 8),
     more = storySource.slice(8, 14);
-  feed.innerHTML = `${popHomeLeadHTML(hero, secondaryHero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>MAIS PARA DESCOBRIR</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
+  feed.innerHTML = `${popHomeLeadHTML(hero, secondaryHero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>MAIS PARA DESCOBRIR</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${duelHomeCalloutHTML()}${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
 };
@@ -2211,6 +2311,72 @@ async function loadAllCommentsPage(r, page, append) {
       .getElementById('retryAllComments')
       ?.addEventListener('click', () => loadAllCommentsPage(r, page, append));
   }
+}
+function rankingVoteModeHTML(r, votingOpen = true) {
+  if (!votingOpen) return '';
+  const duel = duelModeActive(),
+    listPath = `${rankingPath(r.id)}#votar`,
+    duelPath = `${rankingPath(r.id)}?modo=duelo#votar`;
+  return `<nav class="rankingVoteModes" aria-label="Escolher modo de votação"><a class="${duel ? '' : 'active'}" href="${listPath}" ${duel ? '' : 'aria-current="page"'}><span>↑↓</span> VOTAR COM FLECHAS</a><a class="${duel ? 'active' : ''}" href="${duelPath}" ${duel ? 'aria-current="page"' : ''}><span>A×B</span> MODO DUELO</a></nav>`;
+}
+function duelChoiceHTML(option, side) {
+  return `<button class="duelChoice" type="button" data-duel-choice data-id="${option.id}" aria-label="Escolher ${escapeHTML(option.label)}"><span>OPÇÃO ${side}</span><strong>${escapeHTML(option.label)}</strong><small>ESCOLHER</small></button>`;
+}
+function duelRoundCompleteHTML(r, state) {
+  const remaining = duelEligibleOptions(r).length;
+  return `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada concluída</span><h2>Você passou por ${state.pairs.length} duelo${state.pairs.length === 1 ? '' : 's'}.</h2><p>Os escolhidos receberam +1. Nenhuma opção perdeu ponto.</p><div class="duelEndActions">${remaining >= 2 ? '<button type="button" data-duel-continue>CONTINUAR NESTE RANKING</button>' : ''}<button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">PRÓXIMO RANKING</button><a href="${rankingPath(r.id)}#votar">VOLTAR ÀS FLECHAS</a></div></section>`;
+}
+function rankingDuelHTML(r, votingOpen = true) {
+  if (!votingOpen) return '';
+  const state = duelStateFor(r),
+    remaining = duelEligibleOptions(r).length;
+  if (!state.pairs.length)
+    return `<section class="rankingDuel rankingDuelEmpty"><span class="duelEyebrow">Sem pares novos</span><h2>${remaining === 0 ? 'Você já votou em todas as opções.' : 'Só falta uma opção sem voto.'}</h2><p>O duelo usa apenas opções em que você ainda não tocou.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button><a href="${rankingPath(r.id)}#votar">VOLTAR ÀS FLECHAS</a></div></section>`;
+  if (state.index >= state.pairs.length) return duelRoundCompleteHTML(r, state);
+  const pair = state.pairs[state.index],
+    first = r.opts.find((option) => Number(option.id) === pair[0]),
+    second = r.opts.find((option) => Number(option.id) === pair[1]);
+  if (!first || !second) {
+    startDuelRound(r);
+    return rankingDuelHTML(r, votingOpen);
+  }
+  return `<section class="rankingDuel" data-duel-pair><header><span class="duelEyebrow">Duelo ${state.index + 1} de ${state.pairs.length}</span><h2>Qual merece ficar no TOPO?</h2><p>Escolha uma opção. A vencedora recebe +1 e a outra continua com zero.</p></header><div class="duelChoices">${duelChoiceHTML(first, 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(second, 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>PULAR · NÃO CONHEÇO</button><span>${state.index + 1}/${state.pairs.length}</span></div></section>`;
+}
+async function chooseDuelOption(button, r) {
+  const state = duelStateFor(r),
+    pair = state.pairs[state.index],
+    optionId = Number(button.dataset.id);
+  if (!pair?.includes(optionId)) return;
+  const previousIndex = state.index;
+  state.index += 1;
+  const saved = await submitVoteChange(button, {
+    optionId,
+    direction: 1,
+    weight: 1,
+    showHelp: false,
+  });
+  if (saved) rememberDuelPair(r.id, pair);
+  else {
+    state.index = previousIndex;
+    renderInternal();
+  }
+}
+function bindDuelMode(r) {
+  document
+    .querySelectorAll('[data-duel-choice]')
+    .forEach((button) => (button.onclick = () => chooseDuelOption(button, r)));
+  document.querySelector('[data-duel-skip]')?.addEventListener('click', () => {
+    const state = duelStateFor(r),
+      pair = state.pairs[state.index];
+    if (pair) rememberDuelPair(r.id, pair);
+    state.index += 1;
+    renderInternal();
+  });
+  document.querySelector('[data-duel-continue]')?.addEventListener('click', () => {
+    startDuelRound(r);
+    renderInternal();
+  });
+  bindDuelLaunchers();
 }
 function rankingVoteRowHTML(o, i, extraClass = '', votingOpen = true) {
   const upSelected = Number(o.mine) === 1,
@@ -2812,9 +2978,11 @@ function renderInternal() {
         : 'A votação está encerrada.'
       : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
   const cover = r.img
-    ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
-    : '';
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>${rankingPersonalActionsHTML(r, 'mobile')}<div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+      ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
+      : '',
+    listVotingHTML = `<div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`,
+    votingHTML = duelModeActive() && votingOpen ? rankingDuelHTML(r, votingOpen) : listVotingHTML;
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}${votingHTML}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
     document.getElementById('vipOwnerManage').onclick = () => {
@@ -2834,6 +3002,7 @@ function renderInternal() {
     }
   }
   bindVotes();
+  bindDuelMode(r);
   bindAllItems(r);
   bindRankingSuggestion(r);
   loadComments(r);
@@ -3786,6 +3955,7 @@ function bindVotes() {
   mountInternalShare();
   bindNativeShares();
   bindFavoriteButtons();
+  bindDuelLaunchers();
 }
 async function refreshVoteState(rankOrder) {
   const fresh = await fetchBootstrap(),
@@ -3851,7 +4021,11 @@ function applyVoteResult(optionId, result) {
 
 async function submitVoteChange(button, { optionId, direction, weight, showHelp = false }) {
   const rankOrder = rankings.map((r) => r.id),
-    controls = [...(button.closest('.actions')?.querySelectorAll('button') || [button])];
+    controls = [
+      ...((button.closest('[data-duel-pair]') || button.closest('.actions'))?.querySelectorAll(
+        'button',
+      ) || [button]),
+    ];
   controls.forEach((item) => (item.disabled = true));
   try {
     const res = await fetch('/api', {
@@ -3864,20 +4038,20 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
       viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
       renderAccount();
       showRegistrationWall();
-      return;
+      return false;
     }
     if (res.status === 403 && result.error === 'account_required_on_this_device') {
       viewer.votingRequiresAccount = true;
       renderAccount();
       showAccountRequired();
-      return;
+      return false;
     }
     if (res.status === 403 && result.error === 'vip_password_required') {
       const ranking = rankings.find((item) =>
         item.opts?.some((option) => Number(option.id) === Number(optionId)),
       );
       if (ranking?.vip) renderVipGate({ id: ranking.id, q: ranking.q, img: ranking.img });
-      return;
+      return false;
     }
     if (
       (res.status === 403 && result.error === 'double_vote_requires_account') ||
@@ -3887,22 +4061,22 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
         ))
     ) {
       await refreshVoteState(rankOrder);
-      return;
+      return false;
     }
     if (res.status === 409 && result.error === 'ranking_vote_limit') {
       toast(`Máximo de ${result.limit || 20} votos neste ranking`);
-      return;
+      return false;
     }
     if (res.status === 409 && result.error === 'ranking_voting_closed') {
       toast('A votação deste ranking foi encerrada');
       await refreshVoteState(rankOrder);
-      return;
+      return false;
     }
     if (res.status === 409 && result.error === 'device_rekey_required') {
       rotateDeviceId();
       await load();
       toast('Conta protegida. Tente votar novamente.');
-      return;
+      return false;
     }
     if (!res.ok) throw result;
     if (!applyVoteResult(optionId, result)) await refreshVoteState(rankOrder);
@@ -3914,8 +4088,10 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
         ?.focus();
     if (viewer.registered) void loadNotifications({ force: true });
     if (showHelp && direction !== 0) showVoteHelp();
+    return true;
   } catch (e) {
     toast('Não consegui registrar. Tente novamente.');
+    return false;
   } finally {
     controls.forEach((item) => (item.disabled = false));
   }

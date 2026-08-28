@@ -21,6 +21,322 @@
   --clean-whatsapp-hover: #195d41;
 }
 
+/* Modo Duelo ------------------------------------------------------------- */
+
+body.popElectric .duelHomeCallout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 30px;
+  margin: 52px 0;
+  border-top: 5px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  background: var(--clean-soft);
+  padding: 28px 30px 30px;
+}
+
+body.popElectric .duelHomeCallout h2 {
+  margin: 6px 0 7px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(38px, 5vw, 62px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .duelHomeCallout p {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 13px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .duelHomeCallout > button,
+body.popElectric .duelEndActions button {
+  min-height: 48px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 0 22px;
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+body.popElectric .duelHomeCallout > button:hover,
+body.popElectric .duelHomeCallout > button:focus-visible,
+body.popElectric .duelEndActions button:hover,
+body.popElectric .duelEndActions button:focus-visible {
+  background: var(--clean-coral);
+  border-color: var(--clean-coral);
+}
+
+body.popElectric.rankingPage .rankingVoteModes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 25px;
+  border: 1px solid var(--clean-ink);
+}
+
+body.popElectric.rankingPage .rankingVoteModes a {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+}
+
+body.popElectric.rankingPage .rankingVoteModes a + a {
+  border-left: 1px solid var(--clean-ink);
+}
+
+body.popElectric.rankingPage .rankingVoteModes a span {
+  font-size: 14px;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric.rankingPage .rankingVoteModes a:hover,
+body.popElectric.rankingPage .rankingVoteModes a:focus-visible,
+body.popElectric.rankingPage .rankingVoteModes a.active {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .rankingDuel {
+  margin: 0;
+  border-top: 5px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  background: var(--clean-soft);
+  padding: clamp(22px, 4vw, 36px);
+}
+
+body.popElectric.rankingPage .rankingDuel > header {
+  max-width: 650px;
+  margin-bottom: 24px;
+}
+
+body.popElectric.rankingPage .duelEyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--clean-muted);
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+body.popElectric.rankingPage .rankingDuel h2 {
+  margin: 0 0 9px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(36px, 5.5vw, 58px) / 0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric.rankingPage .rankingDuel p {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 12px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .duelChoices {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  align-items: center;
+}
+
+body.popElectric.rankingPage .duelChoice {
+  min-width: 0;
+  min-height: 245px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .duelChoice > span,
+body.popElectric.rankingPage .duelChoice > small {
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.09em;
+}
+
+body.popElectric.rankingPage .duelChoice > span {
+  color: var(--clean-muted);
+}
+
+body.popElectric.rankingPage .duelChoice > strong {
+  overflow-wrap: anywhere;
+  font:
+    900 clamp(27px, 4vw, 45px) / 0.98 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric.rankingPage .duelChoice:hover,
+body.popElectric.rankingPage .duelChoice:focus-visible {
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .duelChoice:hover > span,
+body.popElectric.rankingPage .duelChoice:focus-visible > span {
+  color: var(--clean-paper);
+}
+
+body.popElectric.rankingPage .duelChoice:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+body.popElectric.rankingPage .duelVersus {
+  color: var(--clean-muted);
+  text-align: center;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.rankingPage .duelFooter {
+  min-height: 42px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 14px;
+}
+
+body.popElectric.rankingPage .duelFooter button,
+body.popElectric.rankingPage .duelFooter span,
+body.popElectric.rankingPage .duelEndActions a {
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 7px 0;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.05em;
+}
+
+body.popElectric.rankingPage .duelFooter button {
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .duelFooter span {
+  border: 0;
+  color: var(--clean-muted);
+}
+
+body.popElectric.rankingPage .rankingDuelComplete,
+body.popElectric.rankingPage .rankingDuelEmpty {
+  min-height: 310px;
+  display: grid;
+  align-content: center;
+}
+
+body.popElectric.rankingPage .duelEndActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 25px;
+}
+
+body.popElectric.rankingPage .duelEndActions button.secondary {
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
+@media (max-width: 700px) {
+  body.popElectric .duelHomeCallout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin: 40px 0;
+    padding: 24px 18px;
+  }
+
+  body.popElectric .duelHomeCallout > button {
+    width: 100%;
+  }
+
+  body.popElectric.rankingPage .rankingVoteModes a {
+    min-height: 45px;
+    gap: 6px;
+    font-size: 9px;
+  }
+
+  body.popElectric.rankingPage .rankingDuel {
+    padding: 22px 14px;
+  }
+
+  body.popElectric.rankingPage .rankingDuel h2 {
+    font-size: clamp(34px, 10.5vw, 46px);
+  }
+
+  body.popElectric.rankingPage .duelChoices {
+    grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+  }
+
+  body.popElectric.rankingPage .duelChoice {
+    min-height: 218px;
+    gap: 12px;
+    padding: 14px 10px;
+  }
+
+  body.popElectric.rankingPage .duelChoice > strong {
+    font-size: clamp(21px, 7vw, 32px);
+  }
+
+  body.popElectric.rankingPage .duelEndActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  body.popElectric.rankingPage .duelEndActions button,
+  body.popElectric.rankingPage .duelEndActions a {
+    width: 100%;
+    min-height: 46px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+}
+
 /* Favoritos -------------------------------------------------------------- */
 
 body.popElectric .rankingPersonalActions {
