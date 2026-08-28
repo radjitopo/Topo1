@@ -125,6 +125,10 @@ body.popElectric.rankingPage .rankingDuel {
 }
 
 body.popElectric.rankingPage .rankingDuel > header {
+  height: auto;
+  display: block;
+  align-items: initial;
+  justify-content: initial;
   max-width: 650px;
   margin-bottom: 24px;
 }
@@ -304,12 +308,25 @@ body.popElectric.rankingPage .duelEndActions button.secondary {
     padding: 22px 14px;
   }
 
+  body.popElectric.rankingPage .rankingDuel > header {
+    max-width: none;
+    margin-bottom: 20px;
+  }
+
   body.popElectric.rankingPage .rankingDuel h2 {
-    font-size: clamp(34px, 10.5vw, 46px);
+    margin-bottom: 10px;
+    font-size: clamp(32px, 9.2vw, 40px);
+    line-height: 0.96;
+  }
+
+  body.popElectric.rankingPage .rankingDuel p {
+    max-width: 32em;
+    font-size: 11px;
+    line-height: 1.4;
   }
 
   body.popElectric.rankingPage .duelChoices {
-    grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr);
   }
 
   body.popElectric.rankingPage .duelChoice {
@@ -319,7 +336,11 @@ body.popElectric.rankingPage .duelEndActions button.secondary {
   }
 
   body.popElectric.rankingPage .duelChoice > strong {
-    font-size: clamp(21px, 7vw, 32px);
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    font-size: clamp(19px, 5.6vw, 26px);
+    line-height: 1;
   }
 
   body.popElectric.rankingPage .duelEndActions {

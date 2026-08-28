@@ -59,5 +59,11 @@ test('a duel gives only the chosen option one positive vote', async () => {
   assert.match(style, /\.rankingVoteModes/);
   assert.match(style, /\.duelChoices/);
   assert.match(style, /\.duelHomeCallout/);
+  assert.match(
+    style,
+    /\.rankingDuel > header \{[\s\S]*?height: auto;[\s\S]*?display: block;/,
+    'the global site header layout must not leak into the duel header',
+  );
+  assert.match(style, /hyphens: auto;/, 'long option names should wrap cleanly on phones');
   assert.match(index, /duel-mode/);
 });
