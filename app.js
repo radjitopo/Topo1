@@ -3156,6 +3156,7 @@ async function renderAuth() {
     mount.innerHTML =
       '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span><div id="clerk-captcha"></div></div>';
     try {
+      let oauthTarget = authReturn();
       await clerk.handleRedirectCallback(
         {
           signInFallbackRedirectUrl: authReturn(),
@@ -3164,8 +3165,11 @@ async function renderAuth() {
           signUpUrl: '/entrar',
           continueSignUpUrl: '/entrar',
         },
-        (target) => finishClerkOAuthNavigation(clerk, target),
+        async (target) => {
+          oauthTarget = target;
+        },
       );
+      await finishClerkOAuthNavigation(clerk, oauthTarget);
     } catch (problem) {
       mount.innerHTML = `<div class="clerkAuthError">${escapeHTML(clerkErrorText(problem))}<br><a class="retry authButtonLink" href="/entrar">Voltar para entrar</a></div>`;
     }
