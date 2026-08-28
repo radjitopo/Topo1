@@ -3150,15 +3150,45 @@ async function renderAuth() {
     mount.innerHTML =
       '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span><div id="clerk-captcha"></div></div>';
     try {
-      await clerk.handleRedirectCallback({
-        signInForceRedirectUrl: authReturn(),
-        signInFallbackRedirectUrl: authReturn(),
-        signUpForceRedirectUrl: authReturn(),
-        signUpFallbackRedirectUrl: authReturn(),
-        signInUrl: '/entrar',
-        signUpUrl: '/entrar',
-        continueSignUpUrl: '/entrar',
-      });
+      await clerk.handleRedirectCallback(
+        {
+          signInForceRedirectUrl: authReturn(),
+          signInFallbackRedirectUrl: authReturn(),
+          signUpForceRedirectUrl: authReturn(),
+          signUpFallbackRedirectUrl: authReturn(),
+          signInUrl: '/entrar',
+          signUpUrl: '/entrar',
+          continueSignUpUrl: '/entrar',
+          transferable: true,
+        },
+        async (to) => {
+          const signIn = clerk.client.signIn,
+            signUp = clerk.client.signUp;
+          console.info('Estado do retorno Google.', {
+            destination: to,
+            signInStatus: signIn?.status,
+            signUpStatus: signUp?.status,
+            transferable: Boolean(signIn?.isTransferable),
+          });
+          if (clerk.session || clerk.user) {
+            location.assign(authReturn());
+            return;
+          }
+          if (signIn?.status === 'complete') {
+            await finishClerkAuth(clerk, signIn);
+            return;
+          }
+          if (signUp?.status === 'complete') {
+            await finishClerkAuth(clerk, signUp);
+            return;
+          }
+          if (signIn?.isTransferable) {
+            await transferClerkSignUp(clerk);
+            return;
+          }
+          location.assign(to || '/entrar');
+        },
+      );
     } catch (problem) {
       console.error('Não foi possível concluir o acesso com Google.', problem);
       mount.innerHTML = `<div class="clerkAuthError">${escapeHTML(clerkErrorText(problem))}<br><a class="retry authButtonLink" href="/entrar">Voltar para entrar</a></div>`;
