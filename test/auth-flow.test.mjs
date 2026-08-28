@@ -10,7 +10,7 @@ test('Clerk starts Google OAuth inside SomosTopo and returns to its own callback
     readFile(new URL('page.js', root), 'utf8'),
   ]);
 
-  assert.match(app, /clerk\.client\.signIn\.authenticateWithRedirect/);
+  assert.match(app, /clerk\.client\.signUp\.authenticateWithRedirect/);
   assert.match(app, /strategy: 'oauth_google'/);
   assert.match(app, /new URL\('\/sso-callback', location\.origin\)/);
   assert.match(app, /redirectUrlComplete/);
@@ -29,6 +29,7 @@ test('Clerk starts Google OAuth inside SomosTopo and returns to its own callback
   assert.match(app, /missing\.includes\('password'\)/);
   assert.match(app, /clerk\.handleRedirectCallback\([\s\S]*async \(to\) =>/);
   assert.doesNotMatch(app, /clerk\.mountSignIn/);
+  assert.doesNotMatch(app, /clerk\.client\.signIn\.authenticateWithRedirect/);
   assert.doesNotMatch(app, /clerk\.buildSignInUrl/);
   assert.doesNotMatch(app, /@clerk\/ui/);
   assert.match(page, /Google ou e-mail/);

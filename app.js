@@ -2991,7 +2991,7 @@ async function startClerkGoogle(clerk) {
   try {
     const redirectUrl = new URL('/sso-callback', location.origin).href,
       redirectUrlComplete = new URL(authReturn(), location.origin).href;
-    await clerk.client.signIn.authenticateWithRedirect({
+    await clerk.client.signUp.authenticateWithRedirect({
       strategy: 'oauth_google',
       redirectUrl,
       redirectUrlComplete,
