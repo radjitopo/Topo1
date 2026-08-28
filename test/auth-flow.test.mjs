@@ -31,8 +31,10 @@ test('OAuth callback keeps bot protection and existing email account reconciliat
 
   assert.match(app, /location\.pathname === '\/sso-callback'/);
   assert.match(app, /clerk\.handleRedirectCallback/);
-  assert.match(app, /oauthTarget = target/);
-  assert.match(app, /finishClerkOAuthNavigation\(clerk, oauthTarget\)/);
+  assert.match(app, /prepareClerkOAuthNavigation\(clerk, target\)/);
+  assert.match(app, /signIn\?\.isTransferable/);
+  assert.match(app, /signUp\.create\(\{ transfer: true \}\)/);
+  assert.match(app, /finishClerkAuth\([\s\S]*oauthNavigation\.resource/);
   assert.match(app, /completeClerkSignUp/);
   assert.match(app, /missing\.includes\('password'\)/);
   assert.match(app, /clerkCallback[\s\S]*id="clerk-captcha"/);

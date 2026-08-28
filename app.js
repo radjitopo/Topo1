@@ -2949,34 +2949,46 @@ async function finishClerkAuth(clerk, resource, temporaryPassword = '') {
   }
   location.assign(authReturn());
 }
-async function completeClerkSignUp(clerk, signUp) {
+async function prepareClerkSignUp(signUp) {
   if (signUp?.status === 'complete') {
-    await finishClerkAuth(clerk, signUp);
-    return true;
+    return { resource: signUp, temporaryPassword: '' };
   }
   const missing = signUp?.missingFields || [];
   if (signUp?.id && missing.includes('password')) {
     const password = temporaryClerkPassword();
     const completed = await signUp.update({ password });
     if (completed.status === 'complete') {
-      await finishClerkAuth(clerk, completed, password);
-      return true;
+      return { resource: completed, temporaryPassword: password };
     }
   }
   throw new Error('clerk_session_incomplete');
+}
+async function completeClerkSignUp(clerk, signUp) {
+  const completed = await prepareClerkSignUp(signUp);
+  await finishClerkAuth(clerk, completed.resource, completed.temporaryPassword);
+  return true;
 }
 async function transferClerkSignUp(clerk) {
   const signUp = await clerk.client.signUp.create({ transfer: true });
   return completeClerkSignUp(clerk, signUp);
 }
-async function finishClerkOAuthNavigation(clerk, target) {
-  const signUp = clerk.client.signUp,
-    missing = signUp?.missingFields || [];
-  if (signUp?.id && signUp.status !== 'complete' && missing.includes('password')) {
-    await completeClerkSignUp(clerk, signUp);
-    return;
+async function prepareClerkOAuthNavigation(clerk, target) {
+  const signIn = clerk.client.signIn;
+  if (signIn?.status === 'complete') {
+    return { resource: signIn, temporaryPassword: '', target };
   }
-  location.assign(target || authReturn());
+  let signUp = clerk.client.signUp;
+  if (signUp?.isTransferable) {
+    const transferredSignIn = await clerk.client.signIn.create({ transfer: true });
+    if (transferredSignIn.status === 'complete')
+      return { resource: transferredSignIn, temporaryPassword: '', target };
+  }
+  if (signIn?.isTransferable) signUp = await clerk.client.signUp.create({ transfer: true });
+  if (signUp?.id) {
+    const completed = await prepareClerkSignUp(signUp);
+    return { ...completed, target };
+  }
+  return { resource: null, temporaryPassword: '', target };
 }
 function googleMarkHTML() {
   return `<svg class="googleAuthMark" aria-hidden="true" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.4-.18-2.07H12v3.92h5.38a4.6 4.6 0 0 1-2 3.02v2.54h3.24c1.9-1.75 2.98-4.33 2.98-7.41Z"></path><path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.36l-3.24-2.54c-.9.6-2.05.96-3.38.96-2.6 0-4.81-1.76-5.6-4.13H3.06v2.62A10 10 0 0 0 12 22Z"></path><path fill="#FBBC05" d="M6.4 13.93A6.02 6.02 0 0 1 6.08 12c0-.67.12-1.32.32-1.93V7.45H3.06A10 10 0 0 0 2 12c0 1.64.39 3.2 1.06 4.55l3.34-2.62Z"></path><path fill="#EA4335" d="M12 5.94c1.47 0 2.79.5 3.83 1.5l2.87-2.88A9.62 9.62 0 0 0 12 2a10 10 0 0 0-8.94 5.45l3.34 2.62c.79-2.37 3-4.13 5.6-4.13Z"></path></svg>`;
@@ -3156,7 +3168,11 @@ async function renderAuth() {
     mount.innerHTML =
       '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span><div id="clerk-captcha"></div></div>';
     try {
-      let oauthTarget = authReturn();
+      let oauthNavigation = {
+        resource: null,
+        temporaryPassword: '',
+        target: authReturn(),
+      };
       await clerk.handleRedirectCallback(
         {
           signInFallbackRedirectUrl: authReturn(),
@@ -3166,10 +3182,12 @@ async function renderAuth() {
           continueSignUpUrl: '/entrar',
         },
         async (target) => {
-          oauthTarget = target;
+          oauthNavigation = await prepareClerkOAuthNavigation(clerk, target);
         },
       );
-      await finishClerkOAuthNavigation(clerk, oauthTarget);
+      if (oauthNavigation.resource)
+        await finishClerkAuth(clerk, oauthNavigation.resource, oauthNavigation.temporaryPassword);
+      else location.assign(oauthNavigation.target || authReturn());
     } catch (problem) {
       mount.innerHTML = `<div class="clerkAuthError">${escapeHTML(clerkErrorText(problem))}<br><a class="retry authButtonLink" href="/entrar">Voltar para entrar</a></div>`;
     }
