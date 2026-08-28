@@ -11,6 +11,9 @@ test('Clerk renders its embedded sign-in-or-up flow inside SomosTopo', async () 
   ]);
 
   assert.match(app, /clerk\.mountSignIn\(mount,/);
+  assert.match(app, /@clerk\/ui@1\/dist\/ui\.browser\.js/);
+  assert.match(app, /ui: \{ ClerkUI: window\.__internal_ClerkUICtor \}/);
+  assert.match(app, /initClerk\(true\)/);
   assert.match(app, /routing: 'hash'/);
   assert.match(app, /withSignUp: true/);
   assert.match(app, /signInForceRedirectUrl: authReturn\(\)/);
