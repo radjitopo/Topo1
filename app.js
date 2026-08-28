@@ -2975,22 +2975,17 @@ async function startClerkGoogle(clerk) {
     error = document.getElementById('clerkSocialError');
   if (!button || !label || !error) return;
   button.disabled = true;
-  label.textContent = 'Abrindo o Google…';
+  label.textContent = 'Abrindo acesso seguro…';
   error.textContent = '';
   try {
-    await clerk.client.signIn.authenticateWithRedirect({
-      strategy: 'oauth_google',
-      redirectUrl: '/sso-callback',
-      redirectUrlComplete: authReturn(),
-    });
+    const redirectUrl = new URL(authReturn(), location.origin).href,
+      signInUrl = clerk.buildSignInUrl({ redirectUrl });
+    location.assign(signInUrl);
   } catch (problem) {
-    console.error('Não foi possível iniciar o acesso com Google.', problem);
+    console.error('Não foi possível abrir o acesso seguro.', problem);
     button.disabled = false;
     label.textContent = 'Continuar com Google';
-    error.textContent =
-      clerkErrorCode(problem) === 'strategy_for_user_invalid'
-        ? 'O acesso com Google ainda não está disponível. Use o e-mail abaixo.'
-        : clerkErrorText(problem);
+    error.textContent = clerkErrorText(problem);
   }
 }
 function renderClerkStart(mount, clerk) {

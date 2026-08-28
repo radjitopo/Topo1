@@ -12,9 +12,9 @@ test('Google is the primary account entry and email remains available', async ()
 
   assert.match(app, /id="clerkGoogleAuth"/);
   assert.match(app, /Continuar com Google/);
-  assert.match(app, /strategy: 'oauth_google'/);
-  assert.match(app, /redirectUrl: '\/sso-callback'/);
-  assert.match(app, /redirectUrlComplete: authReturn\(\)/);
+  assert.match(app, /clerk\.buildSignInUrl\(\{ redirectUrl \}\)/);
+  assert.match(app, /new URL\(authReturn\(\), location\.origin\)\.href/);
+  assert.match(app, /location\.assign\(signInUrl\)/);
   assert.match(app, /Receber código por e-mail/);
   assert.ok(
     app.indexOf('id="clerkGoogleAuth"') < app.indexOf('id="emailCodeStart"'),
