@@ -3152,19 +3152,24 @@ async function renderAuth() {
     return;
   }
   mount.innerHTML = '';
-  clerk.mountSignIn(mount, {
-    routing: 'hash',
-    withSignUp: true,
-    signInForceRedirectUrl: authReturn(),
-    signUpForceRedirectUrl: authReturn(),
-    appearance: {
-      elements: {
-        rootBox: { width: '100%' },
-        cardBox: { width: '100%', boxShadow: 'none' },
-        card: { width: '100%', boxShadow: 'none' },
+  try {
+    await clerk.mountSignIn(mount, {
+      routing: 'hash',
+      withSignUp: true,
+      signInForceRedirectUrl: authReturn(),
+      signUpForceRedirectUrl: authReturn(),
+      appearance: {
+        elements: {
+          rootBox: { width: '100%' },
+          cardBox: { width: '100%', boxShadow: 'none' },
+          card: { width: '100%', boxShadow: 'none' },
+        },
       },
-    },
-  });
+    });
+  } catch (problem) {
+    console.error('Não foi possível abrir o componente de acesso do Clerk.', problem);
+    renderClerkStart(mount, clerk);
+  }
 }
 const doubleVoteThresholds = [20, 75, 200];
 function profileProgressInfo(votes) {
