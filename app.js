@@ -185,7 +185,7 @@ function loadExternalScript(src, attributes = {}) {
     document.head.appendChild(script);
   });
 }
-async function initClerk(withUi = false) {
+async function initClerk() {
   if (clerkLoadPromise) return clerkLoadPromise;
   clerkLoadPromise = (async () => {
     const response = await fetch('/api?action=auth-config', { cache: 'no-store' });
@@ -197,15 +197,18 @@ async function initClerk(withUi = false) {
       !String(config.publishableKey || '').startsWith('pk_')
     )
       throw new Error('invalid_clerk_config');
-    if (withUi) await loadExternalScript(`${base}/npm/@clerk/ui@1/dist/ui.browser.js`);
     await loadExternalScript(`${base}/npm/@clerk/clerk-js@6.29.3/dist/clerk.browser.js`, {
       'data-clerk-publishable-key': config.publishableKey,
     });
     if (!window.Clerk) throw new Error('clerk_unavailable');
-    if (withUi && !window.__internal_ClerkUICtor) throw new Error('clerk_ui_unavailable');
-    await window.Clerk.load(
-      withUi ? { ui: { ClerkUI: window.__internal_ClerkUICtor } } : undefined,
-    );
+    await window.Clerk.load({
+      signInUrl: '/entrar',
+      signUpUrl: '/entrar',
+      signInForceRedirectUrl: authReturn(),
+      signInFallbackRedirectUrl: authReturn(),
+      signUpForceRedirectUrl: authReturn(),
+      signUpFallbackRedirectUrl: authReturn(),
+    });
     return window.Clerk;
   })().catch((error) => {
     clerkLoadPromise = null;
@@ -2982,9 +2985,13 @@ async function startClerkGoogle(clerk) {
   label.textContent = 'Abrindo acesso seguro…';
   error.textContent = '';
   try {
-    const redirectUrl = new URL(authReturn(), location.origin).href,
-      signInUrl = clerk.buildSignInUrl({ redirectUrl });
-    location.assign(signInUrl);
+    const redirectUrl = new URL('/sso-callback', location.origin).href,
+      redirectUrlComplete = new URL(authReturn(), location.origin).href;
+    await clerk.client.signIn.authenticateWithRedirect({
+      strategy: 'oauth_google',
+      redirectUrl,
+      redirectUrlComplete,
+    });
   } catch (problem) {
     console.error('Não foi possível abrir o acesso seguro.', problem);
     button.disabled = false;
@@ -3127,7 +3134,7 @@ async function renderAuth() {
   }
   document.title = 'Entrar — TOPO';
   feed.innerHTML = `<div class="authShell clerkAuthShell"><div class="authCard clerkAuthCard"><div class="authEyebrow">Sua conta no TOPO</div><div class="authTitle">Entre em segundos.</div><p class="authIntro">Continue com Google ou use seu e-mail. Na primeira vez, sua conta é criada automaticamente.</p><div class="clerkAuthMount" id="clerkAuthMount"><span class="commentsLoading">preparando acesso seguro…</span></div><div class="authNote">Seus votos deste aparelho serão ligados à sua conta quando você entrar.</div></div></div>`;
-  const clerk = await initClerk(true),
+  const clerk = await initClerk(),
     mount = document.getElementById('clerkAuthMount');
   if (!mount) return;
   if (!clerk) {
@@ -3144,38 +3151,21 @@ async function renderAuth() {
       '<div class="clerkCallback"><span class="commentsLoading">concluindo seu acesso…</span><div id="clerk-captcha"></div></div>';
     try {
       await clerk.handleRedirectCallback({
+        signInForceRedirectUrl: authReturn(),
         signInFallbackRedirectUrl: authReturn(),
+        signUpForceRedirectUrl: authReturn(),
         signUpFallbackRedirectUrl: authReturn(),
         signInUrl: '/entrar',
         signUpUrl: '/entrar',
         continueSignUpUrl: '/entrar',
       });
     } catch (problem) {
+      console.error('Não foi possível concluir o acesso com Google.', problem);
       mount.innerHTML = `<div class="clerkAuthError">${escapeHTML(clerkErrorText(problem))}<br><a class="retry authButtonLink" href="/entrar">Voltar para entrar</a></div>`;
     }
     return;
   }
-  mount.innerHTML = '';
-  try {
-    await clerk.mountSignIn(mount, {
-      routing: 'hash',
-      withSignUp: true,
-      forceRedirectUrl: authReturn(),
-      fallbackRedirectUrl: authReturn(),
-      signUpForceRedirectUrl: authReturn(),
-      signUpFallbackRedirectUrl: authReturn(),
-      appearance: {
-        elements: {
-          rootBox: { width: '100%' },
-          cardBox: { width: '100%', boxShadow: 'none' },
-          card: { width: '100%', boxShadow: 'none' },
-        },
-      },
-    });
-  } catch (problem) {
-    console.error('Não foi possível abrir o componente de acesso do Clerk.', problem);
-    renderClerkStart(mount, clerk);
-  }
+  renderClerkStart(mount, clerk);
 }
 const doubleVoteThresholds = [20, 75, 200];
 function profileProgressInfo(votes) {
