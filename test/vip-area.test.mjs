@@ -101,7 +101,10 @@ test('moderators control VIP placement and passwords in the ranking editor', asy
   assert.doesNotMatch(app, /Área VIP/);
   assert.match(app, /function renderVipGate/);
   assert.match(app, /function loadVipArea/);
-  assert.match(index, /data-experience="vip" href="\/vip"/);
+  const primaryNavigation = index.match(/<nav class="experienceSwitch"[\s\S]*?<\/nav>/)?.[0] || '';
+  assert.match(primaryNavigation, /data-experience="topo" href="\/"/);
+  assert.match(primaryNavigation, /data-experience="local" href="\/local"/);
+  assert.doesNotMatch(primaryNavigation, /data-experience="vip"|href="\/vip"|MEU TOPO/);
   assert.match(style, /\.vipGate/);
   assert.match(style, /\.rankingEditorVip/);
   assert.match(vercel, /moderacao\|vip\|recuperar-senha/);
