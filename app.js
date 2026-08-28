@@ -2956,21 +2956,25 @@ async function finishClerkAuth(clerk, resource, temporaryPassword = '') {
   }
   location.assign(authReturn());
 }
-async function transferClerkSignUp(clerk) {
-  let signUp = await clerk.client.signUp.create({ transfer: true });
-  if (signUp.status === 'complete') {
+async function finishPendingClerkSignUp(clerk, signUp) {
+  if (signUp?.status === 'complete') {
     await finishClerkAuth(clerk, signUp);
     return true;
   }
   const missing = signUp?.missingFields || [];
-  if (missing.includes('password')) {
-    const password = temporaryClerkPassword();
-    signUp = await clerk.client.signUp.update({ password });
-    if (signUp.status === 'complete') {
-      await finishClerkAuth(clerk, signUp, password);
+  if (signUp?.status === 'missing_requirements' && missing.includes('password')) {
+    const password = temporaryClerkPassword(),
+      completed = await clerk.client.signUp.update({ password });
+    if (completed.status === 'complete') {
+      await finishClerkAuth(clerk, completed, password);
       return true;
     }
   }
+  return false;
+}
+async function transferClerkSignUp(clerk) {
+  let signUp = await clerk.client.signUp.create({ transfer: true });
+  if (await finishPendingClerkSignUp(clerk, signUp)) return true;
   throw new Error('clerk_session_incomplete');
 }
 function googleMarkHTML() {
@@ -3164,12 +3168,16 @@ async function renderAuth() {
         async (to) => {
           const signIn = clerk.client.signIn,
             signUp = clerk.client.signUp;
-          console.info('Estado do retorno Google.', {
-            destination: to,
-            signInStatus: signIn?.status,
-            signUpStatus: signUp?.status,
-            transferable: Boolean(signIn?.isTransferable),
-          });
+          console.info(
+            'Estado do retorno Google: ' +
+              JSON.stringify({
+                destination: to,
+                signInStatus: signIn?.status,
+                signUpStatus: signUp?.status,
+                missingSignUpFields: signUp?.missingFields || [],
+                transferable: Boolean(signIn?.isTransferable),
+              }),
+          );
           if (clerk.session || clerk.user) {
             location.assign(authReturn());
             return;
@@ -3181,6 +3189,9 @@ async function renderAuth() {
           if (signUp?.status === 'complete') {
             await finishClerkAuth(clerk, signUp);
             return;
+          }
+          if (signUp?.status === 'missing_requirements') {
+            if (await finishPendingClerkSignUp(clerk, signUp)) return;
           }
           if (signIn?.isTransferable) {
             await transferClerkSignUp(clerk);

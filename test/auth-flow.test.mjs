@@ -24,6 +24,9 @@ test('Clerk starts Google OAuth inside SomosTopo and returns to its own callback
   assert.match(app, /transferable: true/);
   assert.match(app, /signIn\?\.isTransferable/);
   assert.match(app, /transferClerkSignUp\(clerk\)/);
+  assert.match(app, /finishPendingClerkSignUp\(clerk, signUp\)/);
+  assert.match(app, /signUp\?\.status === 'missing_requirements'/);
+  assert.match(app, /missing\.includes\('password'\)/);
   assert.match(app, /clerk\.handleRedirectCallback\([\s\S]*async \(to\) =>/);
   assert.doesNotMatch(app, /clerk\.mountSignIn/);
   assert.doesNotMatch(app, /clerk\.buildSignInUrl/);
