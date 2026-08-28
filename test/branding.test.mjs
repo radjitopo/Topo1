@@ -58,7 +58,7 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260828-1-unified-account-hub'));
+assert.ok(index.includes('/editorial-clean.css?v=20260828-2-meu-topo-tabs'));
 assert.ok(index.includes('/app.js?v=20260827-1-vip-area'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(institutional.includes('/editorial-clean.css?v=20260826-21-login-cta'));
@@ -287,8 +287,8 @@ assert.doesNotMatch(
 );
 assert.match(
   compactEditorialCss,
-  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.profilePage\.profileMetrics\{grid-template-columns:repeat\(auto-fit,minmax\(70px,1fr\)\)/,
-  'profile metrics must stay in one compact row when space allows on phones',
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.vipPage\.profileMetrics\{grid-template-columns:repeat\(auto-fit,minmax\(70px,1fr\)\)/,
+  'activity metrics must stay in one compact row when space allows on phones',
 );
 assert.match(
   compactPopCss,

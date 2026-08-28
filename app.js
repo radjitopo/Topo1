@@ -1164,20 +1164,52 @@ function bindVipOwnerActions() {
   });
 }
 
+function personalAreaHeaderHTML(active = 'activity') {
+  const profilePath = viewer.registered
+      ? '/perfil'
+      : `/entrar?voltar=${encodeURIComponent('/perfil')}`,
+    activityCurrent = active === 'activity',
+    profileCurrent = active === 'profile';
+  return `<section class="personalHubHeader"><div><span class="portalKicker">Seu espaço pessoal</span><h1>Meu Topo</h1><p>Sua atividade e seu perfil reunidos no mesmo lugar.</p></div><nav class="personalHubTabs" aria-label="Áreas do Meu Topo"><a class="${activityCurrent ? 'active' : ''}" href="/vip" ${activityCurrent ? 'aria-current="page"' : ''}>Minha atividade</a><a class="${profileCurrent ? 'active' : ''}" href="${escapeHTML(profilePath)}" ${profileCurrent ? 'aria-current="page"' : ''}>Perfil</a></nav></section>`;
+}
+
+function personalActivityHTML(data = null) {
+  if (!data)
+    return '<section class="profileSection profileRecentSection personalActivityUnavailable"><div class="profileSectionHead"><div class="sectionLabel">Sua participação</div><span>atividade no TOPO</span></div><p class="profileHint">Não consegui carregar seu histórico agora. Seus favoritos e rankings continuam disponíveis acima.</p></section>';
+  const stats = data.stats || {},
+    doubleVotes = data.doubleVotes || {},
+    progress = profileProgressInfo(doubleVotes.totalVotes ?? stats.votes),
+    up = Math.max(0, Number(stats.upVotes || 0)),
+    down = Math.max(0, Number(stats.downVotes || 0)),
+    voteTotal = up + down,
+    upPercent = voteTotal ? Math.round((up / voteTotal) * 100) : 0,
+    downPercent = voteTotal ? 100 - upPercent : 0,
+    powerSummary = progress.unlocked
+      ? `${fmt(doubleVotes.available || 0)} livre${Number(doubleVotes.available || 0) === 1 ? '' : 's'} · ${fmt(doubleVotes.active || 0)} em uso`
+      : 'valem 2 pontos';
+  return `<section class="personalActivityOverview"><span class="portalKicker">Sua participação</span><div class="profileMetrics" aria-label="Resumo da sua atividade"><span><strong>${fmt(stats.votes || 0)}</strong><small>votos ativos</small></span><span><strong>${fmt(stats.rankings || 0)}</strong><small>rankings votados</small></span><span><strong>${fmt(stats.streak || 0)} dia${Number(stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></section><div class="profileDashboard personalActivityDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(data.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(data.recent)}</section>`;
+}
+
 async function loadVipArea() {
   syncExperienceNavigation();
   groupsEl.innerHTML = '';
   document.title = 'Meu Topo — TOPO';
-  const [response, favoriteResponse] = await Promise.all([
+  const [response, favoriteResponse, profileResponse] = await Promise.all([
       fetch('/api?action=vip-catalog', { cache: 'no-store' }),
       viewer.registered
         ? fetch('/api?action=favorites', { cache: 'no-store' })
+        : Promise.resolve(null),
+      viewer.registered
+        ? fetch('/api?action=profile&device_id=' + encodeURIComponent(deviceId), {
+            cache: 'no-store',
+          })
         : Promise.resolve(null),
     ]),
     data = await response.json().catch(() => ({})),
     favoriteData = favoriteResponse?.ok
       ? await favoriteResponse.json().catch(() => ({}))
-      : { favorites: [] };
+      : { favorites: [] },
+    profileData = profileResponse?.ok ? await profileResponse.json().catch(() => null) : null;
   if (!response.ok) throw new Error('vip_catalog');
   vipRankings = Array.isArray(data.rankings) ? data.rankings : [];
   favoriteRankings = Array.isArray(favoriteData.favorites) ? favoriteData.favorites : [];
@@ -1187,9 +1219,6 @@ async function loadVipArea() {
     createAction = viewer.registered
       ? `<button class="vipHeroAction" id="vipCreateToggle" type="button" aria-expanded="${createOpen}">CRIAR NOVO RANKING</button>`
       : `<a class="vipHeroAction" href="${loginPath}">ENTRAR PARA CRIAR</a>`,
-    profileAction = viewer.registered
-      ? '<a class="vipProfileLink" href="/perfil">Editar perfil</a>'
-      : '',
     privateCards = !viewer.registered
       ? '<section class="vipEmpty"><span aria-hidden="true">🔒</span><h2>Entre para ver seus rankings privados.</h2><p>Somente o criador encontra os rankings nesta área.</p></section>'
       : ownedVipRankings.length
@@ -1206,7 +1235,7 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `<section class="vipHero"><span class="portalKicker">Seus gostos, seu espaço</span><h1>Meu Topo</h1><p>Guarde os rankings que você mais gosta e acompanhe os rankings privados do seu grupo.</p><div class="vipHeroActions">${createAction}${profileAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>`;
+  feed.innerHTML = `${personalAreaHeaderHTML('activity')}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
@@ -1214,6 +1243,10 @@ async function loadVipArea() {
   document
     .getElementById('favoriteShareButton')
     ?.addEventListener('click', (event) => shareMyFavorites(event.currentTarget));
+  if (viewer.registered) {
+    void loadProfileLeaderboard();
+    void loadProfileSuggestionCenter();
+  }
 }
 
 function favoriteCollectionToken() {
@@ -1662,7 +1695,7 @@ function portalTrendingHTML(list, label = 'Em alta') {
   return `<section class="portalTrending"><span class="portalTrendingLabel">${escapeHTML(label)}</span><div>${hot.map((r) => `<a href="${rankingPath(r.id)}"><span>${escapeHTML(r.q)}</span></a>`).join('')}</div></section>`;
 }
 function portalIdeaCalloutHTML() {
-  return `<section class="portalIdeaCallout"><div><span class="portalKicker">A comunidade também cria</span><h2>Tem uma ideia de ranking?</h2><p>Sugira um tema no seu perfil e acompanhe a análise.</p></div><a href="/perfil#sugerir-ranking">Sugerir novo ranking →</a></section>`;
+  return `<section class="portalIdeaCallout"><div><span class="portalKicker">A comunidade também cria</span><h2>Tem uma ideia de ranking?</h2><p>Sugira um tema no Meu Topo e acompanhe a análise.</p></div><a href="/vip#sugerir-ranking">Sugerir novo ranking →</a></section>`;
 }
 function clearHomeSearch() {
   homeSearch = '';
@@ -2664,7 +2697,7 @@ function renderVipOwnerEditorScreen(r) {
         result = await response.json().catch(() => ({}));
       if (!response.ok) throw result;
       toast('Ranking privado apagado');
-      location.assign('/perfil#rankings-privados');
+      location.assign('/vip#rankings-privados');
     } catch {
       button.disabled = false;
       status.className = 'vipCreateStatus error';
@@ -2743,7 +2776,7 @@ function renderInternal() {
     local = !vip && topoLocal.isLocalRanking(r),
     homePath = vip
       ? r.vipOwned
-        ? '/perfil#rankings-privados'
+        ? '/vip#rankings-privados'
         : '/vip'
       : local
         ? topoLocal.collectionPath(topoLocal.cityForRanking(r))
@@ -2876,7 +2909,7 @@ function bindProfileSuggestionForm() {
         }),
         result = await response.json().catch(() => ({}));
       if (response.status === 401) {
-        location.assign('/entrar?voltar=%2Fperfil%23sugerir-ranking');
+        location.assign('/entrar?voltar=%2Fvip%23sugerir-ranking');
         return;
       }
       if (!response.ok) throw result;
@@ -3372,7 +3405,7 @@ function bindProfileLeaderboardReports(root = document) {
           }),
           result = await response.json().catch(() => ({}));
         if (response.status === 401) {
-          location.assign('/entrar?voltar=%2Fperfil');
+          location.assign('/entrar?voltar=%2Fvip');
           return;
         }
         if (!response.ok) throw result;
@@ -3421,23 +3454,6 @@ async function loadProfileLeaderboard() {
       '<div class="profileSectionHead"><div class="sectionLabel">Ranking da comunidade</div><span>Top 10</span></div><p class="profileHint">Não consegui carregar o ranking agora.</p>';
   }
 }
-async function refreshProfileLeaderboard() {
-  document.getElementById('profileLeaderboardSection')?.remove();
-  document.querySelector('.profileMetricRank')?.remove();
-  await loadProfileLeaderboard();
-}
-const saveProfilePatchBase = saveProfilePatch;
-saveProfilePatch = async function saveProfilePatchAndRefresh(patch) {
-  const result = await saveProfilePatchBase(patch);
-  void refreshProfileLeaderboard();
-  return result;
-};
-const bindProfileControlsBase = bindProfileControls;
-bindProfileControls = function bindProfileControlsWithLeaderboard() {
-  bindProfileControlsBase();
-  void loadProfileLeaderboard();
-  void loadProfileSuggestionCenter();
-};
 function profileImageFromFile(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file),
@@ -3636,13 +3652,17 @@ function bindProfileControls() {
     };
 }
 async function renderProfile() {
-  document.title = 'Editar perfil — TOPO';
+  document.title = 'Perfil — Meu Topo — TOPO';
   if (!viewer.registered) {
     location.replace('/entrar?modo=entrar');
     return;
   }
   if (queryParams.get('criar') === '1') {
     location.replace('/vip?criar=1');
+    return;
+  }
+  if (location.hash === '#sugerir-ranking' || location.hash === '#rankings-privados') {
+    location.replace('/vip' + location.hash);
     return;
   }
   try {
@@ -3655,20 +3675,11 @@ async function renderProfile() {
     }
     if (!res.ok) throw new Error('profile_load_failed');
     const p = await res.json(),
-      doubleVotes = p.doubleVotes || {},
-      progress = profileProgressInfo(doubleVotes.totalVotes ?? p.stats.votes),
       avatar = p.profile?.avatarData || '',
-      showAvatar = p.profile?.showAvatarOnLeaderboard !== false,
-      up = Number(p.stats.upVotes || 0),
-      down = Number(p.stats.downVotes || 0),
-      voteTotal = up + down,
-      upPercent = voteTotal ? Math.round((up / voteTotal) * 100) : 0,
-      downPercent = voteTotal ? 100 - upPercent : 0,
-      powerSummary = progress.unlocked
-        ? `${fmt(doubleVotes.available || 0)} livre${Number(doubleVotes.available || 0) === 1 ? '' : 's'} · ${fmt(doubleVotes.active || 0)} em uso`
-        : 'valem 2 pontos';
-    const profileSettings = `<section class="profileSection profileSettingsSection" id="perfil-publico"><div class="profileSectionHead"><div class="sectionLabel">Perfil público</div><span>nome e foto</span></div><div class="profileSettingsGrid">${profileNameEditorHTML(p.user)}<div class="profilePhotoPanel"><div class="profilePhotoTitle">Foto do perfil</div><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><div class="profilePhotoActions"><button type="button" id="chooseProfilePhoto">${avatar ? 'Trocar foto' : 'Adicionar foto'}</button><button type="button" id="removeProfilePhoto" ${avatar ? '' : 'hidden'}>Remover</button></div><label class="profilePhotoCheck"><input id="profilePhotoVisibility" type="checkbox" ${showAvatar ? 'checked' : ''}><span>Mostrar minha foto no ranking de usuários</span></label><p class="profilePhotoNote">A imagem é recortada antes de ser salva.</p><div class="profilePhotoStatus" id="profilePhotoStatus" aria-live="polite"></div></div></div></section>`;
-    feed.innerHTML = `<div class="internalHead"><a class="backLink" href="/vip">← Meu Topo</a><button class="logoutBtn" id="logoutBtn">Sair</button></div><section class="profileHero profileGameHero"><div class="profileHeroIntro"><div class="profileAvatarProgress"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div></div><div class="profileHeroHeading"><div class="profileName">${escapeHTML(p.user.name)}</div><a class="profileEditLink" href="#perfil-publico">Editar perfil</a></div></div><div class="profileMetrics" aria-label="Resumo do perfil"><span><strong>${fmt(p.stats.votes)}</strong><small>votos ativos</small></span><span><strong>${fmt(p.stats.rankings)}</strong><small>rankings</small></span><span><strong>${fmt(p.stats.streak || 0)} dia${Number(p.stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></section><div class="profileDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(p.categories)}</section></div>${profileSettings}<section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(p.recent)}</section>`;
+      showAvatar = p.profile?.showAvatarOnLeaderboard !== false;
+    const profileSettings = `<section class="profileSection profileSettingsSection" id="perfil-publico"><div class="profileSectionHead"><div class="sectionLabel">Perfil público</div><span>nome e foto</span></div><div class="profileSettingsGrid">${profileNameEditorHTML(p.user)}<div class="profilePhotoPanel"><div class="profilePhotoTitle">Foto do perfil</div><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><div class="profilePhotoActions"><button type="button" id="chooseProfilePhoto">${avatar ? 'Trocar foto' : 'Adicionar foto'}</button><button type="button" id="removeProfilePhoto" ${avatar ? '' : 'hidden'}>Remover</button></div><label class="profilePhotoCheck"><input id="profilePhotoVisibility" type="checkbox" ${showAvatar ? 'checked' : ''}><span>Mostrar minha foto no ranking da comunidade</span></label><p class="profilePhotoNote">A imagem é recortada antes de ser salva.</p><div class="profilePhotoStatus" id="profilePhotoStatus" aria-live="polite"></div></div></div></section>`,
+      accountSection = `<section class="profileSection profileAccountSection"><div class="profileSectionHead"><div class="sectionLabel">Conta</div><span>acesso e segurança</span></div><div class="profileAccountRow"><span>E-mail de acesso</span><strong>${escapeHTML(p.user.email || '')}</strong></div><button class="logoutBtn" id="logoutBtn" type="button">Sair da conta</button></section>`;
+    feed.innerHTML = `${personalAreaHeaderHTML('profile')}<section class="profileHero profileGameHero profileIdentityHero"><div class="profileHeroIntro"><div class="profileAvatarProgress"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div></div><div class="profileHeroHeading"><div><span class="portalKicker">Perfil</span><h2 class="profileName">${escapeHTML(p.user.name)}</h2><p>É assim que você aparece para a comunidade do TOPO.</p></div></div></div></section>${profileSettings}${accountSection}`;
     document.getElementById('logoutBtn').onclick = logout;
     bindProfileControls();
   } catch (e) {
@@ -3702,7 +3713,7 @@ function showVoteHelp() {
   if (localStorage.getItem('topo_vote_help_seen')) return;
   localStorage.setItem('topo_vote_help_seen', '1');
   showModal(
-    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>${viewer.rankingLimit || 20} opções por ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos são conquistados no perfil.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
+    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>${viewer.rankingLimit || 20} opções por ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos aparecem na sua atividade no Meu Topo.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
   );
 }
 function showRegistrationWall() {
@@ -4131,7 +4142,7 @@ function bindModerationActions() {
           return;
       } else {
         const answer = window.prompt(
-          'Se quiser, escreva o motivo da recusa. A pessoa verá essa nota no perfil:',
+          'Se quiser, escreva o motivo da recusa. A pessoa verá essa nota no Meu Topo:',
           '',
         );
         if (answer === null) return;
@@ -4211,13 +4222,13 @@ async function renderModeration() {
     }
     if (response.status === 403) {
       feed.innerHTML =
-        '<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a></div><section class="moderationAccessDenied"><span class="suggestionEyebrow">Área privada</span><h1>Esta conta não tem acesso à moderação.</h1><p>Entre com o e-mail cadastrado como moderador do TOPO.</p></section>';
+        '<div class="internalHead"><a class="backLink" href="/vip">← Meu Topo</a></div><section class="moderationAccessDenied"><span class="suggestionEyebrow">Área privada</span><h1>Esta conta não tem acesso à moderação.</h1><p>Entre com o e-mail cadastrado como moderador do TOPO.</p></section>';
       return;
     }
     if (!response.ok) throw data;
-    const panelHead = `<div class="internalHead"><a class="backLink" href="/perfil">← Perfil</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div>${moderationPanelTabsHTML(activeTab)}`;
+    const panelHead = `<div class="internalHead"><a class="backLink" href="/vip">← Meu Topo</a><span class="internalMeta">${escapeHTML(data.moderator?.email || '')}</span></div>${moderationPanelTabsHTML(activeTab)}`;
     if (activeTab === 'users') {
-      feed.innerHTML = `${panelHead}${moderationUsersPageHTML(data)}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
+      feed.innerHTML = `${panelHead}${moderationUsersPageHTML(data)}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
       bindModerationUserSearch();
       return;
     }
@@ -4246,7 +4257,7 @@ async function renderModeration() {
         : approvedRankings.length
           ? `${approvedRankings.length} ranking${approvedRankings.length === 1 ? ' está' : 's estão'} pronto${approvedRankings.length === 1 ? '' : 's'} para eu criar.`
           : 'Tudo analisado por enquanto.';
-    feed.innerHTML = `${panelHead}<header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/perfil">← voltar ao perfil</a></div>`;
+    feed.innerHTML = `${panelHead}<header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
     bindModerationActions();
     const targetId = queryParams.get('id'),
       target = targetId ? document.getElementById(`sugestao-${targetId}`) : null;

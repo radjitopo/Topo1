@@ -2105,6 +2105,36 @@ body.popElectric.profilePage .logoutBtn:focus-visible {
   color: var(--clean-coral);
 }
 
+body.popElectric.profilePage .profileAccountSection .logoutBtn {
+  justify-self: start;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+body.popElectric.profilePage .profileAccountRow {
+  display: grid;
+  gap: 5px;
+  border-left: 4px solid var(--clean-sage);
+  background: var(--clean-sage-soft);
+  padding: 14px 16px;
+}
+
+body.popElectric.profilePage .profileAccountRow span {
+  color: var(--clean-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+body.popElectric.profilePage .profileAccountRow strong {
+  overflow-wrap: anywhere;
+  font:
+    750 13px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
 body.popElectric.profilePage .profileGameHero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -2135,6 +2165,17 @@ body.popElectric.profilePage .profileHeroHeading {
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
+}
+
+body.popElectric.profilePage .profileIdentityHero .profileHeroHeading > div {
+  min-width: 0;
+}
+
+body.popElectric.profilePage .profileIdentityHero .profileHeroHeading p {
+  margin: 8px 0 0;
+  color: var(--clean-muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 body.popElectric.profilePage .profileHeroHeading .profileName {
@@ -4953,22 +4994,91 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
 
 /* Meu Topo --------------------------------------------------------------- */
 
-body.popElectric .experienceLink .vipMark {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
+body.popElectric:is(.vipPage, .profilePage) .personalHubHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px 40px;
+  align-items: end;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 24px 0 0;
 }
 
-body.popElectric .experienceLink.vip.active {
-  border-color: #b58e30;
-  background: transparent;
+body.popElectric:is(.vipPage, .profilePage) .personalHubHeader h1 {
+  margin: 5px 0 7px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(42px, 5vw, 62px) / 0.9 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.07em;
+}
+
+body.popElectric:is(.vipPage, .profilePage) .personalHubHeader p {
+  max-width: 560px;
+  margin: 0 0 18px;
+  color: var(--clean-muted);
+  font:
+    650 14px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric:is(.vipPage, .profilePage) .personalHubTabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+body.popElectric:is(.vipPage, .profilePage) .personalHubTabs a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 4px solid transparent;
+  color: var(--clean-muted);
+  padding: 0 2px;
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+body.popElectric:is(.vipPage, .profilePage) .personalHubTabs a:hover,
+body.popElectric:is(.vipPage, .profilePage) .personalHubTabs a:focus-visible,
+body.popElectric:is(.vipPage, .profilePage) .personalHubTabs a.active {
+  border-bottom-color: var(--clean-ink);
   color: var(--clean-ink);
 }
 
 body.popElectric.vipPage .groupsWrap {
   display: none;
+}
+
+body.popElectric .vipActivityLead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 0 18px;
+}
+
+body.popElectric .vipActivityLead h2 {
+  margin: 5px 0 4px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(28px, 3.2vw, 40px) / 0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric .vipActivityLead p {
+  margin: 0;
+  color: var(--clean-muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 body.popElectric .vipHero {
@@ -5026,25 +5136,6 @@ body.popElectric .vipHeroAction {
   letter-spacing: 0.045em;
   text-decoration: none;
   cursor: pointer;
-}
-
-body.popElectric .vipProfileLink {
-  min-height: 30px;
-  border-bottom: 1px solid var(--clean-sage);
-  color: var(--clean-sage);
-  font:
-    900 10px/29px Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: 0.045em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-body.popElectric .vipProfileLink:hover,
-body.popElectric .vipProfileLink:focus-visible {
-  border-bottom-color: var(--clean-coral);
-  color: var(--clean-coral);
 }
 
 body.popElectric .vipCollection {
@@ -6434,6 +6525,96 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
   opacity: 0.65;
 }
 
+body.popElectric.vipPage .personalActivityOverview {
+  margin-top: 42px;
+  border-top: 5px solid var(--clean-ink);
+  padding-top: 16px;
+}
+
+body.popElectric.vipPage .profileMetrics {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0;
+  margin-top: 10px;
+  padding: 0;
+}
+
+body.popElectric.vipPage .profileMetrics > span {
+  min-width: 0;
+  min-height: 64px;
+  align-content: center;
+  border-right: 1px solid var(--clean-line);
+  padding: 12px 16px;
+}
+
+body.popElectric.vipPage .profileMetrics > span:first-child {
+  padding-left: 0;
+}
+
+body.popElectric.vipPage .profileMetrics > span:last-child {
+  border-right: 0;
+}
+
+body.popElectric.vipPage .profileMetrics strong {
+  color: var(--clean-ink);
+  font:
+    800 27px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+
+body.popElectric.vipPage .profileMetrics small {
+  color: var(--clean-muted);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric.vipPage .personalActivityDashboard {
+  gap: 24px;
+  margin-top: 34px;
+}
+
+body.popElectric.vipPage .profileSection {
+  margin: 0 0 34px;
+  border: 0;
+  border-top: 5px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 0 0;
+  box-shadow: none;
+}
+
+body.popElectric.vipPage .profileSectionHead .sectionLabel {
+  color: var(--clean-ink);
+  font:
+    800 18px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.025em;
+}
+
+body.popElectric.vipPage .profileSectionHead > span {
+  color: var(--clean-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+body.popElectric.vipPage .profileComingSoon {
+  border-left-color: var(--clean-sage);
+  border-radius: 0;
+  background: var(--clean-sage-soft);
+  color: var(--clean-ink);
+}
+
+body.popElectric.vipPage .profileLeaderboardRow.current {
+  background: var(--clean-sage-soft);
+  box-shadow: inset 3px 0 0 var(--clean-sage);
+}
+
 @media (max-width: 860px) {
   body.popElectric .vipCreatePanel {
     grid-template-columns: 1fr;
@@ -6446,9 +6627,39 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
 }
 
 @media (max-width: 700px) {
-  body.popElectric .experienceLink .vipMark {
-    width: 16px;
-    height: 16px;
+  body.popElectric:is(.vipPage, .profilePage) .personalHubHeader {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding-top: 15px;
+  }
+
+  body.popElectric:is(.vipPage, .profilePage) .personalHubHeader h1 {
+    font-size: 43px;
+  }
+
+  body.popElectric:is(.vipPage, .profilePage) .personalHubHeader p {
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  body.popElectric:is(.vipPage, .profilePage) .personalHubTabs {
+    gap: 22px;
+  }
+
+  body.popElectric:is(.vipPage, .profilePage) .personalHubTabs a {
+    min-height: 38px;
+    font-size: 10px;
+  }
+
+  body.popElectric .vipActivityLead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+    padding: 19px 0 15px;
+  }
+
+  body.popElectric .vipActivityLead h2 {
+    font-size: 31px;
   }
 
   body.popElectric .vipHero {
@@ -6475,6 +6686,36 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
   body.popElectric .vipHeroActions .vipHeroAction {
     display: inline-block;
     margin-top: 0;
+  }
+
+  body.popElectric.vipPage .profileMetrics {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  }
+
+  body.popElectric.vipPage .profileMetrics > span,
+  body.popElectric.vipPage .profileMetrics > span:first-child {
+    min-height: 56px;
+    padding: 9px 8px;
+  }
+
+  body.popElectric.vipPage .profileMetrics > span:first-child {
+    padding-left: 0;
+  }
+
+  body.popElectric.vipPage .profileMetrics strong {
+    font-size: clamp(20px, 5.8vw, 24px);
+  }
+
+  body.popElectric.vipPage .personalActivityDashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    margin-top: 28px;
+  }
+
+  body.popElectric.vipPage .profileSection {
+    height: auto;
+    margin-bottom: 30px;
+    padding-top: 14px;
   }
 
   body.popElectric .vipCollection {

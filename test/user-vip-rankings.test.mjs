@@ -127,12 +127,15 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
   assert.match(vipArea, /Meu Topo/);
   assert.match(vipArea, /vipCreatePanelHTML\(createOpen\)/);
-  assert.match(vipArea, /href="\/perfil">Editar perfil/);
+  assert.match(vipArea, /personalAreaHeaderHTML\('activity'\)/);
+  assert.match(vipArea, /personalActivityHTML\(profileData\)/);
+  assert.match(vipArea, /loadProfileLeaderboard\(\)/);
+  assert.match(vipArea, /loadProfileSuggestionCenter\(\)/);
   assert.match(vipArea, /bindVipCreateForm\(\)/);
   assert.doesNotMatch(vipArea, /Área VIP/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
-  assert.match(style, /900 clamp\(38px, 4\.4vw, 54px\)/);
-  assert.match(style, /font-size: 38px/);
+  assert.match(style, /900 clamp\(42px, 5vw, 62px\)/);
+  assert.match(style, /font-size: 43px/);
 });
 
 test('only the creator can manage a private ranking and Meu Topo exposes the complete flow', async () => {
@@ -179,11 +182,15 @@ test('only the creator can manage a private ranking and Meu Topo exposes the com
   assert.match(style, /\.vipCreatePanel/);
   assert.match(style, /\.vipOwnerActions/);
   assert.match(style, /\.vipHeroActions/);
-  assert.match(style, /\.vipProfileLink/);
+  assert.match(style, /\.personalHubTabs/);
+  assert.match(style, /\.personalActivityDashboard/);
   assert.match(style, /\.vipOwnerEditor/);
   assert.match(style, /\.vipOwnerEditor > \.vipOwnerEditorHead/);
   assert.match(style, /\.vipRankingCover/);
-  assert.doesNotMatch(profileRender, /Meus rankings privados|vipCreatePanelHTML/);
+  assert.doesNotMatch(
+    profileRender,
+    /Meus rankings privados|vipCreatePanelHTML|profileMetrics|profileRecentSection/,
+  );
   assert.match(index, /vip-custom-rankings/);
 });
 
