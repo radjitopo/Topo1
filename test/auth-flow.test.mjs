@@ -4,16 +4,20 @@ import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
 
-test('Clerk starts Google OAuth inside SomosTopo and returns to its own callback', async () => {
+test('Clerk keeps its complete UI and OAuth callback inside SomosTopo', async () => {
   const [app, page] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('page.js', root), 'utf8'),
   ]);
 
-  assert.match(app, /clerk\.client\.signUp\.authenticateWithRedirect/);
-  assert.match(app, /strategy: 'oauth_google'/);
-  assert.match(app, /new URL\('\/sso-callback', location\.origin\)/);
-  assert.match(app, /redirectUrlComplete/);
+  assert.match(app, /clerk\.mountSignIn\(mount,/);
+  assert.match(app, /@clerk\/ui@1\/dist\/ui\.browser\.js/);
+  assert.match(app, /ui: \{ ClerkUI: window\.__internal_ClerkUICtor \}/);
+  assert.match(app, /initClerk\(true\)/);
+  assert.match(app, /routing: 'hash'/);
+  assert.match(app, /withSignUp: true/);
+  assert.match(app, /forceRedirectUrl: authReturn\(\)/);
+  assert.match(app, /fallbackRedirectUrl: authReturn\(\)/);
   assert.match(app, /signInUrl: '\/entrar'/);
   assert.match(app, /signUpUrl: '\/entrar'/);
   assert.match(app, /signInForceRedirectUrl: authReturn\(\)/);
@@ -28,10 +32,6 @@ test('Clerk starts Google OAuth inside SomosTopo and returns to its own callback
   assert.match(app, /signUp\?\.status === 'missing_requirements'/);
   assert.match(app, /missing\.includes\('password'\)/);
   assert.match(app, /clerk\.handleRedirectCallback\([\s\S]*async \(to\) =>/);
-  assert.doesNotMatch(app, /clerk\.mountSignIn/);
-  assert.doesNotMatch(app, /clerk\.client\.signIn\.authenticateWithRedirect/);
-  assert.doesNotMatch(app, /clerk\.buildSignInUrl/);
-  assert.doesNotMatch(app, /@clerk\/ui/);
   assert.match(page, /Google ou e-mail/);
 });
 

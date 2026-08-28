@@ -185,7 +185,7 @@ function loadExternalScript(src, attributes = {}) {
     document.head.appendChild(script);
   });
 }
-async function initClerk() {
+async function initClerk(withUi = false) {
   if (clerkLoadPromise) return clerkLoadPromise;
   clerkLoadPromise = (async () => {
     const response = await fetch('/api?action=auth-config', { cache: 'no-store' });
@@ -197,11 +197,14 @@ async function initClerk() {
       !String(config.publishableKey || '').startsWith('pk_')
     )
       throw new Error('invalid_clerk_config');
+    if (withUi) await loadExternalScript(`${base}/npm/@clerk/ui@1/dist/ui.browser.js`);
     await loadExternalScript(`${base}/npm/@clerk/clerk-js@6.29.3/dist/clerk.browser.js`, {
       'data-clerk-publishable-key': config.publishableKey,
     });
     if (!window.Clerk) throw new Error('clerk_unavailable');
+    if (withUi && !window.__internal_ClerkUICtor) throw new Error('clerk_ui_unavailable');
     await window.Clerk.load({
+      ...(withUi ? { ui: { ClerkUI: window.__internal_ClerkUICtor } } : {}),
       signInUrl: '/entrar',
       signUpUrl: '/entrar',
       signInForceRedirectUrl: authReturn(),
@@ -3138,7 +3141,7 @@ async function renderAuth() {
   }
   document.title = 'Entrar — TOPO';
   feed.innerHTML = `<div class="authShell clerkAuthShell"><div class="authCard clerkAuthCard"><div class="authEyebrow">Sua conta no TOPO</div><div class="authTitle">Entre em segundos.</div><p class="authIntro">Continue com Google ou use seu e-mail. Na primeira vez, sua conta é criada automaticamente.</p><div class="clerkAuthMount" id="clerkAuthMount"><span class="commentsLoading">preparando acesso seguro…</span></div><div class="authNote">Seus votos deste aparelho serão ligados à sua conta quando você entrar.</div></div></div>`;
-  const clerk = await initClerk(),
+  const clerk = await initClerk(true),
     mount = document.getElementById('clerkAuthMount');
   if (!mount) return;
   if (!clerk) {
@@ -3206,7 +3209,27 @@ async function renderAuth() {
     }
     return;
   }
-  renderClerkStart(mount, clerk);
+  mount.innerHTML = '';
+  try {
+    await clerk.mountSignIn(mount, {
+      routing: 'hash',
+      withSignUp: true,
+      forceRedirectUrl: authReturn(),
+      fallbackRedirectUrl: authReturn(),
+      signUpForceRedirectUrl: authReturn(),
+      signUpFallbackRedirectUrl: authReturn(),
+      appearance: {
+        elements: {
+          rootBox: { width: '100%' },
+          cardBox: { width: '100%', boxShadow: 'none' },
+          card: { width: '100%', boxShadow: 'none' },
+        },
+      },
+    });
+  } catch (problem) {
+    console.error('Não foi possível abrir o componente de acesso do Clerk.', problem);
+    renderClerkStart(mount, clerk);
+  }
 }
 const doubleVoteThresholds = [20, 75, 200];
 function profileProgressInfo(votes) {
