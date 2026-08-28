@@ -46,6 +46,8 @@ async function request({ method = 'GET', action = '', query = {}, body } = {}) {
 
 async function cleanup() {
   await sql.transaction([
+    sql.query('DELETE FROM ranking_top3_selections WHERE device_id = $1', [deviceId]),
+    sql.query('DELETE FROM ranking_duel_rounds WHERE device_id = $1', [deviceId]),
     sql.query('DELETE FROM votes WHERE device_id = $1', [deviceId]),
     sql.query('DELETE FROM anonymous_usage WHERE device_id = $1', [deviceId]),
   ]);
@@ -94,6 +96,56 @@ try {
   assert.equal(removedVote.body.direction, 0);
   assert.equal(removedVote.body.viewer.anonymousUsed, 1);
   assert.equal(removedVote.body.communityVotes, initialCommunityVotes);
+
+  const modes = await request({
+    action: 'ranking-vote-modes',
+    query: { device_id: deviceId, ranking_id: ranking.id },
+  });
+  assert.equal(modes.statusCode, 200);
+  assert.equal(modes.body.top3.standings.length, ranking.opts.length);
+  assert.equal(modes.body.top3.selectedOptionIds.length, 0);
+  assert.equal(modes.body.duel.pair.length, 2);
+
+  const top3OptionIds = ranking.opts.slice(0, 3).map((item) => item.id);
+  const top3 = await request({
+    method: 'POST',
+    action: 'ranking-top3',
+    body: {
+      device_id: deviceId,
+      ranking_id: ranking.id,
+      option_ids: top3OptionIds,
+    },
+  });
+  assert.equal(top3.statusCode, 200);
+  assert.deepEqual(
+    [...top3.body.top3.selectedOptionIds].sort((a, b) => a - b),
+    [...top3OptionIds].sort((a, b) => a - b),
+  );
+  assert.equal(top3.body.viewer.anonymousUsed, 2);
+
+  const pair = modes.body.duel.pair.map((item) => item.optionId);
+  const duel = await request({
+    method: 'POST',
+    action: 'ranking-duel',
+    body: {
+      device_id: deviceId,
+      ranking_id: ranking.id,
+      option_ids: pair,
+      winner_option_id: pair[0],
+    },
+  });
+  assert.equal(duel.statusCode, 200);
+  assert.equal(duel.body.viewer.anonymousUsed, 3);
+  assert.equal(duel.body.duel.seenOptions, 2);
+  assert.equal(duel.body.duel.standings.find((item) => item.optionId === pair[0]).wins, 1);
+  assert.ok(duel.body.duel.pair.every((item) => !pair.includes(item.optionId)));
+
+  const afterModes = await request({ query: { device_id: deviceId } });
+  const unchangedOption = afterModes.body.rankings
+    .find((item) => item.id === ranking.id)
+    .opts.find((item) => item.id === option.id);
+  assert.equal(unchangedOption.score, removedVote.body.score);
+  assert.equal(unchangedOption.mine, 0);
 
   const profile = await request({ action: 'profile', query: { device_id: deviceId } });
   assert.equal(profile.statusCode, 401);

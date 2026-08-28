@@ -6,64 +6,103 @@ import { compactSource, extractTopLevelDeclaration } from './source-helpers.mjs'
 
 const root = new URL('../', import.meta.url);
 
-test('duel rounds are balanced, short and limited to options without a vote', async () => {
-  const source = await readFile(new URL('app.js', root), 'utf8'),
-    declarations = ['duelEligibleOptions', 'duelPairKey', 'buildBalancedDuelPairs'].map((name) =>
-      extractTopLevelDeclaration(source, name),
-    );
+test('ranking pages default to Top 3 and expose three independent voting tabs', async () => {
+  const app = await readFile(new URL('app.js', root), 'utf8');
+  const chooseMode = extractTopLevelDeclaration(app, 'activeRankingVoteMode');
 
-  assert.ok(declarations.every(Boolean), 'duel pairing helpers must remain testable');
+  assert.ok(chooseMode, 'the mode selector must remain testable');
+  for (const [search, expected] of [
+    ['', 'top3'],
+    ['?modo=top3', 'top3'],
+    ['?modo=duelo', 'duelo'],
+    ['?modo=livre', 'livre'],
+    ['?modo=flechas', 'livre'],
+  ]) {
+    const context = vm.createContext({ location: { search }, URLSearchParams });
+    vm.runInContext(`${chooseMode}\nglobalThis.mode = activeRankingVoteMode();`, context);
+    assert.equal(context.mode, expected);
+  }
 
-  const context = vm.createContext({ Math, Number, Set });
-  vm.runInContext(
-    `${declarations.join('\n')}
-globalThis.buildPairsForTest = buildBalancedDuelPairs;
-globalThis.pairKeyForTest = duelPairKey;`,
-    context,
-  );
-
-  const options = Array.from({ length: 12 }, (_, index) => ({
-      id: index + 1,
-      label: `Opção ${index + 1}`,
-      mine: [2, 7].includes(index + 1) ? 1 : 0,
-    })),
-    seen = new Set(['1:3']),
-    pairs = context.buildPairsForTest(options, seen, 5, () => 0.9),
-    ids = pairs.flat().map((option) => option.id);
-
-  assert.equal(pairs.length, 5, 'a round should contain at most five duels');
-  assert.equal(new Set(ids).size, ids.length, 'an option must appear only once per round');
-  assert.ok(!ids.includes(2) && !ids.includes(7), 'previously voted options must be excluded');
-  assert.ok(
-    pairs.every((pair) => !seen.has(context.pairKeyForTest(pair[0], pair[1]))),
-    'a previous pair should be avoided while a new pairing is available',
-  );
+  const compact = compactSource(app);
+  assert.match(compact, /data-ranking-vote-mode="top3"/);
+  assert.match(compact, /data-ranking-vote-mode="duelo"/);
+  assert.match(compact, /data-ranking-vote-mode="livre"/);
+  assert.match(compact, />TOP3</);
+  assert.match(compact, />DUELOS</);
+  assert.match(compact, />VOTOLIVRE</);
+  assert.match(compact, /EsteresultadonãosomapontosaoVotoLivre/);
 });
 
-test('a duel gives only the chosen option one positive vote', async () => {
-  const [app, style, index] = await Promise.all([
-      readFile(new URL('app.js', root), 'utf8'),
-      readFile(new URL('editorial-clean.css', root), 'utf8'),
-      readFile(new URL('index.html', root), 'utf8'),
-    ]),
-    compact = compactSource(app),
-    choose = extractTopLevelDeclaration(app, 'chooseDuelOption');
+test('tab changes stay in place instead of navigating the ranking page', async () => {
+  const app = await readFile(new URL('app.js', root), 'utf8');
+  const tabs = extractTopLevelDeclaration(app, 'rankingVoteModeHTML');
+  const updateUrl = extractTopLevelDeclaration(app, 'updateVoteModeUrl');
 
-  assert.match(choose, /direction:\s*1/);
-  assert.doesNotMatch(choose, /direction:\s*-1/);
-  assert.match(compact, /Avencedorarecebe\+1eaoutracontinuacomzero/);
-  assert.match(compact, /duelEligibleOptions\(ranking\)\.length>=2/);
-  assert.match(compact, /data-start-random-duel/);
-  assert.match(compact, /VOTARCOMFLECHAS/);
-  assert.match(compact, /MODODUELO/);
+  assert.match(tabs, /<button/);
+  assert.doesNotMatch(tabs, /href=/);
+  assert.match(updateUrl, /history\.pushState/);
+  assert.doesNotMatch(updateUrl, /location\.(?:assign|replace)/);
+  assert.doesNotMatch(updateUrl, /scrollTo|scrollIntoView/);
+});
+
+test('Top 3 and Duel persist outside the arrow score', async () => {
+  const [api, migration] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('migrations/20260828_voting_modes.sql', root), 'utf8'),
+  ]);
+  const top3 = extractTopLevelDeclaration(api, 'saveTop3');
+  const duel = extractTopLevelDeclaration(api, 'saveDuel');
+
+  assert.match(top3, /optionIds\.length !== 3/);
+  assert.match(top3, /ranking_top3_selections/);
+  assert.doesNotMatch(top3, /INSERT INTO votes\b/);
+  assert.match(duel, /ranking_duel_rounds/);
+  assert.match(duel, /ranking_duel_entries/);
+  assert.doesNotMatch(duel, /INSERT INTO votes\b/);
+  assert.match(duel, /winnerOptionId === null/);
+  assert.match(migration, /CREATE TABLE IF NOT EXISTS ranking_top3_selections/);
+  assert.match(migration, /CREATE TABLE IF NOT EXISTS ranking_duel_entries/);
+});
+
+test('each option appears at most once per voter and pairs favor lower exposure', async () => {
+  const [api, migration] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('migrations/20260828_voting_modes.sql', root), 'utf8'),
+  ]);
+  const state = extractTopLevelDeclaration(api, 'rankingVotingModeState');
+
+  assert.match(migration, /ranking_duel_user_option_unique_idx/);
+  assert.match(migration, /\(user_id, ranking_id, option_id\)[\s\S]*WHERE user_id IS NOT NULL/);
+  assert.match(migration, /ranking_duel_device_option_unique_idx/);
+  assert.match(migration, /\(device_id, ranking_id, option_id\)[\s\S]*WHERE user_id IS NULL/);
+  assert.match(state, /AND NOT EXISTS/);
+  assert.match(state, /COALESCE\(exposure\.appearances, 0\)/);
+  assert.match(state, /ORDER BY[\s\S]*exposure\.appearances/);
+  assert.match(state, /COUNT\(entry\.option_id\) FILTER \(WHERE entry\.won IS TRUE\)/);
+});
+
+test('duel copy, results and mobile layout keep scoring clear', async () => {
+  const [app, style, index] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+    readFile(new URL('index.html', root), 'utf8'),
+  ]);
+  const compact = compactSource(app);
+
+  assert.match(compact, /Cadavitóriavale1somentenorankingdosDuelos/);
+  assert.match(compact, /Asflechasnãomudam/);
+  assert.match(compact, /RankingdosDuelos/);
+  assert.match(compact, /desempateporaproveitamento/);
+  assert.match(compact, /PULAR·NÃOCONHEÇO/);
   assert.match(style, /\.rankingVoteModes/);
-  assert.match(style, /\.duelChoices/);
-  assert.match(style, /\.duelHomeCallout/);
+  assert.match(style, /grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(style, /\.rankingTop3/);
+  assert.match(style, /\.duelStandings/);
   assert.match(
     style,
     /\.rankingDuel > header \{[\s\S]*?height: auto;[\s\S]*?display: block;/,
     'the global site header layout must not leak into the duel header',
   );
-  assert.match(style, /hyphens: auto;/, 'long option names should wrap cleanly on phones');
+  assert.match(style, /hyphens: auto;/, 'long duel labels should wrap cleanly on phones');
   assert.match(index, /duel-mode/);
 });

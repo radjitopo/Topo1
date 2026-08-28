@@ -938,6 +938,64 @@ async function mergeAnonymousVotes(userId, deviceId) {
     ),
     sql.query(
       `
+      DELETE FROM ranking_top3_selections AS anonymous_selection
+      WHERE anonymous_selection.device_id = $2
+        AND anonymous_selection.user_id IS NULL
+        AND EXISTS (
+          SELECT 1
+          FROM ranking_top3_selections AS account_selection
+          WHERE account_selection.user_id = $1
+            AND account_selection.ranking_id = anonymous_selection.ranking_id
+        )
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      UPDATE ranking_top3_selections
+      SET user_id = $1, updated_at = now()
+      WHERE device_id = $2
+        AND user_id IS NULL
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      DELETE FROM ranking_duel_rounds AS anonymous_round
+      WHERE anonymous_round.device_id = $2
+        AND anonymous_round.user_id IS NULL
+        AND EXISTS (
+          SELECT 1
+          FROM ranking_duel_entries AS anonymous_entry
+          JOIN ranking_duel_entries AS account_entry
+            ON account_entry.user_id = $1
+           AND account_entry.ranking_id = anonymous_entry.ranking_id
+           AND account_entry.option_id = anonymous_entry.option_id
+          WHERE anonymous_entry.round_id = anonymous_round.id
+        )
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      UPDATE ranking_duel_rounds
+      SET user_id = $1
+      WHERE device_id = $2
+        AND user_id IS NULL
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      UPDATE ranking_duel_entries
+      SET user_id = $1
+      WHERE device_id = $2
+        AND user_id IS NULL
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
       INSERT INTO user_vote_history (user_id, option_id, first_voted_at)
       SELECT $1, vote.option_id, MIN(vote.updated_at)
       FROM votes AS vote
@@ -4453,6 +4511,522 @@ async function moderateSuggestion(req, res, body) {
   return json(res, 200, { ok: true, suggestion: rows[0] });
 }
 
+async function rankingVotingContext(req, res, deviceId, rankingId, write = false) {
+  if (!isValidDevice(deviceId) || !isValidRankingId(rankingId)) {
+    json(res, 400, { error: 'invalid_ranking_vote_mode' });
+    return null;
+  }
+
+  const user = await sessionUser(req);
+  if (user && !(await ensureSessionDevice(user, deviceId))) {
+    json(res, 409, { error: 'device_rekey_required' });
+    return null;
+  }
+
+  const [ranking] = await sql.query(
+    `
+    SELECT
+      id,
+      is_vip AS "isVip",
+      vip_voting_open AS "vipVotingOpen",
+      vip_password_version AS "vipPasswordVersion",
+      vip_owner_user_id AS "vipOwnerUserId"
+    FROM rankings
+    WHERE id = $1
+      AND is_active = true
+    LIMIT 1
+  `,
+    [rankingId],
+  );
+
+  if (!ranking) {
+    json(res, 404, { error: 'ranking_not_found' });
+    return null;
+  }
+  if (write && !user && (await deviceAccountId(deviceId)) && ranking.isVip !== true) {
+    json(res, 403, { error: 'account_required_on_this_device' });
+    return null;
+  }
+  if (!hasVipAccess(req, user, ranking)) {
+    json(res, 403, { error: 'vip_password_required' });
+    return null;
+  }
+  if (write && ranking.isVip === true && ranking.vipVotingOpen === false) {
+    json(res, 409, { error: 'ranking_voting_closed' });
+    return null;
+  }
+
+  return { user, ranking };
+}
+
+async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = true) {
+  const userId = user?.id || null;
+  const ownerSeed = userId ? `user:${userId}` : `device:${deviceId}`;
+  const ownerClause = `(
+    ($2::uuid IS NOT NULL AND vote.user_id = $2::uuid)
+    OR (
+      $2::uuid IS NULL
+      AND vote.user_id IS NULL
+      AND vote.device_id = $3
+    )
+  )`;
+  const duelOwnerClause = `(
+    ($2::uuid IS NOT NULL AND entry.user_id = $2::uuid)
+    OR (
+      $2::uuid IS NULL
+      AND entry.user_id IS NULL
+      AND entry.device_id = $3
+    )
+  )`;
+
+  const top3StandingsQuery = sql.query(
+    `
+    SELECT
+      option.id AS "optionId",
+      option.label,
+      option.position,
+      COUNT(selection.id)::int AS choices
+    FROM ranking_options option
+    LEFT JOIN ranking_top3_selections selection
+      ON selection.ranking_id = option.ranking_id
+     AND selection.option_id = option.id
+    WHERE option.ranking_id = $1
+    GROUP BY option.id, option.label, option.position
+    ORDER BY choices DESC, option.position, option.id
+  `,
+    [rankingId],
+  );
+  const selectedTop3Query = sql.query(
+    `
+    SELECT vote.option_id AS "optionId"
+    FROM ranking_top3_selections vote
+    WHERE vote.ranking_id = $1
+      AND ${ownerClause}
+    ORDER BY vote.updated_at, vote.option_id
+  `,
+    [rankingId, userId, deviceId],
+  );
+  const duelStandingsQuery = sql.query(
+    `
+    SELECT
+      option.id AS "optionId",
+      option.label,
+      option.position,
+      COUNT(entry.option_id) FILTER (WHERE entry.won IS TRUE)::int AS wins,
+      COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL)::int AS duels
+    FROM ranking_options option
+    LEFT JOIN ranking_duel_entries entry
+      ON entry.ranking_id = option.ranking_id
+     AND entry.option_id = option.id
+    WHERE option.ranking_id = $1
+    GROUP BY option.id, option.label, option.position
+    ORDER BY
+      wins DESC,
+      CASE
+        WHEN COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL) = 0 THEN 0
+        ELSE COUNT(entry.option_id) FILTER (WHERE entry.won IS TRUE)::numeric
+          / COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL)
+      END DESC,
+      duels ASC,
+      option.position,
+      option.id
+  `,
+    [rankingId],
+  );
+  const pairQuery = votingOpen
+    ? sql.query(
+        `
+        WITH exposure AS (
+          SELECT option_id, COUNT(*)::int AS appearances
+          FROM ranking_duel_entries
+          WHERE ranking_id = $1
+            AND won IS NOT NULL
+          GROUP BY option_id
+        )
+        SELECT
+          option.id AS "optionId",
+          option.label,
+          COALESCE(exposure.appearances, 0)::int AS appearances
+        FROM ranking_options option
+        LEFT JOIN exposure ON exposure.option_id = option.id
+        WHERE option.ranking_id = $1
+          AND NOT EXISTS (
+            SELECT 1
+            FROM ranking_duel_entries entry
+            WHERE entry.ranking_id = option.ranking_id
+              AND entry.option_id = option.id
+              AND ${duelOwnerClause}
+          )
+        ORDER BY
+          COALESCE(exposure.appearances, 0),
+          md5($4 || ':' || option.id::text),
+          option.position
+        LIMIT 2
+      `,
+        [rankingId, userId, deviceId, ownerSeed],
+      )
+    : Promise.resolve([]);
+  const summaryQuery = sql.query(
+    `
+    SELECT
+      (
+        SELECT COUNT(DISTINCT CASE
+          WHEN selection.user_id IS NOT NULL THEN 'user:' || selection.user_id::text
+          ELSE 'device:' || selection.device_id
+        END)::int
+        FROM ranking_top3_selections selection
+        WHERE selection.ranking_id = $1
+      ) AS "top3Ballots",
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_duel_rounds round
+        WHERE round.ranking_id = $1
+          AND round.skipped = false
+      ) AS "totalDuels",
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_duel_rounds round
+        WHERE round.ranking_id = $1
+          AND round.skipped = false
+          AND (
+            ($2::uuid IS NOT NULL AND round.user_id = $2::uuid)
+            OR (
+              $2::uuid IS NULL
+              AND round.user_id IS NULL
+              AND round.device_id = $3
+            )
+          )
+      ) AS "myDuels",
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_duel_entries entry
+        WHERE entry.ranking_id = $1
+          AND ${duelOwnerClause}
+      ) AS "seenOptions",
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_options option
+        WHERE option.ranking_id = $1
+      ) AS "totalOptions"
+  `,
+    [rankingId, userId, deviceId],
+  );
+
+  const [top3Rows, selectedRows, duelRows, pairRows, summaryRows] = await Promise.all([
+    top3StandingsQuery,
+    selectedTop3Query,
+    duelStandingsQuery,
+    pairQuery,
+    summaryQuery,
+  ]);
+  const summary = summaryRows[0] || {};
+
+  return {
+    top3: {
+      selectedOptionIds: selectedRows.map((row) => Number(row.optionId)),
+      totalBallots: Number(summary.top3Ballots || 0),
+      standings: top3Rows.map((row) => ({
+        optionId: Number(row.optionId),
+        label: row.label,
+        choices: Number(row.choices || 0),
+      })),
+    },
+    duel: {
+      pair:
+        pairRows.length === 2
+          ? pairRows.map((row) => ({
+              optionId: Number(row.optionId),
+              label: row.label,
+            }))
+          : [],
+      totalDuels: Number(summary.totalDuels || 0),
+      myDuels: Number(summary.myDuels || 0),
+      seenOptions: Number(summary.seenOptions || 0),
+      totalOptions: Number(summary.totalOptions || 0),
+      standings: duelRows.map((row) => {
+        const wins = Number(row.wins || 0),
+          duels = Number(row.duels || 0);
+        return {
+          optionId: Number(row.optionId),
+          label: row.label,
+          wins,
+          duels,
+          winRate: duels ? wins / duels : 0,
+        };
+      }),
+    },
+  };
+}
+
+async function rankingVotingModes(req, res) {
+  const deviceId = queryValue(req, 'device_id');
+  const rankingId = queryValue(req, 'ranking_id').trim();
+  const context = await rankingVotingContext(req, res, deviceId, rankingId);
+  if (!context) return;
+
+  const votingOpen = context.ranking.isVip !== true || context.ranking.vipVotingOpen !== false;
+  const [modes, currentViewer] = await Promise.all([
+    rankingVotingModeState(rankingId, context.user, deviceId, votingOpen),
+    viewerFor(context.user, deviceId, false, context.ranking.isVip === true),
+  ]);
+
+  return json(res, 200, { ok: true, votingOpen, ...modes, viewer: currentViewer });
+}
+
+async function saveTop3(req, res, body) {
+  const deviceId = String(body.device_id || '');
+  const rankingId = String(body.ranking_id || '').trim();
+  const optionIds = [
+    ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
+  ];
+  if (optionIds.length !== 3 || optionIds.some((id) => !Number.isSafeInteger(id) || id <= 0)) {
+    return json(res, 400, { error: 'top3_requires_three_options' });
+  }
+
+  const context = await rankingVotingContext(req, res, deviceId, rankingId, true);
+  if (!context) return;
+  const userId = context.user?.id || null;
+  const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
+  const currentSelectionQuery = userId
+    ? sql.query(
+        `SELECT COUNT(*)::int AS total FROM ranking_top3_selections
+         WHERE ranking_id = $1 AND user_id = $2`,
+        [rankingId, userId],
+      )
+    : sql.query(
+        `SELECT COUNT(*)::int AS total FROM ranking_top3_selections
+         WHERE ranking_id = $1 AND user_id IS NULL AND device_id = $2`,
+        [rankingId, deviceId],
+      );
+  const [validOptions, currentSelections] = await Promise.all([
+    sql.query(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM ranking_options
+      WHERE ranking_id = $1
+        AND id = ANY($2::bigint[])
+    `,
+      [rankingId, optionIds],
+    ),
+    currentSelectionQuery,
+  ]);
+  if (Number(validOptions[0]?.total || 0) !== 3) {
+    return json(res, 400, { error: 'invalid_top3_options' });
+  }
+
+  const hadBallot = Number(currentSelections[0]?.total || 0) > 0;
+  const consumesAnonymousVote = !context.user && context.ranking.isVip !== true && !hadBallot;
+  if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
+    return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
+  }
+
+  const statements = [
+    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 31))', [
+      `${rankingId}:${ownerKey}`,
+    ]),
+  ];
+  if (consumesAnonymousVote) {
+    statements.push(
+      sql.query(
+        `
+        INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
+        SELECT $1, 1, now()
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM ranking_top3_selections
+          WHERE ranking_id = $2
+            AND user_id IS NULL
+            AND device_id = $1
+        )
+        ON CONFLICT (device_id)
+        DO UPDATE SET
+          votes_used = anonymous_usage.votes_used + 1,
+          updated_at = now()
+      `,
+        [deviceId, rankingId],
+      ),
+    );
+  }
+  if (userId) {
+    statements.push(
+      sql.query('DELETE FROM ranking_top3_selections WHERE ranking_id = $1 AND user_id = $2', [
+        rankingId,
+        userId,
+      ]),
+    );
+  } else {
+    statements.push(
+      sql.query(
+        `DELETE FROM ranking_top3_selections
+         WHERE ranking_id = $1 AND user_id IS NULL AND device_id = $2`,
+        [rankingId, deviceId],
+      ),
+    );
+  }
+  statements.push(
+    sql.query(
+      `
+      INSERT INTO ranking_top3_selections (
+        ranking_id,
+        option_id,
+        device_id,
+        user_id,
+        created_at,
+        updated_at
+      )
+      SELECT $1, selected.option_id, $2, $3::uuid, now(), now()
+      FROM unnest($4::bigint[]) AS selected(option_id)
+    `,
+      [rankingId, deviceId, userId, optionIds],
+    ),
+  );
+  await sql.transaction(statements);
+
+  const [modes, currentViewer] = await Promise.all([
+    rankingVotingModeState(rankingId, context.user, deviceId, true),
+    viewerFor(context.user, deviceId, false, context.ranking.isVip === true),
+  ]);
+  return json(res, 200, { ok: true, ...modes, viewer: currentViewer });
+}
+
+async function saveDuel(req, res, body) {
+  const deviceId = String(body.device_id || '');
+  const rankingId = String(body.ranking_id || '').trim();
+  const optionIds = [
+    ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
+  ];
+  const winnerOptionId = body.winner_option_id == null ? null : Number(body.winner_option_id);
+  if (
+    optionIds.length !== 2 ||
+    optionIds.some((id) => !Number.isSafeInteger(id) || id <= 0) ||
+    (winnerOptionId !== null && !optionIds.includes(winnerOptionId))
+  ) {
+    return json(res, 400, { error: 'invalid_duel' });
+  }
+
+  const context = await rankingVotingContext(req, res, deviceId, rankingId, true);
+  if (!context) return;
+  const userId = context.user?.id || null;
+  const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
+  const [validOptions, alreadySeen] = await Promise.all([
+    sql.query(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM ranking_options
+      WHERE ranking_id = $1
+        AND id = ANY($2::bigint[])
+    `,
+      [rankingId, optionIds],
+    ),
+    sql.query(
+      `
+      SELECT COUNT(*)::int AS total
+      FROM ranking_duel_entries entry
+      WHERE entry.ranking_id = $1
+        AND entry.option_id = ANY($2::bigint[])
+        AND (
+          ($3::uuid IS NOT NULL AND entry.user_id = $3::uuid)
+          OR (
+            $3::uuid IS NULL
+            AND entry.user_id IS NULL
+            AND entry.device_id = $4
+          )
+        )
+    `,
+      [rankingId, optionIds, userId, deviceId],
+    ),
+  ]);
+  if (Number(validOptions[0]?.total || 0) !== 2) {
+    return json(res, 400, { error: 'invalid_duel_options' });
+  }
+  if (Number(alreadySeen[0]?.total || 0) > 0) {
+    const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
+    return json(res, 409, { error: 'duel_option_already_seen', ...modes });
+  }
+
+  const skipped = winnerOptionId === null;
+  const consumesAnonymousVote = !context.user && context.ranking.isVip !== true && !skipped;
+  if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
+    return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
+  }
+
+  const roundId = randomUUID();
+  const statements = [
+    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 37))', [
+      `${rankingId}:${ownerKey}`,
+    ]),
+    sql.query(
+      `
+      INSERT INTO ranking_duel_rounds (
+        id,
+        ranking_id,
+        device_id,
+        user_id,
+        skipped,
+        created_at
+      )
+      VALUES ($1, $2, $3, $4::uuid, $5, now())
+    `,
+      [roundId, rankingId, deviceId, userId, skipped],
+    ),
+    sql.query(
+      `
+      INSERT INTO ranking_duel_entries (
+        round_id,
+        ranking_id,
+        option_id,
+        device_id,
+        user_id,
+        won,
+        created_at
+      )
+      SELECT
+        $1,
+        $2,
+        option.option_id,
+        $3,
+        $4::uuid,
+        CASE
+          WHEN $5::bigint IS NULL THEN NULL
+          ELSE option.option_id = $5::bigint
+        END,
+        now()
+      FROM unnest($6::bigint[]) AS option(option_id)
+    `,
+      [roundId, rankingId, deviceId, userId, winnerOptionId, optionIds],
+    ),
+  ];
+  if (consumesAnonymousVote) {
+    statements.push(
+      sql.query(
+        `
+        INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
+        VALUES ($1, 1, now())
+        ON CONFLICT (device_id)
+        DO UPDATE SET
+          votes_used = anonymous_usage.votes_used + 1,
+          updated_at = now()
+      `,
+        [deviceId],
+      ),
+    );
+  }
+
+  try {
+    await sql.transaction(statements);
+  } catch (error) {
+    if (error?.code !== '23505') throw error;
+    const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
+    return json(res, 409, { error: 'duel_option_already_seen', ...modes });
+  }
+
+  const [modes, currentViewer] = await Promise.all([
+    rankingVotingModeState(rankingId, context.user, deviceId, true),
+    viewerFor(context.user, deviceId, false, context.ranking.isVip === true),
+  ]);
+  return json(res, 200, { ok: true, ...modes, viewer: currentViewer });
+}
+
 async function vote(req, res, body) {
   const deviceId = String(body.device_id || '');
   const optionId = Number(body.option_id);
@@ -4876,6 +5450,7 @@ export default async function handler(req, res) {
       if (action === 'vip-ranking') return vipRanking(req, res);
       if (action === 'favorites') return favorites(req, res);
       if (action === 'favorite-collection') return favoriteCollection(req, res);
+      if (action === 'ranking-vote-modes') return rankingVotingModes(req, res);
       if (action === 'auth-config') return clerkConfig(req, res);
       if (action === 'notifications') return notifications(req, res);
       if (action === 'profile') return profile(req, res);
@@ -4905,6 +5480,8 @@ export default async function handler(req, res) {
         if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
         if (action === 'favorites') return addFavorite(req, res, body);
         if (action === 'favorite-share') return shareFavorites(req, res);
+        if (action === 'ranking-top3') return saveTop3(req, res, body);
+        if (action === 'ranking-duel') return saveDuel(req, res, body);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);
         if (action === 'notifications') return notifications(req, res, body);

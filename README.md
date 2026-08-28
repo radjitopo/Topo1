@@ -58,6 +58,7 @@ npm run db:suggestions
 npm run db:ranking-editor
 npm run db:vip-area
 npm run db:ranking-favorites
+npm run db:voting-modes
 npm run db:local-content-quality
 ```
 

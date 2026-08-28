@@ -12,8 +12,7 @@ const feed = document.getElementById('feed'),
   storeKey = 'topo_device_id',
   cityStoreKey = 'topo_local_city',
   firstShowKey = 'topo_first_show_seen',
-  lastHeroKey = 'topo_last_home_hero',
-  duelPairStoreKey = 'topo_duel_pairs_v1';
+  lastHeroKey = 'topo_last_home_hero';
 function newDeviceId() {
   return crypto.randomUUID
     ? crypto.randomUUID()
@@ -90,7 +89,9 @@ let rankings = [],
   },
   community = { rankings: 0, votes: 0, users: 0 },
   localCityCatalog = [],
-  duelState = null,
+  rankingVotingState = null,
+  top3Draft = null,
+  rankingVotingRequest = 0,
   clerkLoadPromise = null,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
@@ -283,87 +284,18 @@ function isFirstShowCandidate(r) {
 function myVoteCount(r) {
   return (r?.opts || []).reduce((n, o) => n + (Number(o.mine) !== 0 ? 1 : 0), 0);
 }
-function duelEligibleOptions(r) {
-  return (r?.opts || []).filter((option) => Number(option.mine) === 0);
-}
-function duelPairKey(first, second) {
-  return [Number(first?.id || first), Number(second?.id || second)].sort((a, b) => a - b).join(':');
-}
-function buildBalancedDuelPairs(options, seenPairs = new Set(), limit = 5, random = Math.random) {
-  const pool = (options || [])
-      .filter((option) => Number(option.mine) === 0)
-      .map((option) => ({ option, order: Number(random()) || 0 }))
-      .sort((a, b) => a.order - b.order || Number(a.option.id) - Number(b.option.id)),
-    pairs = [],
-    maxPairs = Math.max(1, Math.min(5, Number(limit) || 5));
-
-  while (pool.length > 1 && pairs.length < maxPairs) {
-    let match = null;
-    for (let left = 0; left < pool.length - 1 && !match; left += 1) {
-      for (let right = left + 1; right < pool.length; right += 1) {
-        if (!seenPairs.has(duelPairKey(pool[left].option, pool[right].option))) {
-          match = [left, right];
-          break;
-        }
-      }
-    }
-    const [leftIndex, rightIndex] = match || [0, 1],
-      rightEntry = pool.splice(rightIndex, 1)[0],
-      leftEntry = pool.splice(leftIndex, 1)[0];
-    let first = leftEntry.option,
-      second = rightEntry.option;
-    if (random() < 0.5) [first, second] = [second, first];
-    pairs.push([first, second]);
-  }
-  return pairs;
-}
-function duelPairHistory() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(duelPairStoreKey) || '{}');
-    return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
-  } catch {
-    return {};
-  }
-}
-function seenDuelPairs(rankingId) {
-  const history = duelPairHistory(),
-    pairs = Array.isArray(history[rankingId]) ? history[rankingId] : [];
-  return new Set(pairs.map(String));
-}
-function rememberDuelPair(rankingId, pair) {
-  try {
-    const history = duelPairHistory(),
-      key = duelPairKey(pair[0], pair[1]),
-      stored = Array.isArray(history[rankingId]) ? history[rankingId] : [];
-    history[rankingId] = [...new Set([...stored, key])].slice(-220);
-    const rankingIds = Object.keys(history);
-    rankingIds.slice(0, Math.max(0, rankingIds.length - 80)).forEach((id) => delete history[id]);
-    localStorage.setItem(duelPairStoreKey, JSON.stringify(history));
-  } catch {}
-}
-function startDuelRound(r) {
-  const previousRound = duelState?.rankingId === r.id ? Number(duelState.round || 0) : 0,
-    pairs = buildBalancedDuelPairs(duelEligibleOptions(r), seenDuelPairs(r.id), 5).map(
-      ([first, second]) => [Number(first.id), Number(second.id)],
-    );
-  duelState = { rankingId: r.id, pairs, index: 0, round: previousRound + 1 };
-  return duelState;
-}
-function duelStateFor(r) {
-  if (!duelState || duelState.rankingId !== r.id) return startDuelRound(r);
-  return duelState;
-}
-function duelModeActive() {
-  return pageKind() === 'ranking' && queryParams.get('modo') === 'duelo';
+function activeRankingVoteMode() {
+  const mode = new URLSearchParams(location.search).get('modo');
+  if (mode === 'duelo') return 'duelo';
+  if (mode === 'livre' || mode === 'flechas') return 'livre';
+  return 'top3';
 }
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
-      (ranking) =>
-        !ranking.vip && ranking.id !== excludeRankingId && duelEligibleOptions(ranking).length >= 2,
+      (ranking) => !ranking.vip && ranking.id !== excludeRankingId && ranking.opts?.length >= 2,
     ),
-    untouched = available.filter((ranking) => myVoteCount(ranking) === 0),
-    pool = untouched.length ? untouched : available;
-  return pool[Math.floor(Math.random() * pool.length)] || null;
+    pool = shuffle(available);
+  return pool[0] || null;
 }
 function priorityBucket(r) {
   const n = myVoteCount(r),
@@ -1934,7 +1866,7 @@ function renderSearchResults(visible) {
   bindVotes();
 }
 function duelHomeCalloutHTML() {
-  return `<section class="duelHomeCallout"><div><span class="portalKicker">Novo jeito de votar</span><h2>Duelo aleatório</h2><p>Duas opções do mesmo ranking. Uma escolha por vez.</p></div><button type="button" data-start-random-duel>COMEÇAR</button></section>`;
+  return `<section class="duelHomeCallout"><div><span class="portalKicker">Ranking de vitórias</span><h2>Duelo aleatório</h2><p>Duas opções do mesmo tema. Cada vitória conta só nos Duelos.</p></div><button type="button" data-start-random-duel>COMEÇAR</button></section>`;
 }
 function launchRandomDuel(excludeRankingId = '') {
   const ranking = randomDuelRanking(excludeRankingId);
@@ -2314,69 +2246,332 @@ async function loadAllCommentsPage(r, page, append) {
 }
 function rankingVoteModeHTML(r, votingOpen = true) {
   if (!votingOpen) return '';
-  const duel = duelModeActive(),
-    listPath = `${rankingPath(r.id)}#votar`,
-    duelPath = `${rankingPath(r.id)}?modo=duelo#votar`;
-  return `<nav class="rankingVoteModes" aria-label="Escolher modo de votação"><a class="${duel ? '' : 'active'}" href="${listPath}" ${duel ? '' : 'aria-current="page"'}><span>↑↓</span> VOTAR COM FLECHAS</a><a class="${duel ? 'active' : ''}" href="${duelPath}" ${duel ? 'aria-current="page"' : ''}><span>A×B</span> MODO DUELO</a></nav>`;
+  const mode = activeRankingVoteMode();
+  return `<nav class="rankingVoteModes" aria-label="Escolher forma de votar" role="tablist"><button class="${mode === 'top3' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="top3" aria-selected="${mode === 'top3'}" aria-controls="rankingVotingPanel"><span>3</span> TOP 3</button><button class="${mode === 'duelo' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="duelo" aria-selected="${mode === 'duelo'}" aria-controls="rankingVotingPanel"><span>A×B</span> DUELOS</button><button class="${mode === 'livre' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="livre" aria-selected="${mode === 'livre'}" aria-controls="rankingVotingPanel"><span>↑↓</span> VOTO LIVRE</button></nav>`;
+}
+function votingModeStateFor(r) {
+  return rankingVotingState?.rankingId === r.id && rankingVotingState.loaded
+    ? rankingVotingState
+    : null;
+}
+function modeGap(standings, field) {
+  if (!standings?.length) return 0;
+  return Math.max(0, Number(standings[0]?.[field] || 0) - Number(standings[1]?.[field] || 0));
+}
+function rankingModeStatsHTML(r, votingOpen = true) {
+  const mode = activeRankingVoteMode(),
+    state = votingModeStateFor(r);
+  if (!votingOpen || mode === 'livre') {
+    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Votos livres hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no Voto Livre</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>`;
+  }
+  if (!state) {
+    const firstLabel = mode === 'top3' ? 'Top 3 enviados' : 'Duelos concluídos';
+    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">${firstLabel}</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Resultado deste modo</div><div class="statValue">—</div></div></div>`;
+  }
+  if (mode === 'top3') {
+    const gap = modeGap(state.top3.standings, 'choices');
+    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Top 3 enviados</div><div class="statValue">${fmt(state.top3.totalBallots)}</div></div><div class="statBox"><div class="statLabel">Disputa no Top 3</div><div class="statValue">${gap === 0 ? 'Empate' : `${fmt(gap)} escolha${gap === 1 ? '' : 's'}`}</div></div></div>`;
+  }
+  const leaderWins = Number(state.duel.standings?.[0]?.wins || 0);
+  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Duelos concluídos</div><div class="statValue">${fmt(state.duel.totalDuels)}</div></div><div class="statBox"><div class="statLabel">Líder em vitórias</div><div class="statValue">${leaderWins ? `${fmt(leaderWins)} vit.` : 'Empate'}</div></div></div>`;
+}
+function votingModesLoadingHTML(mode) {
+  const label = mode === 'top3' ? 'Top 3' : 'Duelos';
+  return `<section class="rankingModeLoading"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando ${label}…</strong></section>`;
+}
+function votingModesErrorHTML(mode) {
+  return `<section class="rankingModeLoading error"><strong>Não consegui carregar ${mode === 'top3' ? 'o Top 3' : 'os Duelos'}.</strong><button type="button" data-voting-modes-retry>TENTAR DE NOVO</button></section>`;
+}
+function top3ChoiceText(total) {
+  const value = Number(total || 0);
+  return value === 1 ? '1 escolha' : `${fmt(value)} escolhas`;
+}
+function resetTop3Draft(r, state = votingModeStateFor(r)) {
+  const savedIds = (state?.top3?.selectedOptionIds || []).map(Number);
+  top3Draft = {
+    rankingId: r.id,
+    optionIds: new Set(savedIds),
+    savedSignature: [...savedIds].sort((a, b) => a - b).join(':'),
+  };
+}
+function currentTop3Draft(r) {
+  if (top3Draft?.rankingId !== r.id) resetTop3Draft(r);
+  return top3Draft;
+}
+function top3OptionHTML(option, index, selected) {
+  const label = escapeHTML(option.label);
+  return `<button class="top3Option ${selected ? 'selected' : ''}" type="button" data-top3-option="${option.optionId}" aria-pressed="${selected}" aria-label="${selected ? 'Retirar' : 'Escolher'} ${label} do seu Top 3"><span class="top3Position">${rankMark(index)}</span><span class="top3OptionCopy"><strong>${label}</strong><small>${top3ChoiceText(option.choices)}</small></span><span class="top3Check" aria-hidden="true">${selected ? '✓' : '+'}</span></button>`;
+}
+function rankingTop3HTML(r) {
+  const state = votingModeStateFor(r);
+  if (!state) {
+    return rankingVotingState?.rankingId === r.id && rankingVotingState.error
+      ? votingModesErrorHTML('top3')
+      : votingModesLoadingHTML('top3');
+  }
+  const draft = currentTop3Draft(r),
+    selectedCount = draft.optionIds.size,
+    draftSignature = [...draft.optionIds].sort((a, b) => a - b).join(':'),
+    unchanged = selectedCount === 3 && draftSignature === draft.savedSignature,
+    remaining = Math.max(0, 3 - selectedCount),
+    buttonText = unchanged
+      ? 'TOP 3 SALVO'
+      : selectedCount === 3
+        ? 'SALVAR MEU TOP 3'
+        : `ESCOLHA MAIS ${remaining}`;
+  return `<section class="rankingTop3"><header><div><span class="duelEyebrow">Ranking Top 3</span><h2>Escolha três.</h2><p>As três escolhas valem igual. Este resultado não soma pontos ao Voto Livre.</p></div><strong class="top3Counter">${selectedCount}/3</strong></header><div class="top3Options">${state.top3.standings.map((option, index) => top3OptionHTML(option, index, draft.optionIds.has(Number(option.optionId)))).join('')}</div><div class="top3SaveBar"><span>${selectedCount === 3 ? 'Você pode trocar quando quiser.' : 'Marque exatamente três opções.'}</span><button type="button" data-save-top3 ${selectedCount !== 3 || unchanged ? 'disabled' : ''}>${buttonText}</button></div></section>`;
 }
 function duelChoiceHTML(option, side) {
-  return `<button class="duelChoice" type="button" data-duel-choice data-id="${option.id}" aria-label="Escolher ${escapeHTML(option.label)}"><span>OPÇÃO ${side}</span><strong>${escapeHTML(option.label)}</strong><small>ESCOLHER</small></button>`;
+  return `<button class="duelChoice" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>OPÇÃO ${side}</span><strong>${escapeHTML(option.label)}</strong><small>DAR A VITÓRIA</small></button>`;
 }
-function duelRoundCompleteHTML(r, state) {
-  const remaining = duelEligibleOptions(r).length;
-  return `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada concluída</span><h2>Você passou por ${state.pairs.length} duelo${state.pairs.length === 1 ? '' : 's'}.</h2><p>Os escolhidos receberam +1. Nenhuma opção perdeu ponto.</p><div class="duelEndActions">${remaining >= 2 ? '<button type="button" data-duel-continue>CONTINUAR NESTE RANKING</button>' : ''}<button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">PRÓXIMO RANKING</button><a href="${rankingPath(r.id)}#votar">VOLTAR ÀS FLECHAS</a></div></section>`;
+function duelStandingsHTML(standings) {
+  return `<section class="duelStandings"><header><div><span class="duelEyebrow">Ranking dos Duelos</span><h3>Vitórias</h3></div><small>desempate por aproveitamento</small></header><div>${standings
+    .map(
+      (option, index) =>
+        `<div class="duelStandingRow"><span class="duelStandingPosition">${rankMark(index)}</span><span><strong>${escapeHTML(option.label)}</strong><small>${fmt(option.duels)} duelo${Number(option.duels) === 1 ? '' : 's'}</small></span><b>${fmt(option.wins)} vit.</b></div>`,
+    )
+    .join('')}</div></section>`;
 }
-function rankingDuelHTML(r, votingOpen = true) {
-  if (!votingOpen) return '';
-  const state = duelStateFor(r),
-    remaining = duelEligibleOptions(r).length;
-  if (!state.pairs.length)
-    return `<section class="rankingDuel rankingDuelEmpty"><span class="duelEyebrow">Sem pares novos</span><h2>${remaining === 0 ? 'Você já votou em todas as opções.' : 'Só falta uma opção sem voto.'}</h2><p>O duelo usa apenas opções em que você ainda não tocou.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button><a href="${rankingPath(r.id)}#votar">VOLTAR ÀS FLECHAS</a></div></section>`;
-  if (state.index >= state.pairs.length) return duelRoundCompleteHTML(r, state);
-  const pair = state.pairs[state.index],
-    first = r.opts.find((option) => Number(option.id) === pair[0]),
-    second = r.opts.find((option) => Number(option.id) === pair[1]);
-  if (!first || !second) {
-    startDuelRound(r);
-    return rankingDuelHTML(r, votingOpen);
+function rankingDuelHTML(r) {
+  const state = votingModeStateFor(r);
+  if (!state) {
+    return rankingVotingState?.rankingId === r.id && rankingVotingState.error
+      ? votingModesErrorHTML('duelo')
+      : votingModesLoadingHTML('duelo');
   }
-  return `<section class="rankingDuel" data-duel-pair><header><span class="duelEyebrow">Duelo ${state.index + 1} de ${state.pairs.length}</span><h2>Qual merece ficar no TOPO?</h2><p>Escolha uma opção. A vencedora recebe +1 e a outra continua com zero.</p></header><div class="duelChoices">${duelChoiceHTML(first, 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(second, 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>PULAR · NÃO CONHEÇO</button><span>${state.index + 1}/${state.pairs.length}</span></div></section>`;
+  const pair = state.duel.pair || [],
+    progress = `${fmt(state.duel.seenOptions)} de ${fmt(state.duel.totalOptions)} opções vistas`,
+    duelNumber = Math.floor(Number(state.duel.seenOptions || 0) / 2) + 1,
+    duelCard =
+      pair.length === 2
+        ? `<section class="rankingDuel" data-duel-pair><header><span class="duelEyebrow">Duelo ${duelNumber}</span><h2>Quem ganha?</h2><p>Cada vitória vale 1 somente no ranking dos Duelos. As flechas não mudam.</p></header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>PULAR · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
+        : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Você chegou ao fim</span><h2>As opções que podiam formar pares já passaram.</h2><p>Cada opção apareceu no máximo uma vez para você. O resultado abaixo continua recebendo vitórias de outras pessoas.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
+  return `${duelCard}${duelStandingsHTML(state.duel.standings || [])}`;
 }
-async function chooseDuelOption(button, r) {
-  const state = duelStateFor(r),
-    pair = state.pairs[state.index],
-    optionId = Number(button.dataset.id);
-  if (!pair?.includes(optionId)) return;
-  const previousIndex = state.index;
-  state.index += 1;
-  const saved = await submitVoteChange(button, {
-    optionId,
-    direction: 1,
-    weight: 1,
-    showHelp: false,
+function rankingFreeVoteHTML(r, votingOpen = true) {
+  const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
+    visibleOptions = r.opts.slice(0, visibleLimit),
+    footerVoteText = r.vip
+      ? votingOpen
+        ? 'Entre com a senha e vote sem cadastro.'
+        : 'A votação está encerrada.'
+      : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
+  return `<div class="rankingFreeIntro"><strong>Voto Livre</strong><span>↑ soma 1 ponto · ↓ tira 1 ponto</span></div><div class="rankingResultHead"><span>Resultado do Voto Livre</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
+}
+function rankingVotePanelHTML(r, votingOpen = true) {
+  if (!votingOpen) return rankingFreeVoteHTML(r, false);
+  const mode = activeRankingVoteMode();
+  if (mode === 'top3') return rankingTop3HTML(r);
+  if (mode === 'duelo') return rankingDuelHTML(r);
+  return rankingFreeVoteHTML(r, true);
+}
+function updateVoteModeUrl(mode) {
+  const url = new URL(location.href);
+  if (mode === 'top3') url.searchParams.delete('modo');
+  else url.searchParams.set('modo', mode);
+  history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+function applyVotingModeResult(r, result) {
+  rankingVotingState = {
+    ...result,
+    rankingId: r.id,
+    loaded: true,
+    loading: false,
+    error: '',
+  };
+  if (result.viewer) {
+    viewer = result.viewer;
+    renderAccount();
+  }
+  resetTop3Draft(r, rankingVotingState);
+  renderRankingVoteExperience(r, false);
+}
+async function loadRankingVotingModes(r, force = false) {
+  if (
+    !force &&
+    rankingVotingState?.rankingId === r.id &&
+    (rankingVotingState.loaded || rankingVotingState.loading)
+  )
+    return;
+  const requestId = ++rankingVotingRequest;
+  rankingVotingState = { rankingId: r.id, loaded: false, loading: true, error: '' };
+  try {
+    const response = await fetch(
+        `/api?action=ranking-vote-modes&ranking_id=${encodeURIComponent(r.id)}&device_id=${encodeURIComponent(deviceId)}`,
+        { cache: 'no-store' },
+      ),
+      result = await response.json().catch(() => ({}));
+    if (requestId !== rankingVotingRequest || internalId() !== r.id) return;
+    if (response.status === 409 && result.error === 'device_rekey_required') {
+      rotateDeviceId();
+      rankingVotingState = null;
+      await load();
+      return;
+    }
+    if (response.status === 403 && result.error === 'vip_password_required') {
+      renderVipGate({ id: r.id, q: r.q, img: r.img });
+      return;
+    }
+    if (!response.ok) throw result;
+    applyVotingModeResult(r, result);
+  } catch {
+    if (requestId !== rankingVotingRequest) return;
+    rankingVotingState = {
+      rankingId: r.id,
+      loaded: false,
+      loading: false,
+      error: 'load_failed',
+    };
+    renderRankingVoteExperience(r, false);
+  }
+}
+function handleVotingModeBlock(response, result, r) {
+  if (response.status === 403 && result.error === 'registration_required') {
+    viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
+    renderAccount();
+    showRegistrationWall();
+    return true;
+  }
+  if (response.status === 403 && result.error === 'account_required_on_this_device') {
+    viewer.votingRequiresAccount = true;
+    renderAccount();
+    showAccountRequired();
+    return true;
+  }
+  if (response.status === 403 && result.error === 'vip_password_required') {
+    renderVipGate({ id: r.id, q: r.q, img: r.img });
+    return true;
+  }
+  if (response.status === 409 && result.error === 'ranking_voting_closed') {
+    toast('A votação deste ranking foi encerrada');
+    return true;
+  }
+  if (response.status === 409 && result.error === 'device_rekey_required') {
+    rotateDeviceId();
+    rankingVotingState = null;
+    void load();
+    return true;
+  }
+  return false;
+}
+async function saveTop3Selection(button, r) {
+  const draft = currentTop3Draft(r),
+    optionIds = [...draft.optionIds];
+  if (optionIds.length !== 3) return;
+  button.disabled = true;
+  button.textContent = 'SALVANDO…';
+  try {
+    const response = await fetch('/api?action=ranking-top3', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          device_id: deviceId,
+          ranking_id: r.id,
+          option_ids: optionIds,
+        }),
+      }),
+      result = await response.json().catch(() => ({}));
+    if (handleVotingModeBlock(response, result, r)) return;
+    if (!response.ok) throw result;
+    applyVotingModeResult(r, result);
+    toast('Seu Top 3 foi salvo');
+  } catch {
+    button.disabled = false;
+    button.textContent = 'TENTAR SALVAR DE NOVO';
+    toast('Não consegui salvar seu Top 3');
+  }
+}
+function bindTop3Mode(r) {
+  document.querySelectorAll('[data-top3-option]').forEach((button) => {
+    button.onclick = () => {
+      const draft = currentTop3Draft(r),
+        optionId = Number(button.dataset.top3Option);
+      if (draft.optionIds.has(optionId)) draft.optionIds.delete(optionId);
+      else if (draft.optionIds.size >= 3) {
+        toast('Seu Top 3 já tem três escolhas');
+        return;
+      } else draft.optionIds.add(optionId);
+      renderRankingVoteExperience(r, false);
+      document.querySelector(`[data-top3-option="${optionId}"]`)?.focus();
+    };
   });
-  if (saved) rememberDuelPair(r.id, pair);
-  else {
-    state.index = previousIndex;
-    renderInternal();
+  const save = document.querySelector('[data-save-top3]');
+  if (save) save.onclick = () => saveTop3Selection(save, r);
+}
+async function submitDuelResult(button, r, winnerOptionId = null) {
+  const pair = votingModeStateFor(r)?.duel?.pair || [],
+    optionIds = pair.map((option) => Number(option.optionId));
+  if (optionIds.length !== 2) return;
+  const controls = [...document.querySelectorAll('[data-duel-choice], [data-duel-skip]')];
+  controls.forEach((control) => (control.disabled = true));
+  try {
+    const response = await fetch('/api?action=ranking-duel', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          device_id: deviceId,
+          ranking_id: r.id,
+          option_ids: optionIds,
+          winner_option_id: winnerOptionId,
+        }),
+      }),
+      result = await response.json().catch(() => ({}));
+    if (handleVotingModeBlock(response, result, r)) return;
+    if (response.status === 409 && result.error === 'duel_option_already_seen') {
+      applyVotingModeResult(r, result);
+      return;
+    }
+    if (!response.ok) throw result;
+    applyVotingModeResult(r, result);
+  } catch {
+    controls.forEach((control) => (control.disabled = false));
+    toast('Não consegui registrar este duelo');
   }
+}
+function chooseDuelOption(button, r) {
+  return submitDuelResult(button, r, Number(button.dataset.id));
 }
 function bindDuelMode(r) {
   document
     .querySelectorAll('[data-duel-choice]')
     .forEach((button) => (button.onclick = () => chooseDuelOption(button, r)));
-  document.querySelector('[data-duel-skip]')?.addEventListener('click', () => {
-    const state = duelStateFor(r),
-      pair = state.pairs[state.index];
-    if (pair) rememberDuelPair(r.id, pair);
-    state.index += 1;
-    renderInternal();
-  });
-  document.querySelector('[data-duel-continue]')?.addEventListener('click', () => {
-    startDuelRound(r);
-    renderInternal();
-  });
+  const skip = document.querySelector('[data-duel-skip]');
+  if (skip) skip.onclick = () => submitDuelResult(skip, r, null);
   bindDuelLaunchers();
+}
+function bindRankingVoteModes(r) {
+  document.querySelectorAll('[data-ranking-vote-mode]').forEach((button) => {
+    button.onclick = () => {
+      const nextMode = button.dataset.rankingVoteMode;
+      if (nextMode === activeRankingVoteMode()) return;
+      updateVoteModeUrl(nextMode);
+      renderRankingVoteExperience(r);
+      document.querySelector(`[data-ranking-vote-mode="${nextMode}"]`)?.focus();
+    };
+  });
+}
+function renderRankingVoteExperience(r, loadState = true) {
+  const panel = document.getElementById('rankingVotingPanel'),
+    stats = document.getElementById('rankingModeStats');
+  if (!panel || !stats) return;
+  stats.outerHTML = rankingModeStatsHTML(r);
+  document.querySelectorAll('[data-ranking-vote-mode]').forEach((button) => {
+    const active = button.dataset.rankingVoteMode === activeRankingVoteMode();
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', String(active));
+  });
+  panel.innerHTML = rankingVotePanelHTML(r, true);
+  bindRankingVoteModes(r);
+  if (activeRankingVoteMode() === 'top3') bindTop3Mode(r);
+  else if (activeRankingVoteMode() === 'duelo') bindDuelMode(r);
+  else {
+    bindVotes();
+    bindAllItems(r);
+  }
+  document.querySelector('[data-voting-modes-retry]')?.addEventListener('click', () => {
+    loadRankingVotingModes(r, true);
+  });
+  if (loadState && activeRankingVoteMode() !== 'livre') void loadRankingVotingModes(r);
 }
 function rankingVoteRowHTML(o, i, extraClass = '', votingOpen = true) {
   const upSelected = Number(o.mine) === 1,
@@ -2962,7 +3157,6 @@ function renderInternal() {
   }
   if (rankingEditorState?.rankingId === r.id) rankingEditorState = null;
   const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
-    visibleOptions = r.opts.slice(0, visibleLimit),
     votingOpen = !vip || r.vipVotingOpen !== false,
     ownerBar = r.vipOwned ? vipOwnerBarHTML(r) : '',
     description =
@@ -2971,18 +3165,11 @@ function renderInternal() {
         : '',
     closedNotice = votingOpen
       ? ''
-      : '<div class="vipVotingClosed"><strong>Votação encerrada</strong><span>O resultado continua visível, mas novos votos estão pausados.</span></div>',
-    footerVoteText = vip
-      ? votingOpen
-        ? 'Entre com a senha e vote sem cadastro.'
-        : 'A votação está encerrada.'
-      : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
+      : '<div class="vipVotingClosed"><strong>Votação encerrada</strong><span>O resultado continua visível, mas novos votos estão pausados.</span></div>';
   const cover = r.img
-      ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
-      : '',
-    listVotingHTML = `<div class="rankingResultHead"><span>Resultado atual</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`,
-    votingHTML = duelModeActive() && votingOpen ? rankingDuelHTML(r, votingOpen) : listVotingHTML;
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}<div class="statsRow"><div class="statBox"><div class="statLabel">Votos hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no topo</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}${votingHTML}${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+    ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
+    : '';
+  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos livres · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}${rankingModeStatsHTML(r, votingOpen)}${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
     document.getElementById('vipOwnerManage').onclick = () => {
@@ -3002,8 +3189,11 @@ function renderInternal() {
     }
   }
   bindVotes();
-  bindDuelMode(r);
-  bindAllItems(r);
+  bindRankingVoteModes(r);
+  if (votingOpen && activeRankingVoteMode() === 'top3') bindTop3Mode(r);
+  else if (votingOpen && activeRankingVoteMode() === 'duelo') bindDuelMode(r);
+  else bindAllItems(r);
+  if (votingOpen && activeRankingVoteMode() !== 'livre') void loadRankingVotingModes(r);
   bindRankingSuggestion(r);
   loadComments(r);
 }
@@ -4458,4 +4648,9 @@ async function boot() {
   else if (kind === 'profile' || kind === 'moderation' || hasClerkSession) await initClerk();
   await load();
 }
+window.addEventListener('popstate', () => {
+  if (pageKind() !== 'ranking') return;
+  const ranking = rankings.find((item) => item.id === internalId());
+  if (ranking) renderRankingVoteExperience(ranking);
+});
 boot();
