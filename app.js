@@ -3151,7 +3151,20 @@ async function renderAuth() {
     }
     return;
   }
-  renderClerkStart(mount, clerk);
+  mount.innerHTML = '';
+  clerk.mountSignIn(mount, {
+    routing: 'hash',
+    withSignUp: true,
+    signInForceRedirectUrl: authReturn(),
+    signUpForceRedirectUrl: authReturn(),
+    appearance: {
+      elements: {
+        rootBox: { width: '100%' },
+        cardBox: { width: '100%', boxShadow: 'none' },
+        card: { width: '100%', boxShadow: 'none' },
+      },
+    },
+  });
 }
 const doubleVoteThresholds = [20, 75, 200];
 function profileProgressInfo(votes) {

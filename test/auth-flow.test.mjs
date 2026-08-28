@@ -4,22 +4,17 @@ import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
 
-test('Google is the primary account entry and email remains available', async () => {
+test('Clerk renders its embedded sign-in-or-up flow inside SomosTopo', async () => {
   const [app, page] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('page.js', root), 'utf8'),
   ]);
 
-  assert.match(app, /id="clerkGoogleAuth"/);
-  assert.match(app, /Continuar com Google/);
-  assert.match(app, /clerk\.buildSignInUrl\(\{ redirectUrl \}\)/);
-  assert.match(app, /new URL\(authReturn\(\), location\.origin\)\.href/);
-  assert.match(app, /location\.assign\(signInUrl\)/);
-  assert.match(app, /Receber código por e-mail/);
-  assert.ok(
-    app.indexOf('id="clerkGoogleAuth"') < app.indexOf('id="emailCodeStart"'),
-    'Google must appear before the email-code form',
-  );
+  assert.match(app, /clerk\.mountSignIn\(mount,/);
+  assert.match(app, /routing: 'hash'/);
+  assert.match(app, /withSignUp: true/);
+  assert.match(app, /signInForceRedirectUrl: authReturn\(\)/);
+  assert.match(app, /signUpForceRedirectUrl: authReturn\(\)/);
   assert.match(page, /Google ou e-mail/);
 });
 
