@@ -842,7 +842,10 @@ function privatePageMetadata(kind) {
   return (
     {
       entrar: ['Entrar — TOPO', 'Entre ou crie sua conta no TOPO com Google ou e-mail.'],
-      perfil: ['Perfil — TOPO', 'Acesse seu perfil, seus votos e suas conquistas no TOPO.'],
+      perfil: [
+        'Editar perfil — TOPO',
+        'Ajuste seu nome e sua foto e veja sua participação no TOPO.',
+      ],
       moderacao: ['Moderação — TOPO', 'Área privada de moderação do TOPO.'],
       vip: ['Meu Topo — TOPO', 'Seus rankings protegidos por senha no TOPO.'],
       favoritos: ['Favoritos — TOPO', 'Uma seleção de rankings favoritos no TOPO.'],

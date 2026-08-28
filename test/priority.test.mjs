@@ -4,6 +4,11 @@ import vm from 'node:vm';
 import { extractTopLevelDeclaration } from './source-helpers.mjs';
 
 const source = await readFile(new URL('../app.js', import.meta.url), 'utf8');
+class FixedDate extends Date {
+  static now() {
+    return Date.parse('2026-08-27T12:00:00.000Z');
+  }
+}
 const selected = [
   'NEW_BADGE_EPOCH',
   'NEW_FIRST_SHOW_EPOCH',
@@ -21,7 +26,7 @@ const selected = [
 assert.ok(selected.every(Boolean), 'priority functions must remain testable');
 
 const context = vm.createContext({
-  Date,
+  Date: FixedDate,
   Math,
   viewer: { rankingLimit: 20 },
   groupOf: (ranking) => ranking.cat || '',

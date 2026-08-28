@@ -67,11 +67,12 @@ test('profile name API, reporting and moderation stay wired', async () => {
     compactProfileRender = compactSource(profileRender);
   assert.match(
     compactProfileRender,
-    /profileGameHero[\s\S]*profileHeroIntro[\s\S]*profileMetrics[\s\S]*<\/section><sectionclass="profileSectionprofileVipRankings"/,
-    'profile numbers should follow the compact identity header immediately',
+    /profileGameHero[\s\S]*profileHeroIntro[\s\S]*profileMetrics[\s\S]*<\/section><divclass="profileDashboard"/,
+    'profile participation should follow the compact identity header without duplicating Meu Topo',
   );
   assert.match(profileRender, /href="#perfil-publico">Editar perfil/);
   assert.match(profileRender, /profileSettingsGrid">\$\{profileNameEditorHTML\(p\.user\)\}/);
+  assert.doesNotMatch(profileRender, /Meus rankings privados|vipCreatePanelHTML/);
   assert.doesNotMatch(profileRender, /profileBadges|profileProgressText|profileEmail/);
   assert.match(app, /data-report-name/);
   assert.match(migration, /user_name_reports_pending_unique_idx/);

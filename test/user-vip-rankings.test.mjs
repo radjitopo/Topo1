@@ -126,13 +126,16 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /Meus rankings privados/);
   assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
   assert.match(vipArea, /Meu Topo/);
+  assert.match(vipArea, /vipCreatePanelHTML\(createOpen\)/);
+  assert.match(vipArea, /href="\/perfil">Editar perfil/);
+  assert.match(vipArea, /bindVipCreateForm\(\)/);
   assert.doesNotMatch(vipArea, /Área VIP/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
   assert.match(style, /900 clamp\(38px, 4\.4vw, 54px\)/);
   assert.match(style, /font-size: 38px/);
 });
 
-test('only the creator can manage a private ranking and the profile exposes the complete flow', async () => {
+test('only the creator can manage a private ranking and Meu Topo exposes the complete flow', async () => {
   const [api, app, style, index] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
@@ -144,6 +147,10 @@ test('only the creator can manage a private ranking and the profile exposes the 
     api.indexOf('async function unlockVipRanking'),
   );
   const compact = compactSource(api);
+  const profileRender = app.slice(
+    app.indexOf('async function renderProfile'),
+    app.indexOf('async function logout'),
+  );
 
   assert.match(remove, /const user = await sessionUser\(req\)/);
   assert.match(remove, /DELETE FROM rankings/);
@@ -171,10 +178,12 @@ test('only the creator can manage a private ranking and the profile exposes the 
   assert.match(app, /window\.confirm/);
   assert.match(style, /\.vipCreatePanel/);
   assert.match(style, /\.vipOwnerActions/);
-  assert.match(style, /\.profileVipRankings/);
+  assert.match(style, /\.vipHeroActions/);
+  assert.match(style, /\.vipProfileLink/);
   assert.match(style, /\.vipOwnerEditor/);
   assert.match(style, /\.vipOwnerEditor > \.vipOwnerEditorHead/);
   assert.match(style, /\.vipRankingCover/);
+  assert.doesNotMatch(profileRender, /Meus rankings privados|vipCreatePanelHTML/);
   assert.match(index, /vip-custom-rankings/);
 });
 

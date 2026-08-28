@@ -58,7 +58,7 @@ for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
 assert.ok(index.includes('/pop-electric.css?v=20260826-13-compact-categories'));
-assert.ok(index.includes('/editorial-clean.css?v=20260827-5-compact-profile'));
+assert.ok(index.includes('/editorial-clean.css?v=20260828-1-unified-account-hub'));
 assert.ok(index.includes('/app.js?v=20260827-1-vip-area'));
 assert.ok(institutional.includes('/pop-electric.css?v=20260826-13-compact-categories'));
 assert.ok(institutional.includes('/editorial-clean.css?v=20260826-21-login-cta'));
@@ -223,7 +223,7 @@ assert.match(
 assert.match(
   compactPopCss,
   /@media\(max-width:700px\)[\s\S]*\.popElectric\.accountLink:not\(\.accountEnter\)\{[^}]*display:inline-flex[^}]*font-size:11px/,
-  'signed-in mobile users must keep a visible profile entry beside the bell',
+  'signed-in mobile users must keep a visible Meu Topo entry beside the bell',
 );
 assert.match(
   compactEditorialCss,

@@ -5003,9 +5003,15 @@ body.popElectric .vipHero p {
     sans-serif;
 }
 
-body.popElectric .vipHeroAction {
+body.popElectric .vipHeroActions {
   grid-column: 2;
   grid-row: 3;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.popElectric .vipHeroAction {
   justify-self: start;
   min-height: 36px;
   border: 1px solid var(--clean-ink);
@@ -5020,6 +5026,25 @@ body.popElectric .vipHeroAction {
   letter-spacing: 0.045em;
   text-decoration: none;
   cursor: pointer;
+}
+
+body.popElectric .vipProfileLink {
+  min-height: 30px;
+  border-bottom: 1px solid var(--clean-sage);
+  color: var(--clean-sage);
+  font:
+    900 10px/29px Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+body.popElectric .vipProfileLink:hover,
+body.popElectric .vipProfileLink:focus-visible {
+  border-bottom-color: var(--clean-coral);
+  color: var(--clean-coral);
 }
 
 body.popElectric .vipCollection {
@@ -6440,9 +6465,16 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
     font-size: 13px;
   }
 
-  body.popElectric .vipHeroAction {
-    display: inline-block;
+  body.popElectric .vipHeroActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 11px;
+  }
+
+  body.popElectric .vipHeroActions .vipHeroAction {
+    display: inline-block;
+    margin-top: 0;
   }
 
   body.popElectric .vipCollection {

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { compactSource } from './source-helpers.mjs';
 
-test('the notification center is persisted, generated and visible beside the profile', async () => {
+test('the notification center is persisted, generated and visible beside Meu Topo', async () => {
   const [api, app, css, index, migration] = await Promise.all([
     readFile(new URL('../api.js', import.meta.url), 'utf8'),
     readFile(new URL('../app.js', import.meta.url), 'utf8'),
@@ -30,8 +30,8 @@ test('the notification center is persisted, generated and visible beside the pro
   assert.match(compactApp, /operation:'read-all'/);
   assert.match(
     compactApp,
-    /notificationButton[\s\S]*href="\/perfil">Perfil/,
-    'the bell must appear immediately beside the profile link',
+    /notificationButton[\s\S]*href="\/vip"[^>]*>MeuTopo/,
+    'the bell must appear immediately beside the personal hub link',
   );
   assert.match(css, /\.notificationPanel/);
   assert.match(css, /\.notificationBadge/);
