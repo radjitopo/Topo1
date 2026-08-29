@@ -90,7 +90,6 @@ let rankings = [],
   community = { rankings: 0, votes: 0, users: 0 },
   localCityCatalog = [],
   rankingVotingState = null,
-  top3Draft = null,
   rankingVotingRequest = 0,
   clerkLoadPromise = null,
   clerkAuthFlow = { email: '', kind: 'signin' },
@@ -287,8 +286,7 @@ function myVoteCount(r) {
 function activeRankingVoteMode() {
   const mode = new URLSearchParams(location.search).get('modo');
   if (mode === 'duelo') return 'duelo';
-  if (mode === 'livre' || mode === 'flechas') return 'livre';
-  return 'top3';
+  return 'livre';
 }
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
@@ -1866,7 +1864,7 @@ function renderSearchResults(visible) {
   bindVotes();
 }
 function duelHomeCalloutHTML() {
-  return `<section class="duelHomeCallout"><div><span class="portalKicker">Ranking de vitórias</span><h2>Duelo aleatório</h2><p>Duas opções do mesmo tema. Cada vitória conta só nos Duelos.</p></div><button type="button" data-start-random-duel>COMEÇAR</button></section>`;
+  return `<section class="duelHomeCallout"><div><span class="portalKicker">Modo Ganha, Fica</span><h2>Quem ganha, continua.</h2><p>O vencedor fica, soma pontos e enfrenta o próximo desafiante.</p></div><button type="button" data-start-random-duel>JOGAR</button></section>`;
 }
 function launchRandomDuel(excludeRankingId = '') {
   const ranking = randomDuelRanking(excludeRankingId);
@@ -2247,16 +2245,12 @@ async function loadAllCommentsPage(r, page, append) {
 function rankingVoteModeHTML(r, votingOpen = true) {
   if (!votingOpen) return '';
   const mode = activeRankingVoteMode();
-  return `<nav class="rankingVoteModes" aria-label="Escolher forma de votar" role="tablist"><button class="${mode === 'top3' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="top3" aria-selected="${mode === 'top3'}" aria-controls="rankingVotingPanel"><span>3</span> TOP 3</button><button class="${mode === 'duelo' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="duelo" aria-selected="${mode === 'duelo'}" aria-controls="rankingVotingPanel"><span>A×B</span> DUELOS</button><button class="${mode === 'livre' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="livre" aria-selected="${mode === 'livre'}" aria-controls="rankingVotingPanel"><span>↑↓</span> VOTO LIVRE</button></nav>`;
+  return `<nav class="rankingVoteModes" aria-label="Escolher forma de votar" role="tablist"><button class="${mode === 'livre' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="livre" aria-selected="${mode === 'livre'}" aria-controls="rankingVotingPanel"><span>↑↓</span> VOTO LIVRE</button><button class="${mode === 'duelo' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="duelo" aria-selected="${mode === 'duelo'}" aria-controls="rankingVotingPanel"><span>→</span> GANHA, FICA</button></nav>`;
 }
 function votingModeStateFor(r) {
   return rankingVotingState?.rankingId === r.id && rankingVotingState.loaded
     ? rankingVotingState
     : null;
-}
-function modeGap(standings, field) {
-  if (!standings?.length) return 0;
-  return Math.max(0, Number(standings[0]?.[field] || 0) - Number(standings[1]?.[field] || 0));
 }
 function rankingModeStatsHTML(r, votingOpen = true) {
   const mode = activeRankingVoteMode(),
@@ -2265,70 +2259,34 @@ function rankingModeStatsHTML(r, votingOpen = true) {
     return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Votos livres hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no Voto Livre</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>`;
   }
   if (!state) {
-    const firstLabel = mode === 'top3' ? 'Top 3 enviados' : 'Duelos concluídos';
-    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">${firstLabel}</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Resultado deste modo</div><div class="statValue">—</div></div></div>`;
+    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Partidas concluídas</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Líder no Ganha, Fica</div><div class="statValue">—</div></div></div>`;
   }
-  if (mode === 'top3') {
-    const gap = modeGap(state.top3.standings, 'choices');
-    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Top 3 enviados</div><div class="statValue">${fmt(state.top3.totalBallots)}</div></div><div class="statBox"><div class="statLabel">Disputa no Top 3</div><div class="statValue">${gap === 0 ? 'Empate' : `${fmt(gap)} escolha${gap === 1 ? '' : 's'}`}</div></div></div>`;
-  }
-  const leaderWins = Number(state.duel.standings?.[0]?.wins || 0);
-  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Duelos concluídos</div><div class="statValue">${fmt(state.duel.totalDuels)}</div></div><div class="statBox"><div class="statLabel">Líder em vitórias</div><div class="statValue">${leaderWins ? `${fmt(leaderWins)} vit.` : 'Empate'}</div></div></div>`;
+  const leaderPoints = Number(state.duel.standings?.[0]?.points || 0);
+  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Partidas concluídas</div><div class="statValue">${fmt(state.duel.totalDuels)}</div></div><div class="statBox"><div class="statLabel">Líder no Ganha, Fica</div><div class="statValue">${leaderPoints ? `${fmt(leaderPoints)} pt${leaderPoints === 1 ? '' : 's'}` : 'Empate'}</div></div></div>`;
 }
-function votingModesLoadingHTML(mode) {
-  const label = mode === 'top3' ? 'Top 3' : 'Duelos';
-  return `<section class="rankingModeLoading"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando ${label}…</strong></section>`;
+function votingModesLoadingHTML() {
+  return `<section class="rankingModeLoading"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando Ganha, Fica…</strong></section>`;
 }
-function votingModesErrorHTML(mode) {
-  return `<section class="rankingModeLoading error"><strong>Não consegui carregar ${mode === 'top3' ? 'o Top 3' : 'os Duelos'}.</strong><button type="button" data-voting-modes-retry>TENTAR DE NOVO</button></section>`;
+function votingModesErrorHTML() {
+  return `<section class="rankingModeLoading error"><strong>Não consegui carregar o Ganha, Fica.</strong><button type="button" data-voting-modes-retry>TENTAR DE NOVO</button></section>`;
 }
-function top3ChoiceText(total) {
-  const value = Number(total || 0);
-  return value === 1 ? '1 escolha' : `${fmt(value)} escolhas`;
-}
-function resetTop3Draft(r, state = votingModeStateFor(r)) {
-  const savedIds = (state?.top3?.selectedOptionIds || []).map(Number);
-  top3Draft = {
-    rankingId: r.id,
-    optionIds: new Set(savedIds),
-    savedSignature: [...savedIds].sort((a, b) => a - b).join(':'),
-  };
-}
-function currentTop3Draft(r) {
-  if (top3Draft?.rankingId !== r.id) resetTop3Draft(r);
-  return top3Draft;
-}
-function top3OptionHTML(option, index, selected) {
-  const label = escapeHTML(option.label);
-  return `<button class="top3Option ${selected ? 'selected' : ''}" type="button" data-top3-option="${option.optionId}" aria-pressed="${selected}" aria-label="${selected ? 'Retirar' : 'Escolher'} ${label} do seu Top 3"><span class="top3Position">${rankMark(index)}</span><span class="top3OptionCopy"><strong>${label}</strong><small>${top3ChoiceText(option.choices)}</small></span><span class="top3Check" aria-hidden="true">${selected ? '✓' : '+'}</span></button>`;
-}
-function rankingTop3HTML(r) {
-  const state = votingModeStateFor(r);
-  if (!state) {
-    return rankingVotingState?.rankingId === r.id && rankingVotingState.error
-      ? votingModesErrorHTML('top3')
-      : votingModesLoadingHTML('top3');
-  }
-  const draft = currentTop3Draft(r),
-    selectedCount = draft.optionIds.size,
-    draftSignature = [...draft.optionIds].sort((a, b) => a - b).join(':'),
-    unchanged = selectedCount === 3 && draftSignature === draft.savedSignature,
-    remaining = Math.max(0, 3 - selectedCount),
-    buttonText = unchanged
-      ? 'TOP 3 SALVO'
-      : selectedCount === 3
-        ? 'SALVAR MEU TOP 3'
-        : `ESCOLHA MAIS ${remaining}`;
-  return `<section class="rankingTop3"><header><div><span class="duelEyebrow">Ranking Top 3</span><h2>Escolha três.</h2><p>As três escolhas valem igual. Este resultado não soma pontos ao Voto Livre.</p></div><strong class="top3Counter">${selectedCount}/3</strong></header><div class="top3Options">${state.top3.standings.map((option, index) => top3OptionHTML(option, index, draft.optionIds.has(Number(option.optionId)))).join('')}</div><div class="top3SaveBar"><span>${selectedCount === 3 ? 'Você pode trocar quando quiser.' : 'Marque exatamente três opções.'}</span><button type="button" data-save-top3 ${selectedCount !== 3 || unchanged ? 'disabled' : ''}>${buttonText}</button></div></section>`;
-}
-function duelChoiceHTML(option, side) {
-  return `<button class="duelChoice" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>OPÇÃO ${side}</span><strong>${escapeHTML(option.label)}</strong><small>DAR A VITÓRIA</small></button>`;
+function duelChoiceHTML(option, side, pot) {
+  const nextPoints = Number(pot || 0) + 1,
+    incumbent = option.role === 'incumbent',
+    challenger = option.role === 'challenger',
+    role = incumbent ? 'QUEM ESTÁ' : challenger ? 'DESAFIANTE' : `OPÇÃO ${side}`,
+    result = incumbent
+      ? `FICA COM ${nextPoints} PONTO${nextPoints === 1 ? '' : 'S'}`
+      : challenger
+        ? `ASSUME ${nextPoints} PONTO${nextPoints === 1 ? '' : 'S'}`
+        : 'COMEÇA COM 1 PONTO';
+  return `<button class="duelChoice ${incumbent ? 'incumbent' : challenger ? 'challenger' : ''}" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>${role}</span><strong>${escapeHTML(option.label)}</strong><small>${result}</small></button>`;
 }
 function duelStandingsHTML(standings) {
-  return `<section class="duelStandings"><header><div><span class="duelEyebrow">Ranking dos Duelos</span><h3>Vitórias</h3></div><small>desempate por aproveitamento</small></header><div>${standings
+  return `<section class="duelStandings"><header><div><span class="duelEyebrow">Ranking Ganha, Fica</span><h3>Pontos</h3></div><small>quem conquistou continua com os pontos</small></header><div>${standings
     .map(
       (option, index) =>
-        `<div class="duelStandingRow"><span class="duelStandingPosition">${rankMark(index)}</span><span><strong>${escapeHTML(option.label)}</strong><small>${fmt(option.duels)} duelo${Number(option.duels) === 1 ? '' : 's'}</small></span><b>${fmt(option.wins)} vit.</b></div>`,
+        `<div class="duelStandingRow"><span class="duelStandingPosition">${rankMark(index)}</span><span><strong>${escapeHTML(option.label)}</strong><small>${Number(option.points) ? `pontuou em ${fmt(option.runs)} rodada${Number(option.runs) === 1 ? '' : 's'}` : 'ainda sem pontos'}</small></span><b>${fmt(option.points)} pt${Number(option.points) === 1 ? '' : 's'}</b></div>`,
     )
     .join('')}</div></section>`;
 }
@@ -2336,16 +2294,23 @@ function rankingDuelHTML(r) {
   const state = votingModeStateFor(r);
   if (!state) {
     return rankingVotingState?.rankingId === r.id && rankingVotingState.error
-      ? votingModesErrorHTML('duelo')
-      : votingModesLoadingHTML('duelo');
+      ? votingModesErrorHTML()
+      : votingModesLoadingHTML();
   }
   const pair = state.duel.pair || [],
+    champion = state.duel.champion,
+    pot = Number(state.duel.pot || 0),
     progress = `${fmt(state.duel.seenOptions)} de ${fmt(state.duel.totalOptions)} opções vistas`,
-    duelNumber = Math.floor(Number(state.duel.seenOptions || 0) / 2) + 1,
+    duelNumber = Number(state.duel.myDuels || 0) + 1,
+    headerCopy = champion
+      ? `<span class="duelEyebrow">Partida ${duelNumber} · ${fmt(pot)} ponto${pot === 1 ? '' : 's'} na sequência</span><h2>Quem ganha, fica.</h2><p>Se o desafiante vencer, começa com ${fmt(pot + 1)} pontos. ${escapeHTML(champion.label)} continua com os ${fmt(pot)} que já conquistou.</p>`
+      : `<span class="duelEyebrow">Primeira partida</span><h2>Quem ganha, fica.</h2><p>O vencedor começa com 1 ponto e enfrenta a próxima opção.</p>`,
     duelCard =
       pair.length === 2
-        ? `<section class="rankingDuel" data-duel-pair><header><span class="duelEyebrow">Duelo ${duelNumber}</span><h2>Quem ganha?</h2><p>Cada vitória vale 1 somente no ranking dos Duelos. As flechas não mudam.</p></header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>PULAR · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
-        : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Você chegou ao fim</span><h2>As opções que podiam formar pares já passaram.</h2><p>Cada opção apareceu no máximo uma vez para você. O resultado abaixo continua recebendo vitórias de outras pessoas.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
+        ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A', pot)}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B', pot)}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
+        : champion
+          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada concluída</span><h2>${escapeHTML(champion.label)} termina com ${fmt(pot)} pontos.</h2><p>Quem liderou antes continua com os pontos que conquistou. O placar abaixo soma todas as rodadas.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`
+          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada encerrada</span><h2>Nenhuma opção foi escolhida.</h2><p>Os itens pulados não ganharam nem perderam pontos.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
   return `${duelCard}${duelStandingsHTML(state.duel.standings || [])}`;
 }
 function rankingFreeVoteHTML(r, votingOpen = true) {
@@ -2361,13 +2326,12 @@ function rankingFreeVoteHTML(r, votingOpen = true) {
 function rankingVotePanelHTML(r, votingOpen = true) {
   if (!votingOpen) return rankingFreeVoteHTML(r, false);
   const mode = activeRankingVoteMode();
-  if (mode === 'top3') return rankingTop3HTML(r);
   if (mode === 'duelo') return rankingDuelHTML(r);
   return rankingFreeVoteHTML(r, true);
 }
 function updateVoteModeUrl(mode) {
   const url = new URL(location.href);
-  if (mode === 'top3') url.searchParams.delete('modo');
+  if (mode === 'livre') url.searchParams.delete('modo');
   else url.searchParams.set('modo', mode);
   history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
 }
@@ -2383,7 +2347,6 @@ function applyVotingModeResult(r, result) {
     viewer = result.viewer;
     renderAccount();
   }
-  resetTop3Draft(r, rankingVotingState);
   renderRankingVoteExperience(r, false);
 }
 async function loadRankingVotingModes(r, force = false) {
@@ -2454,50 +2417,6 @@ function handleVotingModeBlock(response, result, r) {
   }
   return false;
 }
-async function saveTop3Selection(button, r) {
-  const draft = currentTop3Draft(r),
-    optionIds = [...draft.optionIds];
-  if (optionIds.length !== 3) return;
-  button.disabled = true;
-  button.textContent = 'SALVANDO…';
-  try {
-    const response = await fetch('/api?action=ranking-top3', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          device_id: deviceId,
-          ranking_id: r.id,
-          option_ids: optionIds,
-        }),
-      }),
-      result = await response.json().catch(() => ({}));
-    if (handleVotingModeBlock(response, result, r)) return;
-    if (!response.ok) throw result;
-    applyVotingModeResult(r, result);
-    toast('Seu Top 3 foi salvo');
-  } catch {
-    button.disabled = false;
-    button.textContent = 'TENTAR SALVAR DE NOVO';
-    toast('Não consegui salvar seu Top 3');
-  }
-}
-function bindTop3Mode(r) {
-  document.querySelectorAll('[data-top3-option]').forEach((button) => {
-    button.onclick = () => {
-      const draft = currentTop3Draft(r),
-        optionId = Number(button.dataset.top3Option);
-      if (draft.optionIds.has(optionId)) draft.optionIds.delete(optionId);
-      else if (draft.optionIds.size >= 3) {
-        toast('Seu Top 3 já tem três escolhas');
-        return;
-      } else draft.optionIds.add(optionId);
-      renderRankingVoteExperience(r, false);
-      document.querySelector(`[data-top3-option="${optionId}"]`)?.focus();
-    };
-  });
-  const save = document.querySelector('[data-save-top3]');
-  if (save) save.onclick = () => saveTop3Selection(save, r);
-}
 async function submitDuelResult(button, r, winnerOptionId = null) {
   const pair = votingModeStateFor(r)?.duel?.pair || [],
     optionIds = pair.map((option) => Number(option.optionId));
@@ -2517,7 +2436,7 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
       }),
       result = await response.json().catch(() => ({}));
     if (handleVotingModeBlock(response, result, r)) return;
-    if (response.status === 409 && result.error === 'duel_option_already_seen') {
+    if (response.status === 409 && result.error === 'duel_state_changed') {
       applyVotingModeResult(r, result);
       return;
     }
@@ -2525,7 +2444,7 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
     applyVotingModeResult(r, result);
   } catch {
     controls.forEach((control) => (control.disabled = false));
-    toast('Não consegui registrar este duelo');
+    toast('Não consegui registrar esta partida');
   }
 }
 function chooseDuelOption(button, r) {
@@ -2562,8 +2481,7 @@ function renderRankingVoteExperience(r, loadState = true) {
   });
   panel.innerHTML = rankingVotePanelHTML(r, true);
   bindRankingVoteModes(r);
-  if (activeRankingVoteMode() === 'top3') bindTop3Mode(r);
-  else if (activeRankingVoteMode() === 'duelo') bindDuelMode(r);
+  if (activeRankingVoteMode() === 'duelo') bindDuelMode(r);
   else {
     bindVotes();
     bindAllItems(r);
@@ -3190,8 +3108,7 @@ function renderInternal() {
   }
   bindVotes();
   bindRankingVoteModes(r);
-  if (votingOpen && activeRankingVoteMode() === 'top3') bindTop3Mode(r);
-  else if (votingOpen && activeRankingVoteMode() === 'duelo') bindDuelMode(r);
+  if (votingOpen && activeRankingVoteMode() === 'duelo') bindDuelMode(r);
   else bindAllItems(r);
   if (votingOpen && activeRankingVoteMode() !== 'livre') void loadRankingVotingModes(r);
   bindRankingSuggestion(r);

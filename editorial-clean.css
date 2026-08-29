@@ -21,7 +21,7 @@
   --clean-whatsapp-hover: #195d41;
 }
 
-/* Modo Duelo ------------------------------------------------------------- */
+/* Modo Ganha, Fica ------------------------------------------------------- */
 
 body.popElectric .duelHomeCallout {
   display: grid;
@@ -80,7 +80,7 @@ body.popElectric .duelEndActions button:focus-visible {
 
 body.popElectric.rankingPage .rankingVoteModes {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0 0 25px;
   border: 1px solid var(--clean-ink);
 }
@@ -391,6 +391,14 @@ body.popElectric.rankingPage .duelChoice {
   padding: 20px;
   text-align: center;
   cursor: pointer;
+}
+
+body.popElectric.rankingPage .duelChoice.incumbent {
+  box-shadow: inset 0 6px 0 var(--clean-lime);
+}
+
+body.popElectric.rankingPage .duelChoice.challenger {
+  box-shadow: inset 0 6px 0 var(--clean-coral);
 }
 
 body.popElectric.rankingPage .duelChoice > span,

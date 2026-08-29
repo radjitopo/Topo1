@@ -70,13 +70,5 @@ CREATE TABLE IF NOT EXISTS ranking_duel_entries (
     CHECK (char_length(device_id) BETWEEN 16 AND 100)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS ranking_duel_user_option_unique_idx
-  ON ranking_duel_entries (user_id, ranking_id, option_id)
-  WHERE user_id IS NOT NULL;
-
-CREATE UNIQUE INDEX IF NOT EXISTS ranking_duel_device_option_unique_idx
-  ON ranking_duel_entries (device_id, ranking_id, option_id)
-  WHERE user_id IS NULL;
-
 CREATE INDEX IF NOT EXISTS ranking_duel_ranking_result_idx
   ON ranking_duel_entries (ranking_id, option_id, won);

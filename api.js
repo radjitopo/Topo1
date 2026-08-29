@@ -961,6 +961,29 @@ async function mergeAnonymousVotes(userId, deviceId) {
     ),
     sql.query(
       `
+      DELETE FROM ranking_duel_sessions AS anonymous_session
+      WHERE anonymous_session.device_id = $2
+        AND anonymous_session.user_id IS NULL
+        AND EXISTS (
+          SELECT 1
+          FROM ranking_duel_sessions AS account_session
+          WHERE account_session.user_id = $1
+            AND account_session.ranking_id = anonymous_session.ranking_id
+        )
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
+      UPDATE ranking_duel_sessions
+      SET user_id = $1, updated_at = now()
+      WHERE device_id = $2
+        AND user_id IS NULL
+    `,
+      [userId, deviceId],
+    ),
+    sql.query(
+      `
       DELETE FROM ranking_duel_rounds AS anonymous_round
       WHERE anonymous_round.device_id = $2
         AND anonymous_round.user_id IS NULL
@@ -4562,106 +4585,153 @@ async function rankingVotingContext(req, res, deviceId, rankingId, write = false
 async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = true) {
   const userId = user?.id || null;
   const ownerSeed = userId ? `user:${userId}` : `device:${deviceId}`;
-  const ownerClause = `(
-    ($2::uuid IS NOT NULL AND vote.user_id = $2::uuid)
+  const sessionOwnerClause = `(
+    ($2::uuid IS NOT NULL AND session.user_id = $2::uuid)
     OR (
       $2::uuid IS NULL
-      AND vote.user_id IS NULL
-      AND vote.device_id = $3
-    )
-  )`;
-  const duelOwnerClause = `(
-    ($2::uuid IS NOT NULL AND entry.user_id = $2::uuid)
-    OR (
-      $2::uuid IS NULL
-      AND entry.user_id IS NULL
-      AND entry.device_id = $3
+      AND session.user_id IS NULL
+      AND session.device_id = $3
     )
   )`;
 
-  const top3StandingsQuery = sql.query(
-    `
-    SELECT
-      option.id AS "optionId",
-      option.label,
-      option.position,
-      COUNT(selection.id)::int AS choices
-    FROM ranking_options option
-    LEFT JOIN ranking_top3_selections selection
-      ON selection.ranking_id = option.ranking_id
-     AND selection.option_id = option.id
-    WHERE option.ranking_id = $1
-    GROUP BY option.id, option.label, option.position
-    ORDER BY choices DESC, option.position, option.id
-  `,
-    [rankingId],
-  );
-  const selectedTop3Query = sql.query(
-    `
-    SELECT vote.option_id AS "optionId"
-    FROM ranking_top3_selections vote
-    WHERE vote.ranking_id = $1
-      AND ${ownerClause}
-    ORDER BY vote.updated_at, vote.option_id
-  `,
-    [rankingId, userId, deviceId],
-  );
   const duelStandingsQuery = sql.query(
     `
+    WITH session_scores AS (
+      SELECT
+        round.session_id,
+        round.ranking_id,
+        round.champion_after_option_id AS option_id,
+        MAX(round.pot_after)::int AS points
+      FROM ranking_duel_rounds round
+      WHERE round.session_id IS NOT NULL
+        AND round.skipped = false
+        AND round.champion_after_option_id IS NOT NULL
+      GROUP BY round.session_id, round.ranking_id, round.champion_after_option_id
+    )
     SELECT
       option.id AS "optionId",
       option.label,
       option.position,
-      COUNT(entry.option_id) FILTER (WHERE entry.won IS TRUE)::int AS wins,
-      COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL)::int AS duels
+      COALESCE(SUM(session_score.points), 0)::bigint AS points,
+      COUNT(session_score.session_id)::int AS runs
     FROM ranking_options option
-    LEFT JOIN ranking_duel_entries entry
-      ON entry.ranking_id = option.ranking_id
-     AND entry.option_id = option.id
+    LEFT JOIN session_scores session_score
+      ON session_score.ranking_id = option.ranking_id
+     AND session_score.option_id = option.id
     WHERE option.ranking_id = $1
     GROUP BY option.id, option.label, option.position
     ORDER BY
-      wins DESC,
-      CASE
-        WHEN COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL) = 0 THEN 0
-        ELSE COUNT(entry.option_id) FILTER (WHERE entry.won IS TRUE)::numeric
-          / COUNT(entry.option_id) FILTER (WHERE entry.won IS NOT NULL)
-      END DESC,
-      duels ASC,
+      points DESC,
+      runs DESC,
       option.position,
       option.id
   `,
     [rankingId],
   );
+  const sessionQuery = sql.query(
+    `
+    SELECT
+      session.id AS "sessionId",
+      session.champion_option_id AS "championOptionId",
+      champion.label AS "championLabel",
+      session.pot,
+      session.completed,
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_duel_rounds round
+        WHERE round.session_id = session.id
+          AND round.skipped = false
+      ) AS "myDuels",
+      (
+        SELECT COUNT(DISTINCT entry.option_id)::int
+        FROM ranking_duel_rounds round
+        JOIN ranking_duel_entries entry ON entry.round_id = round.id
+        WHERE round.session_id = session.id
+      ) AS "seenOptions"
+    FROM ranking_duel_sessions session
+    LEFT JOIN ranking_options champion
+      ON champion.ranking_id = session.ranking_id
+     AND champion.id = session.champion_option_id
+    WHERE session.ranking_id = $1
+      AND ${sessionOwnerClause}
+    LIMIT 1
+  `,
+    [rankingId, userId, deviceId],
+  );
   const pairQuery = votingOpen
     ? sql.query(
         `
-        WITH exposure AS (
-          SELECT option_id, COUNT(*)::int AS appearances
-          FROM ranking_duel_entries
-          WHERE ranking_id = $1
-            AND won IS NOT NULL
-          GROUP BY option_id
+        WITH viewer_session AS (
+          SELECT session.id, session.champion_option_id, session.pot, session.completed
+          FROM ranking_duel_sessions session
+          WHERE session.ranking_id = $1
+            AND ${sessionOwnerClause}
+          LIMIT 1
+        ),
+        seen AS (
+          SELECT DISTINCT entry.option_id
+          FROM viewer_session session
+          JOIN ranking_duel_rounds round ON round.session_id = session.id
+          JOIN ranking_duel_entries entry ON entry.round_id = round.id
+        ),
+        exposure AS (
+          SELECT entry.option_id, COUNT(*)::int AS appearances
+          FROM ranking_duel_rounds round
+          JOIN ranking_duel_entries entry ON entry.round_id = round.id
+          WHERE round.ranking_id = $1
+            AND round.session_id IS NOT NULL
+            AND entry.won IS NOT NULL
+          GROUP BY entry.option_id
+        ),
+        incumbent AS (
+          SELECT
+            option.id AS "optionId",
+            option.label,
+            0::int AS "roleOrder",
+            'incumbent'::text AS role,
+            COALESCE(exposure.appearances, 0)::int AS appearances
+          FROM viewer_session session
+          JOIN ranking_options option
+            ON option.ranking_id = $1
+           AND option.id = session.champion_option_id
+          LEFT JOIN exposure ON exposure.option_id = option.id
+          WHERE session.completed = false
+        ),
+        candidate_pool AS (
+          SELECT
+            option.id AS "optionId",
+            option.label,
+            1::int AS "roleOrder",
+            CASE
+              WHEN (SELECT champion_option_id FROM viewer_session) IS NULL THEN 'starter'
+              ELSE 'challenger'
+            END::text AS role,
+            COALESCE(exposure.appearances, 0)::int AS appearances
+          FROM ranking_options option
+          LEFT JOIN exposure ON exposure.option_id = option.id
+          WHERE option.ranking_id = $1
+            AND COALESCE((SELECT completed FROM viewer_session), false) = false
+            AND NOT EXISTS (SELECT 1 FROM seen WHERE seen.option_id = option.id)
+          ORDER BY
+            COALESCE(exposure.appearances, 0),
+            md5(
+              $4 || ':' || COALESCE((SELECT pot::text FROM viewer_session), '0') || ':'
+              || option.id::text
+            ),
+            option.position
+          LIMIT COALESCE(
+            (SELECT CASE WHEN champion_option_id IS NULL THEN 2 ELSE 1 END FROM viewer_session),
+            2
+          )
         )
         SELECT
-          option.id AS "optionId",
-          option.label,
-          COALESCE(exposure.appearances, 0)::int AS appearances
-        FROM ranking_options option
-        LEFT JOIN exposure ON exposure.option_id = option.id
-        WHERE option.ranking_id = $1
-          AND NOT EXISTS (
-            SELECT 1
-            FROM ranking_duel_entries entry
-            WHERE entry.ranking_id = option.ranking_id
-              AND entry.option_id = option.id
-              AND ${duelOwnerClause}
-          )
-        ORDER BY
-          COALESCE(exposure.appearances, 0),
-          md5($4 || ':' || option.id::text),
-          option.position
-        LIMIT 2
+          pair."optionId", pair.label, pair.role, pair.appearances
+        FROM (
+          SELECT * FROM incumbent
+          UNION ALL
+          SELECT * FROM candidate_pool
+        ) pair
+        ORDER BY pair."roleOrder", pair.appearances, pair."optionId"
       `,
         [rankingId, userId, deviceId, ownerSeed],
       )
@@ -4670,90 +4740,59 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
     `
     SELECT
       (
-        SELECT COUNT(DISTINCT CASE
-          WHEN selection.user_id IS NOT NULL THEN 'user:' || selection.user_id::text
-          ELSE 'device:' || selection.device_id
-        END)::int
-        FROM ranking_top3_selections selection
-        WHERE selection.ranking_id = $1
-      ) AS "top3Ballots",
-      (
         SELECT COUNT(*)::int
         FROM ranking_duel_rounds round
         WHERE round.ranking_id = $1
+          AND round.session_id IS NOT NULL
           AND round.skipped = false
       ) AS "totalDuels",
-      (
-        SELECT COUNT(*)::int
-        FROM ranking_duel_rounds round
-        WHERE round.ranking_id = $1
-          AND round.skipped = false
-          AND (
-            ($2::uuid IS NOT NULL AND round.user_id = $2::uuid)
-            OR (
-              $2::uuid IS NULL
-              AND round.user_id IS NULL
-              AND round.device_id = $3
-            )
-          )
-      ) AS "myDuels",
-      (
-        SELECT COUNT(*)::int
-        FROM ranking_duel_entries entry
-        WHERE entry.ranking_id = $1
-          AND ${duelOwnerClause}
-      ) AS "seenOptions",
       (
         SELECT COUNT(*)::int
         FROM ranking_options option
         WHERE option.ranking_id = $1
       ) AS "totalOptions"
   `,
-    [rankingId, userId, deviceId],
+    [rankingId],
   );
 
-  const [top3Rows, selectedRows, duelRows, pairRows, summaryRows] = await Promise.all([
-    top3StandingsQuery,
-    selectedTop3Query,
+  const [duelRows, sessionRows, pairRows, summaryRows] = await Promise.all([
     duelStandingsQuery,
+    sessionQuery,
     pairQuery,
     summaryQuery,
   ]);
-  const summary = summaryRows[0] || {};
+  const summary = summaryRows[0] || {},
+    session = sessionRows[0] || {};
 
   return {
-    top3: {
-      selectedOptionIds: selectedRows.map((row) => Number(row.optionId)),
-      totalBallots: Number(summary.top3Ballots || 0),
-      standings: top3Rows.map((row) => ({
-        optionId: Number(row.optionId),
-        label: row.label,
-        choices: Number(row.choices || 0),
-      })),
-    },
     duel: {
       pair:
         pairRows.length === 2
           ? pairRows.map((row) => ({
               optionId: Number(row.optionId),
               label: row.label,
+              role: row.role,
             }))
           : [],
+      sessionId: session.sessionId || null,
+      champion: session.championOptionId
+        ? {
+            optionId: Number(session.championOptionId),
+            label: session.championLabel,
+          }
+        : null,
+      pot: Number(session.pot || 0),
+      completed: session.completed === true,
       totalDuels: Number(summary.totalDuels || 0),
-      myDuels: Number(summary.myDuels || 0),
-      seenOptions: Number(summary.seenOptions || 0),
+      myDuels: Number(session.myDuels || 0),
+      seenOptions: Number(session.seenOptions || 0),
       totalOptions: Number(summary.totalOptions || 0),
-      standings: duelRows.map((row) => {
-        const wins = Number(row.wins || 0),
-          duels = Number(row.duels || 0);
-        return {
-          optionId: Number(row.optionId),
-          label: row.label,
-          wins,
-          duels,
-          winRate: duels ? wins / duels : 0,
-        };
-      }),
+      standings: duelRows.map((row) => ({
+        optionId: Number(row.optionId),
+        label: row.label,
+        points: Number(row.points || 0),
+        runs: Number(row.runs || 0),
+      })),
     },
   };
 }
@@ -4908,40 +4947,16 @@ async function saveDuel(req, res, body) {
   if (!context) return;
   const userId = context.user?.id || null;
   const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
-  const [validOptions, alreadySeen] = await Promise.all([
-    sql.query(
-      `
-      SELECT COUNT(*)::int AS total
-      FROM ranking_options
-      WHERE ranking_id = $1
-        AND id = ANY($2::bigint[])
-    `,
-      [rankingId, optionIds],
-    ),
-    sql.query(
-      `
-      SELECT COUNT(*)::int AS total
-      FROM ranking_duel_entries entry
-      WHERE entry.ranking_id = $1
-        AND entry.option_id = ANY($2::bigint[])
-        AND (
-          ($3::uuid IS NOT NULL AND entry.user_id = $3::uuid)
-          OR (
-            $3::uuid IS NULL
-            AND entry.user_id IS NULL
-            AND entry.device_id = $4
-          )
-        )
-    `,
-      [rankingId, optionIds, userId, deviceId],
-    ),
-  ]);
-  if (Number(validOptions[0]?.total || 0) !== 2) {
-    return json(res, 400, { error: 'invalid_duel_options' });
-  }
-  if (Number(alreadySeen[0]?.total || 0) > 0) {
-    const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
-    return json(res, 409, { error: 'duel_option_already_seen', ...modes });
+  const modesBefore = await rankingVotingModeState(rankingId, context.user, deviceId, true);
+  const expectedOptionIds = (modesBefore.duel.pair || [])
+    .map((option) => Number(option.optionId))
+    .sort((a, b) => a - b);
+  const submittedOptionIds = [...optionIds].sort((a, b) => a - b);
+  if (
+    expectedOptionIds.length !== 2 ||
+    submittedOptionIds.some((optionId, index) => optionId !== expectedOptionIds[index])
+  ) {
+    return json(res, 409, { error: 'duel_state_changed', ...modesBefore });
   }
 
   const skipped = winnerOptionId === null;
@@ -4950,11 +4965,39 @@ async function saveDuel(req, res, body) {
     return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
   }
 
-  const roundId = randomUUID();
+  const roundId = randomUUID(),
+    sessionId = modesBefore.duel.sessionId || randomUUID(),
+    championBeforeOptionId = modesBefore.duel.champion?.optionId || null,
+    potBefore = Number(modesBefore.duel.pot || 0),
+    championAfterOptionId = skipped ? championBeforeOptionId : winnerOptionId,
+    potAfter = skipped ? potBefore : potBefore + 1;
   const statements = [
     sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 37))', [
       `${rankingId}:${ownerKey}`,
     ]),
+  ];
+  if (!modesBefore.duel.sessionId) {
+    statements.push(
+      sql.query(
+        `
+        INSERT INTO ranking_duel_sessions (
+          id,
+          ranking_id,
+          device_id,
+          user_id,
+          champion_option_id,
+          pot,
+          completed,
+          created_at,
+          updated_at
+        )
+        VALUES ($1, $2, $3, $4::uuid, NULL, 0, false, now(), now())
+      `,
+        [sessionId, rankingId, deviceId, userId],
+      ),
+    );
+  }
+  statements.push(
     sql.query(
       `
       INSERT INTO ranking_duel_rounds (
@@ -4963,11 +5006,27 @@ async function saveDuel(req, res, body) {
         device_id,
         user_id,
         skipped,
+        session_id,
+        pot_before,
+        pot_after,
+        champion_before_option_id,
+        champion_after_option_id,
         created_at
       )
-      VALUES ($1, $2, $3, $4::uuid, $5, now())
+      VALUES ($1, $2, $3, $4::uuid, $5, $6, $7, $8, $9, $10, now())
     `,
-      [roundId, rankingId, deviceId, userId, skipped],
+      [
+        roundId,
+        rankingId,
+        deviceId,
+        userId,
+        skipped,
+        sessionId,
+        potBefore,
+        potAfter,
+        championBeforeOptionId,
+        championAfterOptionId,
+      ],
     ),
     sql.query(
       `
@@ -4995,7 +5054,33 @@ async function saveDuel(req, res, body) {
     `,
       [roundId, rankingId, deviceId, userId, winnerOptionId, optionIds],
     ),
-  ];
+    sql.query(
+      `
+      UPDATE ranking_duel_sessions session
+      SET
+        champion_option_id = $2::bigint,
+        pot = $3,
+        completed = (
+          SELECT CASE
+            WHEN $2::bigint IS NULL THEN COUNT(*) < 2
+            ELSE COUNT(*) < 1
+          END
+          FROM ranking_options option
+          WHERE option.ranking_id = $4
+            AND NOT EXISTS (
+              SELECT 1
+              FROM ranking_duel_rounds round
+              JOIN ranking_duel_entries entry ON entry.round_id = round.id
+              WHERE round.session_id = session.id
+                AND entry.option_id = option.id
+            )
+        ),
+        updated_at = now()
+      WHERE session.id = $1
+    `,
+      [sessionId, championAfterOptionId, potAfter, rankingId],
+    ),
+  );
   if (consumesAnonymousVote) {
     statements.push(
       sql.query(
@@ -5017,7 +5102,7 @@ async function saveDuel(req, res, body) {
   } catch (error) {
     if (error?.code !== '23505') throw error;
     const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
-    return json(res, 409, { error: 'duel_option_already_seen', ...modes });
+    return json(res, 409, { error: 'duel_state_changed', ...modes });
   }
 
   const [modes, currentViewer] = await Promise.all([
@@ -5480,7 +5565,6 @@ export default async function handler(req, res) {
         if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
         if (action === 'favorites') return addFavorite(req, res, body);
         if (action === 'favorite-share') return shareFavorites(req, res);
-        if (action === 'ranking-top3') return saveTop3(req, res, body);
         if (action === 'ranking-duel') return saveDuel(req, res, body);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);

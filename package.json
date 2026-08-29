@@ -28,6 +28,7 @@
     "db:ranking-favorites": "node scripts/apply-ranking-favorites.mjs",
     "db:vote-identity": "node scripts/apply-vote-identity.mjs",
     "db:voting-modes": "node scripts/apply-voting-modes.mjs",
+    "db:winner-stays": "node scripts/apply-voting-modes.mjs",
     "db:local-content-quality": "node scripts/apply-local-content-quality.mjs",
     "test:api": "node test/api.integration.mjs",
     "test:comments": "node test/comments.integration.mjs",
