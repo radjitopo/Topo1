@@ -8,9 +8,12 @@ if (!process.env.DATABASE_URL) {
 
 const sql = neon(process.env.DATABASE_URL);
 const migrations = await Promise.all(
-  ['20260828_voting_modes.sql', '20260829_winner_stays.sql', '20260829_single_duel_play.sql'].map(
-    (filename) => readFile(new URL(`../migrations/${filename}`, import.meta.url), 'utf8'),
-  ),
+  [
+    '20260828_voting_modes.sql',
+    '20260829_winner_stays.sql',
+    '20260829_single_duel_play.sql',
+    '20260829_duel_bonus_four.sql',
+  ].map((filename) => readFile(new URL(`../migrations/${filename}`, import.meta.url), 'utf8')),
 );
 
 await sql.transaction(
@@ -65,4 +68,6 @@ if (
   throw new Error(`Voting modes schema validation failed: ${JSON.stringify(validation)}`);
 }
 
-console.log('Single-play Ganha, Fica schema and hidden ranking bonus applied and validated.');
+console.log(
+  'Single-play Ganha, Fica schema and 4-point hidden ranking bonus applied and validated.',
+);

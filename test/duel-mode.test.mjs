@@ -27,6 +27,11 @@ test('ranking pages default to Voto Livre and expose Ganha, Fica without Top 3',
   assert.doesNotMatch(compact, /data-ranking-vote-mode="top3"/);
   assert.match(compact, /data-ranking-vote-mode="duelo"/);
   assert.match(compact, /data-ranking-vote-mode="livre"/);
+  assert.ok(
+    compact.indexOf('data-ranking-vote-mode="duelo"') <
+      compact.indexOf('data-ranking-vote-mode="livre"'),
+    'Ganha, Fica should be the left tab while Voto Livre remains the default mode',
+  );
   assert.match(compact, />GANHA,FICA</);
   assert.match(compact, />VOTOLIVRE</);
   assert.doesNotMatch(compact, />TOP3</);
@@ -44,11 +49,12 @@ test('tab changes stay in place instead of navigating the ranking page', async (
   assert.doesNotMatch(updateUrl, /scrollTo|scrollIntoView/);
 });
 
-test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 15 points', async () => {
-  const [api, winnerMigration, singlePlayMigration] = await Promise.all([
+test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 4 points', async () => {
+  const [api, winnerMigration, singlePlayMigration, fourPointBonusMigration] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('migrations/20260829_winner_stays.sql', root), 'utf8'),
     readFile(new URL('migrations/20260829_single_duel_play.sql', root), 'utf8'),
+    readFile(new URL('migrations/20260829_duel_bonus_four.sql', root), 'utf8'),
   ]);
   const duel = extractTopLevelDeclaration(api, 'saveDuel');
 
@@ -60,7 +66,8 @@ test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 15 p
   assert.match(winnerMigration, /CREATE TABLE IF NOT EXISTS ranking_duel_sessions/);
   assert.match(winnerMigration, /DROP INDEX IF EXISTS ranking_duel_user_option_unique_idx/);
   assert.match(singlePlayMigration, /CREATE OR REPLACE VIEW ranking_duel_option_bonuses/);
-  assert.match(singlePlayMigration, /FLOOR\(SUM\(points\)::numeric \/ 15\)/);
+  assert.match(fourPointBonusMigration, /CREATE OR REPLACE VIEW ranking_duel_option_bonuses/);
+  assert.match(fourPointBonusMigration, /FLOOR\(SUM\(points\)::numeric \/ 4\)/);
   assert.match(api, /COALESCE\(duel_bonus\.score_bonus, 0\)/);
   assert.doesNotMatch(api, /action === 'ranking-top3'/);
 });

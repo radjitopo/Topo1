@@ -2245,7 +2245,7 @@ async function loadAllCommentsPage(r, page, append) {
 function rankingVoteModeHTML(r, votingOpen = true) {
   if (!votingOpen) return '';
   const mode = activeRankingVoteMode();
-  return `<nav class="rankingVoteModes" aria-label="Escolher forma de votar" role="tablist"><button class="${mode === 'livre' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="livre" aria-selected="${mode === 'livre'}" aria-controls="rankingVotingPanel"><span>↑↓</span> VOTO LIVRE</button><button class="${mode === 'duelo' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="duelo" aria-selected="${mode === 'duelo'}" aria-controls="rankingVotingPanel"><span>→</span> GANHA, FICA</button></nav>`;
+  return `<nav class="rankingVoteModes" aria-label="Escolher forma de votar" role="tablist"><button class="${mode === 'duelo' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="duelo" aria-selected="${mode === 'duelo'}" aria-controls="rankingVotingPanel"><span>→</span> GANHA, FICA</button><button class="${mode === 'livre' ? 'active' : ''}" type="button" role="tab" data-ranking-vote-mode="livre" aria-selected="${mode === 'livre'}" aria-controls="rankingVotingPanel"><span>↑↓</span> VOTO LIVRE</button></nav>`;
 }
 function votingModeStateFor(r) {
   return rankingVotingState?.rankingId === r.id && rankingVotingState.loaded
