@@ -8,8 +8,8 @@ if (!process.env.DATABASE_URL) {
 
 const sql = neon(process.env.DATABASE_URL);
 const migrations = await Promise.all(
-  ['20260828_voting_modes.sql', '20260829_winner_stays.sql'].map((filename) =>
-    readFile(new URL(`../migrations/${filename}`, import.meta.url), 'utf8'),
+  ['20260828_voting_modes.sql', '20260829_winner_stays.sql', '20260829_single_duel_play.sql'].map(
+    (filename) => readFile(new URL(`../migrations/${filename}`, import.meta.url), 'utf8'),
   ),
 );
 
@@ -32,13 +32,22 @@ const [validation] = await sql.query(`
       AS duel_session_device_index,
     to_regclass('public.ranking_duel_session_pot_unique_idx') IS NOT NULL
       AS duel_session_pot_index,
+    to_regclass('public.ranking_duel_option_bonuses') IS NOT NULL
+      AS duel_bonus_view,
     EXISTS (
       SELECT 1
       FROM information_schema.columns
       WHERE table_schema = 'public'
         AND table_name = 'ranking_duel_rounds'
         AND column_name = 'session_id'
-    ) AS duel_round_session_column
+    ) AS duel_round_session_column,
+    EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'ranking_duel_sessions'
+        AND column_name = 'order_seed'
+    ) AS duel_session_order_seed_column
 `);
 
 if (
@@ -49,9 +58,11 @@ if (
   !validation?.duel_session_user_index ||
   !validation?.duel_session_device_index ||
   !validation?.duel_session_pot_index ||
-  !validation?.duel_round_session_column
+  !validation?.duel_bonus_view ||
+  !validation?.duel_round_session_column ||
+  !validation?.duel_session_order_seed_column
 ) {
   throw new Error(`Voting modes schema validation failed: ${JSON.stringify(validation)}`);
 }
 
-console.log('Voting modes and Ganha, Fica schema applied and validated.');
+console.log('Single-play Ganha, Fica schema and hidden ranking bonus applied and validated.');

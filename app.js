@@ -1201,7 +1201,7 @@ function personalActivityHTML(data = null) {
     powerSummary = progress.unlocked
       ? `${fmt(doubleVotes.available || 0)} livre${Number(doubleVotes.available || 0) === 1 ? '' : 's'} · ${fmt(doubleVotes.active || 0)} em uso`
       : 'valem 2 pontos';
-  return `<section class="personalActivityOverview"><span class="portalKicker">Sua participação</span><div class="profileMetrics" aria-label="Resumo da sua atividade"><span><strong>${fmt(stats.votes || 0)}</strong><small>votos ativos</small></span><span><strong>${fmt(stats.rankings || 0)}</strong><small>rankings votados</small></span><span><strong>${fmt(stats.streak || 0)} dia${Number(stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></section><div class="profileDashboard personalActivityDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(data.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(data.recent)}</section>`;
+  return `<section class="personalActivityOverview"><span class="portalKicker">Sua participação</span><div class="profileMetrics" aria-label="Resumo da sua atividade"><span><strong>${fmt(stats.votes || 0)}</strong><small>votos ativos</small></span><span><strong>${fmt(stats.rankings || 0)}</strong><small>rankings participados</small></span><span><strong>${fmt(stats.streak || 0)} dia${Number(stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></section>${profileRankingActivityHTML(data.rankingActivity)}<div class="profileDashboard personalActivityDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(data.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(data.recent)}</section>`;
 }
 
 async function loadVipArea() {
@@ -2259,10 +2259,12 @@ function rankingModeStatsHTML(r, votingOpen = true) {
     return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Votos livres hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no Voto Livre</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>`;
   }
   if (!state) {
-    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Partidas concluídas</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Líder no Ganha, Fica</div><div class="statValue">—</div></div></div>`;
+    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Sua partida</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Seu líder</div><div class="statValue">—</div></div></div>`;
   }
-  const leaderPoints = Number(state.duel.standings?.[0]?.points || 0);
-  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Partidas concluídas</div><div class="statValue">${fmt(state.duel.totalDuels)}</div></div><div class="statBox"><div class="statLabel">Líder no Ganha, Fica</div><div class="statValue">${leaderPoints ? `${fmt(leaderPoints)} pt${leaderPoints === 1 ? '' : 's'}` : 'Empate'}</div></div></div>`;
+  const seen = Number(state.duel.seenOptions || 0),
+    total = Number(state.duel.totalOptions || 0),
+    champion = state.duel.champion?.label || '';
+  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Sua partida</div><div class="statValue">${state.duel.completed ? 'Concluída' : `${fmt(seen)}/${fmt(total)}`}</div></div><div class="statBox"><div class="statLabel">${state.duel.completed ? 'Seu vencedor' : 'Seu líder'}</div><div class="statValue">${escapeHTML(champion || 'Ainda não')}</div></div></div>`;
 }
 function votingModesLoadingHTML() {
   return `<section class="rankingModeLoading"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando Ganha, Fica…</strong></section>`;
@@ -2270,25 +2272,16 @@ function votingModesLoadingHTML() {
 function votingModesErrorHTML() {
   return `<section class="rankingModeLoading error"><strong>Não consegui carregar o Ganha, Fica.</strong><button type="button" data-voting-modes-retry>TENTAR DE NOVO</button></section>`;
 }
-function duelChoiceHTML(option, side, pot) {
-  const nextPoints = Number(pot || 0) + 1,
-    incumbent = option.role === 'incumbent',
+function duelChoiceHTML(option, side) {
+  const incumbent = option.role === 'incumbent',
     challenger = option.role === 'challenger',
     role = incumbent ? 'QUEM ESTÁ' : challenger ? 'DESAFIANTE' : `OPÇÃO ${side}`,
     result = incumbent
-      ? `FICA COM ${nextPoints} PONTO${nextPoints === 1 ? '' : 'S'}`
+      ? 'CONTINUA SE VENCER'
       : challenger
-        ? `ASSUME ${nextPoints} PONTO${nextPoints === 1 ? '' : 'S'}`
-        : 'COMEÇA COM 1 PONTO';
+        ? 'TOMA O LUGAR SE VENCER'
+        : 'ESCOLHA QUEM CONTINUA';
   return `<button class="duelChoice ${incumbent ? 'incumbent' : challenger ? 'challenger' : ''}" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>${role}</span><strong>${escapeHTML(option.label)}</strong><small>${result}</small></button>`;
-}
-function duelStandingsHTML(standings) {
-  return `<section class="duelStandings"><header><div><span class="duelEyebrow">Ranking Ganha, Fica</span><h3>Pontos</h3></div><small>quem conquistou continua com os pontos</small></header><div>${standings
-    .map(
-      (option, index) =>
-        `<div class="duelStandingRow"><span class="duelStandingPosition">${rankMark(index)}</span><span><strong>${escapeHTML(option.label)}</strong><small>${Number(option.points) ? `pontuou em ${fmt(option.runs)} rodada${Number(option.runs) === 1 ? '' : 's'}` : 'ainda sem pontos'}</small></span><b>${fmt(option.points)} pt${Number(option.points) === 1 ? '' : 's'}</b></div>`,
-    )
-    .join('')}</div></section>`;
 }
 function rankingDuelHTML(r) {
   const state = votingModeStateFor(r);
@@ -2299,19 +2292,18 @@ function rankingDuelHTML(r) {
   }
   const pair = state.duel.pair || [],
     champion = state.duel.champion,
-    pot = Number(state.duel.pot || 0),
     progress = `${fmt(state.duel.seenOptions)} de ${fmt(state.duel.totalOptions)} opções vistas`,
     duelNumber = Number(state.duel.myDuels || 0) + 1,
     headerCopy = champion
-      ? `<span class="duelEyebrow">Partida ${duelNumber} · ${fmt(pot)} ponto${pot === 1 ? '' : 's'} na sequência</span><h2>Quem ganha, fica.</h2><p>Se o desafiante vencer, começa com ${fmt(pot + 1)} pontos. ${escapeHTML(champion.label)} continua com os ${fmt(pot)} que já conquistou.</p>`
-      : `<span class="duelEyebrow">Primeira partida</span><h2>Quem ganha, fica.</h2><p>O vencedor começa com 1 ponto e enfrenta a próxima opção.</p>`,
+      ? `<span class="duelEyebrow">Escolha ${duelNumber} · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>${escapeHTML(champion.label)} continua. O desafiante toma o lugar se vencer.</p>`
+      : `<span class="duelEyebrow">Ordem aleatória · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>Escolha uma opção. A vencedora enfrenta a próxima sem repetir os nomes.</p>`,
     duelCard =
       pair.length === 2
-        ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A', pot)}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B', pot)}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
+        ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
         : champion
-          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada concluída</span><h2>${escapeHTML(champion.label)} termina com ${fmt(pot)} pontos.</h2><p>Quem liderou antes continua com os pontos que conquistou. O placar abaixo soma todas as rodadas.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`
-          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Rodada encerrada</span><h2>Nenhuma opção foi escolhida.</h2><p>Os itens pulados não ganharam nem perderam pontos.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
-  return `${duelCard}${duelStandingsHTML(state.duel.standings || [])}`;
+          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2><p>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</p><div class="duelEndActions"><a class="primary" href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'VER NO MEU TOPO' : 'ENTRAR PARA GUARDAR'}</a><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`
+          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2><p>Esta partida foi encerrada e não reinicia.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
+  return duelCard;
 }
 function rankingFreeVoteHTML(r, votingOpen = true) {
   const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
@@ -2321,7 +2313,7 @@ function rankingFreeVoteHTML(r, votingOpen = true) {
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
       : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
-  return `<div class="rankingFreeIntro"><strong>Voto Livre</strong><span>↑ soma 1 ponto · ↓ tira 1 ponto</span></div><div class="rankingResultHead"><span>Resultado do Voto Livre</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
+  return `<div class="rankingFreeIntro"><strong>Voto Livre</strong><span>↑ soma 1 · ↓ tira 1 · Ganha, Fica também conta</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
 }
 function rankingVotePanelHTML(r, votingOpen = true) {
   if (!votingOpen) return rankingFreeVoteHTML(r, false);
@@ -2336,6 +2328,14 @@ function updateVoteModeUrl(mode) {
   history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
 }
 function applyVotingModeResult(r, result) {
+  const scoreUpdate = result.scoreUpdate,
+    updatedOption = scoreUpdate
+      ? r.opts.find((option) => Number(option.id) === Number(scoreUpdate.optionId))
+      : null;
+  if (updatedOption && Number.isFinite(Number(scoreUpdate.score))) {
+    updatedOption.score = Number(scoreUpdate.score);
+    r.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition);
+  }
   rankingVotingState = {
     ...result,
     rankingId: r.id,
@@ -3638,6 +3638,35 @@ function profileRecentHTML(recent = []) {
         `<a class="recentVote" href="${rankingPath(v.rankingId)}"><span class="voteArrow ${v.direction === 1 ? 'up' : 'down'}">${v.direction === 1 ? '↑' : '↓'}</span><span><span class="recentOption">${escapeHTML(v.option)} ${Number(v.weight) === 2 ? '<em class="recentDoubleVote">2×</em>' : ''}</span><span class="recentQuestion">${escapeHTML(v.question)}</span></span><span class="recentTime">${new Date(v.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span></a>`,
     )
     .join('');
+}
+function profileRankingActivityHTML(items = []) {
+  const activity = Array.isArray(items) ? items : [];
+  if (!activity.length)
+    return `<section class="profileSection profileRankingActivity"><div class="profileSectionHead"><div class="sectionLabel">Rankings votados e jogados</div><span>seu histórico</span></div><p class="profileHint">Os rankings em que você votar ou jogar aparecerão aqui.</p></section>`;
+  return `<section class="profileSection profileRankingActivity"><div class="profileSectionHead"><div class="sectionLabel">Rankings votados e jogados</div><span>${fmt(activity.length)} no seu histórico</span></div><div class="profileRankingActivityList">${activity
+    .map((item) => {
+      const href = `${rankingPath(item.rankingId)}${item.played ? '?modo=duelo' : ''}`,
+        tags = [
+          item.voted ? '<em>VOTO LIVRE</em>' : '',
+          item.played ? '<em>GANHA, FICA</em>' : '',
+        ].join(''),
+        winnerLabel = item.played
+          ? item.completed
+            ? item.winner
+              ? 'Seu vencedor'
+              : 'Partida sem vencedor'
+            : item.winner
+              ? 'Seu líder até agora'
+              : 'Partida em andamento'
+          : 'Você votou neste ranking',
+        winner = item.winner
+          ? `<strong>${escapeHTML(item.winner)}</strong>`
+          : item.played && !item.completed
+            ? '<strong>Continuar escolhendo</strong>'
+            : '';
+      return `<a class="profileRankingActivityCard" href="${escapeHTML(href)}"><span class="profileRankingActivityImage">${item.image ? `<img src="${escapeHTML(item.image)}" alt="" loading="lazy">` : '<b aria-hidden="true">TOPO</b>'}</span><span class="profileRankingActivityCopy"><span>${tags}</span><b>${escapeHTML(item.question)}</b><small>${escapeHTML(item.category || '')}</small></span><span class="profileRankingActivityWinner"><small>${winnerLabel}</small>${winner}</span></a>`;
+    })
+    .join('')}</div></section>`;
 }
 function profileLeaderboardHTML(entries = []) {
   if (!entries.length)

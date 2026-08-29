@@ -44,10 +44,11 @@ test('tab changes stay in place instead of navigating the ranking page', async (
   assert.doesNotMatch(updateUrl, /scrollTo|scrollIntoView/);
 });
 
-test('Ganha, Fica uses its own sessions and never changes the arrow score', async () => {
-  const [api, migration] = await Promise.all([
+test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 15 points', async () => {
+  const [api, winnerMigration, singlePlayMigration] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('migrations/20260829_winner_stays.sql', root), 'utf8'),
+    readFile(new URL('migrations/20260829_single_duel_play.sql', root), 'utf8'),
   ]);
   const duel = extractTopLevelDeclaration(api, 'saveDuel');
 
@@ -56,27 +57,41 @@ test('Ganha, Fica uses its own sessions and never changes the arrow score', asyn
   assert.match(duel, /ranking_duel_entries/);
   assert.doesNotMatch(duel, /INSERT INTO votes\b/);
   assert.match(duel, /winnerOptionId === null/);
-  assert.match(migration, /CREATE TABLE IF NOT EXISTS ranking_duel_sessions/);
-  assert.match(migration, /DROP INDEX IF EXISTS ranking_duel_user_option_unique_idx/);
+  assert.match(winnerMigration, /CREATE TABLE IF NOT EXISTS ranking_duel_sessions/);
+  assert.match(winnerMigration, /DROP INDEX IF EXISTS ranking_duel_user_option_unique_idx/);
+  assert.match(singlePlayMigration, /CREATE OR REPLACE VIEW ranking_duel_option_bonuses/);
+  assert.match(singlePlayMigration, /FLOOR\(SUM\(points\)::numeric \/ 15\)/);
+  assert.match(api, /COALESCE\(duel_bonus\.score_bonus, 0\)/);
   assert.doesNotMatch(api, /action === 'ranking-top3'/);
 });
 
-test('winner stays, inherits the chain plus one and previous winners keep their points', async () => {
-  const api = await readFile(new URL('api.js', root), 'utf8');
+test('each person gets one stable random run and previous winners keep their hidden points', async () => {
+  const [api, winnerMigration, singlePlayMigration] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('migrations/20260829_winner_stays.sql', root), 'utf8'),
+    readFile(new URL('migrations/20260829_single_duel_play.sql', root), 'utf8'),
+  ]);
   const state = extractTopLevelDeclaration(api, 'rankingVotingModeState');
   const duel = extractTopLevelDeclaration(api, 'saveDuel');
 
   assert.match(state, /'incumbent'/);
   assert.match(state, /'challenger'/);
-  assert.match(state, /MAX\(round\.pot_after\)/);
-  assert.match(state, /round\.champion_after_option_id/);
+  assert.match(state, /session\.order_seed/);
+  assert.match(state, /md5\(/);
+  assert.doesNotMatch(state, /appearances|exposure/);
   assert.match(state, /NOT EXISTS \(SELECT 1 FROM seen/);
   assert.match(duel, /potAfter = skipped \? potBefore : potBefore \+ 1/);
   assert.match(duel, /championAfterOptionId = skipped \? championBeforeOptionId : winnerOptionId/);
+  assert.match(duel, /order_seed/);
   assert.match(duel, /completed =/);
+  assert.match(singlePlayMigration, /MAX\(round\.pot_after\)/);
+  assert.match(singlePlayMigration, /round\.champion_after_option_id/);
+  assert.match(singlePlayMigration, /ADD COLUMN IF NOT EXISTS order_seed/);
+  assert.match(winnerMigration, /ranking_duel_session_user_ranking_unique_idx/);
+  assert.match(winnerMigration, /ranking_duel_session_device_ranking_unique_idx/);
 });
 
-test('Ganha, Fica copy and mobile layout explain the accumulating score', async () => {
+test('Ganha, Fica hides its points, records the personal winner and stays usable on mobile', async () => {
   const [app, style, index] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
@@ -85,10 +100,12 @@ test('Ganha, Fica copy and mobile layout explain the accumulating score', async 
   const compact = compactSource(app);
 
   assert.match(compact, /Quemganha,fica/);
-  assert.match(compact, /continuacomos/);
-  assert.match(compact, /ASSUME/);
-  assert.match(compact, /RankingGanha,Fica/);
+  assert.match(compact, /umapartidaporranking/);
+  assert.match(compact, /Seuvencedor/);
+  assert.match(compact, /resultadofoiguardadonoMeuTopo/i);
   assert.match(compact, /TROCARDESAFIANTE/);
+  assert.match(compact, /Rankingoficial/);
+  assert.doesNotMatch(compact, /RankingGanha,Fica|duelStandingsHTML|pontonanasequência/);
   assert.match(style, /\.rankingVoteModes/);
   assert.match(style, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(style, /\.duelChoice\.incumbent/);
@@ -99,5 +116,23 @@ test('Ganha, Fica copy and mobile layout explain the accumulating score', async 
     'the global site header layout must not leak into the Ganha, Fica header',
   );
   assert.match(style, /hyphens: auto;/, 'long option labels should wrap cleanly on phones');
-  assert.match(index, /winner-stays/);
+  assert.match(style, /\.profileRankingActivityCard/);
+  assert.match(index, /single-random-play/);
+});
+
+test('Meu Topo lists voted and played rankings with the personal winner', async () => {
+  const [api, app] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('app.js', root), 'utf8'),
+  ]);
+  const profile = extractTopLevelDeclaration(api, 'profile');
+  const activity = extractTopLevelDeclaration(app, 'profileRankingActivityHTML');
+
+  assert.match(profile, /ranking_duel_sessions/);
+  assert.match(profile, /champion_option_id/);
+  assert.match(profile, /rankingActivity/);
+  assert.match(activity, /Rankings votados e jogados/);
+  assert.match(activity, /Seu vencedor/);
+  assert.match(activity, /Seu líder até agora/);
+  assert.match(activity, /\?modo=duelo/);
 });

@@ -501,6 +501,21 @@ body.popElectric.rankingPage .duelEndActions button.secondary {
   color: var(--clean-ink);
 }
 
+body.popElectric.rankingPage .duelEndActions a.primary {
+  min-height: 48px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 0 22px;
+  text-decoration: none;
+}
+
+body.popElectric.rankingPage .statsRow .statValue {
+  overflow-wrap: anywhere;
+}
+
 body.popElectric.rankingPage .duelStandings {
   margin-top: 34px;
   border-top: 5px solid var(--clean-ink);
@@ -7277,6 +7292,108 @@ body.popElectric.vipPage .personalActivityDashboard {
   margin-top: 34px;
 }
 
+body.popElectric.vipPage .profileRankingActivity {
+  margin-top: 22px;
+}
+
+body.popElectric.vipPage .profileRankingActivityList {
+  display: grid;
+  border-top: 1px solid var(--clean-ink);
+}
+
+body.popElectric.vipPage .profileRankingActivityCard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr) minmax(150px, 0.42fr);
+  align-items: stretch;
+  gap: 16px;
+  border-bottom: 1px solid var(--clean-ink);
+  color: var(--clean-ink);
+  text-decoration: none;
+}
+
+body.popElectric.vipPage .profileRankingActivityImage {
+  min-height: 82px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--clean-soft);
+}
+
+body.popElectric.vipPage .profileRankingActivityImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.popElectric.vipPage .profileRankingActivityImage b {
+  font:
+    950 14px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric.vipPage .profileRankingActivityCopy,
+body.popElectric.vipPage .profileRankingActivityWinner {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 14px 0;
+}
+
+body.popElectric.vipPage .profileRankingActivityCopy > span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+body.popElectric.vipPage .profileRankingActivityCopy em {
+  border: 1px solid var(--clean-ink);
+  padding: 3px 5px;
+  font:
+    900 8px/1 Arial,
+    Helvetica,
+    sans-serif;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+body.popElectric.vipPage .profileRankingActivityCopy > b,
+body.popElectric.vipPage .profileRankingActivityWinner > strong {
+  overflow-wrap: anywhere;
+  font:
+    900 15px/1.05 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.025em;
+}
+
+body.popElectric.vipPage .profileRankingActivityCopy > small,
+body.popElectric.vipPage .profileRankingActivityWinner > small {
+  color: var(--clean-muted);
+  font:
+    800 9px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.popElectric.vipPage .profileRankingActivityWinner {
+  border-left: 1px solid var(--clean-line);
+  padding-left: 16px;
+  padding-right: 8px;
+}
+
+body.popElectric.vipPage .profileRankingActivityCard:hover .profileRankingActivityCopy > b,
+body.popElectric.vipPage .profileRankingActivityCard:focus-visible .profileRankingActivityCopy > b {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 body.popElectric.vipPage .profileSection {
   margin: 0 0 34px;
   border: 0;
@@ -7411,6 +7528,21 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
     margin-top: 28px;
+  }
+
+  body.popElectric.vipPage .profileRankingActivityCard {
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  body.popElectric.vipPage .profileRankingActivityImage {
+    min-height: 94px;
+  }
+
+  body.popElectric.vipPage .profileRankingActivityWinner {
+    grid-column: 2;
+    border-left: 0;
+    padding: 0 8px 13px 0;
   }
 
   body.popElectric.vipPage .profileSection {

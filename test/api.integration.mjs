@@ -106,8 +106,16 @@ try {
   assert.equal(modes.body.duel.pair.length, 2);
   assert.equal(modes.body.duel.pot, 0);
   assert.equal(modes.body.duel.champion, null);
+  assert.equal('standings' in modes.body.duel, false);
+
+  const repeatedModes = await request({
+    action: 'ranking-vote-modes',
+    query: { device_id: deviceId, ranking_id: ranking.id },
+  });
+  assert.deepEqual(repeatedModes.body.duel.pair, modes.body.duel.pair);
 
   const pair = modes.body.duel.pair.map((item) => item.optionId);
+  const initialPairWinnerScore = ranking.opts.find((item) => item.id === pair[0]).score;
   const firstDuel = await request({
     method: 'POST',
     action: 'ranking-duel',
@@ -124,7 +132,9 @@ try {
   assert.equal(firstDuel.body.duel.pot, 1);
   assert.equal(firstDuel.body.duel.champion.optionId, pair[0]);
   assert.equal(firstDuel.body.duel.pair[0].optionId, pair[0]);
-  assert.equal(firstDuel.body.duel.standings.find((item) => item.optionId === pair[0]).points, 1);
+  assert.equal('standings' in firstDuel.body.duel, false);
+  assert.equal(firstDuel.body.scoreUpdate.optionId, pair[0]);
+  assert.equal(firstDuel.body.scoreUpdate.score, initialPairWinnerScore);
 
   const challenger = firstDuel.body.duel.pair[1].optionId;
   assert.ok(!pair.includes(challenger));
@@ -143,11 +153,8 @@ try {
   assert.equal(secondDuel.body.duel.seenOptions, 3);
   assert.equal(secondDuel.body.duel.pot, 2);
   assert.equal(secondDuel.body.duel.champion.optionId, challenger);
-  assert.equal(secondDuel.body.duel.standings.find((item) => item.optionId === pair[0]).points, 1);
-  assert.equal(
-    secondDuel.body.duel.standings.find((item) => item.optionId === challenger).points,
-    2,
-  );
+  assert.equal('standings' in secondDuel.body.duel, false);
+  assert.equal(secondDuel.body.scoreUpdate.optionId, challenger);
   assert.equal(secondDuel.body.duel.pair[0].optionId, challenger);
   assert.ok(secondDuel.body.duel.pair.every((item) => item.optionId !== pair[1]));
 

@@ -754,14 +754,44 @@ async function rankingOrderSignature(rankingId) {
         option.position,
         option.baseline_score
           + COALESCE((SELECT SUM(vote.direction) FROM votes vote WHERE vote.option_id = option.id), 0)
-          + COALESCE((SELECT SUM(double_vote.direction) FROM user_double_votes double_vote WHERE double_vote.option_id = option.id), 0) AS score
+          + COALESCE((SELECT SUM(double_vote.direction) FROM user_double_votes double_vote WHERE double_vote.option_id = option.id), 0)
+          + COALESCE(duel_bonus.score_bonus, 0) AS score
       FROM ranking_options option
+      LEFT JOIN ranking_duel_option_bonuses duel_bonus
+        ON duel_bonus.ranking_id = option.ranking_id
+       AND duel_bonus.option_id = option.id
       WHERE option.ranking_id = $1
     ) state
   `,
     [rankingId],
   );
   return String(row?.signature || '');
+}
+
+async function officialOptionState(optionId) {
+  const [row] = await sql.query(
+    `
+    SELECT
+      option.id AS "optionId",
+      option.baseline_score
+        + COALESCE((SELECT SUM(vote.direction) FROM votes vote WHERE vote.option_id = option.id), 0)
+        + COALESCE((SELECT SUM(double_vote.direction) FROM user_double_votes double_vote WHERE double_vote.option_id = option.id), 0)
+        + COALESCE(duel_bonus.score_bonus, 0) AS score
+    FROM ranking_options option
+    LEFT JOIN ranking_duel_option_bonuses duel_bonus
+      ON duel_bonus.ranking_id = option.ranking_id
+     AND duel_bonus.option_id = option.id
+    WHERE option.id = $1
+    LIMIT 1
+  `,
+    [optionId],
+  );
+  return row
+    ? {
+        optionId: Number(row.optionId),
+        score: Number(row.score || 0),
+      }
+    : null;
 }
 
 async function queueRankingChangeNotifications(rankingId, actorUserId) {
@@ -1218,7 +1248,8 @@ async function catalog(req, res) {
       o.position,
       o.baseline_score
         + COALESCE(vt.score_delta, 0)::int
-        + COALESCE(dvt.score_delta, 0)::int AS score,
+        + COALESCE(dvt.score_delta, 0)::int
+        + COALESCE(duel_bonus.score_bonus, 0)::int AS score,
       COALESCE(vt.live_votes, 0)::int AS live_votes,
       COALESCE(vt.today_votes, 0)::int AS today_votes,
       COALESCE(mv.direction, 0)::int AS my_direction,
@@ -1230,6 +1261,9 @@ async function catalog(req, res) {
     JOIN ranking_options o ON o.ranking_id = r.id
     LEFT JOIN vote_totals vt ON vt.option_id = o.id
     LEFT JOIN double_vote_totals dvt ON dvt.option_id = o.id
+    LEFT JOIN ranking_duel_option_bonuses duel_bonus
+      ON duel_bonus.ranking_id = r.id
+     AND duel_bonus.option_id = o.id
     LEFT JOIN my_votes mv ON mv.option_id = o.id
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
     ORDER BY r.created_at, r.id, o.position
@@ -1488,7 +1522,8 @@ async function vipRanking(req, res) {
         o.vip_added_later AS "vipAddedLater",
         o.baseline_score
           + COALESCE(vt.score_delta, 0)::int
-          + COALESCE(dvt.score_delta, 0)::int AS score,
+          + COALESCE(dvt.score_delta, 0)::int
+          + COALESCE(duel_bonus.score_bonus, 0)::int AS score,
         COALESCE(vt.live_votes, 0)::int AS live_votes,
         COALESCE(vt.today_votes, 0)::int AS today_votes,
         COALESCE(mv.direction, 0)::int AS my_direction,
@@ -1497,6 +1532,9 @@ async function vipRanking(req, res) {
       JOIN ranking_options o ON o.ranking_id = r.id
       LEFT JOIN vote_totals vt ON vt.option_id = o.id
       LEFT JOIN double_vote_totals dvt ON dvt.option_id = o.id
+      LEFT JOIN ranking_duel_option_bonuses duel_bonus
+        ON duel_bonus.ranking_id = r.id
+       AND duel_bonus.option_id = o.id
       LEFT JOIN my_votes mv ON mv.option_id = o.id
       LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
       WHERE r.id = $4
@@ -2471,6 +2509,7 @@ async function profile(req, res) {
 
   const [
     statsRows,
+    rankingActivityRows,
     recentRows,
     categoryRows,
     profileRows,
@@ -2488,14 +2527,72 @@ async function profile(req, res) {
           v.direction
         FROM votes v
         WHERE v.user_id = $1
+      ),
+      activity_rankings AS (
+        SELECT option.ranking_id
+        FROM user_vote_history history
+        JOIN ranking_options option ON option.id = history.option_id
+        WHERE history.user_id = $1
+        UNION
+        SELECT session.ranking_id
+        FROM ranking_duel_sessions session
+        WHERE session.user_id = $1
       )
       SELECT
         COUNT(*)::int AS votes,
-        COUNT(DISTINCT o.ranking_id)::int AS rankings,
+        (SELECT COUNT(*)::int FROM activity_rankings) AS rankings,
         COUNT(*) FILTER (WHERE l.direction = 1)::int AS up_votes,
         COUNT(*) FILTER (WHERE l.direction = -1)::int AS down_votes
       FROM latest l
       JOIN ranking_options o ON o.id = l.option_id
+    `,
+      [user.id],
+    ),
+    sql.query(
+      `
+      WITH voted AS (
+        SELECT
+          option.ranking_id,
+          MAX(history.first_voted_at) AS updated_at
+        FROM user_vote_history history
+        JOIN ranking_options option ON option.id = history.option_id
+        WHERE history.user_id = $1
+        GROUP BY option.ranking_id
+      ),
+      played AS (
+        SELECT
+          session.id,
+          session.ranking_id,
+          session.champion_option_id,
+          session.completed,
+          session.updated_at
+        FROM ranking_duel_sessions session
+        WHERE session.user_id = $1
+      )
+      SELECT
+        ranking.id AS "rankingId",
+        ranking.question,
+        ranking.category,
+        ranking.image_url AS "imageUrl",
+        (voted.ranking_id IS NOT NULL) AS voted,
+        (played.ranking_id IS NOT NULL) AS played,
+        played.completed,
+        played.champion_option_id AS "winnerOptionId",
+        champion.label AS winner,
+        GREATEST(
+          COALESCE(voted.updated_at, '-infinity'::timestamptz),
+          COALESCE(played.updated_at, '-infinity'::timestamptz)
+        ) AS "updatedAt"
+      FROM rankings ranking
+      LEFT JOIN voted ON voted.ranking_id = ranking.id
+      LEFT JOIN played ON played.ranking_id = ranking.id
+      LEFT JOIN ranking_options champion
+        ON champion.ranking_id = ranking.id
+       AND champion.id = played.champion_option_id
+      WHERE ranking.is_active = true
+        AND (voted.ranking_id IS NOT NULL OR played.ranking_id IS NOT NULL)
+      ORDER BY "updatedAt" DESC, ranking.id
+      LIMIT 40
     `,
       [user.id],
     ),
@@ -2671,6 +2768,18 @@ async function profile(req, res) {
       option: row.option,
       direction: Number(row.direction),
       weight: Number(row.weight || 1),
+      updatedAt: row.updatedAt,
+    })),
+    rankingActivity: rankingActivityRows.map((row) => ({
+      rankingId: row.rankingId,
+      question: rankingQuestion(row.rankingId, row.question),
+      category: row.category,
+      image: resolveRankingCover(row.rankingId, row.imageUrl),
+      voted: row.voted === true,
+      played: row.played === true,
+      completed: row.completed === true,
+      winnerOptionId: row.winnerOptionId ? Number(row.winnerOptionId) : null,
+      winner: row.winner || null,
       updatedAt: row.updatedAt,
     })),
     suggestions: {
@@ -4594,40 +4703,6 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
     )
   )`;
 
-  const duelStandingsQuery = sql.query(
-    `
-    WITH session_scores AS (
-      SELECT
-        round.session_id,
-        round.ranking_id,
-        round.champion_after_option_id AS option_id,
-        MAX(round.pot_after)::int AS points
-      FROM ranking_duel_rounds round
-      WHERE round.session_id IS NOT NULL
-        AND round.skipped = false
-        AND round.champion_after_option_id IS NOT NULL
-      GROUP BY round.session_id, round.ranking_id, round.champion_after_option_id
-    )
-    SELECT
-      option.id AS "optionId",
-      option.label,
-      option.position,
-      COALESCE(SUM(session_score.points), 0)::bigint AS points,
-      COUNT(session_score.session_id)::int AS runs
-    FROM ranking_options option
-    LEFT JOIN session_scores session_score
-      ON session_score.ranking_id = option.ranking_id
-     AND session_score.option_id = option.id
-    WHERE option.ranking_id = $1
-    GROUP BY option.id, option.label, option.position
-    ORDER BY
-      points DESC,
-      runs DESC,
-      option.position,
-      option.id
-  `,
-    [rankingId],
-  );
   const sessionQuery = sql.query(
     `
     SELECT
@@ -4662,7 +4737,12 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
     ? sql.query(
         `
         WITH viewer_session AS (
-          SELECT session.id, session.champion_option_id, session.pot, session.completed
+          SELECT
+            session.id,
+            session.champion_option_id,
+            session.pot,
+            session.completed,
+            session.order_seed
           FROM ranking_duel_sessions session
           WHERE session.ranking_id = $1
             AND ${sessionOwnerClause}
@@ -4674,27 +4754,17 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
           JOIN ranking_duel_rounds round ON round.session_id = session.id
           JOIN ranking_duel_entries entry ON entry.round_id = round.id
         ),
-        exposure AS (
-          SELECT entry.option_id, COUNT(*)::int AS appearances
-          FROM ranking_duel_rounds round
-          JOIN ranking_duel_entries entry ON entry.round_id = round.id
-          WHERE round.ranking_id = $1
-            AND round.session_id IS NOT NULL
-            AND entry.won IS NOT NULL
-          GROUP BY entry.option_id
-        ),
         incumbent AS (
           SELECT
             option.id AS "optionId",
             option.label,
             0::int AS "roleOrder",
             'incumbent'::text AS role,
-            COALESCE(exposure.appearances, 0)::int AS appearances
+            ''::text AS "randomOrder"
           FROM viewer_session session
           JOIN ranking_options option
             ON option.ranking_id = $1
            AND option.id = session.champion_option_id
-          LEFT JOIN exposure ON exposure.option_id = option.id
           WHERE session.completed = false
         ),
         candidate_pool AS (
@@ -4706,18 +4776,16 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
               WHEN (SELECT champion_option_id FROM viewer_session) IS NULL THEN 'starter'
               ELSE 'challenger'
             END::text AS role,
-            COALESCE(exposure.appearances, 0)::int AS appearances
+            md5(
+              COALESCE((SELECT order_seed FROM viewer_session), $4)
+              || ':' || option.id::text
+            ) AS "randomOrder"
           FROM ranking_options option
-          LEFT JOIN exposure ON exposure.option_id = option.id
           WHERE option.ranking_id = $1
             AND COALESCE((SELECT completed FROM viewer_session), false) = false
             AND NOT EXISTS (SELECT 1 FROM seen WHERE seen.option_id = option.id)
           ORDER BY
-            COALESCE(exposure.appearances, 0),
-            md5(
-              $4 || ':' || COALESCE((SELECT pot::text FROM viewer_session), '0') || ':'
-              || option.id::text
-            ),
+            "randomOrder",
             option.position
           LIMIT COALESCE(
             (SELECT CASE WHEN champion_option_id IS NULL THEN 2 ELSE 1 END FROM viewer_session),
@@ -4725,13 +4793,13 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
           )
         )
         SELECT
-          pair."optionId", pair.label, pair.role, pair.appearances
+          pair."optionId", pair.label, pair.role
         FROM (
           SELECT * FROM incumbent
           UNION ALL
           SELECT * FROM candidate_pool
         ) pair
-        ORDER BY pair."roleOrder", pair.appearances, pair."optionId"
+        ORDER BY pair."roleOrder", pair."randomOrder", pair."optionId"
       `,
         [rankingId, userId, deviceId, ownerSeed],
       )
@@ -4755,8 +4823,7 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
     [rankingId],
   );
 
-  const [duelRows, sessionRows, pairRows, summaryRows] = await Promise.all([
-    duelStandingsQuery,
+  const [sessionRows, pairRows, summaryRows] = await Promise.all([
     sessionQuery,
     pairQuery,
     summaryQuery,
@@ -4787,12 +4854,6 @@ async function rankingVotingModeState(rankingId, user, deviceId, votingOpen = tr
       myDuels: Number(session.myDuels || 0),
       seenOptions: Number(session.seenOptions || 0),
       totalOptions: Number(summary.totalOptions || 0),
-      standings: duelRows.map((row) => ({
-        optionId: Number(row.optionId),
-        label: row.label,
-        points: Number(row.points || 0),
-        runs: Number(row.runs || 0),
-      })),
     },
   };
 }
@@ -4960,6 +5021,7 @@ async function saveDuel(req, res, body) {
   }
 
   const skipped = winnerOptionId === null;
+  const orderBefore = skipped ? '' : await rankingOrderSignature(rankingId);
   const consumesAnonymousVote = !context.user && context.ranking.isVip !== true && !skipped;
   if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
     return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
@@ -4985,15 +5047,16 @@ async function saveDuel(req, res, body) {
           ranking_id,
           device_id,
           user_id,
+          order_seed,
           champion_option_id,
           pot,
           completed,
           created_at,
           updated_at
         )
-        VALUES ($1, $2, $3, $4::uuid, NULL, 0, false, now(), now())
+        VALUES ($1, $2, $3, $4::uuid, $5, NULL, 0, false, now(), now())
       `,
-        [sessionId, rankingId, deviceId, userId],
+        [sessionId, rankingId, deviceId, userId, ownerKey],
       ),
     );
   }
@@ -5105,11 +5168,20 @@ async function saveDuel(req, res, body) {
     return json(res, 409, { error: 'duel_state_changed', ...modes });
   }
 
-  const [modes, currentViewer] = await Promise.all([
+  const [modes, currentViewer, scoreUpdate, orderAfter] = await Promise.all([
     rankingVotingModeState(rankingId, context.user, deviceId, true),
     viewerFor(context.user, deviceId, false, context.ranking.isVip === true),
+    winnerOptionId ? officialOptionState(winnerOptionId) : Promise.resolve(null),
+    skipped ? Promise.resolve('') : rankingOrderSignature(rankingId),
   ]);
-  return json(res, 200, { ok: true, ...modes, viewer: currentViewer });
+  if (orderBefore && orderAfter && orderBefore !== orderAfter) {
+    try {
+      await queueRankingChangeNotifications(rankingId, userId);
+    } catch (error) {
+      console.error('TOPO duel notification update error', error);
+    }
+  }
+  return json(res, 200, { ok: true, ...modes, scoreUpdate, viewer: currentViewer });
 }
 
 async function vote(req, res, body) {
@@ -5447,8 +5519,12 @@ async function vote(req, res, body) {
                 SELECT SUM(dv.direction)
                 FROM user_double_votes dv
                 WHERE dv.option_id = o.id
-              ), 0) AS score
+              ), 0)
+            + COALESCE(duel_bonus.score_bonus, 0) AS score
         FROM ranking_options o
+        LEFT JOIN ranking_duel_option_bonuses duel_bonus
+          ON duel_bonus.ranking_id = o.ranking_id
+         AND duel_bonus.option_id = o.id
         WHERE o.id = $1
       ),
       ranking_state AS (
