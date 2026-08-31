@@ -177,7 +177,9 @@ async function saveBottomUpDuel(req, res) {
 
   const deviceId = String(body.device_id || '');
   const rankingId = String(body.ranking_id || '').trim();
-  const optionIds = [...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number))];
+  const optionIds = [
+    ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
+  ];
   const winnerOptionId = body.winner_option_id == null ? null : Number(body.winner_option_id);
   if (
     optionIds.length !== 2 ||
@@ -207,8 +209,14 @@ async function saveBottomUpDuel(req, res) {
 
   const skipped = winnerOptionId === null;
   const consumesAnonymousVote = !viewer.registered && viewer.privateVoting !== true && !skipped;
-  if (consumesAnonymousVote && Number(viewer.anonymousUsed || 0) >= Number(viewer.anonymousLimit || 10)) {
-    return json(res, 403, { error: 'registration_required', limit: Number(viewer.anonymousLimit || 10) });
+  if (
+    consumesAnonymousVote &&
+    Number(viewer.anonymousUsed || 0) >= Number(viewer.anonymousLimit || 10)
+  ) {
+    return json(res, 403, {
+      error: 'registration_required',
+      limit: Number(viewer.anonymousLimit || 10),
+    });
   }
 
   const sessionId = duel.sessionId || randomUUID();
@@ -219,7 +227,9 @@ async function saveBottomUpDuel(req, res) {
   const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
   const roundId = randomUUID();
   const statements = [
-    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 37))', [`${rankingId}:${ownerKey}`]),
+    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 37))', [
+      `${rankingId}:${ownerKey}`,
+    ]),
   ];
 
   if (!duel.sessionId) {
@@ -247,8 +257,18 @@ async function saveBottomUpDuel(req, res) {
         )
         VALUES ($1, $2, $3, $4::uuid, $5, $6, $7, $8, $9, $10, now())
       `,
-      [roundId, rankingId, deviceId, userId, skipped, sessionId, potBefore, potAfter,
-        championBeforeOptionId, championAfterOptionId],
+      [
+        roundId,
+        rankingId,
+        deviceId,
+        userId,
+        skipped,
+        sessionId,
+        potBefore,
+        potAfter,
+        championBeforeOptionId,
+        championAfterOptionId,
+      ],
     ),
     sql.query(
       `

@@ -110,6 +110,7 @@ Object.assign(editorial, {
 });
 
 (() => {
+  if (typeof document === 'undefined') return;
   const photoCache = new Map();
 
   const plain = (value) => {

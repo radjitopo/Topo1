@@ -127,6 +127,24 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
   assert.match(index, /single-random-play/);
 });
 
+test('a completed duel puts the next rankings before the small Meu Topo link', async () => {
+  const [app, style] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+  ]);
+  const duel = extractTopLevelDeclaration(app, 'rankingDuelHTML');
+  const flow = extractTopLevelDeclaration(app, 'rankingFlowActionsHTML');
+
+  assert.match(flow, /Próximo ranking/);
+  assert.match(flow, /Ranking aleatório/);
+  assert.match(duel, /rankingFlowActionsHTML\(r, 'duelNextActions'\)/);
+  assert.match(duel, /Seu vencedor:[\s\S]*?<\/h2>\$\{nextActions\}<div class="duelResultMeta">/);
+  assert.match(duel, /Ver no Meu Topo →/);
+  assert.doesNotMatch(duel, /IR PARA OUTRO RANKING/);
+  assert.match(style, /\.duelNextActions/);
+  assert.match(style, /\.duelResultMeta/);
+});
+
 test('Meu Topo lists voted and played rankings with the personal winner', async () => {
   const [api, app] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),

@@ -20,6 +20,7 @@ Object.assign(editorial, {
 });
 
 (() => {
+  if (typeof document === 'undefined') return;
   const style = document.createElement('style');
   style.id = 'duelCompactFixedCards';
   style.textContent = `

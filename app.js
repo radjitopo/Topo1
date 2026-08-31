@@ -2081,10 +2081,8 @@ function relatedCardsHTML(rels) {
     )
     .join('');
 }
-function rankingContinuationHTML(r) {
-  if (r.vip) return '';
-  const rels = relatedFor(r),
-    next = nextRankingFor(r),
+function rankingFlowActionsHTML(r, extraClass = '') {
+  const next = nextRankingFor(r),
     random = randomRankingFor(r),
     nextUnvoted = next && myVoteCount(next) === 0,
     randomUnvoted = random && myVoteCount(random) === 0,
@@ -2096,8 +2094,14 @@ function rankingContinuationHTML(r) {
           : 'Tema relacionado · ainda não votado'
         : 'Você já conhece este tema'
       : 'Continuar descobrindo',
-    randomHint = randomUnvoted ? 'Uma surpresa ainda não votada' : 'Revisite uma disputa';
-  return `<section class="rankingContinuation"><div class="rankingContinuationHead"><div><div class="sectionLabel">Continue votando</div><h2>Rankings relacionados</h2></div><span>sem voltar para a Home</span></div><div class="relatedGrid">${relatedCardsHTML(rels)}</div><div class="rankingFlowActions">${next ? `<a class="rankingFlowButton primary" href="${rankingPath(next.id)}"><span><strong>Próximo ranking</strong><small>${escapeHTML(nextHint)}</small></span><b>→</b></a>` : ''}${random ? `<a class="rankingFlowButton" href="${rankingPath(random.id)}"><span><strong>Ranking aleatório</strong><small>${randomHint}</small></span><b>↻</b></a>` : ''}</div></section>`;
+    randomHint = randomUnvoted ? 'Uma surpresa ainda não votada' : 'Revisite uma disputa',
+    className = `rankingFlowActions${extraClass ? ` ${extraClass}` : ''}`;
+  return `<div class="${className}">${next ? `<a class="rankingFlowButton primary" href="${rankingPath(next.id)}"><span><strong>Próximo ranking</strong><small>${escapeHTML(nextHint)}</small></span><b>→</b></a>` : ''}${random ? `<a class="rankingFlowButton" href="${rankingPath(random.id)}"><span><strong>Ranking aleatório</strong><small>${randomHint}</small></span><b>↻</b></a>` : ''}</div>`;
+}
+function rankingContinuationHTML(r) {
+  if (r.vip) return '';
+  const rels = relatedFor(r);
+  return `<section class="rankingContinuation"><div class="rankingContinuationHead"><div><div class="sectionLabel">Continue votando</div><h2>Rankings relacionados</h2></div><span>sem voltar para a Home</span></div><div class="relatedGrid">${relatedCardsHTML(rels)}</div>${rankingFlowActionsHTML(r)}</section>`;
 }
 function editorialHTML(r) {
   if (r.vip) return '';
@@ -2297,13 +2301,19 @@ function rankingDuelHTML(r) {
     headerCopy = champion
       ? `<span class="duelEyebrow">Escolha ${duelNumber} · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>${escapeHTML(champion.label)} continua. O desafiante toma o lugar se vencer.</p>`
       : `<span class="duelEyebrow">Ordem aleatória · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>Escolha uma opção. A vencedora enfrenta a próxima sem repetir os nomes.</p>`,
+    nextActions = rankingFlowActionsHTML(r, 'duelNextActions'),
     duelCard =
       pair.length === 2
         ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
         : champion
-          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2><p>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</p><div class="duelEndActions"><a class="primary" href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'VER NO MEU TOPO' : 'ENTRAR PARA GUARDAR'}</a><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`
-          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2><p>Esta partida foi encerrada e não reinicia.</p><div class="duelEndActions"><button class="secondary" type="button" data-start-random-duel data-exclude-ranking="${escapeHTML(r.id)}">IR PARA OUTRO RANKING</button></div></section>`;
+          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
+          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2>${nextActions}<div class="duelResultMeta"><span>Esta partida foi encerrada e não reinicia.</span></div></section>`;
   return duelCard;
+}
+
+function syncRankingContinuationFlow() {
+  const flow = document.querySelector('.rankingContinuation > .rankingFlowActions');
+  if (flow) flow.hidden = activeRankingVoteMode() === 'duelo';
 }
 function rankingFreeVoteHTML(r, votingOpen = true) {
   const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
@@ -2480,6 +2490,7 @@ function renderRankingVoteExperience(r, loadState = true) {
     button.setAttribute('aria-selected', String(active));
   });
   panel.innerHTML = rankingVotePanelHTML(r, true);
+  syncRankingContinuationFlow();
   bindRankingVoteModes(r);
   if (activeRankingVoteMode() === 'duelo') bindDuelMode(r);
   else {
@@ -3088,6 +3099,7 @@ function renderInternal() {
     ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
     : '';
   feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos livres · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}${rankingModeStatsHTML(r, votingOpen)}${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  syncRankingContinuationFlow();
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
     document.getElementById('vipOwnerManage').onclick = () => {
