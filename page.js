@@ -73,6 +73,16 @@ function queryValue(req, key) {
   return String(Array.isArray(value) ? value[0] || '' : value || '');
 }
 
+export function sharedDuelForRanking(value, ranking) {
+  const match = String(value || '').match(/^(\d+)-(\d+)$/);
+  if (!match || match[1] === match[2]) return null;
+  const optionsById = new Map(
+      (ranking?.options || []).map((option) => [Number(option.id), option]),
+    ),
+    shared = match.slice(1).map((optionId) => optionsById.get(Number(optionId)));
+  return shared.length === 2 && shared.every(Boolean) ? shared : null;
+}
+
 function safeImageUrl(value) {
   if (!value) return `${BASE_URL}/og-topo-v2.png`;
   try {
@@ -483,7 +493,7 @@ export function renderLocalPage(template, rankings, city = null, group = null, s
   };
 }
 
-export function renderRankingPage(template, ranking) {
+export function renderRankingPage(template, ranking, sharedDuel = null) {
   const question = rankingQuestion(ranking.id, ranking.question);
   const canonical = `${BASE_URL}/ranking/${encodeURIComponent(ranking.id)}`;
   const localCity = localCityByLabel(ranking.category);
@@ -498,11 +508,17 @@ export function renderRankingPage(template, ranking) {
       ? localCollectionPath(localCity, localGroup)
       : generalCategoryPath(generalCategory);
   const options = ranking.options.slice(0, 10);
-  const title = `${truncate(question, 58)} — TOPO`;
-  const description = truncate(
-    `Confira o resultado atualizado de “${question}”, veja o Top ${options.length} e vote para mudar a ordem no TOPO.`,
-    158,
-  );
+  const hasSharedDuel = Array.isArray(sharedDuel) && sharedDuel.length === 2,
+    versus = hasSharedDuel ? `${sharedDuel[0].label} × ${sharedDuel[1].label}` : '',
+    title = hasSharedDuel
+      ? `${truncate(versus, 58)} — Duelo do Topo`
+      : `${truncate(question, 58)} — TOPO`,
+    description = truncate(
+      hasSharedDuel
+        ? `Escolha entre ${versus} e comece uma nova partida neste ranking do TOPO exatamente por este duelo.`
+        : `Confira o resultado atualizado de “${question}”, veja o Top ${options.length} e vote para mudar a ordem no TOPO.`,
+      158,
+    );
   const listId = `${canonical}#resultado`;
   const structuredData = schemaGraph([
     {
@@ -562,6 +578,7 @@ export function renderRankingPage(template, ranking) {
       canonical,
       image: ranking.imageUrl,
       type: 'website',
+      index: !hasSharedDuel,
       structuredData,
     },
     content,
@@ -974,7 +991,10 @@ export default async function handler(req, res) {
         index: false,
       });
     }
-    return sendHtml(res, 200, renderRankingPage(template, ranking));
+    const sharedDuel = sharedDuelForRanking(queryValue(req, 'duelo'), ranking);
+    return sendHtml(res, 200, renderRankingPage(template, ranking, sharedDuel), {
+      index: !sharedDuel,
+    });
   } catch (error) {
     console.error('Public page rendering failed', error);
     const html = withPage(template, {

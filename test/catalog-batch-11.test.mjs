@@ -104,8 +104,8 @@ test('eleventh batch is connected to the importer and public shell', async () =>
 
   assert.match(importer, /rankings-batch-11\.json/);
   assert.match(importer, /eleventhBatchRankings\.length !== 12/);
-  assert.match(importer, /newRankings\.length !== 187/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
+  assert.match(importer, /newRankings\.length !== 195/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
   assert.match(index, /editorial-19\.js\?v=20260827-1-music-genres/);
   assert.match(devServer, /editorial-19\.js/);
 });

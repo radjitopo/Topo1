@@ -123,8 +123,8 @@ test('Nostalgia is wired into catalog, navigation, moderation and SEO', async ()
 
   assert.match(importer, /rankings-batch-9\.json/);
   assert.match(importer, /ninthBatchRankings\.length !== 11/);
-  assert.match(importer, /newRankings\.length !== 187/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
+  assert.match(importer, /newRankings\.length !== 195/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
   assert.match(index, /editorial-17\.js\?v=20260826-1-vagalume/);
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(app, /Nostalgia: 'nostalgia'/);

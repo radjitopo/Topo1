@@ -14,6 +14,7 @@ const batch8 = await readFile(new URL('../data/rankings-batch-8.json', import.me
 const batch9 = await readFile(new URL('../data/rankings-batch-9.json', import.meta.url), 'utf8');
 const batch10 = await readFile(new URL('../data/rankings-batch-10.json', import.meta.url), 'utf8');
 const batch11 = await readFile(new URL('../data/rankings-batch-11.json', import.meta.url), 'utf8');
+const batch12 = await readFile(new URL('../data/rankings-batch-12.json', import.meta.url), 'utf8');
 const cityScript = await readFile(
   new URL('../scripts/apply-city-rankings.mjs', import.meta.url),
   'utf8',
@@ -51,6 +52,7 @@ for (const source of [
   batch9,
   batch10,
   batch11,
+  batch12,
   cityScript,
 ]) {
   assert.doesNotMatch(

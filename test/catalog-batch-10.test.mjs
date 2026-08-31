@@ -110,8 +110,8 @@ test('tenth batch is connected to the importer and public shell', async () => {
 
   assert.match(importer, /rankings-batch-10\.json/);
   assert.match(importer, /tenthBatchRankings\.length !== 2/);
-  assert.match(importer, /newRankings\.length !== 187/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
+  assert.match(importer, /newRankings\.length !== 195/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
   assert.match(index, /editorial-18\.js\?v=20260827-1-floripa-bands/);
   assert.match(devServer, /editorial-18\.js/);
 });

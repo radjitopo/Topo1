@@ -287,6 +287,17 @@ function activeRankingVoteMode() {
   if (mode === 'livre' || mode === 'flechas') return 'livre';
   return 'duelo';
 }
+function sharedDuelStartOptionIds() {
+  const raw = new URLSearchParams(location.search).get('duelo') || '',
+    match = raw.match(/^(\d+)-(\d+)$/);
+  if (!match) return [];
+  const optionIds = match.slice(1).map(Number);
+  return optionIds.length === 2 &&
+    optionIds.every((optionId) => Number.isSafeInteger(optionId) && optionId > 0) &&
+    optionIds[0] !== optionIds[1]
+    ? optionIds
+    : [];
+}
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
       (ranking) => !ranking.vip && ranking.id !== excludeRankingId && ranking.opts?.length >= 2,
@@ -2235,6 +2246,10 @@ function duelChoiceHTML(option, side) {
         : 'ESCOLHA QUEM CONTINUA';
   return `<button class="duelChoice ${incumbent ? 'incumbent' : challenger ? 'challenger' : ''}" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>${role}</span><strong>${escapeHTML(option.label)}</strong><small>${result}</small></button>`;
 }
+function duelShareButtonHTML(pair) {
+  if (pair.length !== 2) return '';
+  return `<div class="duelShareBar"><button class="duelShareButton" type="button" data-share-duel>${nativeShareIconHTML()}<span>COMPARTILHAR ESTE DUELO</span></button></div>`;
+}
 function rankingDuelHTML(r) {
   const state = votingModeStateFor(r);
   if (!state) {
@@ -2248,11 +2263,13 @@ function rankingDuelHTML(r) {
     duelNumber = Number(state.duel.myDuels || 0) + 1,
     headerCopy = champion
       ? `<span class="duelEyebrow">Escolha ${duelNumber} · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>${escapeHTML(champion.label)} continua. O desafiante toma o lugar se vencer.</p>`
-      : `<span class="duelEyebrow">Ordem aleatória · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>Escolha uma opção. A vencedora enfrenta a próxima sem repetir os nomes.</p>`,
+      : state.duel.sharedStart
+        ? `<span class="duelEyebrow">Duelo compartilhado · sua partida começa aqui</span><h2>Quem ganha, fica.</h2><p>Escolha uma opção. A vencedora segue enfrentando as próximas.</p>`
+        : `<span class="duelEyebrow">Ordem aleatória · uma partida por ranking</span><h2>Quem ganha, fica.</h2><p>Escolha uma opção. A vencedora enfrenta a próxima sem repetir os nomes.</p>`,
     nextActions = rankingFlowActionsHTML(r, 'duelNextActions'),
     duelCard =
       pair.length === 2
-        ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
+        ? `<section class="rankingDuel" data-duel-pair><header>${headerCopy}</header><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div>${duelShareButtonHTML(pair)}<div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
         : champion
           ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
           : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2>${nextActions}<div class="duelResultMeta"><span>Esta partida foi encerrada e não reinicia.</span></div></section>`;
@@ -2317,10 +2334,14 @@ async function loadRankingVotingModes(r, force = false) {
   const requestId = ++rankingVotingRequest;
   rankingVotingState = { rankingId: r.id, loaded: false, loading: true, error: '' };
   try {
-    const response = await fetch(
-        `/api?action=ranking-vote-modes&ranking_id=${encodeURIComponent(r.id)}&device_id=${encodeURIComponent(deviceId)}`,
-        { cache: 'no-store' },
-      ),
+    const params = new URLSearchParams({
+        action: 'ranking-vote-modes',
+        ranking_id: r.id,
+        device_id: deviceId,
+      }),
+      startOptionIds = sharedDuelStartOptionIds();
+    if (startOptionIds.length === 2) params.set('start_option_ids', startOptionIds.join('-'));
+    const response = await fetch(`/duel-bottom-api?${params}`, { cache: 'no-store' }),
       result = await response.json().catch(() => ({}));
     if (requestId !== rankingVotingRequest || internalId() !== r.id) return;
     if (response.status === 409 && result.error === 'device_rekey_required') {
@@ -2382,15 +2403,18 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
   const controls = [...document.querySelectorAll('[data-duel-choice], [data-duel-skip]')];
   controls.forEach((control) => (control.disabled = true));
   try {
-    const response = await fetch('/api?action=ranking-duel', {
+    const payload = {
+        device_id: deviceId,
+        ranking_id: r.id,
+        option_ids: optionIds,
+        winner_option_id: winnerOptionId,
+      },
+      startOptionIds = sharedDuelStartOptionIds();
+    if (startOptionIds.length === 2) payload.start_option_ids = startOptionIds;
+    const response = await fetch('/duel-bottom-api?action=ranking-duel', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          device_id: deviceId,
-          ranking_id: r.id,
-          option_ids: optionIds,
-          winner_option_id: winnerOptionId,
-        }),
+        body: JSON.stringify(payload),
       }),
       result = await response.json().catch(() => ({}));
     if (handleVotingModeBlock(response, result, r)) return;
@@ -2408,12 +2432,46 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
 function chooseDuelOption(button, r) {
   return submitDuelResult(button, r, Number(button.dataset.id));
 }
+function sharedDuelURL(r, pair) {
+  const url = new URL(rankingPath(r.id), location.origin);
+  url.searchParams.set('duelo', pair.map((option) => Number(option.optionId)).join('-'));
+  url.hash = 'votar';
+  return url.toString();
+}
+async function shareCurrentDuel(r) {
+  const pair = votingModeStateFor(r)?.duel?.pair || [];
+  if (pair.length !== 2) return;
+  const url = sharedDuelURL(r, pair),
+    versus = `${pair[0].label} × ${pair[1].label}`,
+    data = {
+      title: `${versus} — Duelo do Topo`,
+      text: `🔥 Desempata isso pra mim:\n${versus}\nQuem ganha este duelo no TOPO?`,
+      url,
+    };
+  if (navigator.share) {
+    try {
+      await navigator.share(data);
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(url);
+    toast('Duelo copiado. Agora é só enviar.');
+  } catch {
+    toast('Não consegui abrir o compartilhamento neste navegador.');
+  }
+}
 function bindDuelMode(r) {
   document
     .querySelectorAll('[data-duel-choice]')
     .forEach((button) => (button.onclick = () => chooseDuelOption(button, r)));
   const skip = document.querySelector('[data-duel-skip]');
   if (skip) skip.onclick = () => submitDuelResult(skip, r, null);
+  const share = document.querySelector('[data-share-duel]');
+  if (share) share.onclick = () => shareCurrentDuel(r);
   bindDuelLaunchers();
 }
 function bindRankingVoteModes(r) {

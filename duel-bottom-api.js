@@ -15,6 +15,15 @@ function parseBody(req) {
   return {};
 }
 
+export function parseStartOptionIds(value) {
+  const raw = Array.isArray(value) ? value : String(value || '').split('-'),
+    optionIds = [...new Set(raw.map(Number))];
+  return optionIds.length === 2 &&
+    optionIds.every((optionId) => Number.isSafeInteger(optionId) && optionId > 0)
+    ? optionIds
+    : [];
+}
+
 function json(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
   return res.status(status).json(body);
@@ -131,13 +140,37 @@ async function bottomUpPair(rankingId, duel) {
   ];
 }
 
-async function customizedState(req, rankingId, deviceId) {
+async function sharedStartPair(rankingId, duel, startOptionIds) {
+  if (duel?.sessionId || duel?.completed || startOptionIds.length !== 2) return [];
+  const rows = await sql.query(
+    `
+      SELECT option.id AS "optionId", option.label
+      FROM ranking_options option
+      WHERE option.ranking_id = $1
+        AND option.id = ANY($2::bigint[])
+    `,
+    [rankingId, startOptionIds],
+  );
+  if (rows.length !== 2) return [];
+  const optionsById = new Map(rows.map((row) => [Number(row.optionId), row]));
+  return startOptionIds.map((optionId) => ({
+    optionId,
+    label: optionsById.get(optionId).label,
+    role: 'starter',
+  }));
+}
+
+async function customizedState(req, rankingId, deviceId, startOptionIds = []) {
   const base = await baseVotingState(req, rankingId, deviceId);
   if (base.statusCode >= 400 || !base.body?.duel) return base;
-  const pair = await bottomUpPair(rankingId, base.body.duel);
+  const sharedPair = await sharedStartPair(rankingId, base.body.duel, startOptionIds),
+    pair = sharedPair.length === 2 ? sharedPair : await bottomUpPair(rankingId, base.body.duel);
   return {
     statusCode: base.statusCode,
-    body: { ...base.body, duel: { ...base.body.duel, pair } },
+    body: {
+      ...base.body,
+      duel: { ...base.body.duel, pair, sharedStart: sharedPair.length === 2 },
+    },
   };
 }
 
@@ -180,6 +213,7 @@ async function saveBottomUpDuel(req, res) {
   const optionIds = [
     ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
   ];
+  const startOptionIds = parseStartOptionIds(body.start_option_ids);
   const winnerOptionId = body.winner_option_id == null ? null : Number(body.winner_option_id);
   if (
     optionIds.length !== 2 ||
@@ -189,7 +223,7 @@ async function saveBottomUpDuel(req, res) {
     return json(res, 400, { error: 'invalid_duel' });
   }
 
-  const current = await customizedState(req, rankingId, deviceId);
+  const current = await customizedState(req, rankingId, deviceId, startOptionIds);
   if (current.statusCode >= 400) return json(res, current.statusCode, current.body);
   if (current.body?.votingOpen === false) return json(res, 409, { error: 'ranking_voting_closed' });
 
@@ -343,7 +377,8 @@ export default async function handler(req, res) {
     if (method === 'GET' && action === 'ranking-vote-modes') {
       const rankingId = queryValue(req, 'ranking_id').trim();
       const deviceId = queryValue(req, 'device_id');
-      const state = await customizedState(req, rankingId, deviceId);
+      const startOptionIds = parseStartOptionIds(queryValue(req, 'start_option_ids'));
+      const state = await customizedState(req, rankingId, deviceId, startOptionIds);
       return json(res, state.statusCode, state.body);
     }
     if (method === 'POST' && action === 'ranking-duel') return saveBottomUpDuel(req, res);

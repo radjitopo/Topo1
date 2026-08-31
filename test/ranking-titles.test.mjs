@@ -15,6 +15,7 @@ const catalogFiles = [
   'data/rankings-batch-9.json',
   'data/rankings-batch-10.json',
   'data/rankings-batch-11.json',
+  'data/rankings-batch-12.json',
 ];
 
 test('editorial review keeps 59 approved titles in one canonical map', async () => {

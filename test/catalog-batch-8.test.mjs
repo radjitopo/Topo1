@@ -58,8 +58,8 @@ test('catalog importer and page assets include the eighth batch', async () => {
   ]);
   assert.match(importer, /rankings-batch-8\.json/);
   assert.match(importer, /eighthBatchRankings\.length !== 1/);
-  assert.match(importer, /newRankings\.length !== 187/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 227/);
+  assert.match(importer, /newRankings\.length !== 195/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
   assert.match(index, /editorial-16\.js/);
   assert.match(vercel, /social\/\*\.jpg/);
 });

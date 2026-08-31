@@ -36,6 +36,7 @@ const staticFiles = new Set([
   '/editorial-17.js',
   '/editorial-18.js',
   '/editorial-19.js',
+  '/editorial-20.js',
   '/social/celebridades-cerveja.jpg',
 ]);
 const contentTypes = {

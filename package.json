@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check api.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
+    "check": "node --check api.js && node --check duel-bottom-api.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
     "test": "node --test test/*.test.mjs",
     "validate": "npm run check && npm test && npm run format:check",
     "format": "prettier --write .",

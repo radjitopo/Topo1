@@ -448,6 +448,45 @@ body.popElectric.rankingPage .duelVersus {
     sans-serif;
 }
 
+body.popElectric.rankingPage .duelShareBar {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+body.popElectric.rankingPage .duelShareButton {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 0 18px;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+}
+
+body.popElectric.rankingPage .duelShareButton svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+body.popElectric.rankingPage .duelShareButton:hover,
+body.popElectric.rankingPage .duelShareButton:focus-visible {
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+}
+
 body.popElectric.rankingPage .duelFooter {
   min-height: 42px;
   display: flex;
@@ -740,6 +779,16 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
     hyphens: auto;
     font-size: clamp(19px, 5.6vw, 26px);
     line-height: 1;
+  }
+
+  body.popElectric.rankingPage .duelShareButton {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  body.popElectric.rankingPage .duelFooter {
+    align-items: center;
+    gap: 10px;
   }
 
   body.popElectric.rankingPage .duelEndActions {
