@@ -3,6 +3,7 @@
   "alias": ["somostopo.com.br"],
   "builds": [
     { "src": "api.js", "use": "@vercel/node" },
+    { "src": "duel-bottom-api.js", "use": "@vercel/node" },
     { "src": "page.js", "use": "@vercel/node", "config": { "includeFiles": ["index.html"] } },
     { "src": "institutional.js", "use": "@vercel/node" },
     { "src": "sitemap.js", "use": "@vercel/node" },
@@ -40,6 +41,7 @@
       "continue": true
     },
     { "src": "/api", "dest": "/api.js" },
+    { "src": "/duel-bottom-api", "dest": "/duel-bottom-api.js" },
     { "src": "/sitemap.xml", "dest": "/sitemap.js" },
     { "src": "/", "dest": "/page.js?view=home" },
     {
