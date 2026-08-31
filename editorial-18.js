@@ -18,3 +18,59 @@ Object.assign(editorial, {
     related: ['bandas-ilha-da-magia', 'bandas-rock', 'guitarristas'],
   },
 });
+
+(() => {
+  const style = document.createElement('style');
+  style.id = 'duelCompactFixedCards';
+  style.textContent = `
+    body.popElectric.rankingPage .duelChoice,
+    body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
+      height: 270px !important;
+      min-height: 270px !important;
+      max-height: 270px !important;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
+      grid-template-rows: auto 96px minmax(0, 1fr) auto !important;
+      gap: 9px !important;
+      padding: 12px !important;
+    }
+    body.popElectric.rankingPage .duelChoicePhoto {
+      height: 96px !important;
+      min-height: 96px !important;
+      max-height: 96px !important;
+    }
+    body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto > strong {
+      font-size: clamp(20px, 3vw, 32px) !important;
+      line-height: 1 !important;
+    }
+    @media (max-width: 640px) {
+      body.popElectric.rankingPage .duelChoice,
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
+        height: 218px !important;
+        min-height: 218px !important;
+        max-height: 218px !important;
+      }
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
+        grid-template-rows: auto 68px minmax(0, 1fr) auto !important;
+        gap: 6px !important;
+        padding: 8px !important;
+      }
+      body.popElectric.rankingPage .duelChoicePhoto {
+        height: 68px !important;
+        min-height: 68px !important;
+        max-height: 68px !important;
+      }
+      body.popElectric.rankingPage .duelChoice > strong,
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto > strong {
+        font-size: clamp(17px, 5.1vw, 22px) !important;
+        line-height: 1 !important;
+      }
+      body.popElectric.rankingPage .duelChoicePhoto small {
+        display: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+})();
