@@ -1629,8 +1629,7 @@ body.popElectric .portalSectionHead h2 {
   letter-spacing: -0.055em;
 }
 
-body.popElectric .portalShuffle,
-body.popElectric .categoryShuffle {
+body.popElectric .portalShuffle {
   min-height: 34px;
   border: 0;
   border-radius: 0;
@@ -2057,7 +2056,6 @@ body.popElectric .searchResultsHead h1 {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body.popElectric .categorySorts button,
 body.popElectric .categoryLoadMore button,
 body.popElectric .localExploreButton {
   border: 1px solid var(--clean-ink);
@@ -2066,22 +2064,16 @@ body.popElectric .localExploreButton {
   color: var(--clean-ink);
 }
 
-body.popElectric .categorySorts button.active {
-  background: var(--clean-ink);
-  border-color: var(--clean-ink);
-  color: var(--clean-paper);
-}
-
 /* Ranking — a mesma linguagem editorial da home */
 body.popElectric.rankingPage .feed {
   width: min(860px, calc(100% - 48px));
-  padding: 34px 0 88px;
+  padding: 24px 0 88px;
 }
 
 body.popElectric.rankingPage .internalHead {
-  margin: 0 0 24px;
+  margin: 0 0 14px;
   border-bottom: 1px solid var(--clean-line);
-  padding: 0 0 13px;
+  padding: 0 0 10px;
 }
 
 body.popElectric.rankingPage .backLink,
@@ -2111,9 +2103,9 @@ body.popElectric.rankingPage .rank.rankingMain {
 }
 
 body.popElectric.rankingPage .rankHead {
-  margin: 0 0 17px;
-  border-top: 5px solid var(--clean-ink);
-  padding: 14px 0 0;
+  margin: 0 0 13px;
+  border-top: 0;
+  padding: 0;
 }
 
 body.popElectric.rankingPage .rankingMain > :is(h1, h2) {
@@ -4006,7 +3998,7 @@ body.popElectric .moderationUserFieldLabel {
 
   body.popElectric.rankingPage .feed {
     width: min(800px, calc(100% - 40px));
-    padding-top: 28px;
+    padding-top: 20px;
   }
 
   body.popElectric.rankingPage .rankingMain > :is(h1, h2) {
@@ -4544,7 +4536,7 @@ body.popElectric .moderationUserFieldLabel {
 
   body.popElectric.rankingPage .feed {
     width: calc(100% - 30px);
-    padding-top: 24px;
+    padding-top: 16px;
   }
 
   body.popElectric.rankingPage .rank.rankingMain {
@@ -4797,11 +4789,11 @@ body.popElectric .moderationUserFieldLabel {
   }
 
   body.popElectric.rankingPage .internalHead {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
   }
 
   body.popElectric.rankingPage .rankHead {
-    border-top-width: 4px;
+    border-top: 0;
   }
 
   body.popElectric.rankingPage .rankingMain > :is(h1, h2) {

@@ -2483,48 +2483,6 @@ h2,
   text-transform: uppercase;
   margin-top: 5px;
 }
-.categoryListBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  border-bottom: 1px solid var(--ink);
-  padding: 4px 0 12px;
-  margin-bottom: 14px;
-}
-.categorySorts {
-  display: flex;
-  gap: 6px;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.categorySorts::-webkit-scrollbar {
-  display: none;
-}
-.categorySorts button {
-  flex: 0 0 auto;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--muted);
-  padding: 8px 11px;
-  font-size: 10px;
-  font-weight: 900;
-  cursor: pointer;
-}
-.categorySorts button.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
-}
-.categoryShuffle {
-  flex: 0 0 auto;
-  border: 1px solid var(--line);
-  background: var(--paper);
-  padding: 8px 11px;
-  font-size: 10px;
-}
 .categoryRankGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2966,14 +2924,6 @@ h2,
   .categoryLandingCount strong {
     font-size: 30px;
   }
-  .categoryListBar {
-    align-items: flex-start;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-  }
-  .categoryShuffle {
-    padding: 8px 9px;
-  }
   .categoryRankGrid {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -3077,13 +3027,6 @@ h2,
   }
   .categoryLandingCount strong {
     font-size: 26px;
-  }
-  .categoryListBar {
-    display: block;
-  }
-  .categoryShuffle {
-    display: inline-flex;
-    margin-top: 9px;
   }
   .categoryRankTop {
     grid-template-columns: 96px minmax(0, 1fr);
@@ -3427,11 +3370,6 @@ h2,
 }
 
 /* Descoberta, carregamento e rodapé editorial */
-.categoryShuffle.active {
-  border-color: var(--accent);
-  background: #edf1f2;
-  color: var(--accent);
-}
 .categoryLoadMore {
   display: flex;
   align-items: center;

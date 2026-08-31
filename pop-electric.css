@@ -661,8 +661,7 @@ body.legalShell {
   letter-spacing: -0.035em;
 }
 
-.popElectric .portalShuffle,
-.popElectric .categoryShuffle {
+.popElectric .portalShuffle {
   min-height: 42px;
   border: 2px solid var(--ink);
   border-radius: 9px;
@@ -1022,26 +1021,6 @@ body.legalShell {
 
 .popElectric.localMode .categoryLandingCount strong {
   color: var(--mint);
-}
-
-.popElectric .categoryListBar {
-  border-bottom: 2px solid var(--ink);
-  padding: 10px 0 16px;
-}
-
-.popElectric .categorySorts button {
-  min-height: 38px;
-  border: 2px solid var(--ink);
-  background: #fff;
-  color: var(--ink);
-  padding: 8px 13px;
-  font-size: 12px;
-}
-
-.popElectric .categorySorts button.active {
-  border-color: var(--ink);
-  background: var(--pink);
-  color: var(--ink);
 }
 
 .popElectric .categoryLoadMore button,
@@ -2136,14 +2115,6 @@ body.legalShell {
     font-size: 34px;
   }
 
-  .popElectric .categoryListBar {
-    align-items: flex-end;
-  }
-
-  .popElectric .categoryShuffle {
-    max-width: 105px;
-  }
-
   .popElectric .rank.rankingMain {
     padding: 17px;
   }
@@ -2474,52 +2445,6 @@ body.legalShell {
   .popElectric .moderationMeta span {
     min-width: 0;
     overflow-wrap: anywhere;
-  }
-
-  .popElectric .categoryListBar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 0 9px;
-    margin-bottom: 10px;
-  }
-
-  .popElectric .categorySorts {
-    display: flex;
-    gap: 6px;
-    min-width: 0;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-  }
-
-  .popElectric .categorySorts button {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: max-content;
-    min-height: 34px;
-    padding: 6px 9px;
-    font-size: 10px;
-    white-space: nowrap;
-  }
-
-  .popElectric .categoryShuffle {
-    flex: 0 0 34px;
-    width: 34px;
-    max-width: 34px;
-    min-height: 34px;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-
-  .popElectric .categoryShuffleLabel {
-    display: none;
-  }
-
-  .popElectric .categoryShuffleIcon {
-    font-size: 17px;
-    line-height: 1;
   }
 
   .popElectric .categoryRankCard {

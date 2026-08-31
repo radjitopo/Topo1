@@ -6,14 +6,14 @@ import { compactSource, extractTopLevelDeclaration } from './source-helpers.mjs'
 
 const root = new URL('../', import.meta.url);
 
-test('ranking pages default to Voto Livre and expose Ganha, Fica without Top 3', async () => {
+test('ranking pages default to Ganha, Fica and keep Voto Livre available', async () => {
   const app = await readFile(new URL('app.js', root), 'utf8');
   const chooseMode = extractTopLevelDeclaration(app, 'activeRankingVoteMode');
 
   assert.ok(chooseMode, 'the mode selector must remain testable');
   for (const [search, expected] of [
-    ['', 'livre'],
-    ['?modo=top3', 'livre'],
+    ['', 'duelo'],
+    ['?modo=top3', 'duelo'],
     ['?modo=duelo', 'duelo'],
     ['?modo=livre', 'livre'],
     ['?modo=flechas', 'livre'],
@@ -30,11 +30,12 @@ test('ranking pages default to Voto Livre and expose Ganha, Fica without Top 3',
   assert.ok(
     compact.indexOf('data-ranking-vote-mode="duelo"') <
       compact.indexOf('data-ranking-vote-mode="livre"'),
-    'Ganha, Fica should be the left tab while Voto Livre remains the default mode',
+    'Ganha, Fica should be the left tab and the default mode',
   );
   assert.match(compact, />GANHA,FICA</);
   assert.match(compact, />VOTOLIVRE</);
   assert.doesNotMatch(compact, />TOP3</);
+  assert.doesNotMatch(compact, /Votoslivreshoje|DisputanoVotoLivre|rankingModeStatsHTML/);
 });
 
 test('tab changes stay in place instead of navigating the ranking page', async () => {
@@ -45,6 +46,8 @@ test('tab changes stay in place instead of navigating the ranking page', async (
   assert.match(tabs, /<button/);
   assert.doesNotMatch(tabs, /href=/);
   assert.match(updateUrl, /history\.pushState/);
+  assert.match(updateUrl, /mode\s*===\s*'duelo'\)\s*url\.searchParams\.delete\('modo'\)/);
+  assert.match(updateUrl, /url\.searchParams\.set\('modo',\s*mode\)/);
   assert.doesNotMatch(updateUrl, /location\.(?:assign|replace)/);
   assert.doesNotMatch(updateUrl, /scrollTo|scrollIntoView/);
 });

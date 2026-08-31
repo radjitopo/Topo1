@@ -70,7 +70,6 @@ let rankings = [],
   activeGroup = generalGroupFromRoute() || localRouteState().group || 'Todos',
   homePortal = !isLocalRoute() && !isCategoryRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
-  categorySort = 'priority',
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
   visibleOptionCount = 10,
   rankingEditorState = null,
@@ -285,8 +284,8 @@ function myVoteCount(r) {
 }
 function activeRankingVoteMode() {
   const mode = new URLSearchParams(location.search).get('modo');
-  if (mode === 'duelo') return 'duelo';
-  return 'livre';
+  if (mode === 'livre' || mode === 'flechas') return 'livre';
+  return 'duelo';
 }
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
@@ -1445,7 +1444,6 @@ async function load() {
 function reshuffle() {
   sessionHeroId = '';
   rankings = smartShuffle(rankings);
-  categorySort = homePortal ? 'priority' : 'random';
   categoryVisibleCount = CATEGORY_PAGE_SIZE;
   renderHome();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1725,28 +1723,12 @@ function categoryPriorityRankings(list) {
     list,
     (a, b) =>
       (myVoteCount(a) > 0) - (myVoteCount(b) > 0) ||
-      Number(isNewRanking(b)) - Number(isNewRanking(a)) ||
-      Number(b.todayVotes || 0) - Number(a.todayVotes || 0) ||
       Number(b.votes || 0) - Number(a.votes || 0) ||
+      Number(b.todayVotes || 0) - Number(a.todayVotes || 0) ||
       (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0),
   );
 }
 function categorySortedRankings(list) {
-  if (categorySort === 'random') return sortForExperience(list);
-  if (categorySort === 'hot')
-    return sortForExperience(
-      list,
-      (a, b) =>
-        Number(b.todayVotes || 0) - Number(a.todayVotes || 0) ||
-        Number(b.votes || 0) - Number(a.votes || 0),
-    );
-  if (categorySort === 'new')
-    return sortForExperience(
-      list,
-      (a, b) => (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0),
-    );
-  if (categorySort === 'votes')
-    return sortForExperience(list, (a, b) => Number(b.votes || 0) - Number(a.votes || 0));
   return categoryPriorityRankings(list);
 }
 function categoryVoteOptionHTML(r, o, index) {
@@ -1790,15 +1772,6 @@ function bindLocalCityExplorer() {
     };
 }
 function bindCategoryControls() {
-  document.querySelectorAll('[data-category-sort]').forEach(
-    (button) =>
-      (button.onclick = () => {
-        categorySort =
-          categorySort === button.dataset.categorySort ? 'priority' : button.dataset.categorySort;
-        categoryVisibleCount = CATEGORY_PAGE_SIZE;
-        renderHome();
-      }),
-  );
   document.getElementById('loadMoreRankings')?.addEventListener('click', () => {
     categoryVisibleCount += CATEGORY_PAGE_SIZE;
     renderHome();
@@ -1818,23 +1791,12 @@ function renderCategoryHome(visible) {
     description = local
       ? `Só rankings de ${selectedCity}. Troque a cidade para explorar outro lugar.`
       : isAll
-        ? 'Novos e ainda não votados aparecem primeiro.'
+        ? 'Os mais votados que você ainda não avaliou aparecem primeiro.'
         : 'Abra um ranking, veja os itens e vote.';
   document.title = local
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : `${activeGroup} — rankings no TOPO`;
-  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section><div class="categoryListBar"><div class="categorySorts" aria-label="Ordenar rankings">${[
-    ['hot', 'Em alta'],
-    ['new', 'Novos'],
-    ['votes', 'Mais votados'],
-  ]
-    .map(
-      ([value, label]) =>
-        `<button type="button" data-category-sort="${value}" class="${categorySort === value ? 'active' : ''}" aria-pressed="${categorySort === value}">${label}</button>`,
-    )
-    .join(
-      '',
-    )}</div><button class="shuffleBtn categoryShuffle ${categorySort === 'random' ? 'active' : ''}" type="button" onclick="reshuffle()" aria-label="${categorySort === 'random' ? 'Misturar rankings de novo' : 'Embaralhar rankings'}" aria-pressed="${categorySort === 'random'}"><span class="categoryShuffleIcon" aria-hidden="true">↻</span><span class="categoryShuffleLabel">${categorySort === 'random' ? 'misturar de novo' : 'embaralhar'}</span></button></div><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }
@@ -2256,20 +2218,6 @@ function votingModeStateFor(r) {
     ? rankingVotingState
     : null;
 }
-function rankingModeStatsHTML(r, votingOpen = true) {
-  const mode = activeRankingVoteMode(),
-    state = votingModeStateFor(r);
-  if (!votingOpen || mode === 'livre') {
-    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Votos livres hoje</div><div class="statValue">${fmt(r.todayVotes || 0)}</div></div><div class="statBox"><div class="statLabel">Disputa no Voto Livre</div><div class="statValue">${topGap(r) === 0 ? 'Empate' : topGap(r) + ' pt'}</div></div></div>`;
-  }
-  if (!state) {
-    return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Sua partida</div><div class="statValue">—</div></div><div class="statBox"><div class="statLabel">Seu líder</div><div class="statValue">—</div></div></div>`;
-  }
-  const seen = Number(state.duel.seenOptions || 0),
-    total = Number(state.duel.totalOptions || 0),
-    champion = state.duel.champion?.label || '';
-  return `<div class="statsRow" id="rankingModeStats"><div class="statBox"><div class="statLabel">Sua partida</div><div class="statValue">${state.duel.completed ? 'Concluída' : `${fmt(seen)}/${fmt(total)}`}</div></div><div class="statBox"><div class="statLabel">${state.duel.completed ? 'Seu vencedor' : 'Seu líder'}</div><div class="statValue">${escapeHTML(champion || 'Ainda não')}</div></div></div>`;
-}
 function votingModesLoadingHTML() {
   return `<section class="rankingModeLoading"><span class="loadingSpinner" aria-hidden="true"></span><strong>Carregando Ganha, Fica…</strong></section>`;
 }
@@ -2333,7 +2281,7 @@ function rankingVotePanelHTML(r, votingOpen = true) {
 }
 function updateVoteModeUrl(mode) {
   const url = new URL(location.href);
-  if (mode === 'livre') url.searchParams.delete('modo');
+  if (mode === 'duelo') url.searchParams.delete('modo');
   else url.searchParams.set('modo', mode);
   history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
 }
@@ -2480,10 +2428,8 @@ function bindRankingVoteModes(r) {
   });
 }
 function renderRankingVoteExperience(r, loadState = true) {
-  const panel = document.getElementById('rankingVotingPanel'),
-    stats = document.getElementById('rankingModeStats');
-  if (!panel || !stats) return;
-  stats.outerHTML = rankingModeStatsHTML(r);
+  const panel = document.getElementById('rankingVotingPanel');
+  if (!panel) return;
   document.querySelectorAll('[data-ranking-vote-mode]').forEach((button) => {
     const active = button.dataset.rankingVoteMode === activeRankingVoteMode();
     button.classList.toggle('active', active);
@@ -3098,7 +3044,7 @@ function renderInternal() {
   const cover = r.img
     ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
     : '';
-  feed.innerHTML = `<div class="internalHead"><a class="backLink" href="${homePath}">← ${homeLabel}</a><span class="internalMeta">${vip ? 'MEU TOPO · ' : ''}${fmt(r.votes)} votos livres · Top ${visibleLimit}</span></div>${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}${rankingModeStatsHTML(r, votingOpen)}${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  feed.innerHTML = `${ownerBar}<article class="rank rankingMain" id="votar"><div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>${vip ? cover : ''}<h1>${escapeHTML(r.q)}</h1>${rankingPersonalActionsHTML(r, 'desktop')}${description}${vip ? '' : cover}${closedNotice}${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   syncRankingContinuationFlow();
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
@@ -3111,8 +3057,8 @@ function renderInternal() {
   if (viewer.isModerator) {
     if (!r.vipUserCreated) {
       feed
-        .querySelector('.internalHead')
-        ?.insertAdjacentHTML('afterend', moderatorRankingBarHTML(false));
+        .querySelector('.rankingMain')
+        ?.insertAdjacentHTML('beforebegin', moderatorRankingBarHTML(false));
       document
         .getElementById('rankingEditStart')
         ?.addEventListener('click', () => beginRankingEdit(r));

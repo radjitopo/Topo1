@@ -83,7 +83,7 @@ test('Meu Topo renders favorites, a heart toggle and one collection share action
   assert.match(vercel, /favoritos\/\(\[\^\/\]\+\)/);
 });
 
-test('ranking actions move below the stats in one mobile row while desktop stays unchanged', async () => {
+test('ranking actions stay in one mobile row without the removed stats strip', async () => {
   const [app, style] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
@@ -94,8 +94,9 @@ test('ranking actions move below the stats in one mobile row while desktop stays
   assert.match(app, /rankingPersonalActionsHTML\(r, placement = 'desktop'\)/);
   assert.match(
     compactApp,
-    /<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}[\s\S]*\$\{rankingModeStatsHTML\(r,votingOpen\)\}\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
+    /<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}[\s\S]*\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
   );
+  assert.doesNotMatch(compactApp, /rankingModeStatsHTML|id="rankingModeStats"/);
   assert.match(compactStyle, /body\.popElectric\.rankingPersonalActionsMobile\{display:none;?\}/);
   assert.match(
     compactStyle,

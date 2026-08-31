@@ -81,6 +81,6 @@ const recommended = context.categoryPriorityRankingsForTest([
 ]);
 assert.equal(
   recommended.map((ranking) => ranking.id).join(','),
-  'new-unvoted,relevant-unvoted,quiet-unvoted,popular-voted',
+  'relevant-unvoted,quiet-unvoted,new-unvoted,popular-voted',
 );
-console.log('Priority test passed: new and unvoted rankings share the same random pool.');
+console.log('Priority test passed: unvoted rankings lead in total-vote order.');

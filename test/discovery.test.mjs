@@ -60,20 +60,17 @@ assert.match(
   /'Abra um ranking, veja os itens e vote\.'/,
   'category introductions must stay concise so rankings appear sooner on mobile',
 );
-assert.match(
-  source,
-  /class="categoryShuffleIcon"[\s\S]*class="categoryShuffleLabel"/,
-  'the category shuffle action needs a compact icon treatment on mobile',
-);
+const categoryHomeSource = extractTopLevelDeclaration(source, 'renderCategoryHome');
+assert.ok(categoryHomeSource, 'the category renderer must remain testable');
 assert.doesNotMatch(
-  source,
-  /\['priority',\s*isAll\s*\?\s*'Recomendados'\s*:\s*'Para votar'\]/,
-  'the natural unvoted-first order must not occupy a category filter button',
+  categoryHomeSource,
+  /data-category-sort|categoryListBar|categoryShuffle|Em alta|Mais votados/,
+  'category pages must not show redundant sorting or shuffle controls',
 );
 assert.match(
-  source,
-  /categorySort\s*=\s*categorySort\s*===\s*button\.dataset\.categorySort\s*\?\s*'priority'\s*:\s*button\.dataset\.categorySort/,
-  'clicking the active category sort again must restore the natural unvoted-first order',
+  categoryHomeSource,
+  /categorySortedRankings\(visible\)/,
+  'category pages must always apply their automatic personalized order',
 );
 
 const categoryCardSource = extractTopLevelDeclaration(source, 'categoryRankCardHTML');
@@ -150,13 +147,12 @@ vm.runInContext(
 let rankings=[];
 let activeGroup='Todos';
 let homeSearch='';
-let categorySort='priority';
 let selectedCity='';
 let localExperience=false;
 function isLocalExperience(){return localExperience}
 function categoryPriorityRankings(list){return [...list]}
 ${selected.join('\n')}
-globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.activeGroup;homeSearch=next.homeSearch;categorySort=next.categorySort||'priority';localExperience=Boolean(next.localExperience);selectedCity=next.selectedCity||''};
+globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.activeGroup;homeSearch=next.homeSearch;localExperience=Boolean(next.localExperience);selectedCity=next.selectedCity||''};
 globalThis.visibleRankingsForTest=visibleRankings;
 globalThis.homeEligibleRankingsForTest=homeEligibleRankings;
 globalThis.homeContextOnlyCountForTest=homeContextOnlyRankingIds.size;
@@ -362,7 +358,6 @@ context.setDiscoveryState({
   rankings: [],
   activeGroup: 'Todos',
   homeSearch: '',
-  categorySort: 'random',
 });
 assert.equal(
   context
@@ -370,7 +365,7 @@ assert.equal(
     .map((ranking) => ranking.id)
     .join(','),
   'sushi-floripa,filmes',
-  'random mode must preserve the freshly shuffled catalog order',
+  'category order must come only from the automatic personalized priority',
 );
 
 console.log('Discovery test passed: global search, clearer groups and related ranking relevance.');

@@ -205,10 +205,10 @@ assert.match(
   /@media\(max-width:480px\)[\s\S]*grid-template-rows:autoauto[\s\S]*\.popElectric\.homePage\.siteSearch[^}]*grid-column:1\/-1;grid-row:2/,
   'compact phones need a dedicated full-width search row',
 );
-assert.match(
-  compactPopCss,
-  /@media\(max-width:480px\)[\s\S]*\.popElectric\.categorySorts\{[^}]*display:flex[^}]*overflow-x:auto[\s\S]*\.popElectric\.categorySortsbutton\{[^}]*min-height:34px[\s\S]*\.popElectric\.categoryShuffle\{[^}]*width:34px[^}]*max-width:34px/,
-  'category controls must use one compact horizontal mobile strip',
+assert.doesNotMatch(
+  compactApp,
+  /categorySorts|categoryShuffle|data-category-sort/,
+  'category pages must stay free of redundant sorting controls',
 );
 assert.match(
   compactEditorialCss,
