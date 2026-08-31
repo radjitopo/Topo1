@@ -108,3 +108,127 @@ Object.assign(editorial, {
     related: ['bandas-indie-rock', 'bandas-rock-alternativo', 'bandas-shoegaze'],
   },
 });
+
+(() => {
+  const photoCache = new Map();
+
+  const plain = (value) => {
+    const el = document.createElement('span');
+    el.innerHTML = String(value || '');
+    return (el.textContent || '').replace(/\s+/g, ' ').trim();
+  };
+
+  const fold = (value) =>
+    String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/gi, ' ')
+      .trim()
+      .toLowerCase();
+
+  const safeLicense = (value) =>
+    /^(?:cc0|public domain|cc by(?:-sa)?(?:\s|$))/i.test(plain(value));
+
+  const contextHint = () => {
+    const title = fold(document.querySelector('.rankingHero h1, .rankingHead h1, h1')?.textContent);
+    const words = ['banda', 'cantor', 'cantora', 'ator', 'atriz', 'jogador', 'jogadora', 'filme', 'cidade', 'artista', 'piloto', 'time', 'clube', 'restaurante'];
+    return words.find((word) => title.includes(word)) || '';
+  };
+
+  async function commonsPhoto(label) {
+    const key = `${fold(label)}|${contextHint()}`;
+    if (!key || key === '|') return null;
+    if (photoCache.has(key)) return photoCache.get(key);
+
+    const promise = (async () => {
+      const endpoint = new URL('https://commons.wikimedia.org/w/api.php');
+      endpoint.search = new URLSearchParams({
+        action: 'query',
+        format: 'json',
+        origin: '*',
+        generator: 'search',
+        gsrnamespace: '6',
+        gsrlimit: '8',
+        gsrsearch: `\"${label}\" ${contextHint()}`.trim(),
+        prop: 'imageinfo',
+        iiprop: 'url|mime|extmetadata',
+        iiurlwidth: '720',
+      }).toString();
+      const response = await fetch(endpoint, { mode: 'cors' });
+      if (!response.ok) return null;
+      const data = await response.json();
+      const wanted = fold(label);
+      const pages = Object.values(data?.query?.pages || {});
+      const candidates = pages
+        .map((page) => ({ page, info: page.imageinfo?.[0] }))
+        .filter(({ info }) => info?.thumburl && String(info.mime || '').startsWith('image/') && safeLicense(info.extmetadata?.LicenseShortName?.value))
+        .sort((a, b) => {
+          const aTitle = fold(a.page.title.replace(/^file:/i, ''));
+          const bTitle = fold(b.page.title.replace(/^file:/i, ''));
+          return Number(bTitle.includes(wanted)) - Number(aTitle.includes(wanted));
+        });
+      const selected = candidates[0];
+      if (!selected) return null;
+      const meta = selected.info.extmetadata || {};
+      const author = plain(meta.Artist?.value || meta.Credit?.value).slice(0, 60);
+      const license = plain(meta.LicenseShortName?.value).slice(0, 24);
+      return {
+        src: selected.info.thumburl,
+        credit: `${author ? `${author} · ` : ''}${license} · Wikimedia Commons`,
+      };
+    })().catch(() => null);
+
+    photoCache.set(key, promise);
+    return promise;
+  }
+
+  function installStyles() {
+    if (document.getElementById('duelPhotoStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'duelPhotoStyles';
+    style.textContent = `
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:340px;grid-template-rows:auto 160px auto auto;gap:11px;padding:14px}
+      body.popElectric.rankingPage .duelChoicePhoto{position:relative;width:100%;height:160px;overflow:hidden;border:1px solid var(--clean-line,#d8d8d8);background:var(--clean-soft,#f3f3f0)}
+      body.popElectric.rankingPage .duelChoicePhoto img{display:block;width:100%;height:100%;object-fit:cover}
+      body.popElectric.rankingPage .duelChoicePhoto small{position:absolute;left:0;right:0;bottom:0;max-height:28px;overflow:hidden;background:rgba(0,0,0,.7);color:#fff;padding:4px 5px;text-align:left;font:700 7px/1.2 Arial,Helvetica,sans-serif;letter-spacing:0}
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(23px,3.2vw,38px)}
+      @media(max-width:640px){body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:268px;grid-template-rows:auto 112px auto auto;gap:8px;padding:9px}body.popElectric.rankingPage .duelChoicePhoto{height:112px}body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(18px,5.6vw,25px);line-height:1}body.popElectric.rankingPage .duelChoicePhoto small{font-size:6px;max-height:23px}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  async function enhance(button) {
+    if (!(button instanceof HTMLElement) || button.dataset.duelPhotoChecked) return;
+    button.dataset.duelPhotoChecked = '1';
+    const label = button.querySelector(':scope > strong')?.textContent?.trim();
+    if (!label) return;
+    const photo = await commonsPhoto(label);
+    if (!photo || !button.isConnected || button.querySelector('.duelChoicePhoto')) return;
+
+    const frame = document.createElement('span');
+    frame.className = 'duelChoicePhoto';
+    const image = document.createElement('img');
+    image.src = photo.src;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    const credit = document.createElement('small');
+    credit.textContent = photo.credit;
+    frame.append(image, credit);
+    const role = button.querySelector(':scope > span');
+    role ? role.insertAdjacentElement('afterend', frame) : button.prepend(frame);
+    button.classList.add('duelChoiceWithPhoto');
+  }
+
+  const scan = (root = document) => root.querySelectorAll?.('.duelChoice:not([data-duel-photo-checked])').forEach(enhance);
+
+  installStyles();
+  scan();
+  new MutationObserver((records) => {
+    records.forEach((record) => record.addedNodes.forEach((node) => {
+      if (!(node instanceof Element)) return;
+      if (node.matches?.('.duelChoice')) enhance(node);
+      scan(node);
+    }));
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
