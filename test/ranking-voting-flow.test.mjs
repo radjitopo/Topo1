@@ -119,6 +119,72 @@ assert.doesNotMatch(
   'the ranking must not pressure people with completion progress',
 );
 
+const promotionLauncher = extractTopLevelDeclaration(app, 'rankingOptionPromotionHTML');
+assert.ok(promotionLauncher, 'the automatic option promotion launcher must remain testable');
+assert.match(
+  compactSource(promotionLauncher),
+  /ESTÁNESTERANKING\?/,
+  'rankings must invite listed people and places to promote their option',
+);
+assert.match(
+  compactSource(promotionLauncher),
+  /data-ranking-option-promotion/,
+  'the promotion flow must open from a single compact ranking control',
+);
+assert.match(
+  compactApp,
+  /rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingOptionPromotionHTML\(r\)\}\$\{rankingVoteModeHTML/,
+  'option promotion must stay between the compact personal actions and voting modes',
+);
+
+const promotionUrl = extractTopLevelDeclaration(app, 'rankingOptionPromotionURL');
+const promotionText = extractTopLevelDeclaration(app, 'rankingOptionPromotionText');
+assert.ok(promotionUrl && promotionText, 'promotion links and captions must remain testable');
+const promotionContext = vm.createContext({
+  URL,
+  location: { origin: 'https://somostopo.com.br' },
+  rankingPath: (id) => `/ranking/${id}`,
+});
+vm.runInContext(
+  `${promotionUrl}\n${promotionText}\n` +
+    `globalThis.promotionURL = rankingOptionPromotionURL({ id: 'veganos-floripa' }, { id: 42, label: 'Verde Floripa' });\n` +
+    `globalThis.promotionCaption = rankingOptionPromotionText({ id: 'veganos-floripa', q: 'Qual é o melhor restaurante vegano de Floripa?' }, { id: 42, label: 'Verde Floripa' });`,
+  promotionContext,
+);
+assert.equal(
+  promotionContext.promotionURL,
+  'https://somostopo.com.br/ranking/veganos-floripa?modo=livre&apoiar=42#opcao-42',
+  'promotion links must open free voting at the exact represented option',
+);
+assert.match(
+  promotionContext.promotionCaption,
+  /Estamos concorrendo no TOPO![\s\S]*Vote em Verde Floripa[\s\S]*somostopo\.com\.br/,
+  'the generated caption must be immediately ready to post',
+);
+
+const promotionCanvas = extractTopLevelDeclaration(app, 'rankingOptionPromotionCanvas');
+assert.match(
+  compactSource(promotionCanvas),
+  /canvas\.width=1080;canvas\.height=1350/,
+  'the generated card must use the Instagram-friendly 4:5 format',
+);
+const promotionShare = extractTopLevelDeclaration(app, 'shareRankingOptionCard');
+assert.match(
+  compactSource(promotionShare),
+  /navigator\.canShare\?\.\(\{files:shareData\.files\}\)/,
+  'supported phones must share the generated PNG file through the native share sheet',
+);
+assert.match(
+  compactApp,
+  /bindRankingOptionPromotion\(r\)/,
+  'the automatic card launcher must be active after every ranking render',
+);
+assert.doesNotMatch(
+  compactSource(promotionLauncher),
+  /registered|business|entrar|cadastro/,
+  'promoting an option must not require a personal or business account',
+);
+
 assert.match(
   compactEditorial,
   /body\.popElectric\.categoryVoteOption\{[^}]*grid-template-columns:24pxminmax\(0,1fr\)auto/,
@@ -138,6 +204,21 @@ assert.doesNotMatch(
   compactStyle,
   /\.rankingEvaluationProgress\{/,
   'the removed evaluation progress must not leave stale styles',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.rankingPage\.rankingOptionPromotionLauncher\{/,
+  'the automatic promotion launcher must have a compact editorial treatment',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.rankingPage\.option\.promotionFocus\{/,
+  'a shared option must be visibly highlighted for the arriving voter',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.modalCard\.rankingPromotionModalCard\{/,
+  'the card generator must fit inside the existing modal layer',
 );
 
 assert.match(

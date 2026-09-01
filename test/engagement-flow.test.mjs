@@ -27,8 +27,13 @@ assert.match(
 );
 assert.match(
   compactApp,
-  /withoutTeamCatalog=available\.filter\(\(candidate\)=>!isTeamRanking\(candidate\)\)/,
-  'the random ranking action must avoid flooding the pool with football-team rankings',
+  /functionrandomRankingFor\(r\)\{[^}]*!isClubPlayerRanking\(candidate\)/,
+  'the random ranking action must always exclude club-player rankings',
+);
+assert.match(
+  compactApp,
+  /eligible=\(candidate\)=>candidate\.id!==r\.id&&!isClubPlayerRanking\(candidate\)&&rankingNeedsParticipation\(candidate\)/,
+  'the next ranking action must always exclude club-player rankings',
 );
 assert.match(
   compactApi,

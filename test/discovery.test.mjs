@@ -113,6 +113,7 @@ assert.match(
 
 const wanted = [
   'homeContextOnlyRankingIds',
+  'isClubPlayerRanking',
   'foldText',
   'searchSingular',
   'searchTerms',
@@ -146,13 +147,14 @@ vm.runInContext(
   `
 let rankings=[];
 let activeGroup='Todos';
+let activeFootballSection='';
 let homeSearch='';
 let selectedCity='';
 let localExperience=false;
 function isLocalExperience(){return localExperience}
 function categoryPriorityRankings(list){return [...list]}
 ${selected.join('\n')}
-globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.activeGroup;homeSearch=next.homeSearch;localExperience=Boolean(next.localExperience);selectedCity=next.selectedCity||''};
+globalThis.setDiscoveryState=(next)=>{rankings=next.rankings;activeGroup=next.activeGroup;activeFootballSection=next.activeFootballSection||'';homeSearch=next.homeSearch;localExperience=Boolean(next.localExperience);selectedCity=next.selectedCity||''};
 globalThis.visibleRankingsForTest=visibleRankings;
 globalThis.homeEligibleRankingsForTest=homeEligibleRankings;
 globalThis.homeContextOnlyCountForTest=homeContextOnlyRankingIds.size;
@@ -313,8 +315,19 @@ context.setDiscoveryState({
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
-  ['melhores-jogadores-fluminense', 'maiores-times-brasil'],
-  'team-specific rankings must remain visible inside the Esporte category',
+  ['maiores-times-brasil'],
+  'club-player rankings must stay out of the general Esporte category',
+);
+context.setDiscoveryState({
+  rankings: [fluminensePlayers, biggestBrazilianClub],
+  activeGroup: 'Esporte',
+  activeFootballSection: 'times',
+  homeSearch: '',
+});
+assert.deepEqual(
+  context.visibleRankingsForTest().map((ranking) => ranking.id),
+  ['melhores-jogadores-fluminense'],
+  'the Times subsection must contain only club-player rankings',
 );
 context.setDiscoveryState({
   rankings: [fluminensePlayers, biggestBrazilianClub],

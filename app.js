@@ -51,9 +51,12 @@ const generalGroupSlugs = Object.freeze({
   Vida: 'vida',
 });
 function generalGroupFromRoute() {
-  const match = location.pathname.match(/^\/categoria\/([^/]+)\/?$/);
+  const match = location.pathname.match(/^\/categoria\/([^/]+)(?:\/([^/]+))?\/?$/);
   if (!match) return '';
   return Object.entries(generalGroupSlugs).find(([, slug]) => slug === match[1])?.[0] || '';
+}
+function footballCategorySectionFromRoute() {
+  return /^\/categoria\/esporte\/times\/?$/.test(location.pathname) ? 'times' : '';
 }
 function localRouteState() {
   const parts = location.pathname.split('/').filter(Boolean);
@@ -68,6 +71,7 @@ let rankings = [],
   vipRankings = [],
   favoriteRankings = [],
   activeGroup = generalGroupFromRoute() || localRouteState().group || 'Todos',
+  activeFootballSection = footballCategorySectionFromRoute(),
   homePortal = !isLocalRoute() && !isCategoryRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
   categoryVisibleCount = CATEGORY_PAGE_SIZE,
@@ -90,6 +94,7 @@ let rankings = [],
   localCityCatalog = [],
   rankingVotingState = null,
   rankingVotingRequest = 0,
+  rankingPromotionFocusKey = '',
   clerkLoadPromise = null,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
@@ -142,6 +147,9 @@ const homeContextOnlyRankingIds = new Set([
   'melhores-jogadores-vitoria',
   'melhores-jogadores-fluminense',
 ]);
+function isClubPlayerRanking(ranking) {
+  return homeContextOnlyRankingIds.has(String(ranking?.id || ''));
+}
 const voteCountText = (n) => `${fmt(n)} voto${Number(n) === 1 ? '' : 's'}`;
 const pointCountText = (n) => `${fmt(n)} ponto${Number(n) === 1 ? '' : 's'}`;
 function communityFrom(data = {}) {
@@ -470,6 +478,7 @@ function groupOf(r) {
   return 'Vida';
 }
 function categoryLabel(r) {
+  if (isClubPlayerRanking(r)) return 'Times';
   if (categoryLabelOverrides[r.id]) return categoryLabelOverrides[r.id];
   if (r.cat === 'TV') return 'TV & Séries';
   if (r.cat === 'Pessoas') return 'Famosos';
@@ -1479,13 +1488,18 @@ function visibleRankings() {
       : activeGroup === 'Todos'
         ? experienceSource
         : experienceSource.filter((r) => belongsToGroup(r, activeGroup)),
-    visible = hasSearch
+    matched = hasSearch
       ? source.filter((r) => searchMatches(rankingSearchText(r), homeSearch))
       : source;
-  return visible;
+  if (hasSearch || isLocalExperience() || activeGroup !== 'Esporte') return matched;
+  return matched.filter((ranking) =>
+    activeFootballSection === 'times'
+      ? isClubPlayerRanking(ranking)
+      : !isClubPlayerRanking(ranking),
+  );
 }
 function homeEligibleRankings(list) {
-  return list.filter((ranking) => !homeContextOnlyRankingIds.has(ranking.id));
+  return list.filter((ranking) => !isClubPlayerRanking(ranking));
 }
 function firstShowSeen() {
   try {
@@ -1530,6 +1544,7 @@ function rankingCategoryPath(ranking) {
       topoLocal.cityForRanking(ranking),
       topoLocal.groupForRanking(ranking),
     );
+  if (isClubPlayerRanking(ranking)) return '/categoria/esporte/times';
   return `/categoria/${generalGroupSlugs[groupOf(ranking)] || 'vida'}`;
 }
 function internalId() {
@@ -1628,6 +1643,274 @@ function rankingPersonalActionsHTML(r, placement = 'desktop') {
   const placementClass =
     placement === 'mobile' ? 'rankingPersonalActionsMobile' : 'rankingPersonalActionsDesktop';
   return `<div class="rankingShareRow rankingPersonalActions ${placementClass}">${favoriteButtonHTML(r)}${shareActionsHTML(r)}</div>`;
+}
+function rankingPromotionOptionId() {
+  const optionId = Number(new URLSearchParams(location.search).get('apoiar'));
+  return Number.isSafeInteger(optionId) && optionId > 0 ? optionId : 0;
+}
+function rankingOptionPromotionURL(r, option) {
+  const url = new URL(rankingPath(r.id), location.origin);
+  url.searchParams.set('modo', 'livre');
+  url.searchParams.set('apoiar', String(option.id));
+  url.hash = `opcao-${option.id}`;
+  return url.toString();
+}
+function rankingOptionPromotionText(r, option) {
+  return `Estamos concorrendo no TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${rankingOptionPromotionURL(r, option)}`;
+}
+function rankingOptionPromotionHTML(r) {
+  if (r.vip || !r.opts?.length) return '';
+  return '<button class="rankingOptionPromotionLauncher" type="button" data-ranking-option-promotion aria-haspopup="dialog"><span>ESTÁ NESTE RANKING?</span><strong>Divulgue sua opção</strong><b aria-hidden="true">→</b></button>';
+}
+function rankingPromotionWrapLines(context, text, maxWidth) {
+  const words = String(text || '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean),
+    lines = [];
+  let line = '';
+  words.forEach((word) => {
+    const next = line ? `${line} ${word}` : word;
+    if (line && context.measureText(next).width > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+function rankingPromotionTextLayout(
+  context,
+  text,
+  { maxWidth, maxLines, maxSize, minSize, weight = 900, lineHeight = 0.98 },
+) {
+  let lines = [],
+    size = maxSize;
+  for (; size >= minSize; size -= 2) {
+    context.font = `${weight} ${size}px Arial, Helvetica, sans-serif`;
+    lines = rankingPromotionWrapLines(context, text, maxWidth);
+    if (lines.length <= maxLines) break;
+  }
+  if (lines.length > maxLines) {
+    lines = lines.slice(0, maxLines);
+    let last = lines.at(-1) || '';
+    while (last && context.measureText(`${last}…`).width > maxWidth)
+      last = last.slice(0, -1).trim();
+    lines[lines.length - 1] = `${last}…`;
+  }
+  return { lines, size: Math.max(size, minSize), lineHeight: Math.max(size, minSize) * lineHeight };
+}
+function drawRankingPromotionText(context, text, settings) {
+  const layout = rankingPromotionTextLayout(context, text, settings);
+  context.font = `${settings.weight || 900} ${layout.size}px Arial, Helvetica, sans-serif`;
+  context.fillStyle = settings.color || '#0a0a0a';
+  context.textBaseline = 'top';
+  layout.lines.forEach((line, index) =>
+    context.fillText(line, settings.x, settings.y + index * layout.lineHeight),
+  );
+  return layout;
+}
+function rankingOptionPromotionCanvas(r, option) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1350;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('canvas_unavailable');
+
+  context.fillStyle = '#f5f4ed';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = '#0a0a0a';
+  context.fillRect(0, 0, canvas.width, 230);
+  context.font = '900 104px Arial, Helvetica, sans-serif';
+  context.fillStyle = '#ffffff';
+  context.textBaseline = 'top';
+  context.fillText('TOPO', 68, 43);
+  const logoWidth = context.measureText('TOPO').width;
+  context.fillStyle = '#c8f433';
+  context.font = '900 65px Arial, Helvetica, sans-serif';
+  context.fillText('▲', 76 + logoWidth, 66);
+  context.fillStyle = '#ffffff';
+  context.font = '800 25px Arial, Helvetica, sans-serif';
+  context.fillText('TUDO VIRA RANKING.', 72, 168);
+
+  context.fillStyle = '#c8f433';
+  context.fillRect(68, 276, 535, 66);
+  context.fillStyle = '#0a0a0a';
+  context.font = '900 29px Arial, Helvetica, sans-serif';
+  context.fillText('ESTAMOS CONCORRENDO', 92, 293);
+  drawRankingPromotionText(context, r.q, {
+    x: 68,
+    y: 388,
+    maxWidth: 944,
+    maxLines: 5,
+    maxSize: 78,
+    minSize: 42,
+    weight: 900,
+    lineHeight: 0.96,
+  });
+
+  context.fillStyle = '#0a0a0a';
+  context.fillRect(0, 790, canvas.width, 410);
+  context.fillStyle = '#c8f433';
+  context.font = '900 28px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE EM', 68, 845);
+  drawRankingPromotionText(context, option.label, {
+    x: 68,
+    y: 918,
+    maxWidth: 944,
+    maxLines: 3,
+    maxSize: 96,
+    minSize: 52,
+    weight: 900,
+    lineHeight: 0.94,
+    color: '#ffffff',
+  });
+
+  context.fillStyle = '#c8f433';
+  context.fillRect(0, 1200, canvas.width, 150);
+  context.fillStyle = '#0a0a0a';
+  context.font = '900 39px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE NA GENTE  →', 68, 1231);
+  context.font = '800 24px Arial, Helvetica, sans-serif';
+  context.fillText('somostopo.com.br', 68, 1294);
+  return canvas;
+}
+function rankingPromotionFileName(option) {
+  const stem = String(option?.label || 'opcao')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 52);
+  return `${stem || 'opcao'}-no-topo.png`;
+}
+function rankingPromotionBlob(canvas) {
+  return new Promise((resolve, reject) =>
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('card_generation_failed'))),
+      'image/png',
+      1,
+    ),
+  );
+}
+async function copyRankingPromotionText(text) {
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.append(field);
+    field.select();
+    const copied = document.execCommand?.('copy') === true;
+    field.remove();
+    return copied;
+  }
+}
+function downloadRankingPromotionCard(blob, option) {
+  const objectURL = URL.createObjectURL(blob),
+    link = document.createElement('a');
+  link.href = objectURL;
+  link.download = rankingPromotionFileName(option);
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
+}
+async function shareRankingOptionCard(r, option, canvas) {
+  const text = rankingOptionPromotionText(r, option),
+    blob = await rankingPromotionBlob(canvas),
+    file =
+      typeof File === 'function'
+        ? new File([blob], rankingPromotionFileName(option), { type: 'image/png' })
+        : null,
+    shareData = file ? { files: [file], title: `Vote em ${option.label} no TOPO`, text } : null;
+  if (shareData && navigator.share && navigator.canShare?.({ files: shareData.files })) {
+    try {
+      await navigator.share(shareData);
+      return true;
+    } catch (error) {
+      if (error?.name === 'AbortError') return false;
+    }
+  }
+  downloadRankingPromotionCard(blob, option);
+  const copied = await copyRankingPromotionText(text);
+  toast(copied ? 'Card baixado e texto copiado.' : 'Card baixado. O texto está pronto na tela.');
+  return true;
+}
+function openRankingOptionPromotion(r) {
+  if (r.vip || !r.opts?.length) return;
+  const requestedOptionId = rankingPromotionOptionId(),
+    initialOption = r.opts.find((option) => Number(option.id) === requestedOptionId) || r.opts[0],
+    options = r.opts
+      .map(
+        (option) =>
+          `<option value="${option.id}" ${Number(option.id) === Number(initialOption.id) ? 'selected' : ''}>${escapeHTML(option.label)}</option>`,
+      )
+      .join('');
+  showModal(
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Seu card pronto.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Sem cadastro. Escolha quem você representa e compartilhe.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="6" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR CARD</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, compartilhe o card e use o adesivo de link com o endereço copiado.</small></div></div></div>`,
+  );
+  const layer = document.getElementById('modalLayer'),
+    card = layer.querySelector('.modalCard'),
+    select = layer.querySelector('#rankingPromotionOption'),
+    preview = layer.querySelector('#rankingPromotionPreview'),
+    textField = layer.querySelector('#rankingPromotionText'),
+    shareButton = layer.querySelector('#rankingPromotionShare'),
+    whatsApp = layer.querySelector('#rankingPromotionWhatsApp'),
+    copyButton = layer.querySelector('#rankingPromotionCopy');
+  card?.classList.add('rankingPromotionModalCard');
+  let selectedOption = initialOption,
+    canvas = null;
+  const renderSelection = () => {
+    selectedOption =
+      r.opts.find((option) => Number(option.id) === Number(select.value)) || initialOption;
+    canvas = rankingOptionPromotionCanvas(r, selectedOption);
+    preview.src = canvas.toDataURL('image/png');
+    preview.alt = `Card: vote em ${selectedOption.label} no TOPO`;
+    const text = rankingOptionPromotionText(r, selectedOption);
+    textField.value = text;
+    whatsApp.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  };
+  select.onchange = renderSelection;
+  shareButton.onclick = async () => {
+    shareButton.disabled = true;
+    try {
+      await shareRankingOptionCard(r, selectedOption, canvas);
+    } catch {
+      toast('Não consegui gerar o card neste navegador.');
+    } finally {
+      shareButton.disabled = false;
+    }
+  };
+  copyButton.onclick = async () => {
+    const copied = await copyRankingPromotionText(textField.value);
+    toast(copied ? 'Texto e link copiados.' : 'Não consegui copiar automaticamente.');
+  };
+  renderSelection();
+}
+function bindRankingOptionPromotion(r) {
+  document
+    .querySelectorAll('[data-ranking-option-promotion]')
+    .forEach((button) => (button.onclick = () => openRankingOptionPromotion(r)));
+}
+function focusRankingPromotionOption(r) {
+  const optionId = rankingPromotionOptionId(),
+    focusKey = `${r.id}:${optionId}`;
+  if (!optionId || r.vip || rankingPromotionFocusKey === focusKey) return;
+  const option = document.getElementById(`opcao-${optionId}`);
+  if (!option) return;
+  rankingPromotionFocusKey = focusKey;
+  requestAnimationFrame(() => {
+    option.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    option.setAttribute('tabindex', '-1');
+    option.focus({ preventScroll: true });
+  });
 }
 function syncFavoriteButtons(rankingId, active) {
   document.querySelectorAll('[data-favorite-ranking]').forEach((button) => {
@@ -1802,24 +2085,41 @@ function bindCategoryControls() {
   });
   bindLocalCityExplorer();
 }
+function footballCategoryTabsHTML() {
+  if (isLocalExperience() || activeGroup !== 'Esporte' || homeSearch) return '';
+  const teamCount = experienceRankings().filter(isClubPlayerRanking).length,
+    teamsActive = activeFootballSection === 'times';
+  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/esporte" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="/categoria/esporte/times" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${fmt(teamCount)}</span></a></nav>`;
+}
 function renderCategoryHome(visible) {
   const sorted = categorySortedRankings(visible),
     shown = sorted.slice(0, categoryVisibleCount),
     remaining = Math.max(0, sorted.length - shown.length),
     isAll = activeGroup === 'Todos',
     local = isLocalExperience(),
+    teamsSection = !local && activeGroup === 'Esporte' && activeFootballSection === 'times',
     preferredCount = visible.length,
-    heading = local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
-    kicker = local ? `${selectedCity} no TOPO` : isAll ? 'Todos os rankings' : 'Categoria',
-    description = local
-      ? `Só rankings de ${selectedCity}. Troque a cidade para explorar outro lugar.`
-      : isAll
-        ? 'Os mais votados que você ainda não avaliou aparecem primeiro.'
-        : 'Abra um ranking, veja os itens e vote.';
+    heading = teamsSection ? 'Times' : local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
+    kicker = teamsSection
+      ? 'Futebol'
+      : local
+        ? `${selectedCity} no TOPO`
+        : isAll
+          ? 'Todos os rankings'
+          : 'Categoria',
+    description = teamsSection
+      ? 'Os melhores jogadores da história de cada clube, reunidos numa seção própria.'
+      : local
+        ? `Só rankings de ${selectedCity}. Troque a cidade para explorar outro lugar.`
+        : isAll
+          ? 'Os mais votados que você ainda não avaliou aparecem primeiro.'
+          : 'Abra um ranking, veja os itens e vote.';
   document.title = local
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
-    : `${activeGroup} — rankings no TOPO`;
-  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section><section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+    : teamsSection
+      ? 'Times — rankings de futebol no TOPO'
+      : `${activeGroup} — rankings no TOPO`;
+  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section>${footballCategoryTabsHTML()}<section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }
@@ -2014,7 +2314,7 @@ function rankingsInSameExperience(r) {
 function relatedFor(r) {
   const explicitIds = editorialFor(r.id).related || [],
     scored = rankingsInSameExperience(r)
-      .filter((candidate) => candidate.id !== r.id)
+      .filter((candidate) => candidate.id !== r.id && !isClubPlayerRanking(candidate))
       .map((candidate) => ({
         candidate,
         score: relatedScore(r, candidate, explicitIds),
@@ -2036,7 +2336,10 @@ function nextRankingFor(r) {
       (candidate) => experienceGroupOf(candidate) === currentGroup,
     ),
     currentIndex = currentGroupRankings.findIndex((candidate) => candidate.id === r.id),
-    eligible = (candidate) => candidate.id !== r.id && rankingNeedsParticipation(candidate),
+    eligible = (candidate) =>
+      candidate.id !== r.id &&
+      !isClubPlayerRanking(candidate) &&
+      rankingNeedsParticipation(candidate),
     laterInCurrentGroup = currentGroupRankings.slice(currentIndex + 1).filter(eligible);
   if (laterInCurrentGroup.length) return laterInCurrentGroup[0];
 
@@ -2060,15 +2363,13 @@ function nextRankingFor(r) {
 
   return currentGroupRankings.slice(0, Math.max(0, currentIndex)).find(eligible) || null;
 }
-function isTeamRanking(r) {
-  return /\b(?:time|times|clube|clubes)\b/.test(foldText(`${r?.id || ''} ${r?.q || ''}`));
-}
 function randomRankingFor(r) {
-  const available = rankingsInSameExperience(r).filter(
-      (candidate) => candidate.id !== r.id && rankingNeedsParticipation(candidate),
-    ),
-    withoutTeamCatalog = available.filter((candidate) => !isTeamRanking(candidate)),
-    pool = withoutTeamCatalog.length ? withoutTeamCatalog : available;
+  const pool = rankingsInSameExperience(r).filter(
+    (candidate) =>
+      candidate.id !== r.id &&
+      !isClubPlayerRanking(candidate) &&
+      rankingNeedsParticipation(candidate),
+  );
   return pool[Math.floor(Math.random() * pool.length)] || null;
 }
 function relatedCardsHTML(rels) {
@@ -2298,12 +2599,13 @@ function syncRankingContinuationFlow() {
 function rankingFreeVoteHTML(r, votingOpen = true) {
   const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
     visibleOptions = r.opts.slice(0, visibleLimit),
+    promotionOptionId = rankingPromotionOptionId(),
     footerVoteText = r.vip
       ? votingOpen
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
       : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
-  return `<div class="rankingFreeIntro"><strong>Não concorda?</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
+  return `<div class="rankingFreeIntro"><strong>Não concorda?</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
 }
 function rankingVotePanelHTML(r, votingOpen = true) {
   if (!votingOpen) return rankingFreeVoteHTML(r, false);
@@ -2527,7 +2829,7 @@ function rankingVoteRowHTML(o, i, extraClass = '', votingOpen = true) {
     downSelected = Number(o.mine) === -1,
     label = escapeHTML(o.label),
     disabled = votingOpen ? '' : 'disabled';
-  return `<div class="option ${extraClass}" data-option-id="${o.id}" data-option-label="${label}"><div class="pos">${rankMark(i)}</div><div><div class="name">${label}${o.isNew ? '<span class="vipNewOption">NOVO</span>' : ''}</div><div class="score">${pointCountText(o.score)} · ${i + 1}º lugar ${doubleVoteBadgeHTML(o)}</div></div><div class="actions"><button class="react up ${upSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}" ${disabled}>↑</button>${votingOpen ? doubleVoteActionHTML(o, 1) : ''}<button class="react down ${downSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}" ${disabled}>↓</button>${votingOpen ? doubleVoteActionHTML(o, -1) : ''}</div></div>`;
+  return `<div class="option ${extraClass}" id="opcao-${o.id}" data-option-id="${o.id}" data-option-label="${label}"><div class="pos">${rankMark(i)}</div><div><div class="name">${label}${o.isNew ? '<span class="vipNewOption">NOVO</span>' : ''}</div><div class="score">${pointCountText(o.score)} · ${i + 1}º lugar ${doubleVoteBadgeHTML(o)}</div></div><div class="actions"><button class="react up ${upSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}" ${disabled}>↑</button>${votingOpen ? doubleVoteActionHTML(o, 1) : ''}<button class="react down ${downSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}" ${disabled}>↓</button>${votingOpen ? doubleVoteActionHTML(o, -1) : ''}</div></div>`;
 }
 function allItemsExplorerHTML(r) {
   const total = r.opts.length;
@@ -3105,6 +3407,11 @@ function renderInternal() {
     return;
   }
   if (rankingEditorState?.rankingId === r.id) rankingEditorState = null;
+  const promotedOptionIndex = r.vip
+    ? -1
+    : r.opts.findIndex((option) => Number(option.id) === rankingPromotionOptionId());
+  if (promotedOptionIndex >= visibleOptionCount)
+    visibleOptionCount = Math.min(r.opts.length, promotedOptionIndex + 1);
   const visibleLimit = Math.min(visibleOptionCount, r.opts.length),
     votingOpen = !vip || r.vipVotingOpen !== false,
     ownerBar = r.vipOwned ? vipOwnerBarHTML(r) : '',
@@ -3120,7 +3427,7 @@ function renderInternal() {
     : '';
   const rankingHead = `<div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>`,
     compactHero = `<div class="rankingCompactHero${cover ? '' : ' rankingCompactHeroNoImage'}">${cover}<div class="rankingCompactHeroCopy">${rankingHead}<h1>${escapeHTML(r.q)}</h1>${description}</div></div>`;
-  feed.innerHTML = `${ownerBar}<article class="rank rankingMain" id="votar">${compactHero}${rankingPersonalActionsHTML(r, 'desktop')}${closedNotice}${rankingPersonalActionsHTML(r, 'mobile')}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  feed.innerHTML = `${ownerBar}<article class="rank rankingMain" id="votar">${compactHero}${rankingPersonalActionsHTML(r, 'desktop')}${closedNotice}${rankingPersonalActionsHTML(r, 'mobile')}${rankingOptionPromotionHTML(r)}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   syncRankingContinuationFlow();
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);
@@ -3141,11 +3448,13 @@ function renderInternal() {
     }
   }
   bindVotes();
+  bindRankingOptionPromotion(r);
   bindRankingVoteModes(r);
   if (votingOpen && activeRankingVoteMode() === 'duelo') bindDuelMode(r);
   else bindAllItems(r);
   if (votingOpen && activeRankingVoteMode() !== 'livre') void loadRankingVotingModes(r);
   bindRankingSuggestion(r);
+  focusRankingPromotionOption(r);
   loadComments(r);
 }
 function suggestionStatusInfo(status) {

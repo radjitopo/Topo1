@@ -25,7 +25,7 @@ function navigationContext(random = 0) {
       function rankingsInSameExperience() { return globalThis.inputRankings; }
       function experienceGroupOf(ranking) { return ranking.group; }
       function experienceGroupNames() { return ['Todos', 'Esporte', 'Música', 'Cinema']; }
-      function isTeamRanking(ranking) { return ranking.team === true; }
+      function isClubPlayerRanking(ranking) { return ranking.team === true; }
       ${selected.join('\n')}
       globalThis.nextRankingForTest = nextRankingFor;
       globalThis.randomRankingForTest = randomRankingFor;
@@ -79,10 +79,19 @@ test('next and random never return a voted or completed ranking', () => {
   assert.equal(context.randomRankingForTest(current), null);
 });
 
-test('random can still choose a team ranking when it is the only unfinished option', () => {
+test('club-player rankings never enter next or random continuation', () => {
   const context = navigationContext();
   const current = ranking('atual', 'Esporte', 1, { duelCompleted: true });
-  context.inputRankings = [current, ranking('time-pendente', 'Esporte', 2, { team: true })];
+  context.inputRankings = [
+    current,
+    ranking('time-pendente', 'Esporte', 2, { team: true }),
+    ranking('cinema-pendente', 'Cinema', 3),
+  ];
 
-  assert.equal(context.randomRankingForTest(current).id, 'time-pendente');
+  assert.equal(context.nextRankingForTest(current).id, 'cinema-pendente');
+  assert.equal(context.randomRankingForTest(current).id, 'cinema-pendente');
+
+  context.inputRankings[2].duelCompleted = true;
+  assert.equal(context.nextRankingForTest(current), null);
+  assert.equal(context.randomRankingForTest(current), null);
 });

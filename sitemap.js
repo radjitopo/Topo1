@@ -1,8 +1,10 @@
 import { neon } from '@neondatabase/serverless';
 import {
+  FOOTBALL_TEAMS_CATEGORY_PATH,
   GENERAL_CATEGORIES,
   generalCategoryForRanking,
   generalCategoryPath,
+  isClubPlayerRanking,
   isSeoLocalRanking,
   localCityByLabel,
   localCollectionPath,
@@ -67,6 +69,7 @@ export function buildSitemap(rankings) {
 
   let homeLastModified = '';
   let localLastModified = '';
+  let footballTeamsLastModified = '';
   const categoryActivity = new Map(GENERAL_CATEGORIES.map((category) => [category.slug, '']));
   const cityActivity = new Map();
   const localGroupActivity = new Map();
@@ -89,7 +92,9 @@ export function buildSitemap(rankings) {
     }
 
     const category = generalCategoryForRanking(ranking);
-    if (category)
+    if (isClubPlayerRanking(ranking)) {
+      footballTeamsLastModified = latestDate(footballTeamsLastModified, updatedAt);
+    } else if (category)
       categoryActivity.set(
         category.slug,
         latestDate(categoryActivity.get(category.slug), updatedAt),
@@ -102,6 +107,8 @@ export function buildSitemap(rankings) {
     const lastModified = categoryActivity.get(category.slug);
     if (lastModified) addUrl(urls, generalCategoryPath(category), lastModified);
   }
+  if (footballTeamsLastModified)
+    addUrl(urls, FOOTBALL_TEAMS_CATEGORY_PATH, footballTeamsLastModified);
   for (const [citySlug, lastModified] of cityActivity) {
     addUrl(urls, localCollectionPath(citySlug), lastModified);
   }

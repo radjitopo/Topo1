@@ -58,6 +58,10 @@
     },
     { "src": "/local/([^/]+)/?", "dest": "/page.js?view=local&city=$1" },
     { "src": "/local/?", "dest": "/page.js?view=local" },
+    {
+      "src": "/categoria/esporte/times/?",
+      "dest": "/page.js?view=category&category=esporte&section=times"
+    },
     { "src": "/categoria/([^/]+)/?", "dest": "/page.js?view=category&category=$1" },
     { "src": "/ranking/([^/]+)/?", "dest": "/page.js?id=$1" },
     {

@@ -9,8 +9,11 @@ import {
   renderVipRankingPage,
 } from '../page.js';
 import {
+  CLUB_PLAYER_RANKING_IDS,
+  FOOTBALL_TEAMS_CATEGORY_PATH,
   generalCategoryBySlug,
   generalCategoryForRanking,
+  isClubPlayerRanking,
   localCityBySlug,
   localCollectionPath,
   localGroupForRanking,
@@ -43,6 +46,16 @@ const local = {
   updatedAt: '2026-08-24T12:00:00.000Z',
   voteCount: 80,
 };
+const fluminensePlayers = {
+  id: 'melhores-jogadores-fluminense',
+  category: 'Esporte',
+  question: 'Quais foram os melhores jogadores do Fluminense de todos os tempos?',
+  imageUrl: null,
+  createdAt: '2026-08-26T12:00:00.000Z',
+  updatedAt: '2026-08-27T12:00:00.000Z',
+  voteCount: 12,
+  options: [{ id: 10, label: 'Castilho', score: 5 }],
+};
 
 function structuredData(html) {
   const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
@@ -51,6 +64,9 @@ function structuredData(html) {
 }
 
 test('SEO taxonomy creates stable category, city and local collection URLs', () => {
+  assert.equal(CLUB_PLAYER_RANKING_IDS.length, 20);
+  assert.equal(FOOTBALL_TEAMS_CATEGORY_PATH, '/categoria/esporte/times');
+  assert.equal(isClubPlayerRanking(fluminensePlayers), true);
   assert.equal(generalCategoryBySlug('tv-e-series')?.label, 'TV & Séries');
   assert.equal(generalCategoryBySlug('nostalgia')?.label, 'Nostalgia');
   assert.equal(generalCategoryForRanking(cinema)?.slug, 'cinema');
@@ -125,6 +141,33 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(category.html, /<h1>Cinema<\/h1>/);
   assert.match(category.html, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
 
+  const generalSport = renderGeneralCategoryPage(template, generalCategoryBySlug('esporte'), [
+    fluminensePlayers,
+    {
+      ...fluminensePlayers,
+      id: 'maiores-times-brasil',
+      question: 'Qual é o maior time de futebol do Brasil?',
+    },
+  ]);
+  assert.equal(generalSport.count, 1);
+  assert.doesNotMatch(generalSport.html, /melhores-jogadores-fluminense/);
+  assert.match(generalSport.html, /href="\/categoria\/esporte\/times"/);
+
+  const footballTeams = renderGeneralCategoryPage(
+    template,
+    generalCategoryBySlug('esporte'),
+    [fluminensePlayers],
+    '',
+    'times',
+  );
+  assert.equal(footballTeams.count, 1);
+  assert.match(footballTeams.html, /<h1>Times<\/h1>/);
+  assert.match(footballTeams.html, /href="\/ranking\/melhores-jogadores-fluminense"/);
+  assert.match(
+    footballTeams.html,
+    /rel="canonical" href="https:\/\/somostopo\.com\.br\/categoria\/esporte\/times"/,
+  );
+
   const search = renderHomePage(template, [cinema], 'filmes');
   assert.match(search, /name="robots" content="noindex,follow"/);
   assert.match(search, /Resultados para “filmes”/);
@@ -180,11 +223,19 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
       updated_at: cinema.updatedAt,
       is_vip: true,
     },
+    {
+      id: fluminensePlayers.id,
+      category: fluminensePlayers.category,
+      question: fluminensePlayers.question,
+      created_at: fluminensePlayers.createdAt,
+      updated_at: fluminensePlayers.updatedAt,
+    },
   ]);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis\/sushi-japones/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/ranking\/filmes/);
+  assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/esporte\/times/);
   assert.doesNotMatch(xml, /amigos-vip/);
   assert.doesNotMatch(xml, /\/perfil|\/entrar|\/moderacao/);
 });
@@ -201,6 +252,13 @@ test('Vercel routes every public collection and private account shell through SE
     vercel.routes.some((route) => route.src === '/' && route.dest === '/page.js?view=home'),
   );
   assert.ok(vercel.routes.some((route) => route.src.includes('/categoria/')));
+  assert.ok(
+    vercel.routes.some(
+      (route) =>
+        route.src === '/categoria/esporte/times/?' &&
+        route.dest === '/page.js?view=category&category=esporte&section=times',
+    ),
+  );
   assert.ok(vercel.routes.some((route) => route.src.includes('/local/([^/]+)/([^/]+)')));
   assert.ok(vercel.routes.some((route) => route.dest === '/page.js?view=private&kind=$1'));
   assert.equal(vercel.routes.at(-1).dest, '/page.js?view=not-found');

@@ -98,7 +98,7 @@ test('ranking actions stay in one mobile row without the removed stats strip', a
   );
   assert.match(
     compactApp,
-    /<articleclass="rankrankingMain"id="votar">\$\{compactHero\}\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}\$\{closedNotice\}\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
+    /<articleclass="rankrankingMain"id="votar">\$\{compactHero\}\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}\$\{closedNotice\}\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingOptionPromotionHTML\(r\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
   );
   assert.doesNotMatch(compactApp, /rankingModeStatsHTML|id="rankingModeStats"/);
   assert.match(compactStyle, /body\.popElectric\.rankingPersonalActionsMobile\{display:none;?\}/);

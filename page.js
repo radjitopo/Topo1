@@ -3,12 +3,14 @@ import { neon } from '@neondatabase/serverless';
 import { resolveRankingCover } from './ranking-image-policy.js';
 import { rankingQuestion } from './ranking-titles.js';
 import {
+  FOOTBALL_TEAMS_CATEGORY_PATH,
   GENERAL_CATEGORIES,
   LOCAL_CITIES,
   foldSeoText,
   generalCategoryBySlug,
   generalCategoryForRanking,
   generalCategoryPath,
+  isClubPlayerRanking,
   isSeoLocalRanking,
   localCityByLabel,
   localCityBySlug,
@@ -183,7 +185,9 @@ function rankingCard(ranking) {
   const question = rankingQuestion(ranking.id, ranking.question);
   const category = isSeoLocalRanking(ranking)
     ? localGroupForRanking(ranking)?.label || ranking.category
-    : generalCategoryForRanking(ranking)?.label || ranking.category;
+    : isClubPlayerRanking(ranking)
+      ? 'Times'
+      : generalCategoryForRanking(ranking)?.label || ranking.category;
   const path = `/ranking/${encodeURIComponent(ranking.id)}`;
   const media = ranking.imageUrl
     ? `<img src="${escapeHtml(ranking.imageUrl)}" alt="" loading="lazy" decoding="async">`
@@ -212,6 +216,11 @@ function categoryNavigation() {
   return `<nav class="seoTopicLinks" aria-label="Categorias do TOPO">${GENERAL_CATEGORIES.map(
     (category) => `<a href="${generalCategoryPath(category)}">${escapeHtml(category.label)}</a>`,
   ).join('')}</nav>`;
+}
+
+function footballCategoryTabs(section, teamCount) {
+  const teamsActive = section === 'times';
+  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/esporte" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="${FOOTBALL_TEAMS_CATEGORY_PATH}" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${formatNumber(teamCount)}</span></a></nav>`;
 }
 
 function cityNavigation(rankings) {
@@ -282,7 +291,11 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
       ? localCityByLabel(searchCity) || localCityBySlug(searchCity)
       : searchCity) || localCityByLabel('Florianópolis');
   const publicRankings = rankings.filter(
-    (ranking) => !ranking.isVip && !ranking.is_vip && !isSeoLocalRanking(ranking),
+    (ranking) =>
+      !ranking.isVip &&
+      !ranking.is_vip &&
+      !isSeoLocalRanking(ranking) &&
+      !isClubPlayerRanking(ranking),
   );
   const searchRankings = search
     ? rankings.filter(
@@ -352,24 +365,39 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
   });
 }
 
-export function renderGeneralCategoryPage(template, category, rankings, search = '') {
-  const selected = rankings
-    .filter(
-      (ranking) =>
-        !ranking.isVip &&
-        !ranking.is_vip &&
-        !isSeoLocalRanking(ranking) &&
-        generalCategoryForRanking(ranking)?.slug === category.slug,
-    )
-    .sort(
-      (a, b) =>
-        Number(b.voteCount || 0) - Number(a.voteCount || 0) ||
-        new Date(b.createdAt) - new Date(a.createdAt),
-    );
-  const canonical = `${BASE_URL}${generalCategoryPath(category)}`;
-  const title = `${category.label}: rankings para votar — TOPO`;
+export function renderGeneralCategoryPage(template, category, rankings, search = '', section = '') {
+  const categoryRankings = rankings
+      .filter(
+        (ranking) =>
+          !ranking.isVip &&
+          !ranking.is_vip &&
+          !isSeoLocalRanking(ranking) &&
+          generalCategoryForRanking(ranking)?.slug === category.slug,
+      )
+      .sort(
+        (a, b) =>
+          Number(b.voteCount || 0) - Number(a.voteCount || 0) ||
+          new Date(b.createdAt) - new Date(a.createdAt),
+      ),
+    teamsSection = category.slug === 'esporte' && section === 'times',
+    teamCount = categoryRankings.filter(isClubPlayerRanking).length,
+    selected =
+      category.slug === 'esporte'
+        ? categoryRankings.filter((ranking) =>
+            teamsSection ? isClubPlayerRanking(ranking) : !isClubPlayerRanking(ranking),
+          )
+        : categoryRankings,
+    canonicalPath = teamsSection ? FOOTBALL_TEAMS_CATEGORY_PATH : generalCategoryPath(category),
+    canonical = `${BASE_URL}${canonicalPath}`,
+    pageLabel = teamsSection ? 'Times' : category.label,
+    title = teamsSection
+      ? 'Times: os melhores jogadores de cada clube — TOPO'
+      : `${category.label}: rankings para votar — TOPO`,
+    categoryDescription = teamsSection
+      ? 'Os melhores jogadores da história de cada clube, reunidos numa seção própria.'
+      : category.description;
   const description = truncate(
-    `${category.description} Veja resultados atualizados e participe das disputas no TOPO.`,
+    `${categoryDescription} Veja resultados atualizados e participe das disputas no TOPO.`,
     158,
   );
   const listId = `${canonical}#rankings`;
@@ -386,15 +414,20 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
     },
     breadcrumbSchema([
       { name: 'TOPO', url: BASE_URL },
-      { name: category.label, url: canonical },
+      ...(teamsSection
+        ? [
+            { name: category.label, url: `${BASE_URL}${generalCategoryPath(category)}` },
+            { name: pageLabel, url: canonical },
+          ]
+        : [{ name: category.label, url: canonical }]),
     ]),
-    itemListSchema(selected, `Rankings de ${category.label}`, listId),
+    itemListSchema(selected, `Rankings de ${pageLabel}`, listId),
   ]);
   const content = `<section class="categoryLandingHead seoLandingHead">
-      <div><span class="portalKicker">Categoria</span><h1>${escapeHtml(category.label)}</h1><p>${escapeHtml(category.description)}</p></div>
+      <div><span class="portalKicker">${teamsSection ? 'Futebol' : 'Categoria'}</span><h1>${escapeHtml(pageLabel)}</h1><p>${escapeHtml(categoryDescription)}</p></div>
       <div class="categoryLandingCount"><strong>${formatNumber(selected.length)}</strong><span>rankings</span></div>
     </section>
-    ${categoryNavigation()}
+    ${category.slug === 'esporte' ? footballCategoryTabs(section, teamCount) : categoryNavigation()}
     <section class="categoryRankGrid">${selected.slice(0, 36).map(rankingCard).join('')}</section>`;
   return {
     html: withPage(template, {
@@ -499,14 +532,19 @@ export function renderRankingPage(template, ranking, sharedDuel = null) {
   const localCity = localCityByLabel(ranking.category);
   const localGroup = localGroupForRanking(ranking);
   const generalCategory = generalCategoryForRanking(ranking);
+  const clubPlayerRanking = isClubPlayerRanking(ranking);
   const categoryName =
     localCity && localGroup
       ? `${localGroup.label} em ${localCity.label}`
-      : generalCategory?.label || ranking.category;
+      : clubPlayerRanking
+        ? 'Times'
+        : generalCategory?.label || ranking.category;
   const categoryPath =
     localCity && localGroup
       ? localCollectionPath(localCity, localGroup)
-      : generalCategoryPath(generalCategory);
+      : clubPlayerRanking
+        ? FOOTBALL_TEAMS_CATEGORY_PATH
+        : generalCategoryPath(generalCategory);
   const options = ranking.options.slice(0, 10);
   const hasSharedDuel = Array.isArray(sharedDuel) && sharedDuel.length === 2,
     versus = hasSharedDuel ? `${sharedDuel[0].label} × ${sharedDuel[1].label}` : '',
@@ -954,10 +992,11 @@ export default async function handler(req, res) {
 
     if (view === 'category') {
       const category = generalCategoryBySlug(queryValue(req, 'category'));
-      if (!category)
+      const section = queryValue(req, 'section');
+      if (!category || (section && !(category.slug === 'esporte' && section === 'times')))
         return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
       const rankings = await fetchRankingSummaries(sql, { scope: 'general' });
-      const rendered = renderGeneralCategoryPage(template, category, rankings, search);
+      const rendered = renderGeneralCategoryPage(template, category, rankings, search, section);
       if (!rendered.count) return sendHtml(res, 404, rendered.html, { cache: false, index: false });
       return sendHtml(res, 200, rendered.html, { index: !search });
     }

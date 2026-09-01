@@ -1,5 +1,34 @@
 const BASE_URL = 'https://somostopo.com.br';
 
+export const FOOTBALL_TEAMS_CATEGORY_PATH = '/categoria/esporte/times';
+export const CLUB_PLAYER_RANKING_IDS = Object.freeze([
+  'melhores-jogadores-flamengo',
+  'melhores-jogadores-corinthians',
+  'melhores-jogadores-palmeiras',
+  'melhores-jogadores-sao-paulo',
+  'melhores-jogadores-santos',
+  'melhores-jogadores-vasco',
+  'melhores-jogadores-botafogo',
+  'melhores-jogadores-gremio',
+  'melhores-jogadores-internacional',
+  'melhores-jogadores-atletico-mg',
+  'melhores-jogadores-cruzeiro',
+  'melhores-jogadores-bahia',
+  'melhores-jogadores-sport',
+  'melhores-jogadores-athletico-pr',
+  'melhores-jogadores-coritiba',
+  'melhores-jogadores-fortaleza',
+  'melhores-jogadores-ceara',
+  'melhores-jogadores-goias',
+  'melhores-jogadores-vitoria',
+  'melhores-jogadores-fluminense',
+]);
+const clubPlayerRankingIds = new Set(CLUB_PLAYER_RANKING_IDS);
+
+export function isClubPlayerRanking(ranking) {
+  return clubPlayerRankingIds.has(String(ranking?.id || ''));
+}
+
 export function foldSeoText(value) {
   return String(value || '')
     .normalize('NFD')
