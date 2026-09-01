@@ -3662,6 +3662,7 @@ body.popElectric .moderationPanelTabs {
   gap: 0;
   margin: 0 0 38px;
   border-bottom: 1px solid var(--clean-ink);
+  overflow-x: auto;
 }
 
 body.popElectric .moderationPanelTabs a {
@@ -3860,6 +3861,107 @@ body.popElectric .moderationUserMetric strong {
 
 body.popElectric .moderationUserFieldLabel {
   display: none;
+}
+
+body.popElectric .moderationRankingsHero {
+  margin-bottom: 42px;
+}
+
+body.popElectric .moderationRankingLeaderboard {
+  display: grid;
+}
+
+body.popElectric .moderationRankingLeaderboardRow {
+  min-height: 88px;
+  display: grid;
+  grid-template-columns: 44px 62px minmax(0, 1fr) 110px 20px;
+  gap: 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--clean-line);
+  color: var(--clean-ink);
+  padding: 13px 0;
+  text-decoration: none;
+}
+
+body.popElectric .moderationRankingLeaderboardRow:hover,
+body.popElectric .moderationRankingLeaderboardRow:focus-visible {
+  background: var(--clean-soft);
+  outline: 0;
+}
+
+body.popElectric .moderationRankingLeaderboardRow.top1 {
+  border-top: 3px solid var(--clean-ink);
+}
+
+body.popElectric .moderationRankingPosition {
+  color: var(--clean-muted);
+  font:
+    800 25px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+  text-align: center;
+}
+
+body.popElectric .moderationRankingLeaderboardRow.top1 .moderationRankingPosition,
+body.popElectric .moderationRankingLeaderboardRow.top2 .moderationRankingPosition,
+body.popElectric .moderationRankingLeaderboardRow.top3 .moderationRankingPosition {
+  color: var(--clean-sage);
+}
+
+body.popElectric .moderationRankingCover {
+  width: 62px;
+  height: 62px;
+  display: block;
+  object-fit: cover;
+  background: var(--clean-soft);
+}
+
+body.popElectric .moderationRankingCopy {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+body.popElectric .moderationRankingCopy strong {
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.popElectric .moderationRankingCopy small {
+  color: var(--clean-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+body.popElectric .moderationRankingVotes {
+  display: grid;
+  gap: 3px;
+  text-align: right;
+}
+
+body.popElectric .moderationRankingVotes strong {
+  font-size: 19px;
+  line-height: 1;
+}
+
+body.popElectric .moderationRankingVotes small {
+  color: var(--clean-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+body.popElectric .moderationRankingOpen {
+  color: var(--clean-sage);
+  font-size: 18px;
+  text-align: right;
 }
 
 /* Notebook: mais conteúdo útil na primeira tela, sem comprimir o mobile. */
@@ -4315,7 +4417,7 @@ body.popElectric .moderationUserFieldLabel {
   }
 
   body.popElectric .moderationPanelTabs a {
-    flex: 1 1 50%;
+    flex: 1 1 33.333%;
     justify-content: center;
     min-height: 48px;
     padding: 10px 8px;
@@ -4379,6 +4481,50 @@ body.popElectric .moderationUserFieldLabel {
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  body.popElectric .moderationRankingLeaderboardRow {
+    min-height: 78px;
+    grid-template-columns: 28px 52px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  body.popElectric .moderationRankingPosition {
+    font-size: 19px;
+  }
+
+  body.popElectric .moderationRankingCover {
+    width: 52px;
+    height: 52px;
+  }
+
+  body.popElectric .moderationRankingCopy strong {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.2;
+    text-overflow: clip;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body.popElectric .moderationRankingCopy small {
+    font-size: 8px;
+    line-height: 1.25;
+  }
+
+  body.popElectric .moderationRankingVotes strong {
+    font-size: 14px;
+  }
+
+  body.popElectric .moderationRankingVotes small {
+    font-size: 8px;
+  }
+
+  body.popElectric .moderationRankingOpen {
+    display: none;
   }
 
   body.popElectric .siteSearch,

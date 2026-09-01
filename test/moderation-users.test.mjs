@@ -25,8 +25,8 @@ assert.match(compactApi, /action==='moderation-users'\)returnmoderationUsers\(re
 assert.match(app, /Usuários cadastrados/);
 assert.match(app, /Buscar por nome ou e-mail/);
 assert.match(app, /function bindModerationUserSearch\(\)/);
-assert.match(compactApp, /activeTab==='users'\?'moderation-users':'moderation'/);
-assert.match(compactApp, /queryParams\.get\('aba'\)==='usuarios'/);
+assert.match(compactApp, /activeTab==='users'\?'moderation-users'/);
+assert.match(compactApp, /requestedTab==='usuarios'\?'users'/);
 
 assert.match(compactCss, /\.moderationPanelTabs/);
 assert.match(compactCss, /\.moderationUserRow/);

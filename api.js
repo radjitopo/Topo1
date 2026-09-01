@@ -4170,6 +4170,56 @@ async function moderationUsers(req, res) {
   });
 }
 
+async function moderationRankings(req, res) {
+  const moderator = await sessionUser(req);
+  if (!moderator) return json(res, 401, { error: 'authentication_required' });
+  if (!isModerator(moderator)) return json(res, 403, { error: 'moderator_required' });
+
+  const rows = await sql.query(`
+    SELECT
+      ranking.id,
+      ranking.question,
+      ranking.category,
+      ranking.image_url AS "imageUrl",
+      (
+        ranking.baseline_votes
+        + COUNT(vote.option_id)
+      )::bigint AS votes,
+      COUNT(vote.option_id) FILTER (
+        WHERE vote.updated_at >= date_trunc('day', now())
+      )::int AS "todayVotes"
+    FROM rankings ranking
+    LEFT JOIN ranking_options option ON option.ranking_id = ranking.id
+    LEFT JOIN votes vote ON vote.option_id = option.id
+    WHERE ranking.is_active = true
+      AND ranking.is_vip = false
+    GROUP BY
+      ranking.id,
+      ranking.question,
+      ranking.category,
+      ranking.image_url,
+      ranking.baseline_votes
+    ORDER BY votes DESC, lower(ranking.question), ranking.id
+  `);
+
+  const rankings = rows.map((ranking, index) => ({
+    id: ranking.id,
+    position: index + 1,
+    question: rankingQuestion(ranking.id, ranking.question),
+    category: ranking.category,
+    imageUrl: resolveRankingCover(ranking.id, ranking.imageUrl),
+    votes: Number(ranking.votes || 0),
+    todayVotes: Number(ranking.todayVotes || 0),
+  }));
+
+  return json(res, 200, {
+    moderator: { name: moderator.display_name, email: moderator.email },
+    total: rankings.length,
+    totalVotes: rankings.reduce((total, ranking) => total + ranking.votes, 0),
+    rankings,
+  });
+}
+
 async function moderateNameReport(res, moderator, id, decision, moderationNote) {
   const [report] = await sql.query(
     `
@@ -5620,6 +5670,7 @@ export default async function handler(req, res) {
       if (action === 'suggestions') return mySuggestions(req, res);
       if (action === 'moderation') return moderationQueue(req, res);
       if (action === 'moderation-users') return moderationUsers(req, res);
+      if (action === 'moderation-rankings') return moderationRankings(req, res);
       return json(res, 404, { error: 'action_not_found' });
     }
 

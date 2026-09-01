@@ -4346,7 +4346,23 @@ function moderationSectionHTML(title, items, emptyText) {
   return `<section class="moderationSection"><div class="moderationSectionHead"><h2>${title}</h2><span>${items.length}</span></div>${items.length ? `<div class="moderationList">${items.map((item) => (item.kind === 'name' ? moderationNameCardHTML(item) : moderationCardHTML(item))).join('')}</div>` : `<div class="moderationEmpty">${emptyText}</div>`}</section>`;
 }
 function moderationPanelTabsHTML(active) {
-  return `<nav class="moderationPanelTabs" aria-label="Áreas do painel privado"><a class="${active === 'queue' ? 'active' : ''}" href="/moderacao" ${active === 'queue' ? 'aria-current="page"' : ''}>Sugestões e denúncias</a><a class="${active === 'users' ? 'active' : ''}" href="/moderacao?aba=usuarios" ${active === 'users' ? 'aria-current="page"' : ''}>Usuários cadastrados</a></nav>`;
+  return `<nav class="moderationPanelTabs" aria-label="Áreas da curadoria"><a class="${active === 'queue' ? 'active' : ''}" href="/moderacao" ${active === 'queue' ? 'aria-current="page"' : ''}>Curadoria</a><a class="${active === 'rankings' ? 'active' : ''}" href="/moderacao?aba=rankings" ${active === 'rankings' ? 'aria-current="page"' : ''}>Mais votados</a><a class="${active === 'users' ? 'active' : ''}" href="/moderacao?aba=usuarios" ${active === 'users' ? 'aria-current="page"' : ''}>Usuários</a></nav>`;
+}
+function moderationRankingLeaderboardRowHTML(ranking, index) {
+  const position = Number(ranking.position || index + 1),
+    votes = Math.max(0, Number(ranking.votes || 0)),
+    todayVotes = Math.max(0, Number(ranking.todayVotes || 0));
+  return `<a class="moderationRankingLeaderboardRow ${position <= 3 ? `top${position}` : ''}" href="${rankingPath(ranking.id)}"><span class="moderationRankingPosition">${position}</span><img class="moderationRankingCover" src="${escapeHTML(ranking.imageUrl || '')}" alt="" loading="lazy"><span class="moderationRankingCopy"><strong>${escapeHTML(ranking.question || 'Ranking sem título')}</strong><small>${escapeHTML(ranking.category || 'Sem categoria')}${todayVotes ? ` · +${fmt(todayVotes)} hoje` : ''}</small></span><span class="moderationRankingVotes"><strong>${fmt(votes)}</strong><small>votos</small></span><span class="moderationRankingOpen" aria-hidden="true">→</span></a>`;
+}
+function moderationRankingsPageHTML(data) {
+  const rankings = Array.isArray(data.rankings) ? data.rankings : [],
+    total = Number(data.total ?? rankings.length),
+    totalVotes = Number(
+      data.totalVotes ?? rankings.reduce((sum, ranking) => sum + Number(ranking.votes || 0), 0),
+    ),
+    leaderVotes = Number(rankings[0]?.votes || 0),
+    list = rankings.map(moderationRankingLeaderboardRowHTML).join('');
+  return `<header class="moderationHero moderationRankingsHero"><span class="suggestionEyebrow">Curadoria</span><h1>Ranking dos rankings</h1><p>Todos os rankings públicos do TOPO, do mais votado ao menos votado. A ordem e os totais são atualizados com os votos da comunidade.</p><div class="moderationUserSummary moderationRankingSummary"><span><strong>${fmt(total)}</strong> rankings</span><span><strong>${fmt(totalVotes)}</strong> votos no total</span><span><strong>${fmt(leaderVotes)}</strong> no primeiro lugar</span></div></header><section class="moderationSection moderationRankingLeaderboardSection"><div class="moderationSectionHead"><h2>Mais votados de todos</h2><span>${fmt(total)}</span></div>${list ? `<div class="moderationRankingLeaderboard">${list}</div>` : '<div class="moderationEmpty">Ainda não há rankings públicos.</div>'}</section>`;
 }
 function moderationUserDate(value) {
   const date = new Date(value);
@@ -4533,15 +4549,27 @@ function bindModerationActions() {
   });
 }
 async function renderModeration() {
-  const activeTab = queryParams.get('aba') === 'usuarios' ? 'users' : 'queue';
-  document.title = activeTab === 'users' ? 'Usuários cadastrados — TOPO' : 'Moderação — TOPO';
+  const requestedTab = queryParams.get('aba'),
+    activeTab =
+      requestedTab === 'usuarios' ? 'users' : requestedTab === 'rankings' ? 'rankings' : 'queue';
+  document.title =
+    activeTab === 'users'
+      ? 'Usuários cadastrados — TOPO'
+      : activeTab === 'rankings'
+        ? 'Rankings mais votados — TOPO'
+        : 'Curadoria — TOPO';
   if (!viewer.registered) {
     location.replace(`/entrar?voltar=${encodeURIComponent(location.pathname + location.search)}`);
     return;
   }
   feed.innerHTML = pageLoadingHTML('moderation');
   try {
-    const action = activeTab === 'users' ? 'moderation-users' : 'moderation',
+    const action =
+        activeTab === 'users'
+          ? 'moderation-users'
+          : activeTab === 'rankings'
+            ? 'moderation-rankings'
+            : 'moderation',
       response = await fetch(`/api?action=${action}`, { cache: 'no-store' }),
       data = await response.json().catch(() => ({}));
     if (response.status === 401) {
@@ -4558,6 +4586,10 @@ async function renderModeration() {
     if (activeTab === 'users') {
       feed.innerHTML = `${panelHead}${moderationUsersPageHTML(data)}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
       bindModerationUserSearch();
+      return;
+    }
+    if (activeTab === 'rankings') {
+      feed.innerHTML = `${panelHead}${moderationRankingsPageHTML(data)}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
       return;
     }
     const optionPending = (data.options || []).filter((item) => item.status === 'pending'),
@@ -4585,7 +4617,7 @@ async function renderModeration() {
         : approvedRankings.length
           ? `${approvedRankings.length} ranking${approvedRankings.length === 1 ? ' está' : 's estão'} pronto${approvedRankings.length === 1 ? '' : 's'} para eu criar.`
           : 'Tudo analisado por enquanto.';
-    feed.innerHTML = `${panelHead}<header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Moderação da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
+    feed.innerHTML = `${panelHead}<header class="moderationHero"><span class="suggestionEyebrow">Painel privado</span><h1>Curadoria da comunidade</h1><p>${heroMessage}</p><div class="moderationCounts"><span><strong>${optionPending.length}</strong> opções</span><span><strong>${rankingPending.length}</strong> novos rankings</span><span><strong>${namePending.length}</strong> nomes</span><span><strong>${approvedRankings.length}</strong> para criar</span></div></header>${moderationSectionHTML('Nomes denunciados', namePending, 'Nenhum nome esperando análise.')}${moderationSectionHTML('Opções para rankings', optionPending, 'Nenhuma opção esperando análise.')}${moderationSectionHTML('Ideias de novos rankings', rankingPending, 'Nenhuma ideia de ranking esperando análise.')}${moderationSectionHTML('Prontos para criação', approvedRankings, 'Nenhum ranking aprovado aguardando criação.')}${moderationSectionHTML('Analisadas recentemente', reviewed, 'As decisões recentes aparecerão aqui.')}<div class="end"><a class="backLink" href="/vip">← voltar ao Meu Topo</a></div>`;
     bindModerationActions();
     const targetId = queryParams.get('id'),
       target = targetId ? document.getElementById(`sugestao-${targetId}`) : null;
