@@ -81,13 +81,13 @@ body.popElectric .duelEndActions button:focus-visible {
 body.popElectric.rankingPage .rankingVoteModes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 0 0 25px;
+  margin: 0 0 10px;
   border: 1px solid var(--clean-ink);
 }
 
 body.popElectric.rankingPage .rankingVoteModes button {
   min-width: 0;
-  min-height: 48px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,12 +121,11 @@ body.popElectric.rankingPage .rankingVoteModes button.active {
 }
 
 body.popElectric.rankingPage .rankingModeLoading {
-  min-height: 260px;
+  min-height: 160px;
   display: grid;
   place-content: center;
   justify-items: center;
   gap: 12px;
-  border-top: 5px solid var(--clean-ink);
   border-bottom: 1px solid var(--clean-ink);
   background: var(--clean-soft);
   color: var(--clean-muted);
@@ -325,19 +324,9 @@ body.popElectric.rankingPage .top3SaveBar button:disabled {
 
 body.popElectric.rankingPage .rankingDuel {
   margin: 0;
-  border-top: 5px solid var(--clean-ink);
   border-bottom: 1px solid var(--clean-ink);
   background: var(--clean-soft);
-  padding: clamp(22px, 4vw, 36px);
-}
-
-body.popElectric.rankingPage .rankingDuel > header {
-  height: auto;
-  display: block;
-  align-items: initial;
-  justify-content: initial;
-  max-width: 650px;
-  margin-bottom: 24px;
+  padding: clamp(12px, 2vw, 18px);
 }
 
 body.popElectric.rankingPage .duelEyebrow {
@@ -374,21 +363,21 @@ body.popElectric.rankingPage .rankingDuel p {
 body.popElectric.rankingPage .duelChoices {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
-  align-items: center;
+  align-items: stretch;
 }
 
 body.popElectric.rankingPage .duelChoice {
   min-width: 0;
-  min-height: 245px;
+  min-height: 225px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   border: 1px solid var(--clean-ink);
   border-radius: 0;
   background: var(--clean-paper);
   color: var(--clean-ink);
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   cursor: pointer;
 }
@@ -440,6 +429,7 @@ body.popElectric.rankingPage .duelChoice:disabled {
 }
 
 body.popElectric.rankingPage .duelVersus {
+  align-self: center;
   color: var(--clean-muted);
   text-align: center;
   font:
@@ -662,13 +652,17 @@ body.popElectric.rankingPage .rankingFreeIntro {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  border-top: 5px solid var(--clean-ink);
   border-bottom: 1px solid var(--clean-line);
   color: var(--clean-ink);
   font:
     850 11px/1.2 Arial,
     Helvetica,
     sans-serif;
+}
+
+body.popElectric.rankingPage .rankingFreeIntro > strong {
+  font-size: 18px;
+  line-height: 1.1;
 }
 
 body.popElectric.rankingPage .rankingFreeIntro > span {
@@ -689,7 +683,7 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .rankingVoteModes button {
-    min-height: 45px;
+    min-height: 36px;
     gap: 5px;
     padding: 0 4px;
     font-size: 8px;
@@ -697,6 +691,10 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
 
   body.popElectric.rankingPage .rankingVoteModes button span {
     font-size: 12px;
+  }
+
+  body.popElectric.rankingPage .rankingVoteModes {
+    margin-bottom: 6px;
   }
 
   body.popElectric.rankingPage .rankingTop3 > header {
@@ -743,12 +741,7 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .rankingDuel {
-    padding: 22px 14px;
-  }
-
-  body.popElectric.rankingPage .rankingDuel > header {
-    max-width: none;
-    margin-bottom: 20px;
+    padding: 6px 6px 8px;
   }
 
   body.popElectric.rankingPage .rankingDuel h2 {
@@ -768,22 +761,26 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .duelChoice {
-    min-height: 218px;
-    gap: 12px;
-    padding: 14px 10px;
+    min-height: 168px;
+    gap: 6px;
+    padding: 8px 6px;
   }
 
   body.popElectric.rankingPage .duelChoice > strong {
     overflow-wrap: break-word;
     word-break: normal;
     hyphens: auto;
-    font-size: clamp(19px, 5.6vw, 26px);
+    font-size: clamp(18px, 5.1vw, 23px);
     line-height: 1;
+  }
+
+  body.popElectric.rankingPage .duelShareBar {
+    margin-top: 8px;
   }
 
   body.popElectric.rankingPage .duelShareButton {
     width: 100%;
-    min-height: 46px;
+    min-height: 40px;
   }
 
   body.popElectric.rankingPage .duelFooter {
@@ -826,7 +823,7 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
-    padding: 13px 0;
+    padding: 10px 0 12px;
   }
 }
 
@@ -4765,7 +4762,7 @@ body.popElectric .moderationRankingOpen {
     flex-direction: row;
     justify-content: flex-start;
     gap: clamp(8px, 3vw, 13px);
-    margin: 0 0 27px;
+    margin: 0 0 16px;
     padding: 12px 0 0;
   }
 
@@ -7866,5 +7863,89 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
 
   body.popElectric.rankingPage .rankingEditorVip {
     padding: 17px;
+  }
+}
+
+/* Compact ranking hero: the cover and title share the first fold so voting starts sooner. */
+body.popElectric.rankingPage .rankingCompactHero {
+  display: grid;
+  grid-template-columns: clamp(220px, 27vw, 280px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 48px);
+  margin: 0;
+}
+
+body.popElectric.rankingPage .rankingCompactHeroNoImage {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.popElectric.rankingPage .rankingCompactHeroCopy {
+  min-width: 0;
+  padding-top: 2px;
+}
+
+body.popElectric.rankingPage .rankingCompactHero .rankHead {
+  margin: 0 0 15px;
+}
+
+body.popElectric.rankingPage .rankingCompactHero h1 {
+  max-width: 720px;
+  margin: 0;
+  color: var(--clean-ink);
+  font:
+    800 clamp(38px, 4.6vw, 56px)/0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+body.popElectric.rankingPage .rankingCompactHero .imageStrip,
+body.popElectric.rankingPage .rankingCompactHero .vipRankingCover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin: 0;
+}
+
+body.popElectric.rankingPage .rankingCompactHero .vipRankingDescription {
+  max-width: 620px;
+  margin: 14px 0 0;
+}
+
+@media (max-width: 700px) {
+  body.popElectric.rankingPage .rankingCompactHero {
+    grid-template-columns: clamp(104px, 31vw, 128px) minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  body.popElectric.rankingPage .rankingCompactHeroNoImage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric.rankingPage .rankingCompactHeroCopy {
+    padding-top: 0;
+  }
+
+  body.popElectric.rankingPage .rankingCompactHero .rankHead {
+    margin-bottom: 10px;
+  }
+
+  body.popElectric.rankingPage .rankingCompactHero h1 {
+    font-size: clamp(24px, 6.8vw, 30px);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  body.popElectric.rankingPage .rankingCompactHero .imageStrip,
+  body.popElectric.rankingPage .rankingCompactHero .vipRankingCover {
+    aspect-ratio: 1 / 1;
+    margin: 0;
+  }
+
+  body.popElectric.rankingPage .rankingCompactHero .vipRankingDescription {
+    margin-top: 9px;
+    font-size: 11px;
+    line-height: 1.35;
   }
 }

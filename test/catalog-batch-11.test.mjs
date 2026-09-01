@@ -96,16 +96,19 @@ test('music-style rankings have complete editorial metadata and valid related li
 });
 
 test('eleventh batch is connected to the importer and public shell', async () => {
-  const [importer, index, devServer] = await Promise.all([
+  const [importer, index, devServer, source] = await Promise.all([
     readFile(new URL('scripts/apply-catalog.mjs', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
     readFile(new URL('test/dev-server.mjs', root), 'utf8'),
+    readFile(new URL('editorial-19.js', root), 'utf8'),
   ]);
 
   assert.match(importer, /rankings-batch-11\.json/);
   assert.match(importer, /eleventhBatchRankings\.length !== 12/);
   assert.match(importer, /newRankings\.length !== 195/);
   assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
-  assert.match(index, /editorial-19\.js\?v=20260827-1-music-genres/);
+  assert.match(index, /editorial-19\.js\?v=20260901-1-mobile-duel-share-first-screen/);
+  assert.match(source, /min-height:184px/);
+  assert.match(source, /height:68px/);
   assert.match(devServer, /editorial-19\.js/);
 });

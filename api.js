@@ -1226,6 +1226,23 @@ async function catalog(req, res) {
       SELECT option_id, direction
       FROM user_double_votes
       WHERE user_id = $2::uuid
+    ),
+    my_duel_sessions AS (
+      SELECT
+        session.ranking_id,
+        session.completed
+      FROM ranking_duel_sessions session
+      JOIN eligible_rankings ranking ON ranking.id = session.ranking_id
+      WHERE (
+          $2::uuid IS NOT NULL
+          AND session.user_id = $2::uuid
+        )
+        OR (
+          $2::uuid IS NULL
+          AND $3::boolean = false
+          AND session.user_id IS NULL
+          AND session.device_id = $1
+        )
     )
     SELECT
       r.id AS ranking_id,
@@ -1256,7 +1273,8 @@ async function catalog(req, res) {
       CASE
         WHEN mdv.direction = mv.direction THEN 2
         ELSE 1
-      END::int AS my_weight
+      END::int AS my_weight,
+      COALESCE(mds.completed, false) AS duel_completed
     FROM eligible_rankings r
     JOIN ranking_options o ON o.ranking_id = r.id
     LEFT JOIN vote_totals vt ON vt.option_id = o.id
@@ -1266,6 +1284,7 @@ async function catalog(req, res) {
      AND duel_bonus.option_id = o.id
     LEFT JOIN my_votes mv ON mv.option_id = o.id
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
+    LEFT JOIN my_duel_sessions mds ON mds.ranking_id = r.id
     ORDER BY r.created_at, r.id, o.position
   `,
       [
@@ -1324,6 +1343,7 @@ async function catalog(req, res) {
         createdAt: row.created_at,
         vip: row.is_vip === true,
         favorite: row.is_favorite === true,
+        duelCompleted: row.duel_completed === true,
         vipHasPassword: row.vip_has_password === true,
         vipUnlocked: row.is_vip === true ? true : undefined,
         opts: [],

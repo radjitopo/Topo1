@@ -94,16 +94,36 @@ test('ranking actions stay in one mobile row without the removed stats strip', a
   assert.match(app, /rankingPersonalActionsHTML\(r, placement = 'desktop'\)/);
   assert.match(
     compactApp,
-    /<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}[\s\S]*\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
+    /compactHero=`<divclass="rankingCompactHero\$\{cover\?'':'rankingCompactHeroNoImage'\}">\$\{cover\}<divclass="rankingCompactHeroCopy">\$\{rankingHead\}<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{description\}<\/div><\/div>`/,
+  );
+  assert.match(
+    compactApp,
+    /<articleclass="rankrankingMain"id="votar">\$\{compactHero\}\$\{rankingPersonalActionsHTML\(r,'desktop'\)\}\$\{closedNotice\}\$\{rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingVoteModeHTML\(r,votingOpen\)\}<divid="rankingVotingPanel"/,
   );
   assert.doesNotMatch(compactApp, /rankingModeStatsHTML|id="rankingModeStats"/);
   assert.match(compactStyle, /body\.popElectric\.rankingPersonalActionsMobile\{display:none;?\}/);
   assert.match(
     compactStyle,
-    /@media\(max-width:700px\)[\s\S]*body\.popElectric\.rankingPage\.rankingPersonalActionsDesktop\{display:none;?\}[\s\S]*body\.popElectric\.rankingPage\.rankingPersonalActionsMobile\{[^}]*display:flex[^}]*flex-direction:row[^}]*margin:0027px[^}]*padding:12px00;?\}/,
+    /@media\(max-width:700px\)[\s\S]*body\.popElectric\.rankingPage\.rankingPersonalActionsDesktop\{display:none;?\}[\s\S]*body\.popElectric\.rankingPage\.rankingPersonalActionsMobile\{[^}]*display:flex[^}]*flex-direction:row[^}]*margin:0016px[^}]*padding:12px00;?\}/,
   );
   assert.match(
     compactStyle,
     /body\.popElectric\.rankingPage\.rankingPersonalActionsMobile\.shareActions\{[^}]*flex-wrap:nowrap/,
+  );
+  assert.match(
+    compactStyle,
+    /body\.popElectric\.rankingPage\.rankingCompactHero\{[^}]*display:grid[^}]*grid-template-columns:clamp\(220px,27vw,280px\)minmax\(0,1fr\)/,
+  );
+  assert.match(
+    compactStyle,
+    /@media\(max-width:700px\)[\s\S]*body\.popElectric\.rankingPage\.rankingCompactHero\{[^}]*grid-template-columns:clamp\(104px,31vw,128px\)minmax\(0,1fr\)[^}]*gap:14px/,
+  );
+  assert.match(
+    compactStyle,
+    /body\.popElectric\.rankingPage\.rankingCompactHeroh1\{[^}]*font-size:clamp\(24px,6\.8vw,30px\)/,
+  );
+  assert.match(
+    compactStyle,
+    /body\.popElectric\.rankingPage\.rankingCompactHero\.imageStrip,[^{]*\{[^}]*aspect-ratio:1\/1/,
   );
 });

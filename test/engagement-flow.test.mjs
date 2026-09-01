@@ -12,13 +12,13 @@ const compactStyle = compactSource(style);
 assert.match(compactApp, /functionnextRankingFor\(r\)/, 'ranking pages must choose a next ranking');
 assert.match(
   compactApp,
-  /unvoted=available\.filter\(\(candidate\)=>myVoteCount\(candidate\)===0\)/,
-  'next ranking must prefer rankings without a vote',
+  /functionrankingNeedsParticipation\(r\)\{returnmyVoteCount\(r\)===0&&r\?\.duelCompleted!==true;/,
+  'continuation must exclude both voted rankings and completed duels',
 );
 assert.match(
   compactApp,
-  /sameCategory=pool\.filter\(\(candidate\)=>candidate\.cat===r\.cat\)/,
-  'next ranking must prefer the same category',
+  /laterInCurrentGroup=currentGroupRankings\.slice\(currentIndex\+1\)\.filter\(eligible\)/,
+  'next ranking must continue forward inside the current category',
 );
 assert.match(
   compactApp,
@@ -27,8 +27,13 @@ assert.match(
 );
 assert.match(
   compactApp,
-  /functionisTeamRanking\(r\)[\s\S]*!isTeamRanking\(candidate\)/,
-  'the random ranking action must leave football-team rankings out of its pool',
+  /withoutTeamCatalog=available\.filter\(\(candidate\)=>!isTeamRanking\(candidate\)\)/,
+  'the random ranking action must avoid flooding the pool with football-team rankings',
+);
+assert.match(
+  compactApi,
+  /COALESCE\(mds\.completed,false\)ASduel_completed/,
+  'the catalog must tell the client which duels this viewer completed',
 );
 assert.match(
   compactApp,

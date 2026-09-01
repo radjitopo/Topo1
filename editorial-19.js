@@ -188,12 +188,12 @@ Object.assign(editorial, {
     const style = document.createElement('style');
     style.id = 'duelPhotoStyles';
     style.textContent = `
-      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:340px;grid-template-rows:auto 160px auto auto;gap:11px;padding:14px}
-      body.popElectric.rankingPage .duelChoicePhoto{position:relative;width:100%;height:160px;overflow:hidden;border:1px solid var(--clean-line,#d8d8d8);background:var(--clean-soft,#f3f3f0)}
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:300px;grid-template-rows:auto 140px auto auto;gap:10px;padding:12px}
+      body.popElectric.rankingPage .duelChoicePhoto{position:relative;width:100%;height:140px;overflow:hidden;border:1px solid var(--clean-line,#d8d8d8);background:var(--clean-soft,#f3f3f0)}
       body.popElectric.rankingPage .duelChoicePhoto img{display:block;width:100%;height:100%;object-fit:cover}
       body.popElectric.rankingPage .duelChoicePhoto small{position:absolute;left:0;right:0;bottom:0;max-height:28px;overflow:hidden;background:rgba(0,0,0,.7);color:#fff;padding:4px 5px;text-align:left;font:700 7px/1.2 Arial,Helvetica,sans-serif;letter-spacing:0}
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(23px,3.2vw,38px)}
-      @media(max-width:640px){body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:268px;grid-template-rows:auto 112px auto auto;gap:8px;padding:9px}body.popElectric.rankingPage .duelChoicePhoto{height:112px}body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(18px,5.6vw,25px);line-height:1}body.popElectric.rankingPage .duelChoicePhoto small{font-size:6px;max-height:23px}}
+      @media(max-width:640px){body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:184px;grid-template-rows:auto 68px auto auto;gap:5px;padding:6px}body.popElectric.rankingPage .duelChoicePhoto{height:68px}body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(17px,5.1vw,22px);line-height:1}body.popElectric.rankingPage .duelChoicePhoto small{font-size:6px;max-height:23px}}
     `;
     document.head.appendChild(style);
   }

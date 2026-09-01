@@ -38,6 +38,21 @@ test('ranking pages default to Ganha, Fica and keep Voto Livre available', async
   assert.doesNotMatch(compact, /Votoslivreshoje|DisputanoVotoLivre|rankingModeStatsHTML/);
 });
 
+test('Voto Livre starts without a black bar and explains the stronger duel', async () => {
+  const [app, style] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+  ]);
+  const freeVote = extractTopLevelDeclaration(app, 'rankingFreeVoteHTML');
+  const introRule =
+    style.match(/body\.popElectric\.rankingPage \.rankingFreeIntro \{([^}]*)\}/)?.[1] || '';
+
+  assert.match(freeVote, /Não concorda\?/);
+  assert.match(freeVote, /Duelo do Topo conta mais/);
+  assert.doesNotMatch(introRule, /border-top/);
+  assert.match(style, /\.rankingFreeIntro > strong \{[\s\S]*?font-size: 18px;/);
+});
+
 test('tab changes stay in place instead of navigating the ranking page', async () => {
   const app = await readFile(new URL('app.js', root), 'utf8');
   const tabs = extractTopLevelDeclaration(app, 'rankingVoteModeHTML');
@@ -102,15 +117,17 @@ test('each person gets one stable random run and previous winners keep their hid
 });
 
 test('Ganha, Fica hides its points, records the personal winner and stays usable on mobile', async () => {
-  const [app, style, index] = await Promise.all([
+  const [app, style, index, editorialBase] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
+    readFile(new URL('editorial-base.js', root), 'utf8'),
   ]);
   const compact = compactSource(app);
+  const duel = extractTopLevelDeclaration(app, 'rankingDuelHTML');
+  const duelRule =
+    style.match(/body\.popElectric\.rankingPage \.rankingDuel \{([^}]*)\}/)?.[1] || '';
 
-  assert.match(compact, /Quemganha,fica/);
-  assert.match(compact, /umapartidaporranking/);
   assert.match(compact, /Seuvencedor/);
   assert.match(compact, /resultadofoiguardadonoMeuTopo/i);
   assert.match(compact, /TROCARDESAFIANTE/);
@@ -120,11 +137,30 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
   assert.match(style, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(style, /\.duelChoice\.incumbent/);
   assert.match(style, /\.duelChoice\.challenger/);
+  assert.match(duel, /data-duel-pair><div class="duelChoices">/);
+  assert.doesNotMatch(duel, /<header>|headerCopy|Ordem aleatória|uma partida por ranking/);
+  assert.doesNotMatch(editorialBase, /Começa pelos últimos/);
+  assert.doesNotMatch(duelRule, /border-top/);
+  assert.match(style, /\.rankingVoteModes button \{[\s\S]*?min-height: 38px;/);
   assert.match(
     style,
-    /\.rankingDuel > header \{[\s\S]*?height: auto;[\s\S]*?display: block;/,
-    'the global site header layout must not leak into the Ganha, Fica header',
+    /@media \(max-width: 700px\)[\s\S]*?\.rankingVoteModes button \{[\s\S]*?min-height: 36px;/,
   );
+  assert.match(style, /\.duelChoice \{[\s\S]*?min-height: 225px;/);
+  assert.match(
+    style,
+    /@media \(max-width: 700px\)[\s\S]*?\.duelChoice \{[\s\S]*?min-height: 168px;/,
+  );
+  assert.match(
+    style,
+    /@media \(max-width: 700px\)[\s\S]*?\.duelShareBar \{[\s\S]*?margin-top: 8px;/,
+  );
+  assert.match(
+    style,
+    /@media \(max-width: 700px\)[\s\S]*?\.duelShareButton \{[\s\S]*?min-height: 40px;/,
+  );
+  assert.match(editorialBase, /background: #92333f;/);
+  assert.match(editorialBase, /background: #7d2632;/);
   assert.match(style, /hyphens: auto;/, 'long option labels should wrap cleanly on phones');
   assert.match(style, /\.profileRankingActivityCard/);
   assert.match(index, /single-random-play/);

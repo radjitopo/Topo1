@@ -34,13 +34,13 @@ const editorial = {};
     style.id = 'dueloNoTopoStyles';
     style.textContent = `
       body.popElectric.rankingPage .rankingVoteModes button[data-ranking-vote-mode="duelo"] {
-        background: #711c24;
+        background: #92333f;
         color: #fff;
       }
       body.popElectric.rankingPage .rankingVoteModes button[data-ranking-vote-mode="duelo"]:hover,
       body.popElectric.rankingPage .rankingVoteModes button[data-ranking-vote-mode="duelo"]:focus-visible,
       body.popElectric.rankingPage .rankingVoteModes button[data-ranking-vote-mode="duelo"].active {
-        background: #57151b;
+        background: #7d2632;
         color: #fff;
       }
       body.popElectric.rankingPage .rankingVoteModes button[data-ranking-vote-mode="duelo"].active {
@@ -51,14 +51,6 @@ const editorial = {};
   };
 
   const duelCopy = (root = document) => {
-    root.querySelectorAll?.('.rankingDuel h2').forEach((heading) => {
-      if (heading.textContent.trim() === 'Quem ganha, fica.') heading.textContent = 'Duelo do Topo';
-    });
-    root.querySelectorAll?.('.duelEyebrow').forEach((eyebrow) => {
-      if (eyebrow.textContent.trim().startsWith('Ordem aleatória')) {
-        eyebrow.textContent = 'Começa pelos últimos · uma partida por ranking';
-      }
-    });
     root.querySelectorAll?.('.rankingFreeIntro span, .duelHomeCallout h2, .rankingModeLoading strong').forEach(
       (element) => {
         if (element.textContent.includes('Ganha, Fica')) {

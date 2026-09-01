@@ -23,7 +23,7 @@ test('a shared duel link keeps the exact pair as the start of a new run', async 
   const compactApp = compactSource(app);
   assert.match(compactApp, /data-share-duel/);
   assert.match(compactApp, /COMPARTILHARESTEDUELO/);
-  assert.match(app, /Duelo compartilhado · sua partida começa aqui/);
+  assert.doesNotMatch(app, /Duelo compartilhado · sua partida começa aqui/);
   assert.match(compactApp, /\/duel-bottom-api\?\$\{params\}/);
   assert.match(compactApp, /payload\.start_option_ids=startOptionIds/);
 
