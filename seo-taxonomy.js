@@ -164,7 +164,7 @@ export function generalCategoryForRanking(ranking) {
   if (['Viagem', 'Brasil'].includes(category)) return generalCategoryByLabel('Lugares');
   if (['Animais', 'Plantas'].includes(category)) return generalCategoryByLabel('Natureza');
   if (category === 'Carros') return generalCategoryByLabel('Motores');
-  if (category === 'Esporte') return generalCategoryByLabel('Esporte');
+  if (['Esporte', 'Futebol'].includes(category)) return generalCategoryByLabel('Esporte');
   if (category === 'Tecnologia') return generalCategoryByLabel('Tecnologia');
   if (category === 'Produtos') return generalCategoryByLabel('Produtos');
   return generalCategoryByLabel('Vida');

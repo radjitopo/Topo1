@@ -472,7 +472,7 @@ function groupOf(r) {
   if (['Viagem', 'Brasil'].includes(r.cat) || topoLocal.normalizeCity(r.cat)) return 'Lugares';
   if (['Animais', 'Plantas'].includes(r.cat)) return 'Natureza';
   if (r.cat === 'Carros') return 'Motores';
-  if (r.cat === 'Esporte') return 'Esporte';
+  if (['Esporte', 'Futebol'].includes(r.cat)) return 'Esporte';
   if (r.cat === 'Tecnologia') return 'Tecnologia';
   if (r.cat === 'Produtos') return 'Produtos';
   return 'Vida';

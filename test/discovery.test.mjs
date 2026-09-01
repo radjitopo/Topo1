@@ -289,13 +289,13 @@ const bakeryFloripa = {
 const unrelated = { id: 'piores-empregos', cat: 'Diversão', q: 'Os piores empregos', votes: 1000 };
 const fluminensePlayers = {
   id: 'melhores-jogadores-fluminense',
-  cat: 'Esporte',
+  cat: 'Futebol',
   q: 'Quais foram os melhores jogadores do Fluminense de todos os tempos?',
   votes: 0,
 };
 const biggestBrazilianClub = {
   id: 'maiores-times-brasil',
-  cat: 'Esporte',
+  cat: 'Futebol',
   q: 'Qual é o maior time de futebol do Brasil?',
   votes: 0,
 };

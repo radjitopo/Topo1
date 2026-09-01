@@ -48,7 +48,7 @@ const local = {
 };
 const fluminensePlayers = {
   id: 'melhores-jogadores-fluminense',
-  category: 'Esporte',
+  category: 'Futebol',
   question: 'Quais foram os melhores jogadores do Fluminense de todos os tempos?',
   imageUrl: null,
   createdAt: '2026-08-26T12:00:00.000Z',
@@ -70,6 +70,7 @@ test('SEO taxonomy creates stable category, city and local collection URLs', () 
   assert.equal(generalCategoryBySlug('tv-e-series')?.label, 'TV & Séries');
   assert.equal(generalCategoryBySlug('nostalgia')?.label, 'Nostalgia');
   assert.equal(generalCategoryForRanking(cinema)?.slug, 'cinema');
+  assert.equal(generalCategoryForRanking({ id: 'futebol', category: 'Futebol' })?.slug, 'esporte');
   assert.equal(
     generalCategoryForRanking({ id: 'brinquedos-nostalgicos', category: 'Nostalgia' })?.slug,
     'nostalgia',
