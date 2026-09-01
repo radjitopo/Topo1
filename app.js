@@ -1681,7 +1681,7 @@ function rankingOptionPromotionText(r, option) {
   return `Estamos concorrendo no TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${rankingOptionPromotionURL(r, option)}`;
 }
 function rankingOptionPromotionHTML(r) {
-  if (r.vip || !r.opts?.length) return '';
+  if (r.vip || !r.opts?.length || !topoLocal.isLocalRanking(r)) return '';
   return '<button class="rankingOptionPromotionLauncher" type="button" data-ranking-option-promotion aria-haspopup="dialog"><span>ESTÁ NESTE RANKING?</span><strong>Divulgue sua opção</strong><b aria-hidden="true">→</b></button>';
 }
 function rankingPromotionWrapLines(context, text, maxWidth) {

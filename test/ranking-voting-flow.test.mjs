@@ -124,7 +124,12 @@ assert.ok(promotionLauncher, 'the automatic option promotion launcher must remai
 assert.match(
   compactSource(promotionLauncher),
   /ESTÁNESTERANKING\?/,
-  'rankings must invite listed people and places to promote their option',
+  'local rankings must invite listed people and places to promote their option',
+);
+assert.match(
+  compactSource(promotionLauncher),
+  /topoLocal\.isLocalRanking\(r\)/,
+  'option promotion must be exclusive to Topo Local rankings',
 );
 assert.match(
   compactSource(promotionLauncher),
@@ -135,6 +140,26 @@ assert.match(
   compactApp,
   /rankingPersonalActionsHTML\(r,'mobile'\)\}\$\{rankingOptionPromotionHTML\(r\)\}\$\{rankingVoteModeHTML/,
   'option promotion must stay between the compact personal actions and voting modes',
+);
+
+const promotionLauncherContext = vm.createContext({
+  topoLocal: { isLocalRanking: (ranking) => ranking.local === true },
+});
+vm.runInContext(
+  `${promotionLauncher}\n` +
+    `globalThis.localPromotion = rankingOptionPromotionHTML({ local: true, opts: [{ id: 1 }] });\n` +
+    `globalThis.generalPromotion = rankingOptionPromotionHTML({ local: false, opts: [{ id: 1 }] });`,
+  promotionLauncherContext,
+);
+assert.match(
+  promotionLauncherContext.localPromotion,
+  /data-ranking-option-promotion/,
+  'Topo Local rankings must keep the promotion launcher',
+);
+assert.equal(
+  promotionLauncherContext.generalPromotion,
+  '',
+  'general rankings must keep only their ordinary share actions',
 );
 
 const promotionUrl = extractTopLevelDeclaration(app, 'rankingOptionPromotionURL');
