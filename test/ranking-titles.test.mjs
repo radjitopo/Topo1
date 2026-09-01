@@ -18,7 +18,7 @@ const catalogFiles = [
   'data/rankings-batch-12.json',
 ];
 
-test('editorial review keeps 59 approved titles in one canonical map', async () => {
+test('editorial review keeps 60 approved titles in one canonical map', async () => {
   const knownIds = new Set(
     Object.keys(
       JSON.parse(await readFile(new URL('../data/titles.json', import.meta.url), 'utf8')),
@@ -55,7 +55,7 @@ test('editorial review keeps 59 approved titles in one canonical map', async () 
     knownIds.add(match[1]);
   }
 
-  assert.equal(Object.keys(rankingTitleOverrides).length, 59);
+  assert.equal(Object.keys(rankingTitleOverrides).length, 60);
   for (const [id, title] of Object.entries(rankingTitleOverrides)) {
     assert.ok(knownIds.has(id), `${id} must belong to the known ranking catalog`);
     assert.match(title, /\?$/, `${id} must invite a direct answer`);

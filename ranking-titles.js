@@ -21,6 +21,8 @@ export const rankingTitleOverrides = Object.freeze({
   'quilo-rio': 'Qual é o melhor restaurante por quilo do Rio de Janeiro?',
   'padarias-floripa': 'Qual é a melhor padaria de Florianópolis?',
   'cafes-floripa': 'Qual é o melhor café de Florianópolis?',
+  'restaurantes-veganos-floripa':
+    'Qual é o melhor restaurante/lanchonete vegano ou vegetariano de Florianópolis?',
   'hoteis-floripa': 'Qual é o melhor hotel de Florianópolis?',
   'pizzarias-floripa': 'Qual é a melhor pizzaria de Florianópolis?',
   'hoteis-bc': 'Qual é o melhor hotel de Balneário Camboriú?',

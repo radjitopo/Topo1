@@ -36,6 +36,9 @@ const statements = [
    SET question = 'Qual é o melhor restaurante vegano em ' || category || '?'
    WHERE is_active = true
      AND id LIKE 'restaurantes-veganos-%';`,
+  `UPDATE rankings
+   SET question = 'Qual é o melhor restaurante/lanchonete vegano ou vegetariano de Florianópolis?'
+   WHERE id = 'restaurantes-veganos-floripa';`,
   `WITH excluded AS (${incoming})
    DELETE FROM ranking_options option
    USING excluded

@@ -13,6 +13,9 @@ const exclusions = JSON.parse(
 const publicOptionExpansion = JSON.parse(
   await readFile(new URL('../data/public-option-expansion.json', import.meta.url), 'utf8'),
 );
+const veganFloripaRefresh = JSON.parse(
+  await readFile(new URL('../data/vegan-floripa-refresh.json', import.meta.url), 'utf8'),
+);
 
 const cities = Object.freeze([
   { name: 'São Paulo', state: 'SP', slug: 'sp' },
@@ -503,8 +506,13 @@ function bestOptions(elements, category) {
 
 function makeRanking(city, category, labels) {
   const id = categoryId(category.key, city);
-  const rejected = new Set(exclusions[id] || []);
-  const curatedLabels = [...labels, ...(publicOptionExpansion.local[id] || [])]
+  const isVeganFloripa = id === veganFloripaRefresh.rankingId;
+  const rejected = new Set([
+    ...(exclusions[id] || []),
+    ...(isVeganFloripa ? veganFloripaRefresh.excludedLabels : []),
+  ]);
+  const baseLabels = isVeganFloripa ? veganFloripaRefresh.options : labels;
+  const curatedLabels = [...baseLabels, ...(publicOptionExpansion.local[id] || [])]
     .filter((label) => !rejected.has(label))
     .filter((label, index, all) => all.indexOf(label) === index)
     .slice(0, LOCAL_PUBLIC_OPTION_COUNT);
@@ -516,7 +524,7 @@ function makeRanking(city, category, labels) {
     localCategory: category.label,
     localCategoryKey: category.key,
     category: city.name,
-    question: category.question(city),
+    question: isVeganFloripa ? veganFloripaRefresh.question : category.question(city),
     image_url: category.image,
     baseline_votes: 0,
     is_active: curatedLabels.length === LOCAL_PUBLIC_OPTION_COUNT,
