@@ -1275,6 +1275,7 @@ async function loadVipArea() {
   bindVipOwnerActions();
   bindFavoriteButtons();
   bindNativeShares();
+  bindProfileRankingActivityMore(feed);
   document
     .getElementById('favoriteShareButton')
     ?.addEventListener('click', (event) => shareMyFavorites(event.currentTarget));
@@ -3672,12 +3673,14 @@ function profileRecentHTML(recent = []) {
     )
     .join('');
 }
+const PROFILE_RANKING_ACTIVITY_PAGE_SIZE = 5;
+
 function profileRankingActivityHTML(items = []) {
   const activity = Array.isArray(items) ? items : [];
   if (!activity.length)
     return `<section class="profileSection profileRankingActivity"><div class="profileSectionHead"><div class="sectionLabel">Rankings votados e jogados</div><span>seu histórico</span></div><p class="profileHint">Os rankings em que você votar ou jogar aparecerão aqui.</p></section>`;
-  return `<section class="profileSection profileRankingActivity"><div class="profileSectionHead"><div class="sectionLabel">Rankings votados e jogados</div><span>${fmt(activity.length)} no seu histórico</span></div><div class="profileRankingActivityList">${activity
-    .map((item) => {
+  const cards = activity
+    .map((item, index) => {
       const href = `${rankingPath(item.rankingId)}${item.played ? '?modo=duelo' : ''}`,
         tags = [
           item.voted ? '<em>VOTO LIVRE</em>' : '',
@@ -3697,9 +3700,34 @@ function profileRankingActivityHTML(items = []) {
           : item.played && !item.completed
             ? '<strong>Continuar escolhendo</strong>'
             : '';
-      return `<a class="profileRankingActivityCard" href="${escapeHTML(href)}"><span class="profileRankingActivityImage">${item.image ? `<img src="${escapeHTML(item.image)}" alt="" loading="lazy">` : '<b aria-hidden="true">TOPO</b>'}</span><span class="profileRankingActivityCopy"><span>${tags}</span><b>${escapeHTML(item.question)}</b><small>${escapeHTML(item.category || '')}</small></span><span class="profileRankingActivityWinner"><small>${winnerLabel}</small>${winner}</span></a>`;
+      return `<a class="profileRankingActivityCard" data-profile-activity-card href="${escapeHTML(href)}" ${index >= PROFILE_RANKING_ACTIVITY_PAGE_SIZE ? 'hidden' : ''}><span class="profileRankingActivityImage">${item.image ? `<img src="${escapeHTML(item.image)}" alt="" loading="lazy">` : '<b aria-hidden="true">TOPO</b>'}</span><span class="profileRankingActivityCopy"><span>${tags}</span><b>${escapeHTML(item.question)}</b><small>${escapeHTML(item.category || '')}</small></span><span class="profileRankingActivityWinner"><small>${winnerLabel}</small>${winner}</span></a>`;
     })
-    .join('')}</div></section>`;
+    .join('');
+  const remaining = Math.max(0, activity.length - PROFILE_RANKING_ACTIVITY_PAGE_SIZE),
+    moreButton = remaining
+      ? `<button class="profileRankingActivityMore" type="button" data-profile-activity-more aria-controls="profileRankingActivityList" aria-expanded="false"><span>VER MAIS RANKINGS</span><small>${fmt(remaining)} restantes</small></button>`
+      : '';
+  return `<section class="profileSection profileRankingActivity"><div class="profileSectionHead"><div class="sectionLabel">Rankings votados e jogados</div><span>${fmt(activity.length)} no seu histórico</span></div><div class="profileRankingActivityList" id="profileRankingActivityList">${cards}</div>${moreButton}</section>`;
+}
+
+function bindProfileRankingActivityMore(root = document) {
+  const button = root.querySelector('[data-profile-activity-more]');
+  if (!button) return;
+  button.onclick = () => {
+    const section = button.closest('.profileRankingActivity'),
+      hiddenCards = [...(section?.querySelectorAll('[data-profile-activity-card][hidden]') || [])];
+    hiddenCards
+      .slice(0, PROFILE_RANKING_ACTIVITY_PAGE_SIZE)
+      .forEach((card) => card.removeAttribute('hidden'));
+    button.setAttribute('aria-expanded', 'true');
+    const remaining = Math.max(0, hiddenCards.length - PROFILE_RANKING_ACTIVITY_PAGE_SIZE);
+    if (!remaining) {
+      button.remove();
+      return;
+    }
+    const count = button.querySelector('small');
+    if (count) count.textContent = `${fmt(remaining)} restantes`;
+  };
 }
 function profileLeaderboardHTML(entries = []) {
   if (!entries.length)

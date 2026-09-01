@@ -190,9 +190,10 @@ test('a completed duel puts the next rankings before the small Meu Topo link', a
 });
 
 test('Meu Topo lists voted and played rankings with the personal winner', async () => {
-  const [api, app] = await Promise.all([
+  const [api, app, style] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
   ]);
   const profile = extractTopLevelDeclaration(api, 'profile');
   const activity = extractTopLevelDeclaration(app, 'profileRankingActivityHTML');
@@ -204,4 +205,10 @@ test('Meu Topo lists voted and played rankings with the personal winner', async 
   assert.match(activity, /Seu vencedor/);
   assert.match(activity, /Seu líder até agora/);
   assert.match(activity, /\?modo=duelo/);
+  assert.match(app, /PROFILE_RANKING_ACTIVITY_PAGE_SIZE = 5/);
+  assert.match(activity, /data-profile-activity-card/);
+  assert.match(activity, /data-profile-activity-more/);
+  assert.match(app, /bindProfileRankingActivityMore\(feed\)/);
+  assert.match(style, /\.profileRankingActivityCard\[hidden\]/);
+  assert.match(style, /\.profileRankingActivityMore/);
 });

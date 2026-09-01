@@ -7559,6 +7559,10 @@ body.popElectric.vipPage .profileRankingActivityList {
   border-top: 1px solid var(--clean-ink);
 }
 
+body.popElectric.vipPage .profileRankingActivityCard[hidden] {
+  display: none;
+}
+
 body.popElectric.vipPage .profileRankingActivityCard {
   min-width: 0;
   display: grid;
@@ -7650,6 +7654,43 @@ body.popElectric.vipPage .profileRankingActivityCard:focus-visible .profileRanki
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+body.popElectric.vipPage .profileRankingActivityMore {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--clean-ink);
+  cursor: pointer;
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+}
+
+body.popElectric.vipPage .profileRankingActivityMore small {
+  color: var(--clean-muted);
+  font: inherit;
+  font-size: 9px;
+}
+
+body.popElectric.vipPage .profileRankingActivityMore:hover,
+body.popElectric.vipPage .profileRankingActivityMore:focus-visible {
+  background: var(--clean-ink);
+  color: #fff;
+}
+
+body.popElectric.vipPage .profileRankingActivityMore:hover small,
+body.popElectric.vipPage .profileRankingActivityMore:focus-visible small {
+  color: #fff;
 }
 
 body.popElectric.vipPage .profileSection {
