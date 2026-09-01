@@ -33,6 +33,7 @@
     "db:public-top10": "node scripts/apply-public-top10.mjs",
     "db:public-option-targets": "node scripts/apply-public-option-targets.mjs",
     "db:option-relevance-review": "node scripts/apply-option-relevance-review.mjs",
+    "db:cafes-floripa-refresh": "node scripts/apply-cafes-floripa-refresh.mjs",
     "db:ranking-cover-review": "node scripts/apply-ranking-cover-review.mjs",
     "db:local-content-quality": "node scripts/apply-local-content-quality.mjs",
     "test:api": "node test/api.integration.mjs",
