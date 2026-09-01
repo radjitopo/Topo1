@@ -8220,8 +8220,9 @@ body.popElectric .rankingPromotionModalGrid {
 body.popElectric .rankingPromotionPreview {
   display: grid;
   place-items: center;
-  background: var(--clean-ink);
-  padding: 10px;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-soft);
+  padding: 8px;
 }
 
 body.popElectric .rankingPromotionPreview img {
@@ -8609,13 +8610,13 @@ body.popElectric .rankingPromotionHint {
   }
 
   body.popElectric .rankingPromotionPreview {
-    padding: 7px;
+    padding: 5px;
   }
 
   body.popElectric .rankingPromotionPreview img {
     width: auto;
     max-width: 100%;
-    max-height: 38dvh;
+    max-height: 42dvh;
   }
 
   body.popElectric .rankingPromotionField textarea {

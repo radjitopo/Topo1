@@ -193,6 +193,26 @@ assert.match(
   /canvas\.width=1080;canvas\.height=1350/,
   'the generated card must use the Instagram-friendly 4:5 format',
 );
+assert.match(
+  compactSource(promotionCanvas),
+  /city=topoLocal\.cityForRanking\(r\)\|\|'Suacidade'/,
+  'the card must identify the Topo Local city',
+);
+assert.match(
+  compactSource(promotionCanvas),
+  /optionPanelY=Math\.max\(530,Math\.ceil\(questionBottom\+55\)\)/,
+  'the option panel must follow the question instead of leaving a fixed empty block',
+);
+assert.doesNotMatch(
+  compactSource(promotionCanvas),
+  /fillRect\(0,790,canvas\.width,410\)/,
+  'the old fixed layout with a large empty area must not return',
+);
+assert.match(
+  compactSource(promotionCanvas),
+  /VOTENAGENTE[\s\S]*ABRAOLINKETOQUENASETAPARACIMA/,
+  'the card must end with a clear voting call to action',
+);
 const promotionShare = extractTopLevelDeclaration(app, 'shareRankingOptionCard');
 assert.match(
   compactSource(promotionShare),

@@ -1736,65 +1736,107 @@ function rankingOptionPromotionCanvas(r, option) {
   const canvas = document.createElement('canvas');
   canvas.width = 1080;
   canvas.height = 1350;
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext('2d'),
+    ink = '#0a0a0a',
+    paper = '#f5f4ed',
+    lime = '#c8f433',
+    coral = '#ff513f',
+    contentX = 72,
+    contentWidth = 936,
+    city = topoLocal.cityForRanking(r) || 'Sua cidade';
   if (!context) throw new Error('canvas_unavailable');
 
-  context.fillStyle = '#f5f4ed';
+  context.fillStyle = ink;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#0a0a0a';
-  context.fillRect(0, 0, canvas.width, 230);
-  context.font = '900 104px Arial, Helvetica, sans-serif';
+  context.fillStyle = lime;
+  context.fillRect(0, 0, 18, canvas.height);
+
+  context.font = '900 92px Arial, Helvetica, sans-serif';
   context.fillStyle = '#ffffff';
   context.textBaseline = 'top';
-  context.fillText('TOPO', 68, 43);
+  context.fillText('TOPO', contentX, 48);
   const logoWidth = context.measureText('TOPO').width;
-  context.fillStyle = '#c8f433';
-  context.font = '900 65px Arial, Helvetica, sans-serif';
-  context.fillText('▲', 76 + logoWidth, 66);
+  context.fillStyle = lime;
+  context.font = '900 56px Arial, Helvetica, sans-serif';
+  context.fillText('▲', contentX + logoWidth + 9, 68);
   context.fillStyle = '#ffffff';
-  context.font = '800 25px Arial, Helvetica, sans-serif';
-  context.fillText('TUDO VIRA RANKING.', 72, 168);
+  context.font = '800 22px Arial, Helvetica, sans-serif';
+  context.fillText('TUDO VIRA RANKING.', contentX + 4, 148);
 
-  context.fillStyle = '#c8f433';
-  context.fillRect(68, 276, 535, 66);
-  context.fillStyle = '#0a0a0a';
-  context.font = '900 29px Arial, Helvetica, sans-serif';
-  context.fillText('ESTAMOS CONCORRENDO', 92, 293);
-  drawRankingPromotionText(context, r.q, {
-    x: 68,
-    y: 388,
-    maxWidth: 944,
-    maxLines: 5,
-    maxSize: 78,
-    minSize: 42,
-    weight: 900,
-    lineHeight: 0.96,
-  });
+  context.textAlign = 'right';
+  context.fillStyle = lime;
+  context.font = '900 25px Arial, Helvetica, sans-serif';
+  context.fillText('TOPO LOCAL', contentX + contentWidth, 66);
+  context.fillStyle = '#ffffff';
+  context.font = '700 21px Arial, Helvetica, sans-serif';
+  context.fillText(String(city).toLocaleUpperCase('pt-BR'), contentX + contentWidth, 108);
+  context.textAlign = 'left';
 
-  context.fillStyle = '#0a0a0a';
-  context.fillRect(0, 790, canvas.width, 410);
-  context.fillStyle = '#c8f433';
-  context.font = '900 28px Arial, Helvetica, sans-serif';
-  context.fillText('VOTE EM', 68, 845);
+  context.fillStyle = coral;
+  context.fillRect(contentX, 201, contentWidth, 10);
+
+  context.fillStyle = lime;
+  context.fillRect(contentX, 252, 510, 60);
+  context.fillStyle = ink;
+  context.font = '900 27px Arial, Helvetica, sans-serif';
+  context.fillText('ESTAMOS CONCORRENDO', contentX + 24, 268);
+  const questionLayout = drawRankingPromotionText(context, r.q, {
+      x: contentX,
+      y: 354,
+      maxWidth: contentWidth,
+      maxLines: 4,
+      maxSize: 75,
+      minSize: 44,
+      weight: 900,
+      lineHeight: 0.95,
+      color: '#ffffff',
+    }),
+    questionBottom = 354 + questionLayout.lines.length * questionLayout.lineHeight,
+    optionPanelY = Math.max(530, Math.ceil(questionBottom + 55));
+
+  context.fillStyle = paper;
+  context.fillRect(42, optionPanelY, 996, 1120 - optionPanelY);
+  context.fillStyle = coral;
+  context.fillRect(contentX, optionPanelY + 48, 185, 54);
+  context.fillStyle = ink;
+  context.font = '900 27px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE EM', contentX + 22, optionPanelY + 62);
+  context.save();
+  context.globalAlpha = 0.28;
+  context.fillStyle = lime;
+  context.textAlign = 'right';
+  context.font = '900 390px Arial, Helvetica, sans-serif';
+  context.fillText('↑', contentX + contentWidth, optionPanelY + 120);
+  context.restore();
   drawRankingPromotionText(context, option.label, {
-    x: 68,
-    y: 918,
-    maxWidth: 944,
+    x: contentX,
+    y: optionPanelY + 139,
+    maxWidth: contentWidth,
     maxLines: 3,
-    maxSize: 96,
-    minSize: 52,
+    maxSize: 130,
+    minSize: 56,
     weight: 900,
-    lineHeight: 0.94,
-    color: '#ffffff',
+    lineHeight: 0.92,
+    color: ink,
   });
 
-  context.fillStyle = '#c8f433';
-  context.fillRect(0, 1200, canvas.width, 150);
-  context.fillStyle = '#0a0a0a';
-  context.font = '900 39px Arial, Helvetica, sans-serif';
-  context.fillText('VOTE NA GENTE  →', 68, 1231);
-  context.font = '800 24px Arial, Helvetica, sans-serif';
-  context.fillText('somostopo.com.br', 68, 1294);
+  context.fillStyle = '#6d6d6d';
+  context.font = '800 22px Arial, Helvetica, sans-serif';
+  context.fillText('SUA CIDADE ESCOLHE. TODO VOTO CONTA.', contentX, 1070);
+
+  context.fillStyle = lime;
+  context.fillRect(0, 1120, canvas.width, 230);
+  context.fillStyle = ink;
+  context.font = '900 55px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE NA GENTE', contentX, 1168);
+  context.textAlign = 'right';
+  context.font = '900 100px Arial, Helvetica, sans-serif';
+  context.fillText('→', contentX + contentWidth, 1141);
+  context.textAlign = 'left';
+  context.font = '900 25px Arial, Helvetica, sans-serif';
+  context.fillText('somostopo.com.br', contentX, 1262);
+  context.font = '800 18px Arial, Helvetica, sans-serif';
+  context.fillText('ABRA O LINK E TOQUE NA SETA PARA CIMA', contentX + 260, 1268);
   return canvas;
 }
 function rankingPromotionFileName(option) {
@@ -1876,7 +1918,7 @@ function openRankingOptionPromotion(r) {
       )
       .join('');
   showModal(
-    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Seu card pronto.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Sem cadastro. Escolha quem você representa e compartilhe.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="6" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR CARD</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, compartilhe o card e use o adesivo de link com o endereço copiado.</small></div></div></div>`,
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha quem você representa e compartilhe um card pronto para Instagram e WhatsApp.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="6" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR AGORA</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, compartilhe o card e use o adesivo de link com o endereço copiado.</small></div></div></div>`,
   );
   const layer = document.getElementById('modalLayer'),
     card = layer.querySelector('.modalCard'),
