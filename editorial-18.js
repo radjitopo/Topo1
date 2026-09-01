@@ -46,22 +46,33 @@ Object.assign(editorial, {
       font-size: clamp(20px, 3vw, 32px) !important;
       line-height: 1 !important;
     }
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
+      body.popElectric.rankingPage .rankingVoteModes {
+        margin-bottom: 6px !important;
+      }
+      body.popElectric.rankingPage .rankingDuel {
+        padding: 6px 6px 8px !important;
+      }
+      body.popElectric.rankingPage .duelChoices {
+        grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) !important;
+      }
       body.popElectric.rankingPage .duelChoice,
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-        height: 218px !important;
-        min-height: 218px !important;
-        max-height: 218px !important;
+        height: 168px !important;
+        min-height: 168px !important;
+        max-height: 168px !important;
+        gap: 6px !important;
+        padding: 8px 6px !important;
       }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-        grid-template-rows: auto 68px minmax(0, 1fr) auto !important;
-        gap: 6px !important;
-        padding: 8px !important;
+        grid-template-rows: auto 56px minmax(0, 1fr) auto !important;
+        gap: 5px !important;
+        padding: 6px !important;
       }
       body.popElectric.rankingPage .duelChoicePhoto {
-        height: 68px !important;
-        min-height: 68px !important;
-        max-height: 68px !important;
+        height: 56px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
       }
       body.popElectric.rankingPage .duelChoice > strong,
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto > strong {
@@ -70,6 +81,13 @@ Object.assign(editorial, {
       }
       body.popElectric.rankingPage .duelChoicePhoto small {
         display: none !important;
+      }
+      body.popElectric.rankingPage .duelShareBar {
+        margin-top: 8px !important;
+      }
+      body.popElectric.rankingPage .duelShareButton {
+        width: 100% !important;
+        min-height: 40px !important;
       }
     }
   `;

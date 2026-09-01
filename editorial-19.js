@@ -193,7 +193,7 @@ Object.assign(editorial, {
       body.popElectric.rankingPage .duelChoicePhoto img{display:block;width:100%;height:100%;object-fit:cover}
       body.popElectric.rankingPage .duelChoicePhoto small{position:absolute;left:0;right:0;bottom:0;max-height:28px;overflow:hidden;background:rgba(0,0,0,.7);color:#fff;padding:4px 5px;text-align:left;font:700 7px/1.2 Arial,Helvetica,sans-serif;letter-spacing:0}
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(23px,3.2vw,38px)}
-      @media(max-width:640px){body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:184px;grid-template-rows:auto 68px auto auto;gap:5px;padding:6px}body.popElectric.rankingPage .duelChoicePhoto{height:68px}body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(17px,5.1vw,22px);line-height:1}body.popElectric.rankingPage .duelChoicePhoto small{font-size:6px;max-height:23px}}
+      @media(max-width:900px){body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto{min-height:168px;grid-template-rows:auto 56px auto auto;gap:5px;padding:6px}body.popElectric.rankingPage .duelChoicePhoto{height:56px}body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto>strong{font-size:clamp(17px,5.1vw,22px);line-height:1}body.popElectric.rankingPage .duelChoicePhoto small{font-size:6px;max-height:23px}}
     `;
     document.head.appendChild(style);
   }

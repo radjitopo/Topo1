@@ -226,6 +226,21 @@ assert.match(
   'signed-in mobile users must keep a visible Meu Topo entry beside the bell',
 );
 assert.match(
+  compactApp,
+  /<buttonclass="accountLogout"id="accountLogout"type="button"aria-label="Sairdaconta">Sair<\/button>/,
+  'signed-in users need a small, explicit logout action beside Meu Topo',
+);
+assert.match(
+  compactApp,
+  /getElementById\('accountLogout'\)\?\.addEventListener\('click',logout\)/,
+  'the header logout action must use the existing account logout flow',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.accountLogout\{[^}]*min-height:34px[^}]*background:transparent[^}]*font:9009px\/1Arial/,
+  'the header logout action must stay visually secondary and compact',
+);
+assert.match(
   compactEditorialCss,
   /body\.popElectric\.accountEnter\{[^}]*min-height:46px[^}]*background:var\(--clean-ink\)[^}]*color:#fff/,
   'signed-out visitors need a prominent editorial login call to action',

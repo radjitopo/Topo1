@@ -625,8 +625,9 @@ function bindNotificationBell() {
 }
 function renderAccount() {
   if (viewer.registered) {
-    accountEl.innerHTML = `<div class="notificationShell"><button class="notificationButton" id="notificationButton" type="button" aria-haspopup="dialog" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"></path><path d="M10 21h4"></path></svg><span class="notificationBadge" id="notificationBadge" hidden></span></button><section class="notificationPanel" id="notificationPanel" aria-label="Suas notificações" hidden></section></div><a class="accountLink" href="/vip" aria-label="Abrir Meu Topo">Meu Topo</a>`;
+    accountEl.innerHTML = `<div class="notificationShell"><button class="notificationButton" id="notificationButton" type="button" aria-haspopup="dialog" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"></path><path d="M10 21h4"></path></svg><span class="notificationBadge" id="notificationBadge" hidden></span></button><section class="notificationPanel" id="notificationPanel" aria-label="Suas notificações" hidden></section></div><a class="accountLink" href="/vip" aria-label="Abrir Meu Topo">Meu Topo</a><button class="accountLogout" id="accountLogout" type="button" aria-label="Sair da conta">Sair</button>`;
     bindNotificationBell();
+    document.getElementById('accountLogout')?.addEventListener('click', logout);
     renderNotificationContents();
     void loadNotifications();
   } else {

@@ -117,11 +117,12 @@ test('each person gets one stable random run and previous winners keep their hid
 });
 
 test('Ganha, Fica hides its points, records the personal winner and stays usable on mobile', async () => {
-  const [app, style, index, editorialBase] = await Promise.all([
+  const [app, style, index, editorialBase, editorial18] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
     readFile(new URL('editorial-base.js', root), 'utf8'),
+    readFile(new URL('editorial-18.js', root), 'utf8'),
   ]);
   const compact = compactSource(app);
   const duel = extractTopLevelDeclaration(app, 'rankingDuelHTML');
@@ -159,6 +160,10 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
     style,
     /@media \(max-width: 700px\)[\s\S]*?\.duelShareButton \{[\s\S]*?min-height: 40px;/,
   );
+  assert.match(editorial18, /@media \(max-width: 900px\)/);
+  assert.match(editorial18, /height: 168px !important;/);
+  assert.match(editorial18, /height: 56px !important;/);
+  assert.doesNotMatch(editorial18, /height: 218px !important;/);
   assert.match(editorialBase, /background: #92333f;/);
   assert.match(editorialBase, /background: #7d2632;/);
   assert.match(style, /hyphens: auto;/, 'long option labels should wrap cleanly on phones');

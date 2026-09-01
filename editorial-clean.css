@@ -1310,6 +1310,31 @@ body.popElectric .accountLink {
   letter-spacing: 0.02em;
 }
 
+body.popElectric .accountLogout {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--clean-muted);
+  padding: 0 1px;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+body.popElectric .accountLogout:hover,
+body.popElectric .accountLogout:focus-visible {
+  border-bottom-color: currentColor;
+  color: var(--clean-ink);
+}
+
 body.popElectric .accountEnter {
   min-height: 46px;
   border: 1px solid var(--clean-ink);
@@ -4007,6 +4032,11 @@ body.popElectric .moderationRankingOpen {
 
   body.popElectric .accountLink {
     font-size: 11px;
+  }
+
+  body.popElectric .accountLogout {
+    min-height: 32px;
+    font-size: 9px;
   }
 
   body.popElectric .accountEnter {
