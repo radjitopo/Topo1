@@ -109,8 +109,10 @@ Object.assign(editorial, {
   },
 });
 
+const DUEL_OPTION_PHOTOS_ENABLED = false;
+
 (() => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || !DUEL_OPTION_PHOTOS_ENABLED) return;
   const photoCache = new Map();
 
   const plain = (value) => {

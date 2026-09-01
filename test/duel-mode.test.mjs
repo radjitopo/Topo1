@@ -117,12 +117,13 @@ test('each person gets one stable random run and previous winners keep their hid
 });
 
 test('Ganha, Fica hides its points, records the personal winner and stays usable on mobile', async () => {
-  const [app, style, index, editorialBase, editorial18] = await Promise.all([
+  const [app, style, index, editorialBase, editorial18, editorial19] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
     readFile(new URL('index.html', root), 'utf8'),
     readFile(new URL('editorial-base.js', root), 'utf8'),
     readFile(new URL('editorial-18.js', root), 'utf8'),
+    readFile(new URL('editorial-19.js', root), 'utf8'),
   ]);
   const compact = compactSource(app);
   const duel = extractTopLevelDeclaration(app, 'rankingDuelHTML');
@@ -139,6 +140,7 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
   assert.match(style, /\.duelChoice\.incumbent/);
   assert.match(style, /\.duelChoice\.challenger/);
   assert.match(duel, /data-duel-pair><div class="duelChoices">/);
+  assert.doesNotMatch(duel, /<img|duelChoicePhoto/);
   assert.doesNotMatch(duel, /<header>|headerCopy|Ordem aleatória|uma partida por ranking/);
   assert.doesNotMatch(editorialBase, /Começa pelos últimos/);
   assert.doesNotMatch(duelRule, /border-top/);
@@ -164,6 +166,9 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
   assert.match(editorial18, /height: 168px !important;/);
   assert.match(editorial18, /height: 56px !important;/);
   assert.doesNotMatch(editorial18, /height: 218px !important;/);
+  assert.match(editorial19, /const DUEL_OPTION_PHOTOS_ENABLED = false;/);
+  assert.match(editorial19, /typeof document === 'undefined' \|\| !DUEL_OPTION_PHOTOS_ENABLED/);
+  assert.match(index, /editorial-19\.js\?v=20260901-3-duel-without-option-photos/);
   assert.match(editorialBase, /background: #92333f;/);
   assert.match(editorialBase, /background: #7d2632;/);
   assert.match(style, /hyphens: auto;/, 'long option labels should wrap cleanly on phones');
