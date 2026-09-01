@@ -41,6 +41,19 @@ const statements = [
    USING excluded
    WHERE option.ranking_id = excluded."rankingId"
      AND option.label = excluded.label;`,
+  `UPDATE rankings ranking
+   SET is_active = false,
+       content_updated_at = now()
+   WHERE ranking.is_active = true
+     AND ranking.id IN (
+       SELECT DISTINCT excluded."rankingId"
+       FROM (${incoming}) excluded
+     )
+     AND (
+       SELECT COUNT(*)
+       FROM ranking_options option
+       WHERE option.ranking_id = ranking.id
+     ) < 20;`,
   `DO $$
   BEGIN
     IF EXISTS (
@@ -64,9 +77,9 @@ const statements = [
           FROM (${incoming}) excluded
         )
       GROUP BY ranking.id
-      HAVING COUNT(option.id) < 5
+      HAVING COUNT(option.id) < 20
     ) THEN
-      RAISE EXCEPTION 'A curadoria deixou ranking com menos de 5 opções.';
+      RAISE EXCEPTION 'A curadoria deixou ranking local com menos de 20 opções.';
     END IF;
   END $$;`,
 ];

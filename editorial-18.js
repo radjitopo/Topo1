@@ -26,14 +26,17 @@ Object.assign(editorial, {
   style.textContent = `
     body.popElectric.rankingPage .duelChoice,
     body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-      height: 270px !important;
-      min-height: 270px !important;
-      max-height: 270px !important;
+      height: 220px !important;
+      min-height: 220px !important;
+      max-height: 220px !important;
       box-sizing: border-box;
       overflow: hidden;
     }
+    body.popElectric.rankingPage .duelChoice {
+      grid-template-rows: minmax(0, 1fr) !important;
+    }
     body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-      grid-template-rows: auto 96px minmax(0, 1fr) auto !important;
+      grid-template-rows: 96px minmax(0, 1fr) !important;
       gap: 9px !important;
       padding: 12px !important;
     }
@@ -58,21 +61,23 @@ Object.assign(editorial, {
       }
       body.popElectric.rankingPage .duelChoice,
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-        height: 168px !important;
-        min-height: 168px !important;
-        max-height: 168px !important;
-        gap: 6px !important;
+        height: 142px !important;
+        min-height: 142px !important;
+        max-height: 142px !important;
         padding: 8px 6px !important;
       }
+      body.popElectric.rankingPage .duelChoice {
+        grid-template-rows: minmax(0, 1fr) !important;
+      }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto {
-        grid-template-rows: auto 56px minmax(0, 1fr) auto !important;
+        grid-template-rows: 50px minmax(0, 1fr) !important;
         gap: 5px !important;
         padding: 6px !important;
       }
       body.popElectric.rankingPage .duelChoicePhoto {
-        height: 56px !important;
-        min-height: 56px !important;
-        max-height: 56px !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        max-height: 50px !important;
       }
       body.popElectric.rankingPage .duelChoice > strong,
       body.popElectric.rankingPage .duelChoice.duelChoiceWithPhoto > strong {

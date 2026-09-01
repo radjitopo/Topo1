@@ -446,25 +446,25 @@ Object.assign(editorial, {
   "fenomenos-natureza": {
     "about": "Fenômenos naturais revelam forças, escalas e condições raras do planeta, produzindo paisagens que podem ser belas, extremas ou transformadoras. A ordem não pretende ser uma resposta oficial: ela combina memória, gosto pessoal e impacto cultural para que a comunidade do TOPO decida o resultado.",
     "facts": [
-      "Fenômenos naturais e espécies extintas ajudam a compreender a longa história do planeta.",
-      "Descobertas científicas podem revisar estimativas sobre aparência, comportamento e origem."
+      "Fenômenos naturais ajudam a compreender as forças e a longa história do planeta.",
+      "Descobertas científicas podem revisar estimativas sobre origem, escala e transformação."
     ],
     "related": [
-      "animais-extintos",
       "animais-superpoderes",
-      "misterios-do-espaco"
+      "misterios-do-espaco",
+      "animais-fofos"
     ]
   },
   "animais-extintos": {
     "about": "Espécies extintas ajudam a imaginar ecossistemas desaparecidos e mostram como clima, evolução e ação humana alteram profundamente a vida no planeta. A ordem não pretende ser uma resposta oficial: ela combina memória, gosto pessoal e impacto cultural para que a comunidade do TOPO decida o resultado.",
     "facts": [
-      "Fenômenos naturais e espécies extintas ajudam a compreender a longa história do planeta.",
-      "Descobertas científicas podem revisar estimativas sobre aparência, comportamento e origem."
+      "Espécies atuais e extintas ajudam a compreender a diversidade da vida no planeta.",
+      "Descobertas científicas podem revisar estimativas sobre aparência e comportamento animal."
     ],
     "related": [
-      "fenomenos-natureza",
       "animais-superpoderes",
-      "misterios-do-espaco"
+      "dinossauros-irados",
+      "animais-fofos"
     ]
   },
   "carros-brasileiros-iconicos": {

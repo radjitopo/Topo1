@@ -149,10 +149,10 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
     style,
     /@media \(max-width: 700px\)[\s\S]*?\.rankingVoteModes button \{[\s\S]*?min-height: 36px;/,
   );
-  assert.match(style, /\.duelChoice \{[\s\S]*?min-height: 225px;/);
+  assert.match(style, /\.duelChoice \{[\s\S]*?min-height: 220px;/);
   assert.match(
     style,
-    /@media \(max-width: 700px\)[\s\S]*?\.duelChoice \{[\s\S]*?min-height: 168px;/,
+    /@media \(max-width: 700px\)[\s\S]*?\.duelChoice \{[\s\S]*?min-height: 142px;/,
   );
   assert.match(
     style,
@@ -163,8 +163,8 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
     /@media \(max-width: 700px\)[\s\S]*?\.duelShareButton \{[\s\S]*?min-height: 40px;/,
   );
   assert.match(editorial18, /@media \(max-width: 900px\)/);
-  assert.match(editorial18, /height: 168px !important;/);
-  assert.match(editorial18, /height: 56px !important;/);
+  assert.match(editorial18, /height: 142px !important;/);
+  assert.match(editorial18, /height: 50px !important;/);
   assert.doesNotMatch(editorial18, /height: 218px !important;/);
   assert.match(editorial19, /const DUEL_OPTION_PHOTOS_ENABLED = false;/);
   assert.match(editorial19, /typeof document === 'undefined' \|\| !DUEL_OPTION_PHOTOS_ENABLED/);
@@ -174,6 +174,15 @@ test('Ganha, Fica hides its points, records the personal winner and stays usable
   assert.match(style, /hyphens: auto;/, 'long option labels should wrap cleanly on phones');
   assert.match(style, /\.profileRankingActivityCard/);
   assert.match(index, /single-random-play/);
+  assert.match(
+    style,
+    /\.rankingContinuation > \.rankingFlowActions\[hidden\] \{[\s\S]*?display: none;/,
+  );
+  assert.doesNotMatch(duel, /OPÇÃO [AB]|ESCOLHA QUEM CONTINUA/);
+  assert.match(
+    duel,
+    /<div class="duelFooter">[\s\S]*?\$\{duelShareButtonHTML\(pair\)\}\$\{nextActions\}/,
+  );
 });
 
 test('a completed duel puts the next rankings before the small Meu Topo link', async () => {

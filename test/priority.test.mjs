@@ -44,16 +44,16 @@ const option = (mine = 0) => ({ mine });
 const newRanking = (id) => ({
   id,
   createdAt: '2026-08-21T12:00:00.000Z',
-  opts: Array.from({ length: 20 }, () => option()),
+  opts: Array.from({ length: 10 }, () => option()),
 });
 const oldRanking = (id, voted = 0) => ({
   id,
   createdAt: '2026-08-20T00:14:27.691Z',
-  opts: Array.from({ length: 20 }, (_, index) => option(index < voted ? 1 : 0)),
+  opts: Array.from({ length: 10 }, (_, index) => option(index < voted ? 1 : 0)),
 });
 
 const input = [
-  oldRanking('complete', 20),
+  oldRanking('complete', 10),
   newRanking('new'),
   oldRanking('partial', 3),
   oldRanking('unvoted', 0),
@@ -63,7 +63,7 @@ const result = context.smartShuffleForTest(input);
 assert.equal(context.priorityBucketForTest(newRanking('new')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('unvoted')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('partial', 3)), 1);
-assert.equal(context.priorityBucketForTest(oldRanking('complete', 20)), 2);
+assert.equal(context.priorityBucketForTest(oldRanking('complete', 10)), 2);
 assert.equal(context.isFirstShowCandidateForTest(newRanking('new')), true);
 assert.equal(context.isFirstShowCandidateForTest(oldRanking('old')), false);
 assert.deepEqual(

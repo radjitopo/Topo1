@@ -52,6 +52,7 @@ const SUGGESTION_TITLE_LIMIT = 120;
 const PENDING_RANKING_CATEGORY = 'A definir';
 const PENDING_RANKING_EXAMPLES = Object.freeze(['A definir 1', 'A definir 2', 'A definir 3']);
 const PUBLISHED_RANKING_OPTION_LIMIT = 20;
+const GENERAL_PUBLIC_OPTION_COUNT = 14;
 const PUBLISHED_RANKING_IMAGE_LIMIT = 1000;
 const RANKING_IMAGE_MAX_BYTES = 1500000;
 const RANKING_IMAGE_DATA_LIMIT = 2000000;
@@ -85,9 +86,14 @@ const SUGGESTION_CATEGORY_VALUES = Object.freeze([
   'Natureza',
   'Motores',
   'Esporte',
+  'Futebol',
+  'Animais',
   'Jogos',
   'Tecnologia',
   'Produtos',
+  'Compras',
+  'Luxo',
+  'Viagens',
   'Vida',
 ]);
 const SUGGESTION_CATEGORIES = new Set(SUGGESTION_CATEGORY_VALUES);
@@ -1243,7 +1249,8 @@ async function catalog(req, res) {
           AND session.user_id IS NULL
           AND session.device_id = $1
         )
-    )
+    ),
+    option_rows AS MATERIALIZED (
     SELECT
       r.id AS ranking_id,
       r.category,
@@ -1285,7 +1292,26 @@ async function catalog(req, res) {
     LEFT JOIN my_votes mv ON mv.option_id = o.id
     LEFT JOIN my_double_votes mdv ON mdv.option_id = o.id
     LEFT JOIN my_duel_sessions mds ON mds.ranking_id = r.id
-    ORDER BY r.created_at, r.id, o.position
+    ),
+    ranked_rows AS (
+      SELECT
+        option_rows.*,
+        ROW_NUMBER() OVER (
+          PARTITION BY ranking_id
+          ORDER BY score DESC, position
+        ) AS catalog_position,
+        STRING_AGG(label, ' ') OVER (PARTITION BY ranking_id) AS option_search_text,
+        COUNT(*) FILTER (WHERE my_direction <> 0) OVER (PARTITION BY ranking_id)
+          AS my_vote_count,
+        SUM(live_votes) OVER (PARTITION BY ranking_id) AS ranking_live_votes,
+        SUM(today_votes) OVER (PARTITION BY ranking_id) AS ranking_today_votes
+      FROM option_rows
+    )
+    SELECT *
+    FROM ranked_rows
+    WHERE ranking_id = $7::text
+       OR catalog_position <= 3
+    ORDER BY created_at, ranking_id, catalog_position
   `,
       [
         deviceId,
@@ -1338,9 +1364,11 @@ async function catalog(req, res) {
         cat: row.category,
         q: rankingQuestion(row.ranking_id, row.question),
         img: resolveRankingCover(row.ranking_id, row.image_url),
-        votes: Number(row.baseline_votes || 0),
-        todayVotes: 0,
+        votes: Number(row.baseline_votes || 0) + Number(row.ranking_live_votes || 0),
+        todayVotes: Number(row.ranking_today_votes || 0),
         createdAt: row.created_at,
+        searchText: row.option_search_text || '',
+        myVoteCount: Number(row.my_vote_count || 0),
         vip: row.is_vip === true,
         favorite: row.is_favorite === true,
         duelCompleted: row.duel_completed === true,
@@ -1351,8 +1379,6 @@ async function catalog(req, res) {
     }
 
     const ranking = byId.get(row.ranking_id);
-    ranking.votes += Number(row.live_votes || 0);
-    ranking.todayVotes += Number(row.today_votes || 0);
     ranking.opts.push({
       id: Number(row.option_id),
       label: row.label,
@@ -4318,7 +4344,14 @@ async function publishRankingSuggestion(res, user, body, id, moderationNote) {
   const category = suggestionText(body.category, 2, 50);
   const options = publishedRankingOptions(body.options);
   const imageUrl = publishedRankingImage(body.imageUrl);
-  if (!title || !normalizedTitle || !category || !SUGGESTION_CATEGORIES.has(category) || !options) {
+  if (
+    !title ||
+    !normalizedTitle ||
+    !category ||
+    !SUGGESTION_CATEGORIES.has(category) ||
+    !options ||
+    options.length !== GENERAL_PUBLIC_OPTION_COUNT
+  ) {
     return json(res, 400, { error: 'invalid_published_ranking' });
   }
   if (imageUrl === null) {

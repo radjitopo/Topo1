@@ -310,17 +310,17 @@ assert.deepEqual(
 );
 context.setDiscoveryState({
   rankings: [fluminensePlayers, biggestBrazilianClub],
-  activeGroup: 'Esporte',
+  activeGroup: 'Futebol',
   homeSearch: '',
 });
 assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
   ['maiores-times-brasil'],
-  'club-player rankings must stay out of the general Esporte category',
+  'club-player rankings must stay out of the general Futebol category',
 );
 context.setDiscoveryState({
   rankings: [fluminensePlayers, biggestBrazilianClub],
-  activeGroup: 'Esporte',
+  activeGroup: 'Futebol',
   activeFootballSection: 'times',
   homeSearch: '',
 });

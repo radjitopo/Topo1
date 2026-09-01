@@ -1,0 +1,3052 @@
+[
+  {
+    "id": "marca-luxo-mais-desejada",
+    "category": "Luxo",
+    "question": "Qual é a marca de luxo mais desejada do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1776762893024-890728937eab?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:00:00.000Z",
+    "opts": [
+      {
+        "label": "Louis Vuitton",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chanel",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hermès",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gucci",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dior",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cartier",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rolex",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Prada",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferrari",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tiffany & Co.",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "carro-luxo-mais-bonito",
+    "category": "Luxo",
+    "question": "Qual é o carro de luxo mais bonito de todos os tempos?",
+    "image_url": "https://images.unsplash.com/photo-1775182503666-f5a0c69f81fc?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:01:00.000Z",
+    "opts": [
+      {
+        "label": "Rolls-Royce Phantom",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bentley Continental GT",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mercedes-Maybach Classe S",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferrari Roma",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lamborghini Aventador",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aston Martin DB12",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porsche 911 Turbo S",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Range Rover SV",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maserati GranTurismo",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bugatti Chiron",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "relogio-luxo-mais-iconico",
+    "category": "Luxo",
+    "question": "Qual é o relógio de luxo mais icônico?",
+    "image_url": "https://images.unsplash.com/photo-1763299213167-0c5ebc1e6d96?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:02:00.000Z",
+    "opts": [
+      {
+        "label": "Rolex Submariner",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Audemars Piguet Royal Oak",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Patek Philippe Nautilus",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cartier Tank",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Omega Speedmaster",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rolex Daytona",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jaeger-LeCoultre Reverso",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "TAG Heuer Monaco",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "IWC Portugieser",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vacheron Constantin Overseas",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "bolsa-grife-mais-desejada",
+    "category": "Luxo",
+    "question": "Qual é a bolsa de grife mais desejada?",
+    "image_url": "https://images.unsplash.com/photo-1780337092515-2ca475d4a86a?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:03:00.000Z",
+    "opts": [
+      {
+        "label": "Hermès Birkin",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hermès Kelly",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chanel 2.55",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lady Dior",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Louis Vuitton Speedy",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gucci Jackie",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fendi Baguette",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Prada Galleria",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bottega Veneta Jodie",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Saint Laurent Sac de Jour",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "hotel-mais-luxuoso-mundo",
+    "category": "Luxo",
+    "question": "Qual é o hotel mais luxuoso do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1756802137448-34617566ac2f?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:04:00.000Z",
+    "opts": [
+      {
+        "label": "Burj Al Arab",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Ritz Paris",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hôtel de Paris Monte-Carlo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aman Tokyo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "The Plaza New York",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Emirates Palace Mandarin Oriental",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Four Seasons Resort Bora Bora",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Raffles Singapore",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Copacabana Palace",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caruso, A Belmond Hotel",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "perfume-luxo-mais-marcante",
+    "category": "Luxo",
+    "question": "Qual é o perfume de luxo mais marcante?",
+    "image_url": "https://images.unsplash.com/photo-1592842312573-dca0b185d2e0?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:05:00.000Z",
+    "opts": [
+      {
+        "label": "Chanel Nº 5",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dior Sauvage",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Creed Aventus",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Baccarat Rouge 540",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tom Ford Oud Wood",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Guerlain Shalimar",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Yves Saint Laurent Libre",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hermès Terre d’Hermès",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Giorgio Armani Sì",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jo Malone English Pear & Freesia",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "joia-mais-famosa-historia",
+    "category": "Luxo",
+    "question": "Qual é a joia mais famosa da história?",
+    "image_url": "https://images.unsplash.com/photo-1774814304604-17eb38d59207?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:06:00.000Z",
+    "opts": [
+      {
+        "label": "Diamante Hope",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Koh-i-Noor",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cullinan I",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Diamante Amarelo Tiffany",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "La Peregrina",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dresden Green",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pink Star",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Graff Pink",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Blue Moon of Josephine",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Black Orlov",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "destino-luxo-mais-desejado",
+    "category": "Luxo",
+    "question": "Qual destino de luxo desperta mais desejo?",
+    "image_url": "https://images.unsplash.com/photo-1674043502486-03dc5e49c8e4?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:07:00.000Z",
+    "opts": [
+      {
+        "label": "Maldivas",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bora Bora",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mônaco",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dubai",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Saint-Tropez",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seychelles",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lago de Como",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aspen",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Capri",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santorini",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "residencia-luxo-mais-impressionante",
+    "category": "Luxo",
+    "question": "Qual é a residência de luxo mais impressionante do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1777914467875-6cd2ca7b82ba?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:08:00.000Z",
+    "opts": [
+      {
+        "label": "Antilia",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Villa Leopolda",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "The One Bel Air",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hearst Castle",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Biltmore Estate",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Villa Les Cèdres",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xanadu 2.0",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fairwater",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palais Bulles",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ellison Estate",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "experiencia-luxo-vale-mais-pena",
+    "category": "Luxo",
+    "question": "Qual experiência de luxo vale mais a pena?",
+    "image_url": "https://images.unsplash.com/photo-1781111511939-708e9394a001?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:09:00.000Z",
+    "opts": [
+      {
+        "label": "Hospedagem em ilha particular",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Voo internacional em primeira classe",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viagem de superiate",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Menu degustação estrelado",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Voo em jato particular",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Safári de luxo",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Viagem em trem de luxo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Retiro em spa exclusivo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aluguel de supercarro",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estadia em villa particular",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-plataforma-compras-online",
+    "category": "Compras",
+    "question": "Qual é o melhor site ou aplicativo para comprar online?",
+    "image_url": "https://images.unsplash.com/photo-1691073121676-1ab3a6d3d743?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:10:00.000Z",
+    "opts": [
+      {
+        "label": "Mercado Livre",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Amazon",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shopee",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Magalu",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "AliExpress",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Shein",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "KaBuM!",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Casas Bahia",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "OLX",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carrefour",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marca-celular-preferida",
+    "category": "Compras",
+    "question": "Qual é a marca de celular preferida?",
+    "image_url": "https://images.unsplash.com/photo-1768987439370-bd60d3d0b28b?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:11:00.000Z",
+    "opts": [
+      {
+        "label": "Samsung",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Apple",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Motorola",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Xiaomi",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Google",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Asus",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Realme",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Huawei",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Honor",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nothing",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marca-eletrodomesticos-mais-confiavel",
+    "category": "Compras",
+    "question": "Qual marca de eletrodomésticos é mais confiável?",
+    "image_url": "https://images.unsplash.com/photo-1740803292814-13d2e35924c3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:12:00.000Z",
+    "opts": [
+      {
+        "label": "Brastemp",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Electrolux",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Consul",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "LG",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Samsung",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Panasonic",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Philips Walita",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Oster",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tramontina",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Midea",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "item-casa-vale-cada-centavo",
+    "category": "Compras",
+    "question": "Qual coisa para casa vale cada centavo?",
+    "image_url": "https://images.unsplash.com/photo-1759563871365-4b90aa1ddd5c?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:13:00.000Z",
+    "opts": [
+      {
+        "label": "Air fryer",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Robô aspirador",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lava-louças",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Colchão de qualidade",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Filtro de água",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cadeira ergonômica",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Panela de pressão elétrica",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aspirador vertical",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Purificador de ar",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Máquina lava e seca",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "gadget-mais-util-dia-a-dia",
+    "category": "Compras",
+    "question": "Qual gadget é mais útil no dia a dia?",
+    "image_url": "https://images.unsplash.com/photo-1741794852942-c4956a127ba2?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:14:00.000Z",
+    "opts": [
+      {
+        "label": "Power bank",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Smartwatch",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fone sem fio",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rastreador Bluetooth",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lâmpada inteligente",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leitor digital",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hub USB-C",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caixa de som portátil",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suporte para celular",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mini projetor",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "compra-impulso-maior-arrependimento",
+    "category": "Compras",
+    "question": "Qual compra por impulso mais causa arrependimento?",
+    "image_url": "https://images.unsplash.com/photo-1760565030307-f05068b2585d?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:15:00.000Z",
+    "opts": [
+      {
+        "label": "Roupa em promoção",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curso online",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Eletrônico barato",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Objeto de decoração",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suplemento da moda",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Utensílio milagroso",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Assinatura esquecida",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Produto de influenciador",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Item colecionável",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cosmético viral",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "produto-barato-facilita-vida",
+    "category": "Compras",
+    "question": "Qual produto barato mais facilita a vida?",
+    "image_url": "https://images.unsplash.com/photo-1647427017067-8f33ccbae493?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:16:00.000Z",
+    "opts": [
+      {
+        "label": "Organizador de cabos",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fita dupla face",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lâmpada com sensor",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Suporte para celular",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Potes herméticos",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Escova elétrica de limpeza",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Saco a vácuo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Régua com entradas USB",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Etiquetas organizadoras",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Borrifador de óleo",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-coisa-comprar-usada",
+    "category": "Compras",
+    "question": "O que mais vale a pena comprar usado?",
+    "image_url": "https://images.unsplash.com/photo-1768987439382-894ea4e2a736?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:17:00.000Z",
+    "opts": [
+      {
+        "label": "Carro",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Livros",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Móveis",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Instrumentos musicais",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ferramentas",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roupas de festa",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Equipamentos esportivos",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Videogames",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Câmeras",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brinquedos infantis",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "item-vale-pagar-mais-caro",
+    "category": "Compras",
+    "question": "Em qual item vale a pena pagar mais caro?",
+    "image_url": "https://images.unsplash.com/photo-1513884923967-4b182ef167ab?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:18:00.000Z",
+    "opts": [
+      {
+        "label": "Colchão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cadeira de escritório",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Calçado",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Óculos de sol",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mala de viagem",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Faca de cozinha",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roupa de cama",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mochila",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Panela",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fone de ouvido",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "marca-brasileira-mais-querida",
+    "category": "Compras",
+    "question": "Qual marca brasileira é mais querida?",
+    "image_url": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:19:00.000Z",
+    "opts": [
+      {
+        "label": "Havaianas",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Natura",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "O Boticário",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tramontina",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hering",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Melissa",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Granado",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Embraer",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Localiza",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cacau Show",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "camisa-futebol-mais-bonita-historia",
+    "category": "Futebol",
+    "question": "Qual é a camisa de futebol mais bonita da história?",
+    "image_url": "https://images.unsplash.com/photo-1616124619460-ff4ed8f4683c?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:20:00.000Z",
+    "opts": [
+      {
+        "label": "Brasil de 1970",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Holanda de 1974",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Flamengo de 1981",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Argentina de 1986",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alemanha de 1990",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nigéria de 1994",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milan de 1988–89",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boca Juniors de 2000",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barcelona de 2010–11",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corinthians de 2012",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maior-torcida-brasil",
+    "category": "Futebol",
+    "question": "Qual é a maior torcida do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1749577269406-f391c37071dc?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:21:00.000Z",
+    "opts": [
+      {
+        "label": "Flamengo",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corinthians",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palmeiras",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Paulo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vasco",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grêmio",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cruzeiro",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Atlético-MG",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bahia",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Internacional",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "estadio-futebol-mais-incrivel-mundo",
+    "category": "Futebol",
+    "question": "Qual é o estádio de futebol mais incrível do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1777715330440-025d52e54435?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:22:00.000Z",
+    "opts": [
+      {
+        "label": "Maracanã",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "La Bombonera",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Wembley",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camp Nou",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santiago Bernabéu",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "San Siro",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estádio Azteca",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Signal Iduna Park",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Celtic Park",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Monumental de Núñez",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maior-classico-futebol-brasileiro",
+    "category": "Futebol",
+    "question": "Qual é o maior clássico do futebol brasileiro?",
+    "image_url": "https://images.unsplash.com/photo-1596209949637-c7070e120863?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:23:00.000Z",
+    "opts": [
+      {
+        "label": "Fla-Flu",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corinthians x Palmeiras",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grenal",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Atlético-MG x Cruzeiro",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Vasco x Flamengo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ba-Vi",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ceará x Fortaleza",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Atletiba",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Re-Pa",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sport x Santa Cruz",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-time-copa-do-mundo",
+    "category": "Futebol",
+    "question": "Qual seleção teve o melhor time em uma Copa do Mundo?",
+    "image_url": "https://images.unsplash.com/photo-1762013315117-1c8005ad2b41?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:24:00.000Z",
+    "opts": [
+      {
+        "label": "Brasil de 1970",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hungria de 1954",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Holanda de 1974",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Argentina de 1986",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "França de 1998",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 2002",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Espanha de 2010",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Alemanha de 2014",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "França de 2018",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Argentina de 2022",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "gol-mais-inesquecivel-historia",
+    "category": "Futebol",
+    "question": "Qual é o gol mais inesquecível da história do futebol?",
+    "image_url": "https://images.unsplash.com/photo-1764116679127-dc9d2c1138a7?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:25:00.000Z",
+    "opts": [
+      {
+        "label": "Maradona contra a Inglaterra em 1986",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Carlos Alberto na final de 1970",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pelé na final de 1958",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bergkamp contra a Argentina em 1998",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zidane na final da Champions de 2002",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ronaldinho contra a Inglaterra em 2002",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Iniesta na final de 2010",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Götze na final de 2014",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Messi contra o Getafe em 2007",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roberto Carlos contra a França em 1997",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maior-clube-america-do-sul",
+    "category": "Futebol",
+    "question": "Qual é o maior clube da América do Sul?",
+    "image_url": "https://images.unsplash.com/photo-1767468017997-2c36b0db45cf?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:26:00.000Z",
+    "opts": [
+      {
+        "label": "Boca Juniors",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "River Plate",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Flamengo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palmeiras",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santos",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Paulo",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peñarol",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nacional",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Independiente",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corinthians",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-selecao-brasileira-historia",
+    "category": "Futebol",
+    "question": "Qual é a melhor seleção brasileira de todos os tempos?",
+    "image_url": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:27:00.000Z",
+    "opts": [
+      {
+        "label": "Brasil de 1958",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 1962",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 1970",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 1982",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 1994",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 1998",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 2002",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 2006",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 2010",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Brasil de 2022",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maior-rivalidade-futebol-mundial",
+    "category": "Futebol",
+    "question": "Qual é a maior rivalidade do futebol mundial?",
+    "image_url": "https://images.unsplash.com/photo-1602630537980-5b4176589dd3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:28:00.000Z",
+    "opts": [
+      {
+        "label": "Real Madrid x Barcelona",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boca Juniors x River Plate",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Celtic x Rangers",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Liverpool x Manchester United",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Milan x Inter de Milão",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arsenal x Tottenham",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bayern de Munique x Borussia Dortmund",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ajax x Feyenoord",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fenerbahçe x Galatasaray",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Al Ahly x Zamalek",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "maior-zebra-copas-do-mundo",
+    "category": "Futebol",
+    "question": "Qual foi a maior zebra da história das Copas do Mundo?",
+    "image_url": "https://images.unsplash.com/photo-1763472615780-f5b88411a097?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:29:00.000Z",
+    "opts": [
+      {
+        "label": "Estados Unidos 1 x 0 Inglaterra em 1950",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coreia do Norte 1 x 0 Itália em 1966",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Argélia 2 x 1 Alemanha Ocidental em 1982",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camarões 1 x 0 Argentina em 1990",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Senegal 1 x 0 França em 2002",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coreia do Sul elimina a Itália em 2002",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Costa Rica lidera o grupo em 2014",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rússia elimina a Espanha em 2018",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arábia Saudita 2 x 1 Argentina em 2022",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Marrocos chega à semifinal em 2022",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-mais-bonito-mundo",
+    "category": "Animais",
+    "question": "Qual é o animal mais bonito do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1670854856724-b29550b5d5d3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:30:00.000Z",
+    "opts": [
+      {
+        "label": "Pavão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tigre",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leopardo-das-neves",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arara-azul",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pato-mandarim",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Golfinho",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cavalo árabe",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Borboleta-morfo-azul",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leão",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Urso-polar",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-mais-inteligente",
+    "category": "Animais",
+    "question": "Qual é o animal mais inteligente?",
+    "image_url": "https://images.unsplash.com/photo-1728223621746-a65fbaa283a3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:31:00.000Z",
+    "opts": [
+      {
+        "label": "Chimpanzé",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Golfinho",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Elefante",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Corvo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polvo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Border collie",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orangotango",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Papagaio-cinzento",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porco",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orca",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-mais-assustador",
+    "category": "Animais",
+    "question": "Qual é o animal mais assustador?",
+    "image_url": "https://images.unsplash.com/photo-1661954385332-81a7e857aea7?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:32:00.000Z",
+    "opts": [
+      {
+        "label": "Tubarão-branco",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Crocodilo-do-nilo",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hipopótamo",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dragão-de-komodo",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lula-gigante",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Casuar",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tubarão-duende",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tarântula-golias",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peixe-pedra",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Hiena-malhada",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-mais-estranho-planeta",
+    "category": "Animais",
+    "question": "Qual é o animal mais estranho do planeta?",
+    "image_url": "https://images.unsplash.com/photo-1718648616034-21732b247b53?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:33:00.000Z",
+    "opts": [
+      {
+        "label": "Axolote",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peixe-bolha",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ornitorrinco",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Toupeira-nariz-de-estrela",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Macaco-narigudo",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Camarão-louva-a-deus",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bico-de-sapato",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rato-toupeira-pelado",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ovelha-folha",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Antílope-saiga",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-brasileiro-mais-incrivel",
+    "category": "Animais",
+    "question": "Qual é o animal brasileiro mais incrível?",
+    "image_url": "https://images.unsplash.com/photo-1734121512475-2e063f8d9769?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:34:00.000Z",
+    "opts": [
+      {
+        "label": "Onça-pintada",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lobo-guará",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mico-leão-dourado",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Harpia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boto-cor-de-rosa",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tamanduá-bandeira",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Capivara",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Ariranha",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arara-azul",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tatu-bola",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-marinho-mais-impressionante",
+    "category": "Animais",
+    "question": "Qual é o animal marinho mais impressionante?",
+    "image_url": "https://images.unsplash.com/photo-1568430462989-44163eb1752f?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:35:00.000Z",
+    "opts": [
+      {
+        "label": "Baleia-azul",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Orca",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Arraia-manta",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tubarão-baleia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polvo-gigante-do-pacífico",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Golfinho",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Baleia-jubarte",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tubarão-branco",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cavalo-marinho",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tartaruga-verde",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "raca-cachorro-mais-inteligente",
+    "category": "Animais",
+    "question": "Qual é a raça de cachorro mais inteligente?",
+    "image_url": "https://images.unsplash.com/photo-1646663164307-45521690a884?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:36:00.000Z",
+    "opts": [
+      {
+        "label": "Border collie",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Poodle",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pastor-alemão",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Golden retriever",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Dobermann",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pastor-de-shetland",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Labrador retriever",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Papillon",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rottweiler",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Boiadeiro-australiano",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "raca-gato-mais-carinhosa",
+    "category": "Animais",
+    "question": "Qual é a raça de gato mais carinhosa?",
+    "image_url": "https://images.unsplash.com/photo-1631700159989-c035873133e3?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:37:00.000Z",
+    "opts": [
+      {
+        "label": "Ragdoll",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maine coon",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Siamês",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sagrado da Birmânia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sphynx",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Persa",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Scottish fold",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Burmês",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "British shorthair",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Abissínio",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "ave-canto-mais-bonito",
+    "category": "Animais",
+    "question": "Qual ave tem o canto mais bonito?",
+    "image_url": "https://images.unsplash.com/photo-1706160039811-4686c64bca23?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:38:00.000Z",
+    "opts": [
+      {
+        "label": "Rouxinol",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sabiá-laranjeira",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Uirapuru",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canário-belga",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Melro-preto",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tordo-eremita",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cotovia",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pintassilgo",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lira-soberba",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Curió",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "animal-melhor-camuflagem",
+    "category": "Animais",
+    "question": "Qual animal tem a melhor camuflagem?",
+    "image_url": "https://images.unsplash.com/photo-1751255743269-b6614237a269?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:39:00.000Z",
+    "opts": [
+      {
+        "label": "Camaleão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Polvo-mímico",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Sépia",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lagartixa-cauda-de-folha",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bicho-pau",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Leopardo-das-neves",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Raposa-do-ártico",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Peixe-pedra",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Coruja",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Perereca-folha",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "pais-mais-gostaria-conhecer",
+    "category": "Viagens",
+    "question": "Qual país você mais gostaria de conhecer?",
+    "image_url": "https://images.unsplash.com/photo-1759062012140-9f215c014693?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:40:00.000Z",
+    "opts": [
+      {
+        "label": "Japão",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Itália",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Islândia",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Grécia",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Nova Zelândia",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Egito",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tailândia",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "França",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "África do Sul",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Canadá",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "cidade-mais-bonita-mundo",
+    "category": "Viagens",
+    "question": "Qual é a cidade mais bonita do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1759068491232-4934fde6e401?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:41:00.000Z",
+    "opts": [
+      {
+        "label": "Paris",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Roma",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Florença",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Praga",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kyoto",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Barcelona",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cidade do Cabo",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Veneza",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rio de Janeiro",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Istambul",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "praia-mais-bonita-brasil",
+    "category": "Viagens",
+    "question": "Qual é a praia mais bonita do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1521495611528-1d6a473a3da1?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:42:00.000Z",
+    "opts": [
+      {
+        "label": "Baía do Sancho",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lopes Mendes",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jericoacoara",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Praia do Espelho",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maragogi",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Pipa",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Porto de Galinhas",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Praia dos Carneiros",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lagoinha do Leste",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Taipu de Fora",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "ilha-mais-paradisiaca-mundo",
+    "category": "Viagens",
+    "question": "Qual é a ilha mais paradisíaca do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1754286142170-45b63188a455?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:43:00.000Z",
+    "opts": [
+      {
+        "label": "Maldivas",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bora Bora",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Seychelles",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santorini",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Maui",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernando de Noronha",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bali",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Palawan",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fiji",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Zanzibar",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-destino-america-do-sul",
+    "category": "Viagens",
+    "question": "Qual é o melhor destino da América do Sul?",
+    "image_url": "https://images.unsplash.com/photo-1770319469051-ab940ece86ea?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:44:00.000Z",
+    "opts": [
+      {
+        "label": "Patagônia",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Machu Picchu e Cusco",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Deserto do Atacama",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cartagena",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Buenos Aires",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rio de Janeiro",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Galápagos",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salar de Uyuni",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bariloche",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lima",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-destino-viajar-com-criancas",
+    "category": "Viagens",
+    "question": "Qual é o melhor destino para viajar com crianças?",
+    "image_url": "https://images.unsplash.com/photo-1729593974655-b3e62ed454aa?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:45:00.000Z",
+    "opts": [
+      {
+        "label": "Orlando",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Gramado",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Penha e Beto Carrero World",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Foz do Iguaçu",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fortaleza e Beach Park",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Londres",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paris",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tóquio",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bonito",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Caldas Novas",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "cidade-mais-romantica-mundo",
+    "category": "Viagens",
+    "question": "Qual é a cidade mais romântica do mundo?",
+    "image_url": "https://images.unsplash.com/photo-1510427753020-b0caabc068c2?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:46:00.000Z",
+    "opts": [
+      {
+        "label": "Paris",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Veneza",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Praga",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Florença",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Santorini",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Bruges",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Buenos Aires",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Kyoto",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Quebec",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Cartagena",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "melhor-viagem-carro-brasil",
+    "category": "Viagens",
+    "question": "Qual é a melhor viagem de carro do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1672778107075-b220272c540d?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:47:00.000Z",
+    "opts": [
+      {
+        "label": "Serra do Rio do Rastro",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Estrada Real",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rota Romântica",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rodovia Rio-Santos",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rota das Emoções",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rota dos Cânions",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Circuito da Chapada Diamantina",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Rota do Vinho no Vale dos Vinhedos",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Costa Verde",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Litoral nordestino pela BR-101",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "cidade-historica-mais-bonita-brasil",
+    "category": "Viagens",
+    "question": "Qual é a cidade histórica mais bonita do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1544456808-7530b2d112df?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:48:00.000Z",
+    "opts": [
+      {
+        "label": "Ouro Preto",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Paraty",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Salvador",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Olinda",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Tiradentes",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "São Luís",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Goiás",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Diamantina",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Petrópolis",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Mariana",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  },
+  {
+    "id": "parque-nacional-mais-impressionante-brasil",
+    "category": "Viagens",
+    "question": "Qual é o parque nacional mais impressionante do Brasil?",
+    "image_url": "https://images.unsplash.com/photo-1682347812464-d2c004e28080?auto=format&fit=crop&w=1200&h=675&q=82",
+    "baseline_votes": 0,
+    "is_active": true,
+    "created_at": "2026-09-01T12:49:00.000Z",
+    "opts": [
+      {
+        "label": "Iguaçu",
+        "position": 1,
+        "baseline_score": 0
+      },
+      {
+        "label": "Lençóis Maranhenses",
+        "position": 2,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chapada Diamantina",
+        "position": 3,
+        "baseline_score": 0
+      },
+      {
+        "label": "Chapada dos Veadeiros",
+        "position": 4,
+        "baseline_score": 0
+      },
+      {
+        "label": "Fernando de Noronha",
+        "position": 5,
+        "baseline_score": 0
+      },
+      {
+        "label": "Jericoacoara",
+        "position": 6,
+        "baseline_score": 0
+      },
+      {
+        "label": "Aparados da Serra",
+        "position": 7,
+        "baseline_score": 0
+      },
+      {
+        "label": "Serra da Capivara",
+        "position": 8,
+        "baseline_score": 0
+      },
+      {
+        "label": "Itatiaia",
+        "position": 9,
+        "baseline_score": 0
+      },
+      {
+        "label": "Anavilhanas",
+        "position": 10,
+        "baseline_score": 0
+      }
+    ]
+  }
+]

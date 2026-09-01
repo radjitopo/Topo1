@@ -1666,7 +1666,7 @@
   },
   {
     "id": "chocolates-brasil",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual chocolate você nunca consegue recusar?",
     "image_url": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -1777,7 +1777,7 @@
   },
   {
     "id": "marcas-chocolate",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "As marcas de chocolate mais queridas",
     "image_url": "https://images.unsplash.com/photo-1575377427642-087cf684f29d?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -1888,7 +1888,7 @@
   },
   {
     "id": "cafes-supermercado",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual café de supermercado salva sua manhã?",
     "image_url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -1999,7 +1999,7 @@
   },
   {
     "id": "refrigerantes",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os refrigerantes mais irresistíveis",
     "image_url": "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2110,7 +2110,7 @@
   },
   {
     "id": "biscoitos-recheados",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os biscoitos recheados mais viciantes",
     "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2221,7 +2221,7 @@
   },
   {
     "id": "salgadinhos",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os salgadinhos mais difíceis de parar de comer",
     "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2332,7 +2332,7 @@
   },
   {
     "id": "sorvetes-mercado",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual sorvete de mercado merece um lugar fixo no seu freezer?",
     "image_url": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2443,7 +2443,7 @@
   },
   {
     "id": "molhos-pimenta",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os molhos de pimenta mais saborosos",
     "image_url": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2554,7 +2554,7 @@
   },
   {
     "id": "pizzas-congeladas",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "As melhores pizzas congeladas",
     "image_url": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2665,7 +2665,7 @@
   },
   {
     "id": "paes-queijo-congelados",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os melhores pães de queijo congelados",
     "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2776,7 +2776,7 @@
   },
   {
     "id": "celulares-custo-beneficio-2026",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os melhores celulares custo-benefício de 2026",
     "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2887,7 +2887,7 @@
   },
   {
     "id": "fones-sem-fio-2026",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os melhores fones sem fio de 2026",
     "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -2998,7 +2998,7 @@
   },
   {
     "id": "air-fryers-2026",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "As melhores air fryers de 2026",
     "image_url": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -3109,7 +3109,7 @@
   },
   {
     "id": "notebooks-trabalho-2026",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Os melhores notebooks para trabalhar em 2026",
     "image_url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -3220,7 +3220,7 @@
   },
   {
     "id": "smart-tvs-2026",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "As melhores smart TVs de 2026",
     "image_url": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,

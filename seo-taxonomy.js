@@ -1,6 +1,6 @@
 const BASE_URL = 'https://somostopo.com.br';
 
-export const FOOTBALL_TEAMS_CATEGORY_PATH = '/categoria/esporte/times';
+export const FOOTBALL_TEAMS_CATEGORY_PATH = '/categoria/futebol/times';
 export const CLUB_PLAYER_RANKING_IDS = Object.freeze([
   'melhores-jogadores-flamengo',
   'melhores-jogadores-corinthians',
@@ -72,32 +72,27 @@ export const GENERAL_CATEGORIES = Object.freeze(
       'Comida',
       'Pratos, ingredientes, sabores, restaurantes e escolhas que sempre dão vontade de discutir.',
     ],
-    [
-      'Lugares',
-      'Cidades, destinos, bairros, paisagens e experiências para colocar no mapa e no ranking.',
-    ],
+    ['Lugares', 'Bairros, ruas, construções e paisagens para colocar no mapa e no ranking.'],
+    ['Viagens', 'Países, cidades, praias, roteiros e experiências para inspirar a próxima viagem.'],
     [
       'Famosos',
       'Celebridades, personalidades e figuras públicas avaliadas pelo carisma, talento e impacto cultural.',
     ],
-    [
-      'Natureza',
-      'Animais, plantas e fenômenos naturais que despertam curiosidade, admiração e preferência.',
-    ],
+    ['Natureza', 'Plantas, paisagens e fenômenos naturais que despertam curiosidade e admiração.'],
+    ['Animais', 'Espécies, raças e comportamentos do mundo animal reunidos para comparar e votar.'],
     ['Motores', 'Carros, motos, máquinas e ícones de velocidade, design e engenharia.'],
     [
       'Esporte',
-      'Times, atletas, competições e momentos que movimentam torcidas e desafiam comparações.',
+      'Atletas, modalidades, competições e momentos esportivos que desafiam comparações.',
     ],
+    ['Futebol', 'Clubes, seleções, jogadores, estádios e histórias que movimentam torcidas.'],
     ['Jogos', 'Videogames, jogos de mesa, personagens e universos que atravessam gerações.'],
     [
       'Tecnologia',
       'Produtos, invenções e ideias que mudaram a forma como a gente vive, trabalha e se comunica.',
     ],
-    [
-      'Produtos',
-      'Marcas, objetos e produtos do cotidiano avaliados pela preferência da comunidade.',
-    ],
+    ['Compras', 'Marcas, lojas e produtos avaliados por utilidade, desejo e custo-benefício.'],
+    ['Luxo', 'Marcas, objetos, destinos e experiências que representam exclusividade e desejo.'],
     [
       'Vida',
       'Hábitos, situações, relações e pequenas grandes questões do cotidiano transformadas em ranking.',
@@ -149,9 +144,15 @@ export function generalCategoryForRanking(ranking) {
       'Moda',
       'Jogos',
       'Natureza',
+      'Animais',
       'Motores',
+      'Esporte',
+      'Futebol',
       'Tecnologia',
-      'Produtos',
+      'Compras',
+      'Luxo',
+      'Lugares',
+      'Viagens',
       'TV & Séries',
       'Nostalgia',
     ].includes(category)
@@ -161,12 +162,11 @@ export function generalCategoryForRanking(ranking) {
   if (['Pessoas', 'Famosos'].includes(category)) return generalCategoryByLabel('Famosos');
   if (category === 'Cultura') return generalCategoryByLabel('Arte');
   if (['Comida', 'Café'].includes(category)) return generalCategoryByLabel('Comida');
-  if (['Viagem', 'Brasil'].includes(category)) return generalCategoryByLabel('Lugares');
-  if (['Animais', 'Plantas'].includes(category)) return generalCategoryByLabel('Natureza');
+  if (['Viagem', 'Brasil'].includes(category)) return generalCategoryByLabel('Viagens');
+  if (category === 'Animais') return generalCategoryByLabel('Animais');
+  if (category === 'Plantas') return generalCategoryByLabel('Natureza');
   if (category === 'Carros') return generalCategoryByLabel('Motores');
-  if (['Esporte', 'Futebol'].includes(category)) return generalCategoryByLabel('Esporte');
-  if (category === 'Tecnologia') return generalCategoryByLabel('Tecnologia');
-  if (category === 'Produtos') return generalCategoryByLabel('Produtos');
+  if (category === 'Produtos') return generalCategoryByLabel('Compras');
   return generalCategoryByLabel('Vida');
 }
 

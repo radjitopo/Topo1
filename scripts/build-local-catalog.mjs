@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const USER_AGENT = 'SomosTopoCatalog/1.0 (https://somostopo.com.br; contato@somostopo.com.br)';
+const LOCAL_PUBLIC_OPTION_COUNT = 20;
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
@@ -8,6 +9,9 @@ const OVERPASS_ENDPOINTS = [
 const OUTPUT_URL = new URL('../data/local-catalog.json', import.meta.url);
 const exclusions = JSON.parse(
   await readFile(new URL('../data/local-option-exclusions.json', import.meta.url), 'utf8'),
+);
+const publicOptionExpansion = JSON.parse(
+  await readFile(new URL('../data/public-option-expansion.json', import.meta.url), 'utf8'),
 );
 
 const cities = Object.freeze([
@@ -493,14 +497,17 @@ function bestOptions(elements, category) {
   }
   return [...deduped.values()]
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name, 'pt-BR'))
-    .slice(0, 20)
+    .slice(0, LOCAL_PUBLIC_OPTION_COUNT)
     .map((place) => place.name);
 }
 
 function makeRanking(city, category, labels) {
   const id = categoryId(category.key, city);
   const rejected = new Set(exclusions[id] || []);
-  const curatedLabels = labels.filter((label) => !rejected.has(label));
+  const curatedLabels = [...labels, ...(publicOptionExpansion.local[id] || [])]
+    .filter((label) => !rejected.has(label))
+    .filter((label, index, all) => all.indexOf(label) === index)
+    .slice(0, LOCAL_PUBLIC_OPTION_COUNT);
   return {
     id,
     city: city.name,
@@ -512,7 +519,7 @@ function makeRanking(city, category, labels) {
     question: category.question(city),
     image_url: category.image,
     baseline_votes: 0,
-    is_active: true,
+    is_active: curatedLabels.length === LOCAL_PUBLIC_OPTION_COUNT,
     preserveExistingOptions: existingIds.has(id),
     opts: curatedLabels.map((label, index) => ({
       label,
@@ -556,13 +563,15 @@ function validate(rankings, allowIncomplete = false, requireCompleteMatrix = tru
   if (new Set(rankings.map((ranking) => ranking.id)).size !== rankings.length) {
     throw new Error('Há IDs repetidos no catálogo local.');
   }
-  const incomplete = rankings.filter(
+  const incomplete = rankings.filter((ranking) => ranking.opts.length < LOCAL_PUBLIC_OPTION_COUNT);
+  const invalidActive = rankings.filter(
     (ranking) =>
-      !ranking.preserveExistingOptions && (ranking.opts.length < 5 || ranking.opts.length > 20),
+      ranking.opts.length > LOCAL_PUBLIC_OPTION_COUNT ||
+      (ranking.is_active && ranking.opts.length !== LOCAL_PUBLIC_OPTION_COUNT),
   );
-  if (incomplete.length && !allowIncomplete) {
+  if (invalidActive.length && !allowIncomplete) {
     throw new Error(
-      `Há ${incomplete.length} listas fora do intervalo de 5 a 20 opções:\n${incomplete
+      `Há ${invalidActive.length} rankings públicos sem exatamente ${LOCAL_PUBLIC_OPTION_COUNT} opções:\n${invalidActive
         .map((ranking) => `${ranking.id}: ${ranking.opts.length}`)
         .join('\n')}`,
     );
@@ -607,13 +616,13 @@ function sqlStatements(rankings, requireCompleteMatrix = true) {
       id, category, question, image_url, baseline_votes, is_active, created_at
     )
     SELECT
-      id, category, question, image_url, baseline_votes, true, now()
+      id, category, question, image_url, baseline_votes, is_active, now()
     FROM incoming
     ON CONFLICT (id) DO UPDATE SET
       category = EXCLUDED.category,
       question = COALESCE(NULLIF(rankings.question, ''), EXCLUDED.question),
       image_url = COALESCE(NULLIF(rankings.image_url, ''), EXCLUDED.image_url),
-      is_active = true;`,
+      is_active = EXCLUDED.is_active;`,
     sqlText`WITH ranking_rows AS (
       SELECT *
       FROM jsonb_to_recordset('${freshPayload.replaceAll("'", "''")}'::jsonb) AS ranking(
@@ -636,6 +645,11 @@ function sqlStatements(rankings, requireCompleteMatrix = true) {
     INSERT INTO ranking_options (ranking_id, label, position, baseline_score)
     SELECT ranking_id, label, position, baseline_score
     FROM incoming
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM ranking_options existing
+      WHERE existing.ranking_id = incoming.ranking_id
+    )
     ON CONFLICT (ranking_id, position) DO UPDATE SET
       label = EXCLUDED.label,
       baseline_score = EXCLUDED.baseline_score;`,
@@ -666,7 +680,26 @@ function sqlStatements(rankings, requireCompleteMatrix = true) {
 async function main() {
   const args = new Set(process.argv.slice(2));
   if (args.has('--sql')) {
-    const rankings = JSON.parse(await readFile(OUTPUT_URL, 'utf8'));
+    const rankings = JSON.parse(await readFile(OUTPUT_URL, 'utf8')).map((ranking) => {
+      const opts = [
+        ...(ranking.opts || []),
+        ...(publicOptionExpansion.local[ranking.id] || []).map((label) => ({
+          label,
+          baseline_score: 0,
+        })),
+      ]
+        .filter(
+          (option, index, all) =>
+            all.findIndex((candidate) => candidate.label === option.label) === index,
+        )
+        .slice(0, LOCAL_PUBLIC_OPTION_COUNT)
+        .map((option, index) => ({ ...option, position: index + 1 }));
+      return {
+        ...ranking,
+        is_active: opts.length === LOCAL_PUBLIC_OPTION_COUNT,
+        opts,
+      };
+    });
     const requestedKeys = process.argv
       .find((value) => value.startsWith('--categories='))
       ?.slice(13)
@@ -760,7 +793,7 @@ async function main() {
   const incomplete =
     selectedCities.length === cities.length
       ? validate(rankings, true)
-      : rankings.filter((r) => r.opts.length < 20);
+      : rankings.filter((r) => r.opts.length < LOCAL_PUBLIC_OPTION_COUNT);
   if (args.has('--report') || selectedCities.length !== cities.length) {
     process.stdout.write(
       JSON.stringify(

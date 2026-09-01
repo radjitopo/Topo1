@@ -37,7 +37,7 @@ test('twelfth batch creates the eight approved historical football rankings', ()
   assert.equal(new Set(batch.map(({ image_url: imageUrl }) => imageUrl)).size, batch.length);
 
   for (const ranking of batch) {
-    assert.equal(ranking.category, 'Esporte');
+    assert.equal(ranking.category, 'Futebol');
     assert.match(ranking.id, /^[a-z0-9-]+$/);
     assert.match(ranking.question, /^Quem é o melhor .+ de todos os tempos\?$/);
     assert.match(ranking.image_url, /^https:\/\/images\.unsplash\.com\/photo-/);
@@ -126,8 +126,8 @@ test('twelfth batch is connected to the importer and public shell', async () => 
 
   assert.match(importer, /rankings-batch-12\.json/);
   assert.match(importer, /twelfthBatchRankings\.length !== 8/);
-  assert.match(importer, /newRankings\.length !== 195/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
+  assert.match(importer, /newRankings\.length !== 245/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 285/);
   assert.match(index, /editorial-20\.js\?v=20260831-1-football-legends/);
   assert.match(devServer, /editorial-20\.js/);
 });

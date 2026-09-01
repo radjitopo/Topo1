@@ -4219,7 +4219,7 @@
   },
   {
     "id": "animais-extintos",
-    "category": "Natureza",
+    "category": "Animais",
     "question": "Qual animal extinto você mais gostaria de ver vivo?",
     "image_url": "https://images.unsplash.com/photo-1782848796142-88a50598df91?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -6439,7 +6439,7 @@
   },
   {
     "id": "embalagens-iconicas",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual é a embalagem mais icônica da história?",
     "image_url": "https://images.unsplash.com/photo-1781232815711-1c1d9ec1ca44?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -6550,7 +6550,7 @@
   },
   {
     "id": "objetos-design",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual objeto cotidiano tem o melhor design?",
     "image_url": "https://images.unsplash.com/photo-1786617829002-e130d77fe64a?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -6661,7 +6661,7 @@
   },
   {
     "id": "produtos-brasileiros-iconicos",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual produto mais marcou gerações de brasileiros?",
     "image_url": "https://images.unsplash.com/photo-1606021490433-d28d1d978deb?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,

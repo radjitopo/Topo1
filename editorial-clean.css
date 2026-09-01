@@ -368,11 +368,10 @@ body.popElectric.rankingPage .duelChoices {
 
 body.popElectric.rankingPage .duelChoice {
   min-width: 0;
-  min-height: 225px;
+  min-height: 220px;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-items: center;
-  gap: 14px;
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
   border: 1px solid var(--clean-ink);
   border-radius: 0;
   background: var(--clean-paper);
@@ -478,12 +477,12 @@ body.popElectric.rankingPage .duelShareButton:focus-visible {
 }
 
 body.popElectric.rankingPage .duelFooter {
-  min-height: 42px;
+  min-height: 36px;
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
 body.popElectric.rankingPage .duelFooter button,
@@ -518,8 +517,8 @@ body.popElectric.rankingPage .rankingDuelEmpty {
 }
 
 body.popElectric.rankingPage .duelNextActions {
-  margin-top: 18px;
-  padding-top: 16px;
+  margin-top: 12px;
+  padding-top: 10px;
 }
 
 body.popElectric.rankingPage .duelNextActions .rankingFlowButton {
@@ -533,6 +532,10 @@ body.popElectric.rankingPage .duelNextActions .rankingFlowButton strong {
 
 body.popElectric.rankingPage .duelNextActions .rankingFlowButton small {
   font-size: 9px;
+}
+
+body.popElectric.rankingPage .rankingContinuation > .rankingFlowActions[hidden] {
+  display: none;
 }
 
 body.popElectric.rankingPage .duelResultMeta {
@@ -761,8 +764,7 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .duelChoice {
-    min-height: 168px;
-    gap: 6px;
+    min-height: 142px;
     padding: 8px 6px;
   }
 
@@ -786,6 +788,22 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   body.popElectric.rankingPage .duelFooter {
     align-items: center;
     gap: 10px;
+    min-height: 34px;
+    margin-top: 6px;
+  }
+
+  body.popElectric.rankingPage .duelNextActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  body.popElectric.rankingPage .duelNextActions .rankingFlowButton {
+    min-height: 48px;
+    padding: 8px;
+  }
+
+  body.popElectric.rankingPage .duelNextActions .rankingFlowButton small {
+    display: none;
   }
 
   body.popElectric.rankingPage .duelEndActions {

@@ -27,6 +27,7 @@
     { "src": "topo-local.js", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
     { "src": "editorial-*.js", "use": "@vercel/static" },
+    { "src": "covers/**/*.svg", "use": "@vercel/static" },
     { "src": "social/*.jpg", "use": "@vercel/static" }
   ],
   "routes": [
@@ -59,8 +60,12 @@
     { "src": "/local/([^/]+)/?", "dest": "/page.js?view=local&city=$1" },
     { "src": "/local/?", "dest": "/page.js?view=local" },
     {
+      "src": "/categoria/futebol/times/?",
+      "dest": "/page.js?view=category&category=futebol&section=times"
+    },
+    {
       "src": "/categoria/esporte/times/?",
-      "dest": "/page.js?view=category&category=esporte&section=times"
+      "dest": "/page.js?view=category&category=futebol&section=times"
     },
     { "src": "/categoria/([^/]+)/?", "dest": "/page.js?view=category&category=$1" },
     { "src": "/ranking/([^/]+)/?", "dest": "/page.js?id=$1" },

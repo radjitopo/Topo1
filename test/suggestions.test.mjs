@@ -252,7 +252,7 @@ assert.match(app, /Aprovar nome e categoria/, 'the approval action must describe
 assert.match(app, /Prontos para criação/, 'approved ideas must enter the manual creation queue');
 assert.match(
   app,
-  /Você não precisa montar nem revisar o Top 20/,
+  /Você não precisa montar nem revisar a lista/,
   'the queue must explain that the team handles the remaining work',
 );
 const moderationRender = app.slice(

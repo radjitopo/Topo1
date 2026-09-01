@@ -65,16 +65,30 @@ function structuredData(html) {
 
 test('SEO taxonomy creates stable category, city and local collection URLs', () => {
   assert.equal(CLUB_PLAYER_RANKING_IDS.length, 20);
-  assert.equal(FOOTBALL_TEAMS_CATEGORY_PATH, '/categoria/esporte/times');
+  assert.equal(FOOTBALL_TEAMS_CATEGORY_PATH, '/categoria/futebol/times');
   assert.equal(isClubPlayerRanking(fluminensePlayers), true);
   assert.equal(generalCategoryBySlug('tv-e-series')?.label, 'TV & Séries');
   assert.equal(generalCategoryBySlug('nostalgia')?.label, 'Nostalgia');
+  assert.equal(generalCategoryBySlug('luxo')?.label, 'Luxo');
+  assert.equal(generalCategoryBySlug('compras')?.label, 'Compras');
+  assert.equal(generalCategoryBySlug('futebol')?.label, 'Futebol');
+  assert.equal(generalCategoryBySlug('animais')?.label, 'Animais');
+  assert.equal(generalCategoryBySlug('viagens')?.label, 'Viagens');
   assert.equal(generalCategoryForRanking(cinema)?.slug, 'cinema');
-  assert.equal(generalCategoryForRanking({ id: 'futebol', category: 'Futebol' })?.slug, 'esporte');
+  assert.equal(generalCategoryForRanking({ id: 'futebol', category: 'Futebol' })?.slug, 'futebol');
   assert.equal(
     generalCategoryForRanking({ id: 'brinquedos-nostalgicos', category: 'Nostalgia' })?.slug,
     'nostalgia',
   );
+  assert.equal(
+    generalCategoryForRanking({ id: 'produto-legado', category: 'Produtos' })?.slug,
+    'compras',
+  );
+  assert.equal(
+    generalCategoryForRanking({ id: 'destino-legado', category: 'Viagem' })?.slug,
+    'viagens',
+  );
+  assert.equal(generalCategoryForRanking({ id: 'gatos', category: 'Animais' })?.slug, 'animais');
   assert.equal(localCityBySlug('florianopolis')?.label, 'Florianópolis');
   assert.equal(localGroupForRanking(local)?.slug, 'sushi-japones');
   assert.equal(
@@ -142,7 +156,7 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(category.html, /<h1>Cinema<\/h1>/);
   assert.match(category.html, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
 
-  const generalSport = renderGeneralCategoryPage(template, generalCategoryBySlug('esporte'), [
+  const generalSport = renderGeneralCategoryPage(template, generalCategoryBySlug('futebol'), [
     fluminensePlayers,
     {
       ...fluminensePlayers,
@@ -152,11 +166,11 @@ test('home and category pages expose crawlable ranking and category links', () =
   ]);
   assert.equal(generalSport.count, 1);
   assert.doesNotMatch(generalSport.html, /melhores-jogadores-fluminense/);
-  assert.match(generalSport.html, /href="\/categoria\/esporte\/times"/);
+  assert.match(generalSport.html, /href="\/categoria\/futebol\/times"/);
 
   const footballTeams = renderGeneralCategoryPage(
     template,
-    generalCategoryBySlug('esporte'),
+    generalCategoryBySlug('futebol'),
     [fluminensePlayers],
     '',
     'times',
@@ -166,7 +180,7 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(footballTeams.html, /href="\/ranking\/melhores-jogadores-fluminense"/);
   assert.match(
     footballTeams.html,
-    /rel="canonical" href="https:\/\/somostopo\.com\.br\/categoria\/esporte\/times"/,
+    /rel="canonical" href="https:\/\/somostopo\.com\.br\/categoria\/futebol\/times"/,
   );
 
   const search = renderHomePage(template, [cinema], 'filmes');
@@ -236,7 +250,7 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis\/sushi-japones/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/ranking\/filmes/);
-  assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/esporte\/times/);
+  assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/futebol\/times/);
   assert.doesNotMatch(xml, /amigos-vip/);
   assert.doesNotMatch(xml, /\/perfil|\/entrar|\/moderacao/);
 });
@@ -256,8 +270,8 @@ test('Vercel routes every public collection and private account shell through SE
   assert.ok(
     vercel.routes.some(
       (route) =>
-        route.src === '/categoria/esporte/times/?' &&
-        route.dest === '/page.js?view=category&category=esporte&section=times',
+        route.src === '/categoria/futebol/times/?' &&
+        route.dest === '/page.js?view=category&category=futebol&section=times',
     ),
   );
   assert.ok(vercel.routes.some((route) => route.src.includes('/local/([^/]+)/([^/]+)')));

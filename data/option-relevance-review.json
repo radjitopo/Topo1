@@ -1,0 +1,491 @@
+{
+  "reviewKey": "20260901_option_relevance",
+  "sources": {
+    "emo": "https://www.rollingstone.com/music/music-lists/40-greatest-emo-albums-of-all-time-23526/",
+    "luxuryCars": "https://carbuzz.com/10-best-looking-cars-of-all-time/",
+    "mobileBrands": "https://counterpointresearch.com/en/insights/global-smartphone-share",
+    "ecommerce": "https://www.similarweb.com/top-websites/brazil/e-commerce-and-shopping/marketplace/",
+    "brazilianBrands": "https://www.designbridge.com/news/most-valuable-brands-brazil",
+    "electricCars": "https://www.edmunds.com/electric-car/",
+    "coopGames": "https://www.gamesradar.com/best-co-op-games/",
+    "roblox": "https://www.roblox.com/charts/top-playing-now",
+    "robloxStats": "https://www.rolimons.com/game/109983668079237",
+    "consoles": "https://www.playstation.com/en-us/playstation-history/2000-ps2-psp/",
+    "brazilianCars": "https://quatrorodas.abril.com.br/carros/chevrolet-opala/",
+    "funk": "https://billboard.com.br/5-anos-sem-mr-catra-familia-relembra-o-funkeiro/",
+    "fashion": "https://www.vogue.com/tag/misc/fashion-through-the-decades",
+    "medicines": "https://www.gov.br/anvisa/pt-br/centraisdeconteudo/publicacoes/educacao-e-pesquisa/educacao-em-vigilancia-sanitaria-para-a-sociedade/caderno-de-atividades-promocao-da-saude-no-contexto-escolar.pdf/@@display-file/file"
+  },
+  "questions": [
+    {
+      "rankingId": "epocas-moda",
+      "question": "Qual década teve a moda mais bonita?"
+    },
+    {
+      "rankingId": "redes-sociais-impactantes",
+      "question": "Qual plataforma social mais mudou a internet?"
+    },
+    {
+      "rankingId": "coisas-fora-moda",
+      "question": "Qual dessas coisas do passado você menos sente falta?"
+    },
+    {
+      "rankingId": "remedios-rotina",
+      "question": "Qual desses medicamentos é mais comum nas casas brasileiras?"
+    },
+    {
+      "rankingId": "times-mundo",
+      "question": "Qual é o maior clube de futebol do mundo?"
+    }
+  ],
+  "replacements": [
+    {
+      "rankingId": "bandas-emo",
+      "oldLabel": "Embrace",
+      "newLabel": "Braid",
+      "source": "emo"
+    },
+    {
+      "rankingId": "bandas-emo",
+      "oldLabel": "Moss Icon",
+      "newLabel": "American Football",
+      "source": "emo"
+    },
+    {
+      "rankingId": "bandas-emo",
+      "oldLabel": "Mineral",
+      "newLabel": "Jimmy Eat World",
+      "source": "emo"
+    },
+    {
+      "rankingId": "bandas-emo",
+      "oldLabel": "Texas Is the Reason",
+      "newLabel": "Fall Out Boy",
+      "source": "emo"
+    },
+    {
+      "rankingId": "bandas-emo",
+      "oldLabel": "The Get Up Kids",
+      "newLabel": "My Chemical Romance",
+      "source": "emo"
+    },
+    {
+      "rankingId": "carro-luxo-mais-bonito",
+      "oldLabel": "Rolls-Royce Phantom",
+      "newLabel": "Jaguar E-Type",
+      "source": "luxuryCars"
+    },
+    {
+      "rankingId": "carro-luxo-mais-bonito",
+      "oldLabel": "Bentley Continental GT",
+      "newLabel": "Lamborghini Miura",
+      "source": "luxuryCars"
+    },
+    {
+      "rankingId": "carro-luxo-mais-bonito",
+      "oldLabel": "Mercedes-Maybach Classe S",
+      "newLabel": "Mercedes-Benz 300 SL Gullwing",
+      "source": "luxuryCars"
+    },
+    {
+      "rankingId": "carro-luxo-mais-bonito",
+      "oldLabel": "Range Rover SV",
+      "newLabel": "Ferrari 250 GTO",
+      "source": "luxuryCars"
+    },
+    {
+      "rankingId": "marca-celular-preferida",
+      "oldLabel": "Nothing",
+      "newLabel": "OPPO",
+      "source": "mobileBrands"
+    },
+    {
+      "rankingId": "melhor-plataforma-compras-online",
+      "oldLabel": "Carrefour",
+      "newLabel": "Temu",
+      "source": "ecommerce"
+    },
+    {
+      "rankingId": "marca-brasileira-mais-querida",
+      "oldLabel": "Embraer",
+      "newLabel": "Nubank",
+      "source": "brazilianBrands"
+    },
+    {
+      "rankingId": "marca-brasileira-mais-querida",
+      "oldLabel": "Localiza",
+      "newLabel": "iFood",
+      "source": "brazilianBrands"
+    },
+    {
+      "rankingId": "carros-eletricos",
+      "oldLabel": "Mercedes-Benz EQS",
+      "newLabel": "Tesla Model 3",
+      "source": "electricCars"
+    },
+    {
+      "rankingId": "jogos-com-amigos",
+      "oldLabel": "Fall Guys",
+      "newLabel": "Overcooked! 2",
+      "source": "coopGames"
+    },
+    {
+      "rankingId": "jogos-roblox",
+      "oldLabel": "Natural Disaster Survival",
+      "newLabel": "Steal a Brainrot",
+      "source": "robloxStats"
+    },
+    {
+      "rankingId": "videogames-consoles",
+      "oldLabel": "Dreamcast",
+      "newLabel": "PlayStation 2",
+      "source": "consoles"
+    },
+    {
+      "rankingId": "carros-brasileiros-iconicos",
+      "oldLabel": "Volkswagen Saveiro",
+      "newLabel": "Chevrolet Opala",
+      "source": "brazilianCars"
+    },
+    {
+      "rankingId": "maiores-nomes-funk",
+      "oldLabel": "Pedro Sampaio",
+      "newLabel": "Mr. Catra",
+      "source": "funk"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Egito Antigo",
+      "newLabel": "Anos 1920",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Grécia e Roma Antigas",
+      "newLabel": "Anos 1930",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Idade Média",
+      "newLabel": "Anos 1940",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Renascimento",
+      "newLabel": "Anos 1950",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Barroco",
+      "newLabel": "Anos 1960",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Rococó",
+      "newLabel": "Anos 1990",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Período Regencial",
+      "newLabel": "Anos 2000",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "epocas-moda",
+      "oldLabel": "Era Vitoriana",
+      "newLabel": "Anos 2010",
+      "source": "fashion"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "Formem duplas",
+      "newLabel": "Tem trabalho para amanhã",
+      "source": "editorial"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "Guardem os livros e os cadernos",
+      "newLabel": "Eu vou escolher os grupos",
+      "source": "editorial"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "Podem usar consulta",
+      "newLabel": "Cada um vai ler em voz alta",
+      "source": "editorial"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "A prova foi adiada",
+      "newLabel": "Tem tarefa para o fim de semana",
+      "source": "editorial"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "Hoje vamos assistir a um filme",
+      "newLabel": "Hoje não haverá recreio",
+      "source": "editorial"
+    },
+    {
+      "rankingId": "surpresas-professor",
+      "oldLabel": "A aula será no pátio",
+      "newLabel": "Vou conferir os cadernos",
+      "source": "editorial"
+    }
+  ],
+  "renames": [
+    {
+      "rankingId": "dogs",
+      "oldLabel": "Pomerânia",
+      "newLabel": "Lulu da Pomerânia"
+    },
+    {
+      "rankingId": "personagens-series",
+      "oldLabel": "Sherlock Holmes",
+      "newLabel": "Sherlock Holmes (Sherlock)"
+    },
+    {
+      "rankingId": "restaurantes-veganos-goiania",
+      "oldLabel": "Natural Alimentos | Loja Emporio Produtos Naturais | Restaurante Vegano Vegetariano | Açaí Lanches",
+      "newLabel": "Natural Alimentos"
+    },
+    {
+      "rankingId": "brechos-campinas",
+      "oldLabel": "Único Brechó Cambuí | O Maior e + Completo com as melhores marcas com até 80% de economia!",
+      "newLabel": "Único Brechó Cambuí"
+    },
+    {
+      "rankingId": "quilo-brasilia",
+      "oldLabel": "Mangai Shopping ID: Comida nordestina, buffet variado, pratos regionais e happy hour.",
+      "newLabel": "Mangai Shopping ID"
+    },
+    {
+      "rankingId": "barbearias-belem",
+      "oldLabel": "BR Barbearia Dr. Freitas: Corte de Cabelo Masculino, Degradê, Barbearia em Belém",
+      "newLabel": "BR Barbearia Dr. Freitas"
+    },
+    {
+      "rankingId": "brechos-sao-luis",
+      "oldLabel": "Entre Nós: Brechó, Guarda Roupa Compartilhado, Café, Happy Hour, Espaço Cultural",
+      "newLabel": "Entre Nós"
+    },
+    {
+      "rankingId": "restaurantes-italianos-teresina",
+      "oldLabel": "Pecorino Bar & Trattoria Teresina: Massas, Risoto, Pizza, Delivery, Jóquei PI",
+      "newLabel": "Pecorino Bar & Trattoria Teresina"
+    },
+    {
+      "rankingId": "restaurantes-teresina",
+      "oldLabel": "Pecorino Bar & Trattoria Teresina: Massas, Risoto, Pizza, Delivery, Jóquei PI",
+      "newLabel": "Pecorino Bar & Trattoria Teresina"
+    },
+    {
+      "rankingId": "restaurantes-italianos-porto-alegre",
+      "oldLabel": "Pecorino Bar & Trattoria Praia de Belas: Massas, Risoto, Pizza, Delivery RS",
+      "newLabel": "Pecorino Bar & Trattoria Praia de Belas"
+    },
+    {
+      "rankingId": "restaurantes-porto-alegre",
+      "oldLabel": "Pecorino Bar & Trattoria Praia de Belas: Massas, Risoto, Pizza, Delivery RS",
+      "newLabel": "Pecorino Bar & Trattoria Praia de Belas"
+    },
+    {
+      "rankingId": "saloes-beleza-sao-goncalo",
+      "oldLabel": "Cabeleireira Kátia Silene | Salão de Beleza e Dia da Noiva em São Gonçalo",
+      "newLabel": "Cabeleireira Kátia Silene"
+    },
+    {
+      "rankingId": "quilo-joao-pessoa",
+      "oldLabel": "Portal Restaurante Self Service - Restaurante no Bairro dos Estados",
+      "newLabel": "Portal Restaurante Self Service"
+    },
+    {
+      "rankingId": "brechos-campinas",
+      "oldLabel": "NOVO RUMO BRECHÓ - DO BÁSICO QUE VOCÊ AMA, AO LUXO QUE VOCÊ MERECE.",
+      "newLabel": "Novo Rumo Brechó"
+    },
+    {
+      "rankingId": "restaurantes-recife",
+      "oldLabel": "Casa Chacon Empório e Restaurante - Carnes, Frutos do Mar e Vinhos",
+      "newLabel": "Casa Chacon Empório e Restaurante"
+    },
+    {
+      "rankingId": "saloes-beleza-teresina",
+      "oldLabel": "Débora Mendes Studio de Beleza e Cabelos Sobrancelhas Unhas Cílios",
+      "newLabel": "Débora Mendes Studio de Beleza"
+    },
+    {
+      "rankingId": "quilo-fortaleza",
+      "oldLabel": "Restaurante Kinta Kasa | Self-Service | José Vilar | Fortaleza Ce",
+      "newLabel": "Restaurante Kinta Kasa"
+    },
+    {
+      "rankingId": "restaurantes-veganos-fortaleza",
+      "oldLabel": "Grow Healthy Food: Café da Manhã, Brunch, Vegana em Fortaleza CE",
+      "newLabel": "Grow Healthy Food"
+    }
+  ],
+  "top10": {
+    "bandas-emo": [
+      "Rites of Spring",
+      "Sunny Day Real Estate",
+      "The Promise Ring",
+      "Jawbreaker",
+      "Braid",
+      "American Football",
+      "Cap'n Jazz",
+      "Jimmy Eat World",
+      "Fall Out Boy",
+      "My Chemical Romance"
+    ],
+    "carro-luxo-mais-bonito": [
+      "Jaguar E-Type",
+      "Lamborghini Miura",
+      "Mercedes-Benz 300 SL Gullwing",
+      "Ferrari 250 GTO",
+      "Ferrari Roma",
+      "Lamborghini Aventador",
+      "Aston Martin DB12",
+      "Porsche 911 Turbo S",
+      "Maserati GranTurismo",
+      "Bugatti Chiron"
+    ],
+    "marca-celular-preferida": [
+      "Samsung",
+      "Apple",
+      "Motorola",
+      "Xiaomi",
+      "Google",
+      "Asus",
+      "Realme",
+      "Huawei",
+      "Honor",
+      "OPPO"
+    ],
+    "melhor-plataforma-compras-online": [
+      "Mercado Livre",
+      "Amazon",
+      "Shopee",
+      "Temu",
+      "Magalu",
+      "AliExpress",
+      "Shein",
+      "KaBuM!",
+      "Casas Bahia",
+      "OLX"
+    ],
+    "marca-brasileira-mais-querida": [
+      "Havaianas",
+      "Natura",
+      "O Boticário",
+      "Tramontina",
+      "Hering",
+      "Melissa",
+      "Granado",
+      "Nubank",
+      "iFood",
+      "Cacau Show"
+    ],
+    "carros-eletricos": [
+      "Tesla Model 3",
+      "Porsche Taycan",
+      "BMW i4",
+      "Ford Mustang Mach-E",
+      "Tesla Model S",
+      "Hyundai Ioniq 5",
+      "Kia EV6",
+      "Lucid Air",
+      "Rivian R1T",
+      "Volkswagen ID. Buzz"
+    ],
+    "jogos-com-amigos": [
+      "Minecraft",
+      "Roblox",
+      "Mario Kart World",
+      "Super Mario Party Jamboree",
+      "Fortnite",
+      "Rocket League",
+      "Overcooked! 2",
+      "Stumble Guys",
+      "Brawl Stars",
+      "Among Us"
+    ],
+    "jogos-roblox": [
+      "Brookhaven RP",
+      "Adopt Me!",
+      "Dress to Impress",
+      "Grow a Garden",
+      "Blox Fruits",
+      "Murder Mystery 2",
+      "99 Nights in the Forest",
+      "Steal a Brainrot",
+      "Tower of Hell",
+      "DOORS"
+    ],
+    "videogames-consoles": [
+      "PlayStation 2",
+      "Super Nintendo (SNES)",
+      "Nintendo Entertainment System (NES)",
+      "Mega Drive",
+      "Atari 2600",
+      "Nintendo 64",
+      "Xbox 360",
+      "Nintendo Switch",
+      "PlayStation 4",
+      "Game Boy"
+    ],
+    "carros-brasileiros-iconicos": [
+      "Volkswagen Fusca",
+      "Volkswagen Kombi",
+      "Chevrolet Opala",
+      "Volkswagen Brasília",
+      "Volkswagen Gol",
+      "Chevrolet Monza",
+      "Ford Escort XR3",
+      "Fiat 147",
+      "Volkswagen Santana",
+      "Puma GTB"
+    ],
+    "maiores-nomes-funk": [
+      "DJ Marlboro",
+      "MC Marcinho",
+      "Claudinho & Buchecha",
+      "Cidinho & Doca",
+      "Bonde do Tigrão",
+      "Tati Quebra Barraco",
+      "Mr. Catra",
+      "Valesca Popozuda",
+      "Anitta",
+      "MC Livinho"
+    ],
+    "epocas-moda": [
+      "Anos 1920",
+      "Anos 1930",
+      "Anos 1940",
+      "Anos 1950",
+      "Anos 1960",
+      "Anos 1970",
+      "Anos 1980",
+      "Anos 1990",
+      "Anos 2000",
+      "Anos 2010"
+    ],
+    "surpresas-professor": [
+      "Hoje tem prova surpresa",
+      "Esta atividade vale nota",
+      "As apresentações começam hoje",
+      "O trabalho será individual",
+      "Tem trabalho para amanhã",
+      "Eu vou escolher os grupos",
+      "Cada um vai ler em voz alta",
+      "Tem tarefa para o fim de semana",
+      "Hoje não haverá recreio",
+      "Vou conferir os cadernos"
+    ]
+  }
+}

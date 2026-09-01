@@ -12,11 +12,12 @@ const expectedCategoryCounts = {
   Arte: 9,
   Moda: 5,
   Famosos: 5,
-  Natureza: 2,
+  Natureza: 1,
+  Animais: 1,
   Motores: 10,
   Jogos: 3,
   Tecnologia: 6,
-  Produtos: 3,
+  Compras: 3,
 };
 
 test('seventh batch contains the planned 61 Top 20 rankings', () => {
@@ -102,11 +103,11 @@ test('catalog importer and page assets include the seventh batch', async () => {
 
   assert.match(importer, /rankings-batch-7\.json/);
   assert.match(importer, /seventhBatchRankings\.length !== 61/);
-  assert.match(importer, /newRankings\.length !== 195/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
+  assert.match(importer, /newRankings\.length !== 245/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 285/);
   assert.match(index, /editorial-15\.js/);
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
-  for (const category of ['Arte', 'Motores', 'Tecnologia', 'Produtos', 'TV & Séries']) {
+  for (const category of ['Arte', 'Motores', 'Tecnologia', 'Compras', 'TV & Séries']) {
     assert.ok(app.includes(`'${category}'`), `app must preserve the ${category} group`);
   }
 });

@@ -218,7 +218,7 @@
   },
   {
     "id": "dinossauros-irados",
-    "category": "Natureza",
+    "category": "Animais",
     "question": "Qual dinossauro é o mais irado de todos?",
     "image_url": "https://images.unsplash.com/photo-1548980397-dda45023c130?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -249,7 +249,7 @@
   },
   {
     "id": "animais-superpoderes",
-    "category": "Natureza",
+    "category": "Animais",
     "question": "Animais que parecem ter superpoderes",
     "image_url": "https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,
@@ -559,7 +559,7 @@
   },
   {
     "id": "presentes-aniversario",
-    "category": "Produtos",
+    "category": "Compras",
     "question": "Qual presente você mais gostaria de ganhar?",
     "image_url": "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?auto=format&fit=crop&w=1200&q=82",
     "baseline_votes": 0,

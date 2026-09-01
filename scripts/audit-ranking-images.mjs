@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { rejectedRankingCoverIssue } from '../ranking-image-policy.js';
+import { imageAssetKey, rejectedRankingCoverIssue } from '../ranking-image-policy.js';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(SCRIPT_DIR, '..');
@@ -18,11 +18,18 @@ function rankingImage(ranking) {
   return ranking?.image_url || ranking?.image || ranking?.img || '';
 }
 
-function normalizeRanking(ranking) {
+function normalizeRanking(ranking, baseUrl = DEFAULT_SITE) {
+  const rawImage = String(rankingImage(ranking) || '');
+  let image = rawImage;
+  if (rawImage) {
+    try {
+      image = new URL(rawImage, baseUrl).href;
+    } catch {}
+  }
   return {
     id: String(ranking?.id || ''),
     question: String(ranking?.question || ranking?.title || ''),
-    image: String(rankingImage(ranking) || ''),
+    image,
   };
 }
 
@@ -34,7 +41,7 @@ async function rankingsFromSite(siteUrl) {
   });
   if (!response.ok) throw new Error(`Catálogo remoto respondeu ${response.status}.`);
   const payload = await response.json();
-  return (payload.rankings || []).map(normalizeRanking);
+  return (payload.rankings || []).map((ranking) => normalizeRanking(ranking, base));
 }
 
 async function rankingsFromLocalData() {
@@ -47,7 +54,7 @@ async function rankingsFromLocalData() {
     const parsed = JSON.parse(await readFile(resolve(dataDir, filename), 'utf8'));
     if (!Array.isArray(parsed)) continue;
     for (const raw of parsed) {
-      const ranking = normalizeRanking(raw);
+      const ranking = normalizeRanking(raw, DEFAULT_SITE);
       if (ranking.id) byId.set(ranking.id, ranking);
     }
   }
@@ -59,7 +66,7 @@ function staticQualityIssues(ranking) {
   if (!ranking.image) return ['sem endereço de imagem'];
   let url;
   try {
-    url = new URL(ranking.image);
+    url = new URL(ranking.image, DEFAULT_SITE);
   } catch {
     return ['endereço inválido'];
   }
@@ -81,47 +88,67 @@ function editorialIssues(ranking) {
   return rejected ? [rejected] : [];
 }
 
-async function probeImage(ranking) {
-  const qualityIssues = staticQualityIssues(ranking);
-  if (!ranking.image) {
+function responseResult(response, method) {
+  const contentType = response.headers.get('content-type') || '';
+  const ok = response.ok && contentType.toLowerCase().startsWith('image/');
+  return {
+    ok,
+    status: response.status,
+    contentType,
+    method,
+    error: ok
+      ? ''
+      : response.ok
+        ? `conteúdo inesperado: ${contentType || 'desconhecido'}`
+        : `HTTP ${response.status}`,
+  };
+}
+
+async function imageRequest(image, method) {
+  const response = await fetch(image, {
+    method,
+    redirect: 'follow',
+    headers: {
+      'user-agent': 'TOPO image audit/1.0',
+      ...(method === 'GET' ? { range: 'bytes=0-2047' } : {}),
+    },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+  const result = responseResult(response, method);
+  if (response.body) await response.body.cancel().catch(() => {});
+  return result;
+}
+
+async function probeImageAsset(image) {
+  if (!image) {
     return {
-      ...ranking,
       ok: false,
       status: 0,
       contentType: '',
+      method: '',
       error: 'sem imagem',
-      qualityIssues,
     };
   }
+  let headFailure = '';
   try {
-    const response = await fetch(ranking.image, {
-      method: 'HEAD',
-      redirect: 'follow',
-      headers: { 'user-agent': 'TOPO image audit/1.0' },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    });
-    const contentType = response.headers.get('content-type') || '';
-    const ok = response.ok && contentType.toLowerCase().startsWith('image/');
-    return {
-      ...ranking,
-      ok,
-      status: response.status,
-      contentType,
-      error: ok
-        ? ''
-        : response.ok
-          ? `conteúdo inesperado: ${contentType || 'desconhecido'}`
-          : `HTTP ${response.status}`,
-      qualityIssues,
-    };
+    const head = await imageRequest(image, 'HEAD');
+    if (head.ok) return head;
+    headFailure = head.error;
   } catch (error) {
+    headFailure =
+      error?.name === 'TimeoutError' ? 'tempo esgotado' : String(error?.message || error);
+  }
+  try {
+    return await imageRequest(image, 'GET');
+  } catch (error) {
+    const getFailure =
+      error?.name === 'TimeoutError' ? 'tempo esgotado' : String(error?.message || error);
     return {
-      ...ranking,
       ok: false,
       status: 0,
       contentType: '',
-      error: error?.name === 'TimeoutError' ? 'tempo esgotado' : String(error?.message || error),
-      qualityIssues,
+      method: 'GET',
+      error: `HEAD: ${headFailure || 'falhou'}; GET: ${getFailure}`,
     };
   }
 }
@@ -143,12 +170,7 @@ function duplicatePhotoGroups(rankings) {
   const groups = new Map();
   for (const ranking of rankings) {
     if (!ranking.image) continue;
-    let key = ranking.image;
-    try {
-      const url = new URL(ranking.image);
-      const unsplashId = url.pathname.match(/\/photo-([^/]+)/)?.[1];
-      key = unsplashId ? `unsplash:${unsplashId}` : `${url.origin}${url.pathname}`;
-    } catch {}
+    const key = imageAssetKey(ranking.image) || ranking.image;
     const group = groups.get(key) || [];
     group.push(ranking.id);
     groups.set(key, group);
@@ -159,12 +181,25 @@ function duplicatePhotoGroups(rankings) {
 }
 
 export async function auditRankingImages(rankings, options = {}) {
-  const normalized = rankings.map(normalizeRanking).filter((ranking) => ranking.id);
-  const results = await mapConcurrent(
-    normalized,
-    probeImage,
+  const normalized = rankings
+    .map((ranking) => normalizeRanking(ranking))
+    .filter((ranking) => ranking.id);
+  const assets = new Map();
+  for (const ranking of normalized) {
+    const key = imageAssetKey(ranking.image) || `missing:${ranking.id}`;
+    if (!assets.has(key)) assets.set(key, ranking.image);
+  }
+  const probedAssets = await mapConcurrent(
+    [...assets.entries()],
+    async ([key, image]) => [key, await probeImageAsset(image)],
     options.concurrency || MAX_CONCURRENCY,
   );
+  const probeByAsset = new Map(probedAssets);
+  const results = normalized.map((ranking) => ({
+    ...ranking,
+    ...probeByAsset.get(imageAssetKey(ranking.image) || `missing:${ranking.id}`),
+    qualityIssues: staticQualityIssues(ranking),
+  }));
   return {
     checked: results.length,
     broken: results.filter((result) => !result.ok),
@@ -204,7 +239,13 @@ function printReport(report, sourceLabel) {
 async function main() {
   const site = argValue('--site');
   const rankings = site ? await rankingsFromSite(site) : await rankingsFromLocalData();
-  const report = await auditRankingImages(rankings);
+  const requestedConcurrency = Number(argValue('--concurrency'));
+  const report = await auditRankingImages(rankings, {
+    concurrency:
+      Number.isInteger(requestedConcurrency) && requestedConcurrency > 0
+        ? requestedConcurrency
+        : MAX_CONCURRENCY,
+  });
   printReport(report, site || 'arquivos locais');
   if (
     report.broken.length ||

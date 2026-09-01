@@ -220,7 +220,7 @@ function categoryNavigation() {
 
 function footballCategoryTabs(section, teamCount) {
   const teamsActive = section === 'times';
-  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/esporte" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="${FOOTBALL_TEAMS_CATEGORY_PATH}" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${formatNumber(teamCount)}</span></a></nav>`;
+  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/futebol" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="${FOOTBALL_TEAMS_CATEGORY_PATH}" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${formatNumber(teamCount)}</span></a></nav>`;
 }
 
 function cityNavigation(rankings) {
@@ -379,10 +379,10 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
           Number(b.voteCount || 0) - Number(a.voteCount || 0) ||
           new Date(b.createdAt) - new Date(a.createdAt),
       ),
-    teamsSection = category.slug === 'esporte' && section === 'times',
+    teamsSection = category.slug === 'futebol' && section === 'times',
     teamCount = categoryRankings.filter(isClubPlayerRanking).length,
     selected =
-      category.slug === 'esporte'
+      category.slug === 'futebol'
         ? categoryRankings.filter((ranking) =>
             teamsSection ? isClubPlayerRanking(ranking) : !isClubPlayerRanking(ranking),
           )
@@ -427,7 +427,7 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
       <div><span class="portalKicker">${teamsSection ? 'Futebol' : 'Categoria'}</span><h1>${escapeHtml(pageLabel)}</h1><p>${escapeHtml(categoryDescription)}</p></div>
       <div class="categoryLandingCount"><strong>${formatNumber(selected.length)}</strong><span>rankings</span></div>
     </section>
-    ${category.slug === 'esporte' ? footballCategoryTabs(section, teamCount) : categoryNavigation()}
+    ${category.slug === 'futebol' ? footballCategoryTabs(section, teamCount) : categoryNavigation()}
     <section class="categoryRankGrid">${selected.slice(0, 36).map(rankingCard).join('')}</section>`;
   return {
     html: withPage(template, {
@@ -993,7 +993,7 @@ export default async function handler(req, res) {
     if (view === 'category') {
       const category = generalCategoryBySlug(queryValue(req, 'category'));
       const section = queryValue(req, 'section');
-      if (!category || (section && !(category.slug === 'esporte' && section === 'times')))
+      if (!category || (section && !(category.slug === 'futebol' && section === 'times')))
         return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
       const rankings = await fetchRankingSummaries(sql, { scope: 'general' });
       const rendered = renderGeneralCategoryPage(template, category, rankings, search, section);

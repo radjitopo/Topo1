@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   CURATED_COVER_COUNT,
@@ -9,11 +9,12 @@ import {
   rejectedRankingCoverIssue,
   resolveRankingCover,
 } from '../ranking-image-policy.js';
+import { RANKING_COVER_REVIEW, RANKING_COVER_REVIEW_COUNT } from '../ranking-cover-review.js';
 
 const root = new URL('../', import.meta.url);
 
 test('the semantic reviews replace all known weak or mismatched covers', () => {
-  assert.equal(CURATED_COVER_COUNT, 59);
+  assert.equal(CURATED_COVER_COUNT, 95);
   const replacements = Object.values(CURATED_COVER_RULES).map((coverRule) => {
     assert.match(coverRule.replacement, /^https:\/\//);
     return imageAssetKey(coverRule.replacement);
@@ -40,6 +41,31 @@ test('the semantic reviews replace all known weak or mismatched covers', () => {
     moderatorChoice,
     'a later moderator choice must win over the curated fallback',
   );
+});
+
+test('the full visual review is licensed, unique and ships every original asset', async () => {
+  assert.equal(RANKING_COVER_REVIEW_COUNT, 42);
+  assert.equal(
+    new Set(RANKING_COVER_REVIEW.map((change) => change.rankingId)).size,
+    RANKING_COVER_REVIEW_COUNT,
+  );
+
+  for (const change of RANKING_COVER_REVIEW) {
+    assert.ok(change.reason);
+    assert.match(change.replacement, /^https:\/\//);
+    if (change.license === 'Unsplash License') {
+      assert.match(change.sourcePage, /^https:\/\/unsplash\.com\/photos\//);
+    } else {
+      assert.equal(change.license, 'Arte original TOPO');
+      const pathname = new URL(change.replacement).pathname;
+      await access(new URL(`.${pathname}`, root));
+    }
+
+    const oldImage = change.rejectedAsset.startsWith('unsplash:')
+      ? `https://images.unsplash.com/photo-${change.rejectedAsset.slice(9)}?auto=format&fit=crop&w=1200&q=82`
+      : change.rejectedAsset;
+    assert.equal(resolveRankingCover(change.rankingId, oldImage), change.replacement);
+  }
 });
 
 test('search briefs use the ranking meaning instead of loose title words', () => {

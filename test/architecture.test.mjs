@@ -33,6 +33,22 @@ test('successful votes update the current catalog without downloading it again',
   );
 });
 
+test('catalog sends compact previews and keeps the opened ranking complete', async () => {
+  const [api, app] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('app.js', root), 'utf8'),
+  ]);
+
+  assert.match(api, /ROW_NUMBER\(\) OVER/);
+  assert.match(api, /catalog_position <= 3/);
+  assert.match(api, /ranking_id = \$7::text/);
+  assert.match(api, /option_search_text/);
+  assert.match(api, /ranking_live_votes/);
+  assert.match(api, /my_vote_count/);
+  assert.match(app, /r\.searchText \|\|/);
+  assert.match(app, /ranking\.myVoteCount = previousVoteCount \+ 1/);
+});
+
 test('dead public copies are gone and the Open Graph image is static', async () => {
   const vercel = JSON.parse(await readFile(new URL('vercel.json', root), 'utf8'));
   const ogBuild = vercel.builds.find((build) => build.src === 'og-topo-v2.png');

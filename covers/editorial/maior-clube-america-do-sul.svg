@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Clubes da América do Sul</title>
+  <desc id="desc">Arte editorial original da TOPO com campo, bola e mapa estilizado da América do Sul.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#082b29"/><stop offset="1" stop-color="#071117"/></linearGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0V44" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grid)"/>
+  <path d="M0 535 1200 215v170L0 675Z" fill="#d6f044" opacity=".1"/>
+  <path d="M842 75c-69 1-120 35-147 91-21 43-17 90 9 129 18 28 45 51 51 83 7 34-12 66-15 99-5 57 31 106 70 143 21-72 54-138 78-207 18-52 38-108 26-163-9-42-42-72-43-117-1-20 3-40-8-58-6 0-14 0-21 0Z" fill="#d6f044" opacity=".28"/>
+  <g transform="translate(875 350)" fill="none" stroke="#fff" stroke-width="8" opacity=".35"><circle r="122"/><path d="m0-52 49 35-19 57h-60l-19-57Z"/><path d="M0-122v70M116-38 49-17M72 99 30 40M-72 99-30 40M-116-38-49-17"/></g>
+  <text x="285" y="92" fill="#d6f044" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="5">TOPO • FUTEBOL</text>
+  <text x="285" y="302" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="62" font-weight="900">AMÉRICA DO SUL</text>
+  <text x="285" y="386" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700">QUAL CLUBE É O MAIOR?</text>
+  <path d="M285 432h455" stroke="#d6f044" stroke-width="12"/><text x="285" y="510" fill="#fff" opacity=".7" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="700" letter-spacing="3">HISTÓRIA • TÍTULOS • TORCIDA</text>
+</svg>

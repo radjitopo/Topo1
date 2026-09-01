@@ -105,8 +105,8 @@ test('eleventh batch is connected to the importer and public shell', async () =>
 
   assert.match(importer, /rankings-batch-11\.json/);
   assert.match(importer, /eleventhBatchRankings\.length !== 12/);
-  assert.match(importer, /newRankings\.length !== 195/);
-  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 235/);
+  assert.match(importer, /newRankings\.length !== 245/);
+  assert.match(importer, /Object\.keys\(allTitles\)\.length !== 285/);
   assert.match(index, /editorial-19\.js\?v=20260901-3-duel-without-option-photos/);
   assert.match(source, /min-height:168px/);
   assert.match(source, /height:56px/);

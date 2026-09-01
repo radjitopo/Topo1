@@ -1,3 +1,5 @@
+import { RANKING_COVER_REVIEW } from './ranking-cover-review.js';
+
 const coverUrl = (photoId, extra = '') =>
   `https://images.unsplash.com/photo-${photoId}?auto=format&fit=crop${extra}&w=1200&h=675&q=82`;
 
@@ -10,7 +12,7 @@ const rule = (rejectedPhotoId, replacement, queries) =>
 
 // These rules are deliberately tied to the exact rejected asset. A moderator can
 // still choose a new image later without a code-level override fighting that edit.
-export const CURATED_COVER_RULES = Object.freeze({
+const LEGACY_CURATED_COVER_RULES = Object.freeze({
   'bandas-pagode': rule(
     '1736184766006-377f3e9827a1',
     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Prettos_alex-pires_IV.jpg/1280px-Prettos_alex-pires_IV.jpg',
@@ -273,6 +275,22 @@ export const CURATED_COVER_RULES = Object.freeze({
     'early 2000s iPod MP3 player nostalgia',
     'Y2K gadgets retro technology',
   ]),
+});
+
+const REVIEWED_COVER_RULES = Object.fromEntries(
+  RANKING_COVER_REVIEW.map((review) => [
+    review.rankingId,
+    Object.freeze({
+      rejected: review.rejectedAsset,
+      replacement: review.replacement,
+      queries: review.queries,
+    }),
+  ]),
+);
+
+export const CURATED_COVER_RULES = Object.freeze({
+  ...LEGACY_CURATED_COVER_RULES,
+  ...REVIEWED_COVER_RULES,
 });
 
 const CATEGORY_HINTS = Object.freeze({

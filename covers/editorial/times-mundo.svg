@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Maiores clubes do mundo</title>
+  <desc id="desc">Arte editorial original da TOPO com um globo transformado em bola de futebol.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#181026"/><stop offset=".55" stop-color="#32174d"/><stop offset="1" stop-color="#09070c"/></linearGradient></defs>
+  <rect width="1200" height="675" fill="url(#bg)"/><path d="M0 535 1200 215v170L0 675Z" fill="#ff365f" opacity=".18"/>
+  <g transform="translate(875 338)" fill="none" stroke="#fff" opacity=".38"><circle r="205" stroke-width="9"/><ellipse rx="90" ry="205" stroke-width="5" opacity=".55"/><path d="M-190-73h380M-203 0h406M-190 73h380" stroke-width="5" opacity=".55"/><path d="m0-62 59 43-23 70h-72l-23-70Z" fill="#ff365f" stroke-width="7"/><path d="M0-205v143M195-63 59-19M121 166 36 51M-121 166-36 51M-195-63-59-19" stroke-width="7"/></g>
+  <text x="285" y="92" fill="#ff8098" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="5">TOPO • FUTEBOL MUNDIAL</text>
+  <text x="285" y="300" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="76" font-weight="900">CLUBES DO</text><text x="285" y="395" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="92" font-weight="900">MUNDO</text>
+  <path d="M285 438h455" stroke="#ff365f" stroke-width="12"/><text x="285" y="516" fill="#fff" opacity=".72" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" letter-spacing="3">UM PLANETA. UMA ESCOLHA.</text>
+</svg>

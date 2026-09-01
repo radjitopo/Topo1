@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Embalagens icônicas</title>
+  <desc id="desc">Arte editorial original da TOPO com silhuetas de garrafa, lata, caixa e frasco.</desc>
+  <rect width="1200" height="675" fill="#f2eee4"/><path d="M0 520 1200 190v485H0Z" fill="#dd2345"/>
+  <g transform="translate(650 124)" stroke="#111" stroke-width="12" stroke-linejoin="round" opacity=".38">
+    <path d="M55 42h74v78c0 19 42 43 42 86v284H13V206c0-43 42-67 42-86Z" fill="#fff"/>
+    <rect x="205" y="105" width="126" height="385" rx="28" fill="#f8c83b"/><path d="M205 166h126M205 426h126" fill="none"/>
+    <path d="M365 76h188v414H365Z" fill="#60c4bd"/><path d="m365 76 46-45h188l-46 45M553 76l46-45v414l-46 45" fill="#fff"/>
+    <path d="M623 202h120v288H623Z" fill="#fff"/><path d="M654 130h58v72h-58Z" fill="#f8c83b"/>
+  </g>
+  <text x="285" y="88" fill="#111" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="5">TOPO • DESIGN &amp; COMPRAS</text>
+  <text x="285" y="280" fill="#111" font-family="Arial,Helvetica,sans-serif" font-size="70" font-weight="900">EMBALAGENS</text><text x="285" y="370" fill="#111" font-family="Arial,Helvetica,sans-serif" font-size="82" font-weight="900">ICÔNICAS</text>
+  <path d="M285 412h455" stroke="#111" stroke-width="12"/><text x="285" y="488" fill="#111" opacity=".7" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" letter-spacing="3">FORMA • COR • MEMÓRIA</text>
+</svg>

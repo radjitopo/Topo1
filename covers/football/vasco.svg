@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">VASCO — ídolos da história</title>
+  <desc id="desc">Arte editorial original da TOPO nas cores do clube, sem uso de escudo ou logotipo.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111111"/><stop offset="1" stop-color="#08090b"/></linearGradient><pattern id="pitch" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern></defs>
+  <rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#pitch)"/>
+  <path d="M0 535 1200 215v170L0 675Z" fill="#f5f5f2" opacity=".22"/><path d="M770 0h145L640 675H495Z" fill="#d71920" opacity=".14"/>
+  <g transform="translate(875 337)" fill="none" stroke="#d71920" stroke-width="8" opacity=".42"><circle r="184"/><circle r="130" opacity=".35"/><path d="m0-57 54 39-21 64h-66l-21-64Z" fill="#f5f5f2" fill-opacity=".55"/><path d="M0-184v127M175-57 54-18M108 149 33 46M-108 149-33 46M-175-57-54-18"/></g>
+  <text x="285" y="88" fill="#d71920" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="700" letter-spacing="5">TOPO • FUTEBOL BRASILEIRO</text>
+  <text x="285" y="328" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="102" font-weight="900">VASCO</text>
+  <text x="285" y="411" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="700">ÍDOLOS DA HISTÓRIA</text>
+  <path d="M285 454h455" stroke="#d71920" stroke-width="12"/><text x="285" y="526" fill="#fff" opacity=".72" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="700" letter-spacing="3">QUEM MERECE O TOPO?</text>
+</svg>

@@ -18,7 +18,7 @@ const compactPage = compactSource(page);
 assert.match(
   api,
   /const RANKING_LIMIT = 20;/,
-  'the API must allow all 20 standard options to be evaluated',
+  'the API must cover all twenty options in the largest public rankings',
 );
 assert.match(compactApp, /rankingLimit:20/, 'the interface fallback must match the API limit');
 assert.match(

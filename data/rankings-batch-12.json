@@ -1,7 +1,7 @@
 [
   {
     "id": "melhor-jogador-futebol-todos-tempos",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor jogador de futebol de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1764438344341-d4700ad674f0?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -32,7 +32,7 @@
   },
   {
     "id": "melhores-goleiros-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor goleiro de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1769805225355-2a572ed4525e?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -63,7 +63,7 @@
   },
   {
     "id": "melhores-zagueiros-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor zagueiro de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1777304012210-a12b1188ab49?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -94,7 +94,7 @@
   },
   {
     "id": "melhores-laterais-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor lateral de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1598399615261-adafbbb044fc?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -125,7 +125,7 @@
   },
   {
     "id": "melhores-meio-campistas-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor meio-campista de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -156,7 +156,7 @@
   },
   {
     "id": "melhores-camisas-10-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor camisa 10 de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1779142167168-458a646f596e?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -187,7 +187,7 @@
   },
   {
     "id": "melhores-atacantes-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor atacante de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1770484235223-f4f23ee66143?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,
@@ -218,7 +218,7 @@
   },
   {
     "id": "melhores-tecnicos-futebol-historia",
-    "category": "Esporte",
+    "category": "Futebol",
     "question": "Quem é o melhor técnico de futebol de todos os tempos?",
     "image_url": "https://images.unsplash.com/photo-1606471029913-9dbf1df2bd8b?auto=format&fit=crop&w=1200&h=675&q=82",
     "baseline_votes": 0,

@@ -79,7 +79,7 @@ const covers = Object.freeze({
     'https://images.unsplash.com/photo-1783419116339-a2956ffeb7a0?auto=format&fit=crop&w=1200&q=82',
     'https://images.unsplash.com/photo-1688895463871-f5e81079d7be?auto=format&fit=crop&w=1200&q=82',
   ],
-  Produtos: [
+  Compras: [
     'https://images.unsplash.com/photo-1781232815711-1c1d9ec1ca44?auto=format&fit=crop&w=1200&q=82',
     'https://images.unsplash.com/photo-1786617829002-e130d77fe64a?auto=format&fit=crop&w=1200&q=82',
     'https://images.unsplash.com/photo-1606021490433-d28d1d978deb?auto=format&fit=crop&w=1200&q=82',
@@ -1775,8 +1775,10 @@ const definitions = [
         'Pomada Minancora',
       ],
     ],
-  ].map(([id, question, focus, options]) => ranking(id, 'Produtos', question, focus, options)),
+  ].map(([id, question, focus, options]) => ranking(id, 'Compras', question, focus, options)),
 ];
+
+definitions.find((item) => item.id === 'animais-extintos').category = 'Animais';
 
 const factsByCategory = Object.freeze({
   Cinema: [
@@ -1804,8 +1806,12 @@ const factsByCategory = Object.freeze({
     'Popularidade e talento são percepções subjetivas e mudam entre gerações.',
   ],
   Natureza: [
-    'Fenômenos naturais e espécies extintas ajudam a compreender a longa história do planeta.',
-    'Descobertas científicas podem revisar estimativas sobre aparência, comportamento e origem.',
+    'Fenômenos naturais ajudam a compreender as forças e a longa história do planeta.',
+    'Descobertas científicas podem revisar estimativas sobre origem, escala e transformação.',
+  ],
+  Animais: [
+    'Espécies atuais e extintas ajudam a compreender a diversidade da vida no planeta.',
+    'Descobertas científicas podem revisar estimativas sobre aparência e comportamento animal.',
   ],
   Motores: [
     'Design, desempenho, confiabilidade e memória afetiva são critérios diferentes para avaliar um veículo.',
@@ -1819,7 +1825,7 @@ const factsByCategory = Object.freeze({
     'Tecnologias podem transformar hábitos antes mesmo de se tornarem acessíveis para todas as pessoas.',
     'Impacto social, utilidade cotidiana e inovação técnica são critérios independentes.',
   ],
-  Produtos: [
+  Compras: [
     'Design, utilidade, lembrança afetiva e força de marca influenciam a percepção de um produto.',
     'Embalagens e objetos cotidianos podem se transformar em símbolos de uma geração.',
   ],
@@ -1828,8 +1834,9 @@ const factsByCategory = Object.freeze({
 const relatedSeeds = Object.freeze({
   'TV & Séries': ['series-tv', 'realities-brasileiros', 'desenhos-obrigatorios'],
   Natureza: ['animais-superpoderes', 'misterios-do-espaco', 'animais-fofos'],
+  Animais: ['animais-superpoderes', 'dinossauros-irados', 'animais-fofos'],
   Jogos: ['jogos-videogame', 'videogames-consoles', 'jogos-celular'],
-  Produtos: ['chocolates-brasil', 'salgadinhos', 'presentes-aniversario'],
+  Compras: ['chocolates-brasil', 'salgadinhos', 'presentes-aniversario'],
 });
 
 function relatedFor(item) {

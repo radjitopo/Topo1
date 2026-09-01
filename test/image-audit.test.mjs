@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+import { auditRankingImages } from '../scripts/audit-ranking-images.mjs';
 
 const audit = await readFile(
   new URL('../scripts/audit-ranking-images.mjs', import.meta.url),
@@ -15,6 +17,7 @@ const batch9 = await readFile(new URL('../data/rankings-batch-9.json', import.me
 const batch10 = await readFile(new URL('../data/rankings-batch-10.json', import.meta.url), 'utf8');
 const batch11 = await readFile(new URL('../data/rankings-batch-11.json', import.meta.url), 'utf8');
 const batch12 = await readFile(new URL('../data/rankings-batch-12.json', import.meta.url), 'utf8');
+const batch13 = await readFile(new URL('../data/rankings-batch-13.json', import.meta.url), 'utf8');
 const cityScript = await readFile(
   new URL('../scripts/apply-city-rankings.mjs', import.meta.url),
   'utf8',
@@ -24,7 +27,9 @@ const migration = await readFile(
   'utf8',
 );
 
-assert.match(audit, /method: 'HEAD'/, 'image audit must probe the real remote file');
+assert.match(audit, /imageRequest\(image, 'HEAD'\)/, 'image audit must try a cheap HEAD probe');
+assert.match(audit, /imageRequest\(image, 'GET'\)/, 'image audit must retry with a ranged GET');
+assert.match(audit, /bytes=0-2047/, 'fallback GET must avoid downloading the complete image');
 assert.match(
   audit,
   /contentType\.toLowerCase\(\)\.startsWith\('image\/'\)/,
@@ -53,6 +58,7 @@ for (const source of [
   batch10,
   batch11,
   batch12,
+  batch13,
   cityScript,
 ]) {
   assert.doesNotMatch(
@@ -81,3 +87,37 @@ for (const id of [
 }
 
 console.log('Image audit checks passed.');
+
+test('image audit resolves internal URLs, retries HEAD failures and deduplicates probes', async () => {
+  const originalFetch = global.fetch;
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url: String(url), method: options.method, range: options.headers?.range || '' });
+    if (options.method === 'HEAD') {
+      return new Response(null, { status: 500, headers: { 'content-type': 'text/plain' } });
+    }
+    return new Response(new Uint8Array([1, 2, 3]), {
+      status: 206,
+      headers: { 'content-type': 'image/jpeg' },
+    });
+  };
+
+  try {
+    const report = await auditRankingImages(
+      [
+        { id: 'internal-one', image: '/api?action=ranking-image&ranking_id=one' },
+        { id: 'internal-two', image: '/api?action=ranking-image&ranking_id=one' },
+      ],
+      { concurrency: 1 },
+    );
+    assert.equal(report.checked, 2);
+    assert.equal(report.broken.length, 0);
+    assert.equal(calls.length, 2, 'the same image asset should be probed only once');
+    assert.equal(calls[0].url, 'https://somostopo.com.br/api?action=ranking-image&ranking_id=one');
+    assert.equal(calls[0].method, 'HEAD');
+    assert.equal(calls[1].method, 'GET');
+    assert.equal(calls[1].range, 'bytes=0-2047');
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

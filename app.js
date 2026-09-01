@@ -41,13 +41,17 @@ const generalGroupSlugs = Object.freeze({
   Moda: 'moda',
   Comida: 'comida',
   Lugares: 'lugares',
+  Viagens: 'viagens',
   Famosos: 'famosos',
   Natureza: 'natureza',
+  Animais: 'animais',
   Motores: 'motores',
   Esporte: 'esporte',
+  Futebol: 'futebol',
   Jogos: 'jogos',
   Tecnologia: 'tecnologia',
-  Produtos: 'produtos',
+  Compras: 'compras',
+  Luxo: 'luxo',
   Vida: 'vida',
 });
 function generalGroupFromRoute() {
@@ -56,7 +60,7 @@ function generalGroupFromRoute() {
   return Object.entries(generalGroupSlugs).find(([, slug]) => slug === match[1])?.[0] || '';
 }
 function footballCategorySectionFromRoute() {
-  return /^\/categoria\/esporte\/times\/?$/.test(location.pathname) ? 'times' : '';
+  return /^\/categoria\/(?:futebol|esporte)\/times\/?$/.test(location.pathname) ? 'times' : '';
 }
 function localRouteState() {
   const parts = location.pathname.split('/').filter(Boolean);
@@ -70,7 +74,10 @@ let renderHome;
 let rankings = [],
   vipRankings = [],
   favoriteRankings = [],
-  activeGroup = generalGroupFromRoute() || localRouteState().group || 'Todos',
+  activeGroup =
+    (footballCategorySectionFromRoute() ? 'Futebol' : generalGroupFromRoute()) ||
+    localRouteState().group ||
+    'Todos',
   activeFootballSection = footballCategorySectionFromRoute(),
   homePortal = !isLocalRoute() && !isCategoryRoute(),
   homeSearch = (queryParams.get('busca') || '').trim(),
@@ -115,13 +122,17 @@ const groupNames = [
     'Moda',
     'Comida',
     'Lugares',
+    'Viagens',
     'Famosos',
     'Natureza',
+    'Animais',
     'Motores',
     'Esporte',
+    'Futebol',
     'Jogos',
     'Tecnologia',
-    'Produtos',
+    'Compras',
+    'Luxo',
     'Vida',
   ],
   fmt = (n) => Number(n).toLocaleString('pt-BR');
@@ -265,6 +276,7 @@ function rankingSearchText(r) {
     r.cat,
     groupOf(r),
     topoLocal.groupForRanking(r),
+    r.searchText || '',
     ...(r.opts || []).map((o) => o.label),
   ].join(' ');
 }
@@ -288,6 +300,8 @@ function isFirstShowCandidate(r) {
   return isNewRanking(r) && Number.isFinite(t) && t >= NEW_FIRST_SHOW_EPOCH;
 }
 function myVoteCount(r) {
+  const stored = Number(r?.myVoteCount);
+  if (Number.isSafeInteger(stored) && stored >= 0) return stored;
   return (r?.opts || []).reduce((n, o) => n + (Number(o.mine) !== 0 ? 1 : 0), 0);
 }
 function rankingNeedsParticipation(r) {
@@ -325,7 +339,7 @@ function randomDuelRanking(excludeRankingId = '') {
 }
 function priorityBucket(r) {
   const n = myVoteCount(r),
-    limit = Number(viewer.rankingLimit || 20);
+    limit = Math.min(r.opts.length, Number(viewer.rankingLimit || 20));
   if (n === 0) return 0;
   if (n < limit) return 1;
   return 2;
@@ -457,9 +471,15 @@ function groupOf(r) {
       'Moda',
       'Jogos',
       'Natureza',
+      'Animais',
       'Motores',
+      'Esporte',
+      'Futebol',
       'Tecnologia',
-      'Produtos',
+      'Compras',
+      'Luxo',
+      'Viagens',
+      'Lugares',
       'TV & Séries',
       'Nostalgia',
     ].includes(r.cat)
@@ -469,12 +489,12 @@ function groupOf(r) {
   if (['Pessoas', 'Famosos'].includes(r.cat)) return 'Famosos';
   if (r.cat === 'Cultura') return 'Arte';
   if (['Comida', 'Café'].includes(r.cat)) return 'Comida';
-  if (['Viagem', 'Brasil'].includes(r.cat) || topoLocal.normalizeCity(r.cat)) return 'Lugares';
-  if (['Animais', 'Plantas'].includes(r.cat)) return 'Natureza';
+  if (['Viagem', 'Brasil'].includes(r.cat)) return 'Viagens';
+  if (topoLocal.normalizeCity(r.cat)) return 'Lugares';
+  if (r.cat === 'Animais') return 'Animais';
+  if (r.cat === 'Plantas') return 'Natureza';
   if (r.cat === 'Carros') return 'Motores';
-  if (['Esporte', 'Futebol'].includes(r.cat)) return 'Esporte';
-  if (r.cat === 'Tecnologia') return 'Tecnologia';
-  if (r.cat === 'Produtos') return 'Produtos';
+  if (r.cat === 'Produtos') return 'Compras';
   return 'Vida';
 }
 function categoryLabel(r) {
@@ -483,6 +503,8 @@ function categoryLabel(r) {
   if (r.cat === 'TV') return 'TV & Séries';
   if (r.cat === 'Pessoas') return 'Famosos';
   if (r.cat === 'Cotidiano') return 'Vida';
+  if (r.cat === 'Produtos') return 'Compras';
+  if (['Viagem', 'Brasil'].includes(r.cat)) return 'Viagens';
   return r.cat;
 }
 function experienceGroupOf(r) {
@@ -1491,7 +1513,7 @@ function visibleRankings() {
     matched = hasSearch
       ? source.filter((r) => searchMatches(rankingSearchText(r), homeSearch))
       : source;
-  if (hasSearch || isLocalExperience() || activeGroup !== 'Esporte') return matched;
+  if (hasSearch || isLocalExperience() || activeGroup !== 'Futebol') return matched;
   return matched.filter((ranking) =>
     activeFootballSection === 'times'
       ? isClubPlayerRanking(ranking)
@@ -1544,7 +1566,7 @@ function rankingCategoryPath(ranking) {
       topoLocal.cityForRanking(ranking),
       topoLocal.groupForRanking(ranking),
     );
-  if (isClubPlayerRanking(ranking)) return '/categoria/esporte/times';
+  if (isClubPlayerRanking(ranking)) return '/categoria/futebol/times';
   return `/categoria/${generalGroupSlugs[groupOf(ranking)] || 'vida'}`;
 }
 function internalId() {
@@ -2086,10 +2108,10 @@ function bindCategoryControls() {
   bindLocalCityExplorer();
 }
 function footballCategoryTabsHTML() {
-  if (isLocalExperience() || activeGroup !== 'Esporte' || homeSearch) return '';
+  if (isLocalExperience() || activeGroup !== 'Futebol' || homeSearch) return '';
   const teamCount = experienceRankings().filter(isClubPlayerRanking).length,
     teamsActive = activeFootballSection === 'times';
-  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/esporte" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="/categoria/esporte/times" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${fmt(teamCount)}</span></a></nav>`;
+  return `<nav class="footballCategoryTabs" aria-label="Seções de futebol"><a class="${teamsActive ? '' : 'active'}" href="/categoria/futebol" ${teamsActive ? '' : 'aria-current="page"'}>Geral</a><a class="${teamsActive ? 'active' : ''}" href="/categoria/futebol/times" ${teamsActive ? 'aria-current="page"' : ''}>Times <span>${fmt(teamCount)}</span></a></nav>`;
 }
 function renderCategoryHome(visible) {
   const sorted = categorySortedRankings(visible),
@@ -2097,7 +2119,7 @@ function renderCategoryHome(visible) {
     remaining = Math.max(0, sorted.length - shown.length),
     isAll = activeGroup === 'Todos',
     local = isLocalExperience(),
-    teamsSection = !local && activeGroup === 'Esporte' && activeFootballSection === 'times',
+    teamsSection = !local && activeGroup === 'Futebol' && activeFootballSection === 'times',
     preferredCount = visible.length,
     heading = teamsSection ? 'Times' : local && isAll ? `Rankings em ${selectedCity}` : activeGroup,
     kicker = teamsSection
@@ -2129,7 +2151,7 @@ function searchRelevance(r) {
     category = topoLocal.isLocalRanking(r)
       ? `${r.cat} ${topoLocal.groupForRanking(r)} TOPO LOCAL`
       : `${r.cat} ${groupOf(r)} TOPO`,
-    items = (r.opts || []).map((o) => o.label).join(' ');
+    items = r.searchText || (r.opts || []).map((o) => o.label).join(' ');
   if (title.startsWith(needle)) return 4;
   if (searchMatches(r.q, homeSearch)) return 3;
   if (searchMatches(category, homeSearch)) return 2;
@@ -2557,16 +2579,10 @@ function votingModesLoadingHTML() {
 function votingModesErrorHTML() {
   return `<section class="rankingModeLoading error"><strong>Não consegui carregar o Ganha, Fica.</strong><button type="button" data-voting-modes-retry>TENTAR DE NOVO</button></section>`;
 }
-function duelChoiceHTML(option, side) {
+function duelChoiceHTML(option) {
   const incumbent = option.role === 'incumbent',
-    challenger = option.role === 'challenger',
-    role = incumbent ? 'QUEM ESTÁ' : challenger ? 'DESAFIANTE' : `OPÇÃO ${side}`,
-    result = incumbent
-      ? 'CONTINUA SE VENCER'
-      : challenger
-        ? 'TOMA O LUGAR SE VENCER'
-        : 'ESCOLHA QUEM CONTINUA';
-  return `<button class="duelChoice ${incumbent ? 'incumbent' : challenger ? 'challenger' : ''}" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)}"><span>${role}</span><strong>${escapeHTML(option.label)}</strong><small>${result}</small></button>`;
+    challenger = option.role === 'challenger';
+  return `<button class="duelChoice ${incumbent ? 'incumbent' : challenger ? 'challenger' : ''}" type="button" data-duel-choice data-id="${option.optionId}" aria-label="Escolher ${escapeHTML(option.label)} para continuar"><strong>${escapeHTML(option.label)}</strong></button>`;
 }
 function duelShareButtonHTML(pair) {
   if (pair.length !== 2) return '';
@@ -2585,7 +2601,7 @@ function rankingDuelHTML(r) {
     nextActions = rankingFlowActionsHTML(r, 'duelNextActions'),
     duelCard =
       pair.length === 2
-        ? `<section class="rankingDuel" data-duel-pair><div class="duelChoices">${duelChoiceHTML(pair[0], 'A')}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1], 'B')}</div>${duelShareButtonHTML(pair)}<div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div></section>`
+        ? `<section class="rankingDuel" data-duel-pair><div class="duelChoices">${duelChoiceHTML(pair[0])}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1])}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div>${duelShareButtonHTML(pair)}${nextActions}</section>`
         : champion
           ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
           : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2>${nextActions}<div class="duelResultMeta"><span>Esta partida foi encerrada e não reinicia.</span></div></section>`;
@@ -2604,7 +2620,7 @@ function rankingFreeVoteHTML(r, votingOpen = true) {
       ? votingOpen
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
-      : `Até ${viewer.rankingLimit || 20} votos por ranking.`;
+      : `Até ${Math.min(r.opts.length, viewer.rankingLimit || 20)} votos por ranking.`;
   return `<div class="rankingFreeIntro"><strong>Não concorda?</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
 }
 function rankingVotePanelHTML(r, votingOpen = true) {
@@ -4388,7 +4404,7 @@ function showVoteHelp() {
   if (localStorage.getItem('topo_vote_help_seen')) return;
   localStorage.setItem('topo_vote_help_seen', '1');
   showModal(
-    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>${viewer.rankingLimit || 20} opções por ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos aparecem na sua atividade no Meu Topo.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
+    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>20 opções, conforme o ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos aparecem na sua atividade no Meu Topo.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
   );
 }
 function showRegistrationWall() {
@@ -4509,9 +4525,15 @@ function applyVoteResult(optionId, result) {
     return false;
   }
 
+  const previousDirection = Number(option.mine || 0),
+    nextDirection = Number(result.direction || 0),
+    previousVoteCount = myVoteCount(ranking);
   option.score = score;
-  option.mine = Number(result.direction || 0);
+  option.mine = nextDirection;
   option.mineWeight = option.mine === 0 ? 1 : Number(result.weight) === 2 ? 2 : 1;
+  if (previousDirection === 0 && nextDirection !== 0) ranking.myVoteCount = previousVoteCount + 1;
+  else if (previousDirection !== 0 && nextDirection === 0)
+    ranking.myVoteCount = Math.max(0, previousVoteCount - 1);
   ranking.votes = rankingVotes;
   ranking.todayVotes = todayVotes;
   ranking.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition);
@@ -4570,7 +4592,7 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
       return false;
     }
     if (res.status === 409 && result.error === 'ranking_vote_limit') {
-      toast(`Máximo de ${result.limit || 20} votos neste ranking`);
+      toast(`Máximo de ${result.limit || 10} votos neste ranking`);
       return false;
     }
     if (res.status === 409 && result.error === 'ranking_voting_closed') {
@@ -4644,10 +4666,10 @@ function rankingIdeaExamples(item) {
   return item.category === 'A definir' ? [] : examples;
 }
 function moderationRankingReviewHTML(item) {
-  return `<div class="moderationRankingReview"><p><strong>Aprove apenas o nome e a categoria.</strong> Depois eu crio os 20 itens, escolho a foto e publico para você.</p><div><label class="suggestionField"><span>Nome final do ranking</span><input data-ranking-title type="text" minlength="8" maxlength="120" value="${escapeHTML(item.title)}" required></label><label class="suggestionField"><span>Categoria</span><select data-ranking-category required>${moderationCategoryOptions(item.category)}</select></label></div></div>`;
+  return `<div class="moderationRankingReview"><p><strong>Aprove apenas o nome e a categoria.</strong> Depois eu crio os 14 itens, escolho a foto e publico para você.</p><div><label class="suggestionField"><span>Nome final do ranking</span><input data-ranking-title type="text" minlength="8" maxlength="120" value="${escapeHTML(item.title)}" required></label><label class="suggestionField"><span>Categoria</span><select data-ranking-category required>${moderationCategoryOptions(item.category)}</select></label></div></div>`;
 }
 function moderationCreationReadyHTML() {
-  return `<div class="moderationCreationReady"><strong>Pronto para eu criar</strong><span>Nome e categoria aprovados. Você não precisa montar nem revisar o Top 20: eu preparo os 20 itens, escolho a foto e publico.</span></div>`;
+  return `<div class="moderationCreationReady"><strong>Pronto para eu criar</strong><span>Nome e categoria aprovados. Você não precisa montar nem revisar a lista: eu preparo os 14 itens, escolho a foto e publico.</span></div>`;
 }
 function moderationOptionReviewHTML(item) {
   const options = Array.isArray(item.existingOptions) ? item.existingOptions : [],
@@ -4825,7 +4847,7 @@ function bindModerationActions() {
         }
         const message = isOption
           ? `Aprovar “${label}” e incluir no final do ranking com zero pontos?`
-          : `Aprovar “${rankingTitle}” na categoria ${rankingCategory}? Depois eu criarei os 20 itens, a foto e publicarei.`;
+          : `Aprovar “${rankingTitle}” na categoria ${rankingCategory}? Depois eu criarei os 14 itens, a foto e publicarei.`;
         if (!window.confirm(message)) return;
       } else if (decision === 'duplicate') {
         if (!duplicateOptionId) {

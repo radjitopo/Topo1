@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Comédias do cinema</title>
+  <desc id="desc">Arte editorial original da TOPO com filme, holofote e um sorriso.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a91635"/><stop offset="1" stop-color="#22060f"/></linearGradient><radialGradient id="light"><stop stop-color="#ffd58a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="675" fill="url(#bg)"/><circle cx="875" cy="305" r="310" fill="url(#light)"/>
+  <g transform="translate(875 312)" fill="none" stroke="#fff" stroke-width="14" opacity=".38"><circle r="178"/><circle cx="-70" cy="-40" r="24" fill="#fff"/><circle cx="70" cy="-40" r="24" fill="#fff"/><path d="M-100 42Q0 142 100 42" stroke-linecap="round"/></g>
+  <path d="M0 565h1200" stroke="#fff" stroke-opacity=".2" stroke-width="84" stroke-dasharray="64 22"/>
+  <text x="285" y="92" fill="#ffd58a" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="5">TOPO • CINEMA</text>
+  <text x="285" y="306" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="96" font-weight="900">COMÉDIA</text><text x="285" y="398" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="800">QUE NUNCA PERDE A GRAÇA</text>
+  <path d="M285 440h455" stroke="#ffd58a" stroke-width="12"/><text x="285" y="515" fill="#fff" opacity=".75" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="3">RIR TAMBÉM É CRITÉRIO</text>
+</svg>

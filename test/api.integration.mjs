@@ -72,7 +72,13 @@ try {
   assert.equal(bootstrap.body.viewer.rankingLimit, 20);
   assert.ok(bootstrap.body.rankings.every((ranking) => ranking.opts.length >= 3));
 
-  const ranking = bootstrap.body.rankings.find((item) => item.opts.length >= 2);
+  const rankingPreview = bootstrap.body.rankings.find((item) => item.opts.length >= 2);
+  const rankingPage = await request({
+    query: { device_id: deviceId, ranking_id: rankingPreview.id },
+  });
+  assert.equal(rankingPage.statusCode, 200);
+  const ranking = rankingPage.body.rankings.find((item) => item.id === rankingPreview.id);
+  assert.ok(ranking.opts.length >= 14);
   const option = ranking.opts[0];
   const initialCommunityVotes = bootstrap.body.community.votes;
 
@@ -158,7 +164,9 @@ try {
   assert.equal(secondDuel.body.duel.pair[0].optionId, challenger);
   assert.ok(secondDuel.body.duel.pair.every((item) => item.optionId !== pair[1]));
 
-  const afterModes = await request({ query: { device_id: deviceId } });
+  const afterModes = await request({
+    query: { device_id: deviceId, ranking_id: ranking.id },
+  });
   const unchangedOption = afterModes.body.rankings
     .find((item) => item.id === ranking.id)
     .opts.find((item) => item.id === option.id);

@@ -1,5 +1,7 @@
 import { rankingQuestion } from '../ranking-titles.js';
 
+const LOCAL_PUBLIC_OPTION_COUNT = 20;
+
 const images = {
   sushi:
     'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82',
@@ -138,7 +140,7 @@ const ranking = (id, category, title, image, options) => ({
   category,
   title: rankingQuestion(id, title),
   image: editorialImages[id] || images[image],
-  options,
+  options: options.slice(0, LOCAL_PUBLIC_OPTION_COUNT),
 });
 
 const rankings = [
@@ -825,8 +827,10 @@ function validate() {
 
   for (const item of rankings) {
     if (!item.image) throw new Error(`${item.id} não tem imagem válida.`);
-    if (item.options.length < 5) {
-      throw new Error(`${item.id} tem ${item.options.length} opções; o mínimo é 5.`);
+    if (item.options.length !== LOCAL_PUBLIC_OPTION_COUNT) {
+      throw new Error(
+        `${item.id} tem ${item.options.length} opções; o ranking local precisa começar com ${LOCAL_PUBLIC_OPTION_COUNT}.`,
+      );
     }
     if (new Set(item.options).size !== item.options.length) {
       throw new Error(`${item.id} tem opções repetidas.`);
@@ -855,7 +859,7 @@ function sqlStatements() {
     )
     .join(',\n');
 
-  const upsertOptions = `INSERT INTO ranking_options (ranking_id, label, position, baseline_score)\nVALUES\n${optionValues}\nON CONFLICT (ranking_id, position) DO UPDATE SET\n  label = EXCLUDED.label;`;
+  const upsertOptions = `INSERT INTO ranking_options (ranking_id, label, position, baseline_score)\nSELECT incoming.ranking_id, incoming.label, incoming.position, incoming.baseline_score\nFROM (VALUES\n${optionValues}\n) AS incoming(ranking_id, label, position, baseline_score)\nWHERE NOT EXISTS (\n  SELECT 1 FROM ranking_options existing\n  WHERE existing.ranking_id = incoming.ranking_id\n)\nON CONFLICT (ranking_id, position) DO UPDATE SET\n  label = EXCLUDED.label;`;
 
   const legacyImageValues = legacyEditorialIds
     .map((id) => `(${q(id)}, ${q(editorialImages[id])})`)

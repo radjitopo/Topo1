@@ -4,5 +4,6 @@ data/
 editorial-*.js
 index.html
 migrations/
+covers/
 og-topo.svg
 package-lock.json
