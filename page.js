@@ -49,6 +49,17 @@ function truncate(value, limit) {
   return `${text.slice(0, Math.max(1, limit - 1)).trimEnd()}…`;
 }
 
+function rankingTitleSizeClass(value) {
+  const title = String(value || '')
+      .trim()
+      .replace(/\s+/g, ' '),
+    longestWord = title.split(' ').reduce((longest, word) => Math.max(longest, word.length), 0);
+  if (title.length >= 96 || longestWord >= 28) return ' rankingTitleExtraLong';
+  if (title.length >= 70 || longestWord >= 22) return ' rankingTitleLong';
+  if (title.length >= 48 || longestWord >= 18) return ' rankingTitleMedium';
+  return '';
+}
+
 function formatNumber(value) {
   return Number(value || 0).toLocaleString('pt-BR');
 }
@@ -600,7 +611,7 @@ export function renderRankingPage(template, ranking, sharedDuel = null) {
     )
     .join('');
   const content = `<nav class="seoBreadcrumb" aria-label="Navegação estrutural"><a href="/">TOPO</a><span>›</span><a href="${categoryPath}">${escapeHtml(categoryName)}</a></nav>
-    <article class="rank rankingMain seoRankingMain" id="votar">
+    <article class="rank rankingMain seoRankingMain${rankingTitleSizeClass(question)}" id="votar">
       <div class="rankHead"><a class="category" href="${categoryPath}">${escapeHtml(categoryName)}</a><span class="total">Top ${options.length}</span></div>
       <h1>${escapeHtml(question)}</h1>
       ${ranking.imageUrl ? `<div class="imageStrip"><img src="${escapeHtml(ranking.imageUrl)}" alt="${escapeHtml(question)}" decoding="async"></div>` : ''}

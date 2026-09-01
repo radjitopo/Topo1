@@ -28,6 +28,17 @@ function rotateDeviceId() {
   localStorage.setItem(storeKey, deviceId);
   return deviceId;
 }
+
+function rankingTitleSizeClass(value) {
+  const title = String(value || '')
+      .trim()
+      .replace(/\s+/g, ' '),
+    longestWord = title.split(' ').reduce((longest, word) => Math.max(longest, word.length), 0);
+  if (title.length >= 96 || longestWord >= 28) return ' rankingTitleExtraLong';
+  if (title.length >= 70 || longestWord >= 22) return ' rankingTitleLong';
+  if (title.length >= 48 || longestWord >= 18) return ' rankingTitleMedium';
+  return '';
+}
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 10;
@@ -3484,7 +3495,7 @@ function renderInternal() {
     ? `<div class="imageStrip ${vip ? 'vipRankingCover' : ''}"><img data-ranking-image src="${escapeHTML(r.img)}" alt="${escapeHTML(r.q)}" decoding="async"></div>`
     : '';
   const rankingHead = `<div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>`,
-    compactHero = `<div class="rankingCompactHero${cover ? '' : ' rankingCompactHeroNoImage'}">${cover}<div class="rankingCompactHeroCopy">${rankingHead}<h1>${escapeHTML(r.q)}</h1>${description}</div></div>`;
+    compactHero = `<div class="rankingCompactHero${cover ? '' : ' rankingCompactHeroNoImage'}${rankingTitleSizeClass(r.q)}">${cover}<div class="rankingCompactHeroCopy">${rankingHead}<h1>${escapeHTML(r.q)}</h1>${description}</div></div>`;
   feed.innerHTML = `${ownerBar}<article class="rank rankingMain" id="votar">${compactHero}${rankingPersonalActionsHTML(r, 'desktop')}${closedNotice}${rankingPersonalActionsHTML(r, 'mobile')}${rankingOptionPromotionHTML(r)}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
   syncRankingContinuationFlow();
   if (r.vipOwned) {

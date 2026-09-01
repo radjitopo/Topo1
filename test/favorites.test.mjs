@@ -94,7 +94,7 @@ test('ranking actions stay in one mobile row without the removed stats strip', a
   assert.match(app, /rankingPersonalActionsHTML\(r, placement = 'desktop'\)/);
   assert.match(
     compactApp,
-    /compactHero=`<divclass="rankingCompactHero\$\{cover\?'':'rankingCompactHeroNoImage'\}">\$\{cover\}<divclass="rankingCompactHeroCopy">\$\{rankingHead\}<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{description\}<\/div><\/div>`/,
+    /compactHero=`<divclass="rankingCompactHero\$\{cover\?'':'rankingCompactHeroNoImage'\}\$\{rankingTitleSizeClass\(r\.q\)\}">\$\{cover\}<divclass="rankingCompactHeroCopy">\$\{rankingHead\}<h1>\$\{escapeHTML\(r\.q\)\}<\/h1>\$\{description\}<\/div><\/div>`/,
   );
   assert.match(
     compactApp,
@@ -121,6 +121,14 @@ test('ranking actions stay in one mobile row without the removed stats strip', a
   assert.match(
     compactStyle,
     /body\.popElectric\.rankingPage\.rankingCompactHeroh1\{[^}]*font-size:clamp\(24px,6\.8vw,30px\)/,
+  );
+  assert.match(
+    compactStyle,
+    /body\.popElectric\.rankingPage\.rankingCompactHero\.rankingTitleLongh1,[^{]*\{[^}]*font-size:clamp\(18px,5vw,22px\)/,
+  );
+  assert.match(
+    compactStyle,
+    /body\.popElectric\.rankingPage\.rankingCompactHeroh1\{[^}]*overflow-wrap:anywhere[^}]*hyphens:auto/,
   );
   assert.match(
     compactStyle,
