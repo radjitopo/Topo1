@@ -8290,6 +8290,253 @@ body.popElectric .rankingPromotionActions .main {
   color: var(--clean-paper);
 }
 
+/* TOPO LOCAL — mesma direção editorial limpa do restante do site */
+body.popElectric.localMode .categoryLandingHead.localCatalogHead {
+  margin: 14px 0 18px;
+  border: 0;
+  border-top: 4px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  box-shadow: none;
+  padding: 20px 0 18px;
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead .portalKicker {
+  color: var(--clean-sage);
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead h1 {
+  margin: 5px 0 7px;
+  color: var(--clean-ink);
+  font:
+    850 clamp(40px, 5vw, 58px) / 0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    600 13px/1.42 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead .categoryLandingCount {
+  border-color: var(--clean-line);
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead .categoryLandingCount strong {
+  color: var(--clean-ink);
+  font:
+    850 34px/0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric.localMode .categoryLandingHead.localCatalogHead .categoryLandingCount span {
+  color: var(--clean-muted);
+}
+
+body.popElectric.localMode .categoryLoadMore {
+  padding: 18px 0 0;
+}
+
+body.popElectric.localMode .categoryLoadMore button {
+  min-height: 42px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 0 18px;
+  font:
+    850 12px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.localMode .categoryLoadMore button:hover,
+body.popElectric.localMode .categoryLoadMore button:focus-visible {
+  border-color: var(--clean-ink);
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric.localMode .categoryLoadMore span {
+  color: var(--clean-muted);
+  font-size: 12px;
+}
+
+body.popElectric.localMode .localCatalogFooter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 24px;
+  margin: 30px 0 0;
+  border: 0;
+  border-top: 4px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: var(--clean-soft);
+  box-shadow: none;
+  padding: 22px 24px;
+}
+
+body.popElectric.localMode .localCatalogFooter .portalKicker {
+  color: var(--clean-sage);
+}
+
+body.popElectric.localMode .localCatalogFooter h2 {
+  margin: 5px 0 6px;
+  color: var(--clean-ink);
+  font:
+    850 clamp(29px, 3.4vw, 40px) / 0.96 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric.localMode .localCatalogFooterCopy p {
+  color: var(--clean-muted);
+  font:
+    600 13px/1.42 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.localMode .localExploreButton {
+  min-height: 44px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 0 18px;
+  font:
+    850 12px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.localMode .localExploreButton:hover,
+body.popElectric.localMode .localExploreButton:focus-visible {
+  border-color: var(--clean-sage);
+  background: var(--clean-sage);
+  color: var(--clean-paper);
+}
+
+body.popElectric.localMode .localDataCredit {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    550 12px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.localMode .localDataCredit a {
+  color: var(--clean-ink);
+  text-decoration-color: var(--clean-sage);
+}
+
+body.popElectric.localMode .localCityOptions {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  border-top: 1px solid var(--clean-line);
+  padding-top: 16px;
+}
+
+body.popElectric.localMode .localCityOptions :is(button, a) {
+  min-height: 46px;
+  border: 1px solid var(--clean-line);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+body.popElectric.localMode .localCityOptions :is(button, a):hover,
+body.popElectric.localMode .localCityOptions :is(button, a):focus-visible {
+  border-color: var(--clean-ink);
+  background: var(--clean-paper);
+}
+
+body.popElectric.localMode .localCityOptions span {
+  color: var(--clean-muted);
+  font-size: 12px;
+}
+
+body.popElectric.localMode .end {
+  color: var(--clean-muted);
+}
+
+@media (max-width: 700px) {
+  body.popElectric.localMode .categoryLandingHead.localCatalogHead {
+    gap: 0 12px;
+    margin: 8px 0 14px;
+    padding: 13px 0 12px;
+  }
+
+  body.popElectric.localMode .categoryLandingHead.localCatalogHead h1 {
+    margin: 3px 0 5px;
+    font-size: clamp(32px, 9vw, 38px);
+    line-height: 0.96;
+  }
+
+  body.popElectric.localMode .categoryLandingHead.localCatalogHead p {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  body.popElectric.localMode .categoryLandingHead.localCatalogHead .categoryLandingCount {
+    min-width: 52px;
+    margin-top: 16px;
+    padding-left: 10px;
+  }
+
+  body.popElectric.localMode .categoryLandingHead.localCatalogHead .categoryLandingCount strong {
+    font-size: 24px;
+  }
+
+  body.popElectric.localMode .localCatalogFooter {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 13px;
+    margin-top: 24px;
+    padding: 18px 16px;
+  }
+
+  body.popElectric.localMode .localCatalogFooter h2 {
+    font-size: clamp(28px, 8.2vw, 34px);
+  }
+
+  body.popElectric.localMode .localCatalogFooterCopy p {
+    font-size: 12px;
+  }
+
+  body.popElectric.localMode .localExploreButton {
+    width: 100%;
+  }
+
+  body.popElectric.localMode .localDataCredit {
+    font-size: 12px;
+  }
+
+  body.popElectric.localMode .localCityOptions {
+    width: 100%;
+    grid-template-columns: 1fr;
+    padding-top: 13px;
+  }
+}
+
 body.popElectric .rankingPromotionActions a,
 body.popElectric .rankingPromotionActions button {
   min-height: 44px;
