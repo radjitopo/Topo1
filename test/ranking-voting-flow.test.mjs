@@ -123,8 +123,8 @@ const promotionLauncher = extractTopLevelDeclaration(app, 'rankingOptionPromotio
 assert.ok(promotionLauncher, 'the automatic option promotion launcher must remain testable');
 assert.match(
   compactSource(promotionLauncher),
-  /ESTÁNESTERANKING\?/,
-  'local rankings must invite listed people and places to promote their option',
+  /TEMUMFAVORITO\?[\s\S]*Chamesuatorcida/,
+  'local rankings must invite every supporter to rally their own audience',
 );
 assert.match(
   compactSource(promotionLauncher),
@@ -194,10 +194,15 @@ assert.match(
   /rankingPromotionWhatsApp[\s\S]*rankingPromotionCopy/,
   'the promotion dialog must keep WhatsApp and text-link copying',
 );
+assert.match(
+  compactPromotionDialog,
+  /Apoieseufavorito[\s\S]*Quemvocêquerapoiar\?/,
+  'the promotion dialog must welcome supporters instead of requiring representation',
+);
 assert.doesNotMatch(
   compactPromotionDialog,
-  /rankingPromotionShare|COMPARTILHARAGORA|rankingPromotionPreview|Instagram/,
-  'the promotion dialog must not show image or generic sharing controls',
+  /Quemvocêrepresenta|Divulguesuaparticipação|rankingPromotionShare|COMPARTILHARAGORA|rankingPromotionPreview|Instagram/,
+  'the promotion dialog must not show representative-only copy, image or generic sharing controls',
 );
 assert.match(
   compactApp,

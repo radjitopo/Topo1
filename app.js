@@ -1693,7 +1693,7 @@ function rankingOptionPromotionText(r, option) {
 }
 function rankingOptionPromotionHTML(r) {
   if (r.vip || !r.opts?.length || !topoLocal.isLocalRanking(r)) return '';
-  return '<button class="rankingOptionPromotionLauncher" type="button" data-ranking-option-promotion aria-haspopup="dialog"><span>ESTÁ NESTE RANKING?</span><strong>Divulgue sua opção</strong><b aria-hidden="true">→</b></button>';
+  return '<button class="rankingOptionPromotionLauncher" type="button" data-ranking-option-promotion aria-haspopup="dialog"><span>TEM UM FAVORITO?</span><strong>Chame sua torcida</strong><b aria-hidden="true">→</b></button>';
 }
 function rankingPromotionWrapLines(context, text, maxWidth) {
   const words = String(text || '')
@@ -1931,7 +1931,7 @@ function openRankingOptionPromotion(r) {
       )
       .join('');
   showModal(
-    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha sua opção e envie pelo WhatsApp.</p><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto e link</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><a class="main" id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div></div></div>`,
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Apoie seu favorito</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha quem você quer apoiar e envie pelo WhatsApp.</p><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você quer apoiar?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto e link</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><a class="main" id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div></div></div>`,
   );
   const layer = document.getElementById('modalLayer'),
     card = layer.querySelector('.modalCard'),
