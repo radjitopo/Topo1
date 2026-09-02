@@ -68,6 +68,7 @@ test('clicking either allowed name opens the live official Google Maps panel', a
   assert.match(editorial, /\.googlePlaceTrigger/);
   assert.match(editorial, /\.googlePlaceModalCard/);
   assert.match(editorial, /\.googlePlaceRatingCard/);
+  assert.match(editorial, /\.googlePlaceModalHead\s*\{[^}]*height: auto/s);
   assert.match(editorial, /height: clamp\(180px, 28dvh, 220px\)/);
   assert.match(template, /editorial-clean\.css[^"\n]*google-place-profiles/);
   assert.match(template, /app\.js[^"\n]*google-place-profiles/);

@@ -8382,6 +8382,8 @@ body.popElectric .modalCard.googlePlaceModalCard {
 }
 
 body.popElectric .googlePlaceModalHead {
+  min-height: 0;
+  height: auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
