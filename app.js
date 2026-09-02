@@ -2686,7 +2686,7 @@ function rankingFreeVoteHTML(r, votingOpen = true) {
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
       : `Até ${Math.min(r.opts.length, viewer.rankingLimit || 20)} votos por ranking.`;
-  return `<div class="rankingFreeIntro"><strong>Não concorda?</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
+  return `<div class="rankingFreeIntro"><strong>Agora é com você!</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
 }
 function rankingVotePanelHTML(r, votingOpen = true) {
   if (!votingOpen) return rankingFreeVoteHTML(r, false);

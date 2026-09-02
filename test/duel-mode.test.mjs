@@ -47,7 +47,7 @@ test('Voto Livre starts without a black bar and explains the stronger duel', asy
   const introRule =
     style.match(/body\.popElectric\.rankingPage \.rankingFreeIntro \{([^}]*)\}/)?.[1] || '';
 
-  assert.match(freeVote, /Não concorda\?/);
+  assert.match(freeVote, /Agora é com você!/);
   assert.match(freeVote, /Duelo do Topo conta mais/);
   assert.doesNotMatch(introRule, /border-top/);
   assert.match(style, /\.rankingFreeIntro > strong \{[\s\S]*?font-size: 18px;/);
