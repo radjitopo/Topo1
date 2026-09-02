@@ -2242,7 +2242,7 @@ body.popElectric.rankingPage .total {
 }
 
 body.popElectric.rankingPage .rank.rankingMain {
-  margin: 0 0 54px;
+  margin: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -2500,8 +2500,8 @@ body.popElectric.rankingPage .option.previewFocus {
 
 body.popElectric.rankingPage .rankFoot {
   margin: 13px 0 0;
-  border-bottom: 1px solid var(--clean-ink);
-  padding: 0 0 16px;
+  border-bottom: 0;
+  padding: 0;
   color: var(--clean-muted);
   font:
     500 10px/1.35 Arial,
@@ -2550,9 +2550,9 @@ body.popElectric.rankingPage .allItemsToggle > b {
 }
 
 body.popElectric.rankingPage .rankingSuggestion {
-  margin-top: 34px;
-  border-top: 1px solid var(--clean-ink);
-  padding: 24px 0 0;
+  margin-top: 30px;
+  border-top: 0;
+  padding: 0;
 }
 
 body.popElectric.rankingPage .rankingSuggestion h3 {
@@ -2575,7 +2575,16 @@ body.popElectric.rankingPage .commentField textarea {
   border-radius: 0;
 }
 
-body.popElectric.rankingPage .rankingContinuation,
+body.popElectric.rankingPage .rankingContinuation {
+  margin: 0 0 54px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--clean-ink);
+  padding: 0;
+}
+
 body.popElectric.rankingPage .contentSection,
 body.popElectric.rankingPage .commentsSection {
   margin: 0 0 54px;

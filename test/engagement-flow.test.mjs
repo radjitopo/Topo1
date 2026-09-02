@@ -5,9 +5,11 @@ import { compactSource } from './source-helpers.mjs';
 const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
 const api = await readFile(new URL('../api.js', import.meta.url), 'utf8');
 const style = await readFile(new URL('../style.css', import.meta.url), 'utf8');
+const editorialStyle = await readFile(new URL('../editorial-clean.css', import.meta.url), 'utf8');
 const compactApp = compactSource(app);
 const compactApi = compactSource(api);
 const compactStyle = compactSource(style);
+const compactEditorialStyle = compactSource(editorialStyle);
 
 assert.match(compactApp, /functionnextRankingFor\(r\)/, 'ranking pages must choose a next ranking');
 assert.match(
@@ -84,5 +86,25 @@ assert.match(
 );
 assert.match(compactStyle, /\.rankingContinuation\{/, 'ranking continuation must be styled');
 assert.match(compactStyle, /\.rankingFlowActions\{/, 'next and random actions must be styled');
+assert.match(
+  compactEditorialStyle,
+  /body\.popElectric\.rankingPage\.rank\.rankingMain\{margin:0;/,
+  'the ranking and its continuation must not be split by empty space',
+);
+assert.match(
+  compactEditorialStyle,
+  /body\.popElectric\.rankingPage\.rankFoot\{[^}]*border-bottom:0;[^}]*padding:0;/,
+  'the free-vote footer must not add a decorative divider',
+);
+assert.match(
+  compactEditorialStyle,
+  /body\.popElectric\.rankingPage\.rankingSuggestion\{[^}]*border-top:0;[^}]*padding:0;/,
+  'the suggestion form must follow the results without another divider',
+);
+assert.match(
+  compactEditorialStyle,
+  /body\.popElectric\.rankingPage\.rankingContinuation\{[^}]*border:0;[^}]*padding:0;/,
+  'related rankings must join the suggestion area without a thick divider',
+);
 
 console.log('Engagement flow checks passed.');
