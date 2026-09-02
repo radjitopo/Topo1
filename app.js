@@ -1749,8 +1749,7 @@ function rankingOptionPromotionCanvas(r, option) {
   canvas.height = 1350;
   const context = canvas.getContext('2d'),
     ink = '#0a0a0a',
-    paper = '#f5f4ed',
-    lime = '#c8f433',
+    paper = '#ffffff',
     coral = '#ff513f',
     contentX = 72,
     contentWidth = 936,
@@ -1759,15 +1758,15 @@ function rankingOptionPromotionCanvas(r, option) {
 
   context.fillStyle = ink;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = lime;
-  context.fillRect(0, 0, 18, canvas.height);
+  context.fillStyle = coral;
+  context.fillRect(0, 0, 14, canvas.height);
 
   context.font = '900 92px Arial, Helvetica, sans-serif';
   context.fillStyle = '#ffffff';
   context.textBaseline = 'top';
   context.fillText('TOPO', contentX, 48);
   const logoWidth = context.measureText('TOPO').width;
-  context.fillStyle = lime;
+  context.fillStyle = coral;
   context.font = '900 56px Arial, Helvetica, sans-serif';
   context.fillText('▲', contentX + logoWidth + 9, 68);
   context.fillStyle = '#ffffff';
@@ -1775,7 +1774,7 @@ function rankingOptionPromotionCanvas(r, option) {
   context.fillText('TUDO VIRA RANKING.', contentX + 4, 148);
 
   context.textAlign = 'right';
-  context.fillStyle = lime;
+  context.fillStyle = coral;
   context.font = '900 25px Arial, Helvetica, sans-serif';
   context.fillText('TOPO LOCAL', contentX + contentWidth, 66);
   context.fillStyle = '#ffffff';
@@ -1786,9 +1785,9 @@ function rankingOptionPromotionCanvas(r, option) {
   context.fillStyle = coral;
   context.fillRect(contentX, 201, contentWidth, 10);
 
-  context.fillStyle = lime;
+  context.fillStyle = coral;
   context.fillRect(contentX, 252, 510, 60);
-  context.fillStyle = ink;
+  context.fillStyle = '#ffffff';
   context.font = '900 27px Arial, Helvetica, sans-serif';
   context.fillText('ESTAMOS CONCORRENDO', contentX + 24, 268);
   const questionLayout = drawRankingPromotionText(context, r.q, {
@@ -1813,8 +1812,8 @@ function rankingOptionPromotionCanvas(r, option) {
   context.font = '900 27px Arial, Helvetica, sans-serif';
   context.fillText('VOTE EM', contentX + 22, optionPanelY + 62);
   context.save();
-  context.globalAlpha = 0.28;
-  context.fillStyle = lime;
+  context.globalAlpha = 0.06;
+  context.fillStyle = ink;
   context.textAlign = 'right';
   context.font = '900 390px Arial, Helvetica, sans-serif';
   context.fillText('↑', contentX + contentWidth, optionPanelY + 120);
@@ -1835,17 +1834,20 @@ function rankingOptionPromotionCanvas(r, option) {
   context.font = '800 22px Arial, Helvetica, sans-serif';
   context.fillText('SUA CIDADE ESCOLHE. TODO VOTO CONTA.', contentX, 1070);
 
-  context.fillStyle = lime;
-  context.fillRect(0, 1120, canvas.width, 230);
-  context.fillStyle = ink;
+  context.fillStyle = coral;
+  context.fillRect(0, 1120, canvas.width, 12);
+  context.fillStyle = '#ffffff';
   context.font = '900 55px Arial, Helvetica, sans-serif';
   context.fillText('VOTE NA GENTE', contentX, 1168);
   context.textAlign = 'right';
+  context.fillStyle = coral;
   context.font = '900 100px Arial, Helvetica, sans-serif';
   context.fillText('→', contentX + contentWidth, 1141);
   context.textAlign = 'left';
+  context.fillStyle = '#ffffff';
   context.font = '900 25px Arial, Helvetica, sans-serif';
   context.fillText('somostopo.com.br', contentX, 1262);
+  context.fillStyle = '#b7b7b7';
   context.font = '800 18px Arial, Helvetica, sans-serif';
   context.fillText('ABRA O LINK E TOQUE NA SETA PARA CIMA', contentX + 260, 1268);
   return canvas;
@@ -1929,7 +1931,7 @@ function openRankingOptionPromotion(r) {
       )
       .join('');
   showModal(
-    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha quem você representa e compartilhe um card pronto para Instagram e WhatsApp.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="6" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR AGORA</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, compartilhe o card e use o adesivo de link com o endereço copiado.</small></div></div></div>`,
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha sua opção e compartilhe no Instagram ou WhatsApp.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR AGORA</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, use o adesivo de link com o endereço copiado.</small></div></div></div>`,
   );
   const layer = document.getElementById('modalLayer'),
     card = layer.querySelector('.modalCard'),

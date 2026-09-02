@@ -188,30 +188,41 @@ assert.match(
 );
 
 const promotionCanvas = extractTopLevelDeclaration(app, 'rankingOptionPromotionCanvas');
+const compactPromotionCanvas = compactSource(promotionCanvas);
 assert.match(
-  compactSource(promotionCanvas),
+  compactPromotionCanvas,
   /canvas\.width=1080;canvas\.height=1350/,
   'the generated card must use the Instagram-friendly 4:5 format',
 );
 assert.match(
-  compactSource(promotionCanvas),
+  compactPromotionCanvas,
   /city=topoLocal\.cityForRanking\(r\)\|\|'Suacidade'/,
   'the card must identify the Topo Local city',
 );
 assert.match(
-  compactSource(promotionCanvas),
+  compactPromotionCanvas,
   /optionPanelY=Math\.max\(530,Math\.ceil\(questionBottom\+55\)\)/,
   'the option panel must follow the question instead of leaving a fixed empty block',
 );
 assert.doesNotMatch(
-  compactSource(promotionCanvas),
+  compactPromotionCanvas,
   /fillRect\(0,790,canvas\.width,410\)/,
   'the old fixed layout with a large empty area must not return',
 );
 assert.match(
-  compactSource(promotionCanvas),
+  compactPromotionCanvas,
   /VOTENAGENTE[\s\S]*ABRAOLINKETOQUENASETAPARACIMA/,
   'the card must end with a clear voting call to action',
+);
+assert.doesNotMatch(
+  compactPromotionCanvas,
+  /lime|#c8f433/,
+  'the promotion card must stay sober without the lime accent',
+);
+assert.match(
+  compactPromotionCanvas,
+  /coral='#ff513f'[\s\S]*fillRect\(0,1120,canvas\.width,12\)/,
+  'coral must be limited to restrained accents in the black-and-white card',
 );
 const promotionShare = extractTopLevelDeclaration(app, 'shareRankingOptionCard');
 assert.match(
@@ -264,6 +275,16 @@ assert.match(
   compactEditorial,
   /body\.popElectric\.modalCard\.rankingPromotionModalCard\{/,
   'the card generator must fit inside the existing modal layer',
+);
+assert.match(
+  compactEditorial,
+  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.rankingPromotionModalGrid\{grid-template-columns:minmax\(92px,0\.58fr\)minmax\(0,1\.42fr\);gap:10px/,
+  'phones must show a small card preview beside the controls instead of hiding the actions below it',
+);
+assert.match(
+  compactEditorial,
+  /body\.popElectric\.rankingPromotionActionsbutton:hover[\s\S]*background:var\(--clean-coral\);color:var\(--clean-paper\)/,
+  'promotion actions must use coral instead of lime for emphasis',
 );
 
 assert.match(
