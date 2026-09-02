@@ -4976,6 +4976,58 @@ async function rankingVotingModes(req, res) {
   return json(res, 200, { ok: true, votingOpen, ...modes, viewer: currentViewer });
 }
 
+async function resetDuel(req, res, body) {
+  const deviceId = String(body.device_id || '');
+  const rankingId = String(body.ranking_id || '').trim();
+  const context = await rankingVotingContext(req, res, deviceId, rankingId, true);
+  if (!context) return;
+
+  const userId = context.user?.id || null;
+  const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
+  const deleteSession = userId
+    ? sql.query(
+        `
+          DELETE FROM ranking_duel_sessions session
+          WHERE session.ranking_id = $1
+            AND session.user_id = $2::uuid
+            AND session.completed = true
+          RETURNING session.id
+        `,
+        [rankingId, userId],
+      )
+    : sql.query(
+        `
+          DELETE FROM ranking_duel_sessions session
+          WHERE session.ranking_id = $1
+            AND session.user_id IS NULL
+            AND session.device_id = $2
+            AND session.completed = true
+          RETURNING session.id
+        `,
+        [rankingId, deviceId],
+      );
+  const transaction = await sql.transaction([
+    sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1::text, 37))', [
+      `${rankingId}:${ownerKey}`,
+    ]),
+    deleteSession,
+  ]);
+
+  if (!transaction[1]?.[0]) {
+    const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
+    return json(res, 409, {
+      error: modes.duel.sessionId ? 'duel_not_completed' : 'duel_not_found',
+      ...modes,
+    });
+  }
+
+  return json(res, 200, {
+    ok: true,
+    duelReset: true,
+    viewer: await viewerFor(context.user, deviceId, false, context.ranking.isVip === true),
+  });
+}
+
 async function saveTop3(req, res, body) {
   const deviceId = String(body.device_id || '');
   const rankingId = String(body.ranking_id || '').trim();
@@ -5746,6 +5798,7 @@ export default async function handler(req, res) {
         if (action === 'favorites') return addFavorite(req, res, body);
         if (action === 'favorite-share') return shareFavorites(req, res);
         if (action === 'ranking-duel') return saveDuel(req, res, body);
+        if (action === 'ranking-duel-reset') return resetDuel(req, res, body);
         if (action === 'comments') return writeComment(req, res, body);
         if (action === 'name-reports') return createNameReport(req, res, body);
         if (action === 'notifications') return notifications(req, res, body);

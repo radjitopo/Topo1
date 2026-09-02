@@ -10,6 +10,7 @@ const selected = [
   'rankingNeedsParticipation',
   'rankingSequenceCompare',
   'nextRankingFor',
+  'randomGeneralRankingFor',
   'randomRankingFor',
 ].map((name) => extractTopLevelDeclaration(source, name));
 
@@ -26,9 +27,12 @@ function navigationContext(random = 0) {
       function experienceGroupOf(ranking) { return ranking.group; }
       function experienceGroupNames() { return ['Todos', 'Esporte', 'Música', 'Cinema']; }
       function isClubPlayerRanking(ranking) { return ranking.team === true; }
+      const topoLocal = { isLocalRanking: (ranking) => ranking.local === true };
+      let rankings = [];
       ${selected.join('\n')}
       globalThis.nextRankingForTest = nextRankingFor;
       globalThis.randomRankingForTest = randomRankingFor;
+      globalThis.setAllRankings = (value) => { rankings = value; };
     `,
     context,
   );
@@ -94,4 +98,32 @@ test('club-player rankings never enter next or random continuation', () => {
   context.inputRankings[2].duelCompleted = true;
   assert.equal(context.nextRankingForTest(current), null);
   assert.equal(context.randomRankingForTest(current), null);
+});
+
+test('finishing a local city continues in a general TOPO ranking, never another city', () => {
+  const context = navigationContext();
+  const current = ranking('cafe-floripa', 'Café/Cafeteria', 1, {
+      local: true,
+      duelCompleted: true,
+    }),
+    completedInFloripa = ranking('pizza-floripa', 'Pizza', 2, {
+      local: true,
+      duelCompleted: true,
+    }),
+    anotherCity = ranking('cafe-sao-paulo', 'Café/Cafeteria', 3, { local: true }),
+    teamRanking = ranking('jogadores-time', 'Esporte', 4, { team: true }),
+    votedGeneral = ranking('cinema-votado', 'Cinema', 5, { opts: [{ mine: 1 }] }),
+    pendingGeneral = ranking('musica-pendente', 'Música', 6);
+  context.inputRankings = [current, completedInFloripa];
+  context.setAllRankings([
+    current,
+    completedInFloripa,
+    anotherCity,
+    teamRanking,
+    votedGeneral,
+    pendingGeneral,
+  ]);
+
+  assert.equal(context.nextRankingForTest(current).id, 'musica-pendente');
+  assert.equal(context.randomRankingForTest(current).id, 'musica-pendente');
 });

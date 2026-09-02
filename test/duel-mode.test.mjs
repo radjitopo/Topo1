@@ -90,7 +90,7 @@ test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 4 po
   assert.doesNotMatch(api, /action === 'ranking-top3'/);
 });
 
-test('each person gets one stable random run and previous winners keep their hidden points', async () => {
+test('each person keeps one active stable run and previous winners keep their hidden points', async () => {
   const [api, winnerMigration, singlePlayMigration] = await Promise.all([
     readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('migrations/20260829_winner_stays.sql', root), 'utf8'),
@@ -114,6 +114,30 @@ test('each person gets one stable random run and previous winners keep their hid
   assert.match(singlePlayMigration, /ADD COLUMN IF NOT EXISTS order_seed/);
   assert.match(winnerMigration, /ranking_duel_session_user_ranking_unique_idx/);
   assert.match(winnerMigration, /ranking_duel_session_device_ranking_unique_idx/);
+});
+
+test('a completed duel can be restarted by replacing only its previous duel points', async () => {
+  const [api, app] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('app.js', root), 'utf8'),
+  ]);
+  const reset = extractTopLevelDeclaration(api, 'resetDuel');
+  const restart = extractTopLevelDeclaration(app, 'restartDuel');
+  const duel = extractTopLevelDeclaration(app, 'rankingDuelHTML');
+
+  assert.ok(reset, 'the duel reset endpoint must remain testable');
+  assert.match(reset, /DELETE FROM ranking_duel_sessions/);
+  assert.match(reset, /session\.completed = true/);
+  assert.doesNotMatch(reset, /DELETE FROM votes/);
+  assert.doesNotMatch(reset, /DELETE FROM user_double_votes/);
+  assert.match(api, /action === 'ranking-duel-reset'/);
+
+  assert.ok(restart, 'the duel restart client action must remain testable');
+  assert.match(restart, /ranking-duel-reset/);
+  assert.match(restart, /rankingVotingState = null/);
+  assert.match(restart, /await load\(\)/);
+  assert.match(duel, /data-duel-restart>REFAZER DUELO/);
+  assert.doesNotMatch(duel, /não reinicia/i);
 });
 
 test('Ganha, Fica hides its points, records the personal winner and stays usable on mobile', async () => {
@@ -196,7 +220,8 @@ test('a completed duel puts the next rankings before the small Meu Topo link', a
   assert.match(flow, /Próximo ranking/);
   assert.match(flow, /Ranking aleatório/);
   assert.match(duel, /rankingFlowActionsHTML\(r, 'duelNextActions'\)/);
-  assert.match(duel, /Seu vencedor:[\s\S]*?<\/h2>\$\{nextActions\}<div class="duelResultMeta">/);
+  assert.match(duel, /Seu vencedor:[\s\S]*?data-duel-restart>REFAZER DUELO<\/button>/);
+  assert.match(duel, /REFAZER DUELO[\s\S]*?\$\{nextActions\}<div class="duelResultMeta">/);
   assert.match(duel, /Ver no Meu Topo →/);
   assert.doesNotMatch(duel, /IR PARA OUTRO RANKING/);
   assert.match(style, /\.duelNextActions/);

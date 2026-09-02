@@ -2448,7 +2448,21 @@ function nextRankingFor(r) {
     if (next) return next;
   }
 
-  return currentGroupRankings.slice(0, Math.max(0, currentIndex)).find(eligible) || null;
+  return (
+    currentGroupRankings.slice(0, Math.max(0, currentIndex)).find(eligible) ||
+    randomGeneralRankingFor(r)
+  );
+}
+function randomGeneralRankingFor(r) {
+  if (!topoLocal.isLocalRanking(r)) return null;
+  const pool = rankings.filter(
+    (candidate) =>
+      !candidate.vip &&
+      !topoLocal.isLocalRanking(candidate) &&
+      !isClubPlayerRanking(candidate) &&
+      rankingNeedsParticipation(candidate),
+  );
+  return pool[Math.floor(Math.random() * pool.length)] || null;
 }
 function randomRankingFor(r) {
   const pool = rankingsInSameExperience(r).filter(
@@ -2457,7 +2471,7 @@ function randomRankingFor(r) {
       !isClubPlayerRanking(candidate) &&
       rankingNeedsParticipation(candidate),
   );
-  return pool[Math.floor(Math.random() * pool.length)] || null;
+  return pool[Math.floor(Math.random() * pool.length)] || randomGeneralRankingFor(r);
 }
 function relatedCardsHTML(rels) {
   return rels
@@ -2471,10 +2485,13 @@ function rankingFlowActionsHTML(r, extraClass = '') {
   const next = nextRankingFor(r),
     random = randomRankingFor(r),
     sameCategory = next && experienceGroupOf(next) === experienceGroupOf(r),
+    leavesLocal = next && topoLocal.isLocalRanking(r) && !topoLocal.isLocalRanking(next),
     nextHint = next
-      ? sameCategory
-        ? `${categoryLabel(next)} · ainda não concluído`
-        : `${categoryLabel(next)} · próxima categoria`
+      ? leavesLocal
+        ? `${categoryLabel(next)} · outro ranking do TOPO`
+        : sameCategory
+          ? `${categoryLabel(next)} · ainda não concluído`
+          : `${categoryLabel(next)} · próxima categoria`
       : 'Continuar descobrindo',
     randomHint = 'Uma surpresa ainda não concluída',
     className = `rankingFlowActions${extraClass ? ` ${extraClass}` : ''}`;
@@ -2668,8 +2685,8 @@ function rankingDuelHTML(r) {
       pair.length === 2
         ? `<section class="rankingDuel" data-duel-pair><div class="duelChoices">${duelChoiceHTML(pair[0])}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1])}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div>${duelShareButtonHTML(pair)}${nextActions}</section>`
         : champion
-          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo. Esta partida não reinicia.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
-          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2>${nextActions}<div class="duelResultMeta"><span>Esta partida foi encerrada e não reinicia.</span></div></section>`;
+          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button></div>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
+          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button></div>${nextActions}</section>`;
   return duelCard;
 }
 
@@ -2828,6 +2845,27 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
     toast('Não consegui registrar esta partida');
   }
 }
+async function restartDuel(button, r) {
+  button.disabled = true;
+  const label = button.textContent;
+  button.textContent = 'REINICIANDO…';
+  try {
+    const response = await fetch('/api?action=ranking-duel-reset', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ device_id: deviceId, ranking_id: r.id }),
+      }),
+      result = await response.json().catch(() => ({}));
+    if (handleVotingModeBlock(response, result, r)) return;
+    if (!response.ok) throw result;
+    rankingVotingState = null;
+    await load();
+  } catch {
+    button.disabled = false;
+    button.textContent = label;
+    toast('Não consegui reiniciar o duelo');
+  }
+}
 function chooseDuelOption(button, r) {
   return submitDuelResult(button, r, Number(button.dataset.id));
 }
@@ -2871,6 +2909,8 @@ function bindDuelMode(r) {
   if (skip) skip.onclick = () => submitDuelResult(skip, r, null);
   const share = document.querySelector('[data-share-duel]');
   if (share) share.onclick = () => shareCurrentDuel(r);
+  const restart = document.querySelector('[data-duel-restart]');
+  if (restart) restart.onclick = () => restartDuel(restart, r);
   bindDuelLaunchers();
 }
 function bindRankingVoteModes(r) {
