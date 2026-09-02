@@ -187,48 +187,17 @@ assert.match(
   'the generated caption must be immediately ready to post',
 );
 
-const promotionCanvas = extractTopLevelDeclaration(app, 'rankingOptionPromotionCanvas');
-const compactPromotionCanvas = compactSource(promotionCanvas);
+const promotionDialog = extractTopLevelDeclaration(app, 'openRankingOptionPromotion');
+const compactPromotionDialog = compactSource(promotionDialog);
 assert.match(
-  compactPromotionCanvas,
-  /canvas\.width=1080;canvas\.height=1350/,
-  'the generated card must use the Instagram-friendly 4:5 format',
-);
-assert.match(
-  compactPromotionCanvas,
-  /city=topoLocal\.cityForRanking\(r\)\|\|'Suacidade'/,
-  'the card must identify the Topo Local city',
-);
-assert.match(
-  compactPromotionCanvas,
-  /optionPanelY=Math\.max\(530,Math\.ceil\(questionBottom\+55\)\)/,
-  'the option panel must follow the question instead of leaving a fixed empty block',
+  compactPromotionDialog,
+  /rankingPromotionWhatsApp[\s\S]*rankingPromotionCopy/,
+  'the promotion dialog must keep WhatsApp and text-link copying',
 );
 assert.doesNotMatch(
-  compactPromotionCanvas,
-  /fillRect\(0,790,canvas\.width,410\)/,
-  'the old fixed layout with a large empty area must not return',
-);
-assert.match(
-  compactPromotionCanvas,
-  /VOTENAGENTE[\s\S]*ABRAOLINKETOQUENASETAPARACIMA/,
-  'the card must end with a clear voting call to action',
-);
-assert.doesNotMatch(
-  compactPromotionCanvas,
-  /lime|#c8f433/,
-  'the promotion card must stay sober without the lime accent',
-);
-assert.match(
-  compactPromotionCanvas,
-  /coral='#ff513f'[\s\S]*fillRect\(0,1120,canvas\.width,12\)/,
-  'coral must be limited to restrained accents in the black-and-white card',
-);
-const promotionShare = extractTopLevelDeclaration(app, 'shareRankingOptionCard');
-assert.match(
-  compactSource(promotionShare),
-  /navigator\.canShare\?\.\(\{files:shareData\.files\}\)/,
-  'supported phones must share the generated PNG file through the native share sheet',
+  compactPromotionDialog,
+  /rankingPromotionShare|COMPARTILHARAGORA|rankingPromotionPreview|Instagram/,
+  'the promotion dialog must not show image or generic sharing controls',
 );
 assert.match(
   compactApp,
@@ -273,13 +242,13 @@ assert.match(
 );
 assert.match(
   compactEditorial,
-  /body\.popElectric\.modalCard\.rankingPromotionModalCard\{/,
-  'the card generator must fit inside the existing modal layer',
+  /body\.popElectric\.modalCard\.rankingPromotionModalCard\{[^}]*width:min\(620px,100%\)/,
+  'the text-only promotion flow must use a compact modal',
 );
-assert.match(
+assert.doesNotMatch(
   compactEditorial,
-  /@media\(max-width:700px\)[\s\S]*body\.popElectric\.rankingPromotionModalGrid\{grid-template-columns:minmax\(92px,0\.58fr\)minmax\(0,1\.42fr\);gap:10px/,
-  'phones must show a small card preview beside the controls instead of hiding the actions below it',
+  /rankingPromotionPreview|rankingPromotionModalGrid|rankingPromotionHint/,
+  'the removed card preview and Instagram hint must not leave stale layout rules',
 );
 assert.match(
   compactEditorial,

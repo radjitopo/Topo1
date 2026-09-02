@@ -1931,40 +1931,24 @@ function openRankingOptionPromotion(r) {
       )
       .join('');
   showModal(
-    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha sua opção e compartilhe no Instagram ou WhatsApp.</p><div class="rankingPromotionModalGrid"><div class="rankingPromotionPreview"><img id="rankingPromotionPreview" alt="Prévia do card para divulgar esta opção"></div><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto pronto</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><button class="main" id="rankingPromotionShare" type="button">COMPARTILHAR AGORA</button><a id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div><small class="rankingPromotionHint">No Instagram, use o adesivo de link com o endereço copiado.</small></div></div></div>`,
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Divulgue sua participação</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha sua opção e envie pelo WhatsApp.</p><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você representa?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto e link</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><a class="main" id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div></div></div>`,
   );
   const layer = document.getElementById('modalLayer'),
     card = layer.querySelector('.modalCard'),
     select = layer.querySelector('#rankingPromotionOption'),
-    preview = layer.querySelector('#rankingPromotionPreview'),
     textField = layer.querySelector('#rankingPromotionText'),
-    shareButton = layer.querySelector('#rankingPromotionShare'),
     whatsApp = layer.querySelector('#rankingPromotionWhatsApp'),
     copyButton = layer.querySelector('#rankingPromotionCopy');
   card?.classList.add('rankingPromotionModalCard');
-  let selectedOption = initialOption,
-    canvas = null;
+  let selectedOption = initialOption;
   const renderSelection = () => {
     selectedOption =
       r.opts.find((option) => Number(option.id) === Number(select.value)) || initialOption;
-    canvas = rankingOptionPromotionCanvas(r, selectedOption);
-    preview.src = canvas.toDataURL('image/png');
-    preview.alt = `Card: vote em ${selectedOption.label} no TOPO`;
     const text = rankingOptionPromotionText(r, selectedOption);
     textField.value = text;
     whatsApp.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
   };
   select.onchange = renderSelection;
-  shareButton.onclick = async () => {
-    shareButton.disabled = true;
-    try {
-      await shareRankingOptionCard(r, selectedOption, canvas);
-    } catch {
-      toast('Não consegui gerar o card neste navegador.');
-    } finally {
-      shareButton.disabled = false;
-    }
-  };
   copyButton.onclick = async () => {
     const copied = await copyRankingPromotionText(textField.value);
     toast(copied ? 'Texto e link copiados.' : 'Não consegui copiar automaticamente.');

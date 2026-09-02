@@ -8206,7 +8206,7 @@ body.popElectric.rankingPage .option.promotionFocus:focus {
 }
 
 body.popElectric .modalCard.rankingPromotionModalCard {
-  width: min(920px, 100%);
+  width: min(620px, 100%);
   max-height: calc(100dvh - 24px);
   overflow: auto;
   border: 2px solid var(--clean-ink);
@@ -8251,29 +8251,6 @@ body.popElectric .rankingPromotionClose {
 body.popElectric .rankingPromotionModal > .modalText {
   margin: 8px 0 17px;
   color: var(--clean-muted);
-}
-
-body.popElectric .rankingPromotionModalGrid {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.78fr) minmax(300px, 1fr);
-  align-items: start;
-  gap: 24px;
-}
-
-body.popElectric .rankingPromotionPreview {
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--clean-ink);
-  background: var(--clean-paper);
-  padding: 8px;
-}
-
-body.popElectric .rankingPromotionPreview img {
-  width: 100%;
-  height: auto;
-  display: block;
-  aspect-ratio: 4 / 5;
-  object-fit: contain;
 }
 
 body.popElectric .rankingPromotionControls {
@@ -8327,7 +8304,6 @@ body.popElectric .modalActions.rankingPromotionActions {
 }
 
 body.popElectric .rankingPromotionActions .main {
-  grid-column: 1 / -1;
   min-height: 48px;
   border-color: var(--clean-ink);
   background: var(--clean-ink);
@@ -8606,21 +8582,6 @@ body.popElectric .rankingPromotionActions button:focus-visible {
   color: var(--clean-paper);
 }
 
-body.popElectric .rankingPromotionActions button:disabled {
-  cursor: wait;
-  opacity: 0.55;
-}
-
-body.popElectric .rankingPromotionHint {
-  display: block;
-  margin-top: 11px;
-  color: var(--clean-muted);
-  font:
-    600 10px/1.35 Arial,
-    Helvetica,
-    sans-serif;
-}
-
 @media (max-width: 700px) {
   body.popElectric.rankingPage .rankingOptionPromotionLauncher {
     min-height: 36px;
@@ -8665,22 +8626,6 @@ body.popElectric .rankingPromotionHint {
     line-height: 1.35;
   }
 
-  body.popElectric .rankingPromotionModalGrid {
-    grid-template-columns: minmax(92px, 0.58fr) minmax(0, 1.42fr);
-    gap: 10px;
-  }
-
-  body.popElectric .rankingPromotionPreview {
-    align-self: start;
-    padding: 3px;
-  }
-
-  body.popElectric .rankingPromotionPreview img {
-    width: 100%;
-    max-width: none;
-    max-height: none;
-  }
-
   body.popElectric .rankingPromotionField {
     gap: 4px;
     margin-bottom: 8px;
@@ -8712,7 +8657,6 @@ body.popElectric .rankingPromotionHint {
   }
 
   body.popElectric .rankingPromotionActions .main {
-    grid-column: auto;
     min-height: 40px;
   }
 
@@ -8721,11 +8665,5 @@ body.popElectric .rankingPromotionHint {
     min-height: 36px;
     padding: 6px;
     font-size: 8.5px;
-  }
-
-  body.popElectric .rankingPromotionHint {
-    margin-top: 6px;
-    font-size: 8px;
-    line-height: 1.3;
   }
 }
