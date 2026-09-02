@@ -42,6 +42,28 @@ function rankingTitleSizeClass(value) {
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 10;
+const googlePlaceProfiles = Object.freeze({
+  libre: Object.freeze({
+    id: 'libre',
+    rankingId: 'restaurantes-veganos-floripa',
+    optionLabels: ['libre cozinha'],
+    displayName: 'Libre Cozinha',
+    mapUrl:
+      'https://www.google.com/maps/place/LIBRE+-+COZINHA/@-27.6567798,-48.4840168,17z/data=!3m1!4b1!4m6!3m5!1s0x95273ba1f6a8e1af:0x8eaacec299f51e9c!8m2!3d-27.6567798!4d-48.4840168!16s%2Fg%2F11vsv6l8m7?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
+    embedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3533.9577195105094!2d-48.4840168!3d-27.6567798!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95273ba1f6a8e1af%3A0x8eaacec299f51e9c!2sLIBRE%20-%20COZINHA!5e0!3m2!1spt-BR!2sbr!4v1788371200299!5m2!1spt-BR!2sbr',
+  }),
+  desvio: Object.freeze({
+    id: 'desvio',
+    rankingId: 'restaurantes-veganos-floripa',
+    optionLabels: ['desvio', 'desvio veg'],
+    displayName: 'Desvio',
+    mapUrl:
+      'https://www.google.com/maps/place/Desvio+Veg/@-27.5983625,-48.5488766,17z/data=!3m1!4b1!4m6!3m5!1s0x9527383ab57785cb:0x4a5de6cc77021d38!8m2!3d-27.5983625!4d-48.5488766!16s%2Fg%2F11f4_r0rnj?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
+    embedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3535.8441032818355!2d-48.54887660000001!3d-27.598362499999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9527383ab57785cb%3A0x4a5de6cc77021d38!2sDesvio%20Veg!5e0!3m2!1spt-BR!2sbr!4v1788371161963!5m2!1spt-BR!2sbr',
+  }),
+});
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
   Música: 'musica',
@@ -2703,7 +2725,7 @@ function rankingFreeVoteHTML(r, votingOpen = true) {
         ? 'Entre com a senha e vote sem cadastro.'
         : 'A votação está encerrada.'
       : `Até ${Math.min(r.opts.length, viewer.rankingLimit || 20)} votos por ranking.`;
-  return `<div class="rankingFreeIntro"><strong>Agora é com você!</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
+  return `<div class="rankingFreeIntro"><strong>Agora é com você!</strong><span>↑ soma 1 · ↓ tira 1 · Duelo do Topo conta mais</span></div><div class="rankingResultHead"><span>Ranking oficial</span><strong>Top ${visibleLimit}</strong></div><div class="options">${visibleOptions.map((o, i) => rankingVoteRowHTML(r, o, i, Number(o.id) === promotionOptionId ? 'promotionFocus' : '', votingOpen)).join('')}</div><div class="rankFoot"><span>${footerVoteText}</span><span>${viewer.registered && votingOpen ? 'Vote normalmente · 2× reforça' : votingOpen ? '↑ sobe · ↓ desce' : 'resultado preservado'}</span></div>${allItemsExplorerHTML(r)}`;
 }
 function rankingVotePanelHTML(r, votingOpen = true) {
   if (!votingOpen) return rankingFreeVoteHTML(r, false);
@@ -2945,12 +2967,48 @@ function renderRankingVoteExperience(r, loadState = true) {
   });
   if (loadState && activeRankingVoteMode() !== 'livre') void loadRankingVotingModes(r);
 }
-function rankingVoteRowHTML(o, i, extraClass = '', votingOpen = true) {
+function normalizedGooglePlaceOptionLabel(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+function googlePlaceProfileForOption(r, o) {
+  const optionLabel = normalizedGooglePlaceOptionLabel(o?.label);
+  return (
+    Object.values(googlePlaceProfiles).find(
+      (profile) => profile.rankingId === r?.id && profile.optionLabels.includes(optionLabel),
+    ) || null
+  );
+}
+function rankingVoteOptionNameHTML(r, o) {
+  const label = escapeHTML(o.label),
+    newBadge = o.isNew ? '<span class="vipNewOption">NOVO</span>' : '',
+    profile = googlePlaceProfileForOption(r, o);
+  if (!profile) return `<div class="name">${label}${newBadge}</div>`;
+  return `<div class="name"><button class="googlePlaceTrigger" type="button" data-google-place="${profile.id}" aria-label="Ver nota e avaliações de ${label} no Google Maps"><span>${label}</span><small>Nota no Google Maps ↗</small></button>${newBadge}</div>`;
+}
+function openGooglePlaceProfile(profileId) {
+  const profile = googlePlaceProfiles[profileId];
+  if (!profile) return;
+  showModal(
+    `<section class="googlePlaceModal" role="dialog" aria-modal="true" aria-labelledby="googlePlaceTitle"><header class="googlePlaceModalHead"><div><div class="modalKicker">Google Maps</div><div class="modalTitle" id="googlePlaceTitle">${escapeHTML(profile.displayName)}</div><p>Nota, avaliações e localização no perfil oficial.</p></div><button class="googlePlaceClose" type="button" data-close aria-label="Fechar">×</button></header><iframe class="googlePlaceFrame" src="${escapeHTML(profile.embedUrl)}" title="Google Maps — ${escapeHTML(profile.displayName)}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe><footer class="googlePlaceModalFoot"><span>As informações são exibidas diretamente pelo Google Maps.</span><div class="modalActions googlePlaceModalActions"><button type="button" data-close>VOLTAR AO RANKING</button><a class="main" href="${escapeHTML(profile.mapUrl)}" target="_blank" rel="noopener noreferrer">ABRIR NO GOOGLE MAPS</a></div></footer></section>`,
+  );
+  document.querySelector('#modalLayer .modalCard')?.classList.add('googlePlaceModalCard');
+}
+function bindGooglePlaceProfiles() {
+  document.querySelectorAll('[data-google-place]').forEach((button) => {
+    button.onclick = () => openGooglePlaceProfile(button.dataset.googlePlace);
+  });
+}
+function rankingVoteRowHTML(r, o, i, extraClass = '', votingOpen = true) {
   const upSelected = Number(o.mine) === 1,
     downSelected = Number(o.mine) === -1,
     label = escapeHTML(o.label),
     disabled = votingOpen ? '' : 'disabled';
-  return `<div class="option ${extraClass}" id="opcao-${o.id}" data-option-id="${o.id}" data-option-label="${label}"><div class="pos">${rankMark(i)}</div><div><div class="name">${label}${o.isNew ? '<span class="vipNewOption">NOVO</span>' : ''}</div><div class="score">${pointCountText(o.score)} · ${i + 1}º lugar ${doubleVoteBadgeHTML(o)}</div></div><div class="actions"><button class="react up ${upSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}" ${disabled}>↑</button>${votingOpen ? doubleVoteActionHTML(o, 1) : ''}<button class="react down ${downSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}" ${disabled}>↓</button>${votingOpen ? doubleVoteActionHTML(o, -1) : ''}</div></div>`;
+  return `<div class="option ${extraClass}" id="opcao-${o.id}" data-option-id="${o.id}" data-option-label="${label}"><div class="pos">${rankMark(i)}</div><div>${rankingVoteOptionNameHTML(r, o)}<div class="score">${pointCountText(o.score)} · ${i + 1}º lugar ${doubleVoteBadgeHTML(o)}</div></div><div class="actions"><button class="react up ${upSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="1" aria-label="${upSelected ? 'Remover voto em' : 'Fazer'} ${label}${upSelected ? '' : ' subir'}" ${disabled}>↑</button>${votingOpen ? doubleVoteActionHTML(o, 1) : ''}<button class="react down ${downSelected ? 'selected' : ''}" data-id="${o.id}" data-mine="${o.mine}" data-dir="-1" aria-label="${downSelected ? 'Remover voto em' : 'Fazer'} ${label}${downSelected ? '' : ' descer'}" ${disabled}>↓</button>${votingOpen ? doubleVoteActionHTML(o, -1) : ''}</div></div>`;
 }
 function allItemsExplorerHTML(r) {
   const total = r.opts.length;
@@ -4583,6 +4641,7 @@ function bindVotes() {
   bindNativeShares();
   bindFavoriteButtons();
   bindDuelLaunchers();
+  bindGooglePlaceProfiles();
 }
 async function refreshVoteState(rankOrder) {
   const fresh = await fetchBootstrap(),
