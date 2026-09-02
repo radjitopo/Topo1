@@ -8310,6 +8310,21 @@ body.popElectric .rankingPromotionActions .main {
   color: var(--clean-paper);
 }
 
+body.popElectric .rankingPromotionActions #rankingPromotionStory {
+  border-color: var(--clean-coral);
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+}
+
+body.popElectric .rankingPromotionActions #rankingPromotionCopy {
+  grid-column: 1 / -1;
+}
+
+body.popElectric .rankingPromotionActions button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
 /* TOPO LOCAL — mesma direção editorial limpa do restante do site */
 body.popElectric.localMode .categoryLandingHead.localCatalogHead {
   margin: 14px 0 18px;

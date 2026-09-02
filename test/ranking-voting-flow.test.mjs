@@ -191,8 +191,8 @@ const promotionDialog = extractTopLevelDeclaration(app, 'openRankingOptionPromot
 const compactPromotionDialog = compactSource(promotionDialog);
 assert.match(
   compactPromotionDialog,
-  /rankingPromotionWhatsApp[\s\S]*rankingPromotionCopy/,
-  'the promotion dialog must keep WhatsApp and text-link copying',
+  /rankingPromotionWhatsApp[\s\S]*rankingPromotionStory[\s\S]*rankingPromotionCopy/,
+  'the promotion dialog must keep WhatsApp, Story and text-link actions',
 );
 assert.match(
   compactPromotionDialog,
@@ -201,8 +201,13 @@ assert.match(
 );
 assert.doesNotMatch(
   compactPromotionDialog,
-  /Quemvocêrepresenta|Divulguesuaparticipação|rankingPromotionShare|COMPARTILHARAGORA|rankingPromotionPreview|Instagram/,
-  'the promotion dialog must not show representative-only copy, image or generic sharing controls',
+  /Quemvocêrepresenta|Divulguesuaparticipação|rankingPromotionShare|COMPARTILHARAGORA|rankingPromotionPreview/,
+  'the promotion dialog must not show representative-only copy, previews or generic sharing controls',
+);
+assert.match(
+  compactPromotionDialog,
+  /BAIXARSTORY[\s\S]*downloadRankingOptionStory/,
+  'supporters must be able to download a dedicated Instagram Story',
 );
 assert.match(
   compactApp,
@@ -254,6 +259,21 @@ assert.doesNotMatch(
   compactEditorial,
   /rankingPromotionPreview|rankingPromotionModalGrid|rankingPromotionHint/,
   'the removed card preview and Instagram hint must not leave stale layout rules',
+);
+assert.match(
+  compactEditorial,
+  /rankingPromotionStory\{[^}]*background:var\(--clean-coral\);color:var\(--clean-paper\)/,
+  'the Story action must use the coral campaign color',
+);
+assert.match(
+  compactApp,
+  /canvas\.width=1080;canvas\.height=1920/,
+  'the campaign artwork must use the native 9:16 Story format',
+);
+assert.match(
+  compactApp,
+  /image\.src='\/logo-topo-v4\.svg'/,
+  'the campaign artwork must load the official TOPO logo asset',
 );
 assert.match(
   compactEditorial,

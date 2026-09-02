@@ -1722,7 +1722,11 @@ function rankingPromotionTextLayout(
   for (; size >= minSize; size -= 2) {
     context.font = `${weight} ${size}px Arial, Helvetica, sans-serif`;
     lines = rankingPromotionWrapLines(context, text, maxWidth);
-    if (lines.length <= maxLines) break;
+    if (
+      lines.length <= maxLines &&
+      lines.every((line) => context.measureText(line).width <= maxWidth)
+    )
+      break;
   }
   if (lines.length > maxLines) {
     lines = lines.slice(0, maxLines);
@@ -1743,113 +1747,129 @@ function drawRankingPromotionText(context, text, settings) {
   );
   return layout;
 }
-function rankingOptionPromotionCanvas(r, option) {
+let rankingPromotionLogoPromise;
+function loadRankingPromotionLogo() {
+  if (!rankingPromotionLogoPromise) {
+    rankingPromotionLogoPromise = new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => {
+        rankingPromotionLogoPromise = null;
+        reject(new Error('topo_logo_unavailable'));
+      };
+      image.src = '/logo-topo-v4.svg';
+    });
+  }
+  return rankingPromotionLogoPromise;
+}
+function drawRankingPromotionLinkIcon(context, x, y) {
+  context.save();
+  context.translate(x, y);
+  context.rotate(-Math.PI / 4);
+  context.strokeStyle = '#ff513f';
+  context.lineWidth = 11;
+  context.lineCap = 'round';
+  context.beginPath();
+  context.roundRect(-37, -15, 58, 30, 15);
+  context.stroke();
+  context.beginPath();
+  context.roundRect(-3, -15, 58, 30, 15);
+  context.stroke();
+  context.restore();
+}
+async function rankingOptionPromotionCanvas(r, option) {
   const canvas = document.createElement('canvas');
   canvas.width = 1080;
-  canvas.height = 1350;
+  canvas.height = 1920;
   const context = canvas.getContext('2d'),
     ink = '#0a0a0a',
     paper = '#ffffff',
     coral = '#ff513f',
-    contentX = 72,
-    contentWidth = 936,
+    contentX = 64,
+    contentWidth = 952,
     city = topoLocal.cityForRanking(r) || 'Sua cidade';
   if (!context) throw new Error('canvas_unavailable');
+  const logo = await loadRankingPromotionLogo();
 
-  context.fillStyle = ink;
+  context.fillStyle = coral;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = coral;
-  context.fillRect(0, 0, 14, canvas.height);
-
-  context.font = '900 92px Arial, Helvetica, sans-serif';
-  context.fillStyle = '#ffffff';
+  context.fillStyle = paper;
+  context.fillRect(0, 0, canvas.width, 252);
+  context.drawImage(logo, contentX, 49, 370, (370 * 230) / 884);
+  context.fillStyle = ink;
   context.textBaseline = 'top';
-  context.fillText('TOPO', contentX, 48);
-  const logoWidth = context.measureText('TOPO').width;
-  context.fillStyle = coral;
-  context.font = '900 56px Arial, Helvetica, sans-serif';
-  context.fillText('▲', contentX + logoWidth + 9, 68);
-  context.fillStyle = '#ffffff';
-  context.font = '800 22px Arial, Helvetica, sans-serif';
-  context.fillText('TUDO VIRA RANKING.', contentX + 4, 148);
+  context.font = '800 24px Arial, Helvetica, sans-serif';
+  context.fillText('TUDO VIRA RANKING.', contentX + 2, 169);
 
   context.textAlign = 'right';
   context.fillStyle = coral;
-  context.font = '900 25px Arial, Helvetica, sans-serif';
-  context.fillText('TOPO LOCAL', contentX + contentWidth, 66);
-  context.fillStyle = '#ffffff';
-  context.font = '700 21px Arial, Helvetica, sans-serif';
-  context.fillText(String(city).toLocaleUpperCase('pt-BR'), contentX + contentWidth, 108);
+  context.font = '900 29px Arial, Helvetica, sans-serif';
+  context.fillText('TOPO LOCAL', contentX + contentWidth, 70);
+  context.fillStyle = ink;
+  context.font = '800 25px Arial, Helvetica, sans-serif';
+  context.fillText(String(city).toLocaleUpperCase('pt-BR'), contentX + contentWidth, 121);
   context.textAlign = 'left';
 
-  context.fillStyle = coral;
-  context.fillRect(contentX, 201, contentWidth, 10);
-
-  context.fillStyle = coral;
-  context.fillRect(contentX, 252, 510, 60);
-  context.fillStyle = '#ffffff';
-  context.font = '900 27px Arial, Helvetica, sans-serif';
-  context.fillText('ESTAMOS CONCORRENDO', contentX + 24, 268);
+  context.font = '900 31px Arial, Helvetica, sans-serif';
+  const campaignLabel = 'ESTAMOS NA DISPUTA PELO TOPO!',
+    campaignWidth = Math.min(contentWidth, context.measureText(campaignLabel).width + 48);
+  context.fillStyle = ink;
+  context.fillRect(contentX, 315, campaignWidth, 72);
+  context.fillStyle = paper;
+  context.fillText(campaignLabel, contentX + 24, 334);
   const questionLayout = drawRankingPromotionText(context, r.q, {
       x: contentX,
-      y: 354,
+      y: 455,
       maxWidth: contentWidth,
-      maxLines: 4,
-      maxSize: 75,
-      minSize: 44,
+      maxLines: 5,
+      maxSize: 82,
+      minSize: 48,
       weight: 900,
-      lineHeight: 0.95,
-      color: '#ffffff',
+      lineHeight: 0.96,
+      color: paper,
     }),
-    questionBottom = 354 + questionLayout.lines.length * questionLayout.lineHeight,
-    optionPanelY = Math.max(530, Math.ceil(questionBottom + 55));
+    questionBottom = 455 + questionLayout.lines.length * questionLayout.lineHeight,
+    optionPanelY = Math.max(850, Math.min(920, Math.ceil(questionBottom + 56))),
+    optionPanelBottom = 1400;
 
   context.fillStyle = paper;
-  context.fillRect(42, optionPanelY, 996, 1120 - optionPanelY);
+  context.fillRect(contentX, optionPanelY, contentWidth, optionPanelBottom - optionPanelY);
   context.fillStyle = coral;
-  context.fillRect(contentX, optionPanelY + 48, 185, 54);
-  context.fillStyle = ink;
-  context.font = '900 27px Arial, Helvetica, sans-serif';
-  context.fillText('VOTE EM', contentX + 22, optionPanelY + 62);
-  context.save();
-  context.globalAlpha = 0.06;
-  context.fillStyle = ink;
-  context.textAlign = 'right';
-  context.font = '900 390px Arial, Helvetica, sans-serif';
-  context.fillText('↑', contentX + contentWidth, optionPanelY + 120);
-  context.restore();
+  context.font = '900 38px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE EM', contentX + 52, optionPanelY + 66);
   drawRankingPromotionText(context, option.label, {
-    x: contentX,
-    y: optionPanelY + 139,
-    maxWidth: contentWidth,
+    x: contentX + 52,
+    y: optionPanelY + 158,
+    maxWidth: contentWidth - 104,
     maxLines: 3,
-    maxSize: 130,
-    minSize: 56,
+    maxSize: 138,
+    minSize: 58,
     weight: 900,
     lineHeight: 0.92,
     color: ink,
   });
 
-  context.fillStyle = '#6d6d6d';
-  context.font = '800 22px Arial, Helvetica, sans-serif';
-  context.fillText('SUA CIDADE ESCOLHE. TODO VOTO CONTA.', contentX, 1070);
-
-  context.fillStyle = coral;
-  context.fillRect(0, 1120, canvas.width, 12);
-  context.fillStyle = '#ffffff';
-  context.font = '900 55px Arial, Helvetica, sans-serif';
-  context.fillText('VOTE NA GENTE', contentX, 1168);
+  context.fillStyle = ink;
+  context.fillRect(contentX, 1462, contentWidth, 4);
+  context.fillStyle = paper;
+  context.font = '900 61px Arial, Helvetica, sans-serif';
+  context.fillText('CHAME SUA TORCIDA', contentX, 1513);
   context.textAlign = 'right';
-  context.fillStyle = coral;
-  context.font = '900 100px Arial, Helvetica, sans-serif';
-  context.fillText('→', contentX + contentWidth, 1141);
+  context.fillStyle = ink;
+  context.font = '900 104px Arial, Helvetica, sans-serif';
+  context.fillText('→', contentX + contentWidth, 1484);
   context.textAlign = 'left';
-  context.fillStyle = '#ffffff';
-  context.font = '900 25px Arial, Helvetica, sans-serif';
-  context.fillText('somostopo.com.br', contentX, 1262);
-  context.fillStyle = '#b7b7b7';
-  context.font = '800 18px Arial, Helvetica, sans-serif';
-  context.fillText('ABRA O LINK E TOQUE NA SETA PARA CIMA', contentX + 260, 1268);
+
+  context.fillStyle = paper;
+  context.roundRect(contentX, 1630, 690, 120, 12);
+  context.fill();
+  drawRankingPromotionLinkIcon(context, contentX + 72, 1690);
+  context.fillStyle = ink;
+  context.font = '900 52px Arial, Helvetica, sans-serif';
+  context.fillText('VOTE NO TOPO', contentX + 142, 1661);
+  context.fillStyle = paper;
+  context.font = '800 28px Arial, Helvetica, sans-serif';
+  context.fillText('somostopo.com.br', contentX, 1815);
   return canvas;
 }
 function rankingPromotionFileName(option) {
@@ -1860,7 +1880,7 @@ function rankingPromotionFileName(option) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     .slice(0, 52);
-  return `${stem || 'opcao'}-no-topo.png`;
+  return `${stem || 'opcao'}-story-topo.png`;
 }
 function rankingPromotionBlob(canvas) {
   return new Promise((resolve, reject) =>
@@ -1899,25 +1919,16 @@ function downloadRankingPromotionCard(blob, option) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
 }
-async function shareRankingOptionCard(r, option, canvas) {
-  const text = rankingOptionPromotionText(r, option),
-    blob = await rankingPromotionBlob(canvas),
-    file =
-      typeof File === 'function'
-        ? new File([blob], rankingPromotionFileName(option), { type: 'image/png' })
-        : null,
-    shareData = file ? { files: [file], title: `Vote em ${option.label} no TOPO`, text } : null;
-  if (shareData && navigator.share && navigator.canShare?.({ files: shareData.files })) {
-    try {
-      await navigator.share(shareData);
-      return true;
-    } catch (error) {
-      if (error?.name === 'AbortError') return false;
-    }
-  }
+async function downloadRankingOptionStory(r, option) {
+  const canvas = await rankingOptionPromotionCanvas(r, option),
+    blob = await rankingPromotionBlob(canvas);
   downloadRankingPromotionCard(blob, option);
-  const copied = await copyRankingPromotionText(text);
-  toast(copied ? 'Card baixado e texto copiado.' : 'Card baixado. O texto está pronto na tela.');
+  const copied = await copyRankingPromotionText(rankingOptionPromotionURL(r, option));
+  toast(
+    copied
+      ? 'Story baixado. Link copiado para o adesivo do Instagram.'
+      : 'Story baixado. Copie o link que está pronto na tela.',
+  );
   return true;
 }
 function openRankingOptionPromotion(r) {
@@ -1931,13 +1942,14 @@ function openRankingOptionPromotion(r) {
       )
       .join('');
   showModal(
-    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Apoie seu favorito</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha quem você quer apoiar e envie pelo WhatsApp.</p><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você quer apoiar?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto e link</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><a class="main" id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div></div></div>`,
+    `<div class="rankingPromotionModal"><div class="rankingPromotionModalHead"><div><div class="modalKicker">Apoie seu favorito</div><div class="modalTitle">Chame sua torcida.</div></div><button class="rankingPromotionClose" type="button" data-close aria-label="Fechar">×</button></div><p class="modalText">Escolha quem você quer apoiar e divulgue pelo WhatsApp ou no Story.</p><div class="rankingPromotionControls"><label class="rankingPromotionField"><span>Quem você quer apoiar?</span><select id="rankingPromotionOption">${options}</select></label><label class="rankingPromotionField"><span>Texto e link</span><textarea id="rankingPromotionText" rows="4" readonly></textarea></label><div class="modalActions rankingPromotionActions"><a class="main" id="rankingPromotionWhatsApp" target="_blank" rel="noopener noreferrer">WHATSAPP</a><button id="rankingPromotionStory" type="button">BAIXAR STORY</button><button id="rankingPromotionCopy" type="button">COPIAR TEXTO E LINK</button></div></div></div>`,
   );
   const layer = document.getElementById('modalLayer'),
     card = layer.querySelector('.modalCard'),
     select = layer.querySelector('#rankingPromotionOption'),
     textField = layer.querySelector('#rankingPromotionText'),
     whatsApp = layer.querySelector('#rankingPromotionWhatsApp'),
+    storyButton = layer.querySelector('#rankingPromotionStory'),
     copyButton = layer.querySelector('#rankingPromotionCopy');
   card?.classList.add('rankingPromotionModalCard');
   let selectedOption = initialOption;
@@ -1952,6 +1964,20 @@ function openRankingOptionPromotion(r) {
   copyButton.onclick = async () => {
     const copied = await copyRankingPromotionText(textField.value);
     toast(copied ? 'Texto e link copiados.' : 'Não consegui copiar automaticamente.');
+  };
+  storyButton.onclick = async () => {
+    const option = selectedOption,
+      originalLabel = storyButton.textContent;
+    storyButton.disabled = true;
+    storyButton.textContent = 'PREPARANDO STORY…';
+    try {
+      await downloadRankingOptionStory(r, option);
+    } catch {
+      toast('Não consegui gerar o Story. Tente novamente.');
+    } finally {
+      storyButton.disabled = false;
+      storyButton.textContent = originalLabel;
+    }
   };
   renderSelection();
 }
