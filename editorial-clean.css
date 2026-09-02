@@ -8423,12 +8423,89 @@ body.popElectric .googlePlaceClose {
   cursor: pointer;
 }
 
+body.popElectric .googlePlaceRatingCard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 20px;
+  border-top: 1px solid var(--clean-line);
+  background: color-mix(in srgb, #f9ab00 7%, var(--clean-paper));
+}
+
+body.popElectric .googlePlaceRatingScore {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+body.popElectric .googlePlaceRatingScore strong {
+  color: var(--clean-ink);
+  font:
+    900 32px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .googlePlaceRatingScore > span {
+  color: #f9ab00;
+  font-size: 19px;
+}
+
+body.popElectric .googlePlaceRatingScore small {
+  color: var(--clean-muted);
+  font:
+    700 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .googlePlaceRatingDetails {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+body.popElectric .googlePlaceRatingDetails strong {
+  color: var(--clean-ink);
+  font:
+    900 13px/1.1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .googlePlaceRatingDetails span {
+  color: var(--clean-muted);
+  font:
+    600 8.5px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .googlePlaceRatingLink {
+  color: #1769aa;
+  font:
+    900 8.5px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-align: right;
+  text-decoration: none;
+}
+
+body.popElectric .googlePlaceRatingLink:hover,
+body.popElectric .googlePlaceRatingLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 body.popElectric .googlePlaceFrame {
   width: 100%;
-  height: clamp(300px, 48dvh, 410px);
+  height: clamp(240px, 38dvh, 320px);
   display: block;
   border: 0;
-  border-top: 1px solid var(--clean-line);
   border-bottom: 1px solid var(--clean-line);
 }
 
@@ -8821,11 +8898,11 @@ body.popElectric .rankingPromotionActions button:focus-visible {
   body.popElectric .googlePlaceModalHead {
     align-items: center;
     gap: 10px;
-    padding: 13px 13px 11px;
+    padding: 12px 13px 10px;
   }
 
   body.popElectric .googlePlaceModalHead .modalTitle {
-    font-size: 27px;
+    font-size: 25px;
   }
 
   body.popElectric .googlePlaceModalHead p {
@@ -8838,8 +8915,30 @@ body.popElectric .rankingPromotionActions button:focus-visible {
     font-size: 24px;
   }
 
+  body.popElectric .googlePlaceRatingCard {
+    gap: 8px;
+    padding: 10px 13px;
+  }
+
+  body.popElectric .googlePlaceRatingScore strong {
+    font-size: 28px;
+  }
+
+  body.popElectric .googlePlaceRatingScore > span {
+    font-size: 17px;
+  }
+
+  body.popElectric .googlePlaceRatingDetails strong {
+    font-size: 11px;
+  }
+
+  body.popElectric .googlePlaceRatingDetails span,
+  body.popElectric .googlePlaceRatingLink {
+    font-size: 7.5px;
+  }
+
   body.popElectric .googlePlaceFrame {
-    height: min(48dvh, 340px);
+    height: clamp(180px, 28dvh, 220px);
   }
 
   body.popElectric .googlePlaceModalFoot {

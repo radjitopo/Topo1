@@ -48,6 +48,9 @@ const googlePlaceProfiles = Object.freeze({
     rankingId: 'restaurantes-veganos-floripa',
     optionLabels: ['libre cozinha'],
     displayName: 'Libre Cozinha',
+    rating: '4,9',
+    reviewCount: 128,
+    ratingCheckedAt: '02/09/2026',
     mapUrl:
       'https://www.google.com/maps/place/LIBRE+-+COZINHA/@-27.6567798,-48.4840168,17z/data=!3m1!4b1!4m6!3m5!1s0x95273ba1f6a8e1af:0x8eaacec299f51e9c!8m2!3d-27.6567798!4d-48.4840168!16s%2Fg%2F11vsv6l8m7?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
     embedUrl:
@@ -58,6 +61,9 @@ const googlePlaceProfiles = Object.freeze({
     rankingId: 'restaurantes-veganos-floripa',
     optionLabels: ['desvio', 'desvio veg'],
     displayName: 'Desvio',
+    rating: '4,7',
+    reviewCount: 588,
+    ratingCheckedAt: '02/09/2026',
     mapUrl:
       'https://www.google.com/maps/place/Desvio+Veg/@-27.5983625,-48.5488766,17z/data=!3m1!4b1!4m6!3m5!1s0x9527383ab57785cb:0x4a5de6cc77021d38!8m2!3d-27.5983625!4d-48.5488766!16s%2Fg%2F11f4_r0rnj?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
     embedUrl:
@@ -2994,7 +3000,7 @@ function openGooglePlaceProfile(profileId) {
   const profile = googlePlaceProfiles[profileId];
   if (!profile) return;
   showModal(
-    `<section class="googlePlaceModal" role="dialog" aria-modal="true" aria-labelledby="googlePlaceTitle"><header class="googlePlaceModalHead"><div><div class="modalKicker">Google Maps</div><div class="modalTitle" id="googlePlaceTitle">${escapeHTML(profile.displayName)}</div><p>Nota, avaliações e localização no perfil oficial.</p></div><button class="googlePlaceClose" type="button" data-close aria-label="Fechar">×</button></header><iframe class="googlePlaceFrame" src="${escapeHTML(profile.embedUrl)}" title="Google Maps — ${escapeHTML(profile.displayName)}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe><footer class="googlePlaceModalFoot"><span>As informações são exibidas diretamente pelo Google Maps.</span><div class="modalActions googlePlaceModalActions"><button type="button" data-close>VOLTAR AO RANKING</button><a class="main" href="${escapeHTML(profile.mapUrl)}" target="_blank" rel="noopener noreferrer">ABRIR NO GOOGLE MAPS</a></div></footer></section>`,
+    `<section class="googlePlaceModal" role="dialog" aria-modal="true" aria-labelledby="googlePlaceTitle"><header class="googlePlaceModalHead"><div><div class="modalKicker">Google Maps</div><div class="modalTitle" id="googlePlaceTitle">${escapeHTML(profile.displayName)}</div><p>Perfil oficial do estabelecimento.</p></div><button class="googlePlaceClose" type="button" data-close aria-label="Fechar">×</button></header><div class="googlePlaceRatingCard" aria-label="Nota ${escapeHTML(profile.rating)} de 5, com ${profile.reviewCount} avaliações no Google Maps"><div class="googlePlaceRatingScore"><strong>${escapeHTML(profile.rating)}</strong><span aria-hidden="true">★</span><small>de 5</small></div><div class="googlePlaceRatingDetails"><strong>${profile.reviewCount} avaliações</strong><span>Google Maps · conferido em ${escapeHTML(profile.ratingCheckedAt)}</span></div><a class="googlePlaceRatingLink" href="${escapeHTML(profile.mapUrl)}" target="_blank" rel="noopener noreferrer">VER AVALIAÇÕES ↗</a></div><iframe class="googlePlaceFrame" src="${escapeHTML(profile.embedUrl)}" title="Google Maps — ${escapeHTML(profile.displayName)}" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe><footer class="googlePlaceModalFoot"><span>A nota pode mudar; confira o valor mais recente no perfil oficial.</span><div class="modalActions googlePlaceModalActions"><button type="button" data-close>VOLTAR AO RANKING</button><a class="main" href="${escapeHTML(profile.mapUrl)}" target="_blank" rel="noopener noreferrer">ABRIR NO GOOGLE MAPS</a></div></footer></section>`,
   );
   document.querySelector('#modalLayer .modalCard')?.classList.add('googlePlaceModalCard');
 }
