@@ -1689,7 +1689,7 @@ function rankingOptionPromotionURL(r, option) {
   return url.toString();
 }
 function rankingOptionPromotionText(r, option) {
-  return `Estamos concorrendo no TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${rankingOptionPromotionURL(r, option)}`;
+  return `Estamos na disputa pelo TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${rankingOptionPromotionURL(r, option)}`;
 }
 function rankingOptionPromotionHTML(r) {
   if (r.vip || !r.opts?.length || !topoLocal.isLocalRanking(r)) return '';

@@ -183,7 +183,7 @@ assert.equal(
 );
 assert.match(
   promotionContext.promotionCaption,
-  /Estamos concorrendo no TOPO![\s\S]*Vote em Verde Floripa[\s\S]*somostopo\.com\.br/,
+  /Estamos na disputa pelo TOPO![\s\S]*Vote em Verde Floripa[\s\S]*somostopo\.com\.br/,
   'the generated caption must be immediately ready to post',
 );
 
