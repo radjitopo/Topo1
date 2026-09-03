@@ -8050,7 +8050,7 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
   }
 
   body.popElectric .vipCollectionHead h2 {
-    font-size: 31px;
+    font-size: 27px;
   }
 
   body.popElectric .vipCreatePanel {
@@ -8072,6 +8072,69 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
     grid-template-columns: 1fr;
     gap: 14px;
     padding-top: 18px;
+  }
+
+  body.popElectric .vipOwnedGrid {
+    gap: 10px;
+    padding: 12px 0 30px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCard {
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardMedia {
+    width: 96px;
+    height: 96px;
+    min-height: 0;
+    aspect-ratio: 1;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardLock {
+    top: 7px;
+    right: 7px;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardBody {
+    padding: 10px 11px 11px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardStatus {
+    font-size: 8px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCard h2 {
+    margin: 5px 0 9px;
+    font-size: 17px;
+    line-height: 1.03;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardDetails {
+    margin: 0 0 8px;
+    font-size: 10px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipCardAction {
+    min-height: 28px;
+    padding-top: 7px;
+    font-size: 9px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipOwnerActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  body.popElectric .vipOwnedGrid .vipOwnerActions a,
+  body.popElectric .vipOwnedGrid .vipOwnerActions button {
+    min-height: 30px;
+    padding: 0 4px;
+    font-size: 8px;
   }
 
   body.popElectric .vipCard {

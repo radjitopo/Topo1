@@ -136,6 +136,18 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
   assert.match(style, /900 clamp\(42px, 5vw, 62px\)/);
   assert.match(style, /font-size: 43px/);
+  assert.match(
+    style,
+    /\.vipOwnedGrid \.vipCard\s*\{[^}]*grid-template-columns: 96px minmax\(0, 1fr\)/s,
+  );
+  assert.match(
+    style,
+    /\.vipOwnedGrid \.vipCardMedia\s*\{[^}]*width: 96px;[^}]*height: 96px;[^}]*min-height: 0/s,
+  );
+  assert.match(
+    style,
+    /\.vipOwnedGrid \.vipOwnerActions\s*\{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/s,
+  );
 });
 
 test('only the creator can manage a private ranking and Meu Topo exposes the complete flow', async () => {
