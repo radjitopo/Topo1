@@ -12,7 +12,10 @@ test('Clerk keeps its complete UI and OAuth callback inside SomosTopo', async ()
 
   assert.match(app, /clerk\.mountSignIn\(mount,/);
   assert.match(app, /@clerk\/ui@1\/dist\/ui\.browser\.js/);
+  assert.match(app, /@clerk\/localizations@3\.37\.8\/dist\/pt-BR\.mjs/);
   assert.match(app, /ui: \{ ClerkUI: window\.__internal_ClerkUICtor \}/);
+  assert.match(app, /localization: ptBR/);
+  assert.match(app, /clerkUiLocalizationReady = Boolean\(ptBR\)/);
   assert.match(app, /initClerk\(true\)/);
   assert.match(app, /routing: 'hash'/);
   assert.match(app, /withSignUp: true/);
@@ -25,6 +28,13 @@ test('Clerk keeps its complete UI and OAuth callback inside SomosTopo', async ()
   assert.match(app, /signUpForceRedirectUrl: authReturn\(\)/);
   assert.match(app, /signUpFallbackRedirectUrl: authReturn\(\)/);
   assert.match(app, /renderClerkStart\(mount, clerk\)/);
+  assert.match(
+    app,
+    /if \(!clerkUiLocalizationReady\) \{[\s\S]*renderClerkStart\(mount, clerk\);[\s\S]*return;/,
+  );
+  assert.match(app, /Continuar com Google/);
+  assert.match(app, /Receber código por e-mail/);
+  assert.match(app, /Entrar no TOPO/);
   assert.match(app, /transferable: true/);
   assert.match(app, /signIn\?\.isTransferable/);
   assert.match(app, /transferClerkSignUp\(clerk\)/);

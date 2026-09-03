@@ -44,24 +44,38 @@ const pages = {
     kicker: 'Transparência',
     headline: 'O ranking muda com você.',
     lead: 'Os resultados mostram a preferência da comunidade naquele momento — não uma verdade definitiva nem uma pesquisa científica.',
+    updatedAt: '3 de setembro de 2026',
+    dateModified: '2026-09-03',
     content: `
       <section class="legalSection wide">
-        <h2>Como um ranking é formado</h2>
-        <div class="methodStep"><b>1</b><div><strong>A lista começa</strong><p>A equipe do TOPO seleciona o tema e as opções. Alguns rankings podem estrear com uma ordem editorial inicial para que a disputa não comece vazia.</p></div></div>
-        <div class="methodStep"><b>2</b><div><strong>A comunidade vota</strong><p>A seta para cima soma um ponto. A seta para baixo tira um ponto. Para quem já conquistou essa regalia, tocar novamente na mesma seta ativa o voto duplo; o terceiro toque volta ao voto simples. Escolher a seta oposta troca a direção.</p></div></div>
-        <div class="methodStep"><b>3</b><div><strong>A ordem se atualiza</strong><p>As opções aparecem da maior para a menor pontuação. Em caso de empate, a ordem original funciona como desempate até que novos votos mudem a disputa.</p></div></div>
+        <h2>Duas formas de participar</h2>
+        <div class="methodStep"><b>1</b><div><strong>Duelo do Topo</strong><p>Você escolhe entre duas opções. A vencedora continua e enfrenta a próxima até surgir o seu campeão. Ao completar o Duelo, o vencedor fica salvo no Meu Topo e suas escolhas também alimentam o ranking. O Duelo tem mais peso na disputa do que um voto livre isolado.</p></div></div>
+        <div class="methodStep"><b>2</b><div><strong>Voto livre pelas flechas</strong><p>A seta para cima soma um ponto à opção; a seta para baixo retira um ponto. Escolher a seta oposta muda a direção do voto. Quando o botão 2× estiver disponível, ele reforça a escolha e passa a valer dois pontos no ranking.</p></div></div>
+        <div class="methodStep"><b>3</b><div><strong>A ordem se atualiza</strong><p>As escolhas da comunidade são somadas e as opções aparecem da maior para a menor pontuação. Em caso de empate, a ordem editorial original funciona como desempate até que novos votos mudem a disputa.</p></div></div>
       </section>
       <section class="legalSection">
-        <h2>Limites de voto</h2>
-        <ul><li>Até 20 opções avaliadas em cada ranking.</li><li>Até 30 votos sem cadastro; depois, pedimos acesso por e-mail.</li><li>Um voto ativo por opção e por pessoa ou dispositivo vinculado.</li><li>Votos duplos são liberados conforme a participação e valem dois pontos.</li><li>O Top 10 aparece primeiro; o ranking completo pode ser aberto logo abaixo.</li></ul>
+        <h2>Antes de criar a conta</h2>
+        <p>Sem cadastro, você pode usar <strong>10 votos livres</strong> ou iniciar até <strong>2 Duelos</strong>. Assim que um desses limites é atingido, o TOPO pede que você entre ou crie uma conta antes de continuar.</p>
+        <p>A conta liga os votos deste aparelho ao seu perfil, guarda seus vencedores e ajuda a evitar votos extras gerados apenas saindo e entrando novamente.</p>
+      </section>
+      <section class="legalSection">
+        <h2>Como a lista é apresentada</h2>
+        <p>A equipe do TOPO escolhe o tema e prepara as opções. A quantidade varia conforme o ranking. O Top 10 aparece primeiro, e a lista completa pode ser aberta logo abaixo.</p>
+        <p>Um voto ativo por opção fica ligado à pessoa ou ao dispositivo. Mudar a seta substitui a escolha anterior; não cria vários votos para a mesma opção.</p>
+      </section>
+      <section class="legalSection wide">
+        <h2>Sua pontuação no Meu Topo</h2>
+        <p>Além de movimentar os rankings, sua participação forma um placar pessoal:</p>
+        <ul><li><strong>Flecha em uma opção:</strong> 1 ponto, contado uma vez por opção.</li><li><strong>Primeira participação em um ranking:</strong> 5 pontos.</li><li><strong>Primeiro Duelo completo em cada ranking:</strong> 10 pontos.</li><li><strong>Dia ativo:</strong> 10 pontos, uma vez por dia em que você participa.</li><li><strong>Compartilhamento com voto:</strong> 20 pontos quando outra pessoa chega pelo seu link e vota, limitado a 3 compartilhamentos pontuados por dia.</li></ul>
+        <p class="legalFine">O placar do Meu Topo mede sua participação. Ele é separado da pontuação das opções dentro de cada ranking.</p>
       </section>
       <section class="legalSection">
         <h2>Busca e descoberta</h2>
         <p>A busca considera títulos, categorias, opções e variações de singular, plural e acentos. Na área “Todos”, rankings novos, relevantes e ainda não votados podem aparecer primeiro para cada pessoa.</p>
       </section>
       <section class="legalSection">
-        <h2>Comentários</h2>
-        <p>Em rankings com comentários abertos, pessoas cadastradas podem explicar suas escolhas. Comentários não alteram a pontuação e devem seguir as <a href="/regras">Regras da comunidade</a>.</p>
+        <h2>Comentários e sugestões</h2>
+        <p>Em rankings com comentários abertos, pessoas cadastradas podem explicar suas escolhas. Também é possível sugerir opções e novos rankings. Comentários e sugestões não alteram a pontuação e devem seguir as <a href="/regras">Regras da comunidade</a>.</p>
       </section>
       <section class="legalSection">
         <h2>Integridade</h2>
@@ -494,7 +508,7 @@ function renderPage(slug, page) {
         description: page.description,
         url: canonical,
         inLanguage: 'pt-BR',
-        dateModified: '2026-08-22',
+        dateModified: page.dateModified || '2026-08-22',
         isPartOf: { '@id': `${BASE_URL}/#website` },
       },
       {
@@ -533,7 +547,7 @@ function renderPage(slug, page) {
   <div class="legalKicker">${escapeHtml(page.kicker)}</div>
   <h1>${escapeHtml(page.headline)}</h1>
   <p class="legalLead">${escapeHtml(page.lead)}</p>
-  <span class="legalUpdated">Atualizado em ${UPDATED_AT}</span>
+  <span class="legalUpdated">Atualizado em ${page.updatedAt || UPDATED_AT}</span>
   <div class="legalGrid">${page.content}</div>
   <p class="legalReviewNote">Esta é uma versão inicial para a fase beta do TOPO e poderá ser revisada conforme o serviço evoluir.</p>
 </main>

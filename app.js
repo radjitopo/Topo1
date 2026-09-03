@@ -43,6 +43,7 @@ const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 10;
 const DEFAULT_ANONYMOUS_DUEL_LIMIT = 2;
+const CLERK_PT_BR_URL = 'https://unpkg.com/@clerk/localizations@3.37.8/dist/pt-BR.mjs';
 const googlePlaceProfiles = Object.freeze({});
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
@@ -121,6 +122,7 @@ let rankings = [],
   rankingVotingRequest = 0,
   rankingPromotionFocusKey = '',
   clerkLoadPromise = null,
+  clerkUiLocalizationReady = false,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
     items: [],
@@ -223,6 +225,23 @@ function loadExternalScript(src, attributes = {}) {
     document.head.appendChild(script);
   });
 }
+async function loadClerkPtBR() {
+  let timeout;
+  try {
+    const localizationModule = await Promise.race([
+      import(CLERK_PT_BR_URL),
+      new Promise((_, reject) => {
+        timeout = setTimeout(() => reject(new Error('clerk_localization_timeout')), 3500);
+      }),
+    ]);
+    return localizationModule.ptBR || null;
+  } catch (error) {
+    console.warn('Não foi possível carregar a tradução completa do acesso.', error);
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 async function initClerk(withUi = false) {
   if (clerkLoadPromise) return clerkLoadPromise;
   clerkLoadPromise = (async () => {
@@ -235,7 +254,14 @@ async function initClerk(withUi = false) {
       !String(config.publishableKey || '').startsWith('pk_')
     )
       throw new Error('invalid_clerk_config');
-    if (withUi) await loadExternalScript(`${base}/npm/@clerk/ui@1/dist/ui.browser.js`);
+    let ptBR = null;
+    if (withUi) {
+      [, ptBR] = await Promise.all([
+        loadExternalScript(`${base}/npm/@clerk/ui@1/dist/ui.browser.js`),
+        loadClerkPtBR(),
+      ]);
+      clerkUiLocalizationReady = Boolean(ptBR);
+    }
     await loadExternalScript(`${base}/npm/@clerk/clerk-js@6.29.3/dist/clerk.browser.js`, {
       'data-clerk-publishable-key': config.publishableKey,
     });
@@ -243,6 +269,7 @@ async function initClerk(withUi = false) {
     if (withUi && !window.__internal_ClerkUICtor) throw new Error('clerk_ui_unavailable');
     await window.Clerk.load({
       ...(withUi ? { ui: { ClerkUI: window.__internal_ClerkUICtor } } : {}),
+      ...(ptBR ? { localization: ptBR } : {}),
       signInUrl: '/entrar',
       signUpUrl: '/entrar',
       signInForceRedirectUrl: authReturn(),
@@ -4113,6 +4140,10 @@ async function renderAuth() {
     }
     return;
   }
+  if (!clerkUiLocalizationReady) {
+    renderClerkStart(mount, clerk);
+    return;
+  }
   mount.innerHTML = '';
   try {
     await clerk.mountSignIn(mount, {
@@ -4314,7 +4345,7 @@ function profileLeaderboardHTML(entries = []) {
     })
     .join(
       '',
-    )}</div><p class="profileLeaderboardNote">Flecha: 1 ponto · ranking novo: 5 · Duelo completo: 10 · dia ativo: 10 · compartilhamento com voto: 20. Até 3 compartilhamentos por dia.</p>`;
+    )}</div><p class="profileLeaderboardNote">Flecha por opção: 1 ponto · 1ª participação no ranking: 5 · Duelo completo: 10 · dia ativo: 10 · compartilhamento com voto: 20. Até 3 compartilhamentos por dia.</p>`;
 }
 function bindProfileLeaderboardReports(root = document) {
   root.querySelectorAll('[data-report-name]').forEach((button) => {

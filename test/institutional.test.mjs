@@ -69,6 +69,22 @@ for (const slug of expectedSlugs) {
     assert.ok(res.body.includes(link), `${slug} footer must include ${link}`);
 }
 
+const howItWorks = responseMock();
+handler({ query: { slug: 'como-funciona' } }, howItWorks);
+assert.match(howItWorks.body, /Duelo do Topo/);
+assert.match(howItWorks.body, /Voto livre pelas flechas/);
+assert.match(howItWorks.body, /10 votos livres/);
+assert.match(howItWorks.body, /2 Duelos/);
+assert.match(howItWorks.body, /Flecha em uma opção:<\/strong> 1 ponto/);
+assert.match(howItWorks.body, /Primeira participação em um ranking:<\/strong> 5 pontos/);
+assert.match(howItWorks.body, /Primeiro Duelo completo em cada ranking:<\/strong> 10 pontos/);
+assert.match(howItWorks.body, /Dia ativo:<\/strong> 10 pontos/);
+assert.match(howItWorks.body, /Compartilhamento com voto:<\/strong> 20 pontos/);
+assert.match(howItWorks.body, /limitado a 3 compartilhamentos pontuados por dia/);
+assert.match(howItWorks.body, /Atualizado em 3 de setembro de 2026/);
+assert.match(howItWorks.body, /"dateModified":"2026-09-03"/);
+assert.doesNotMatch(howItWorks.body, /Até 30 votos/);
+
 const missing = responseMock();
 handler({ query: { slug: 'nao-existe' } }, missing);
 assert.equal(missing.statusCode, 302);

@@ -61,6 +61,7 @@ test('votes, duels and qualified shares all feed the score safely', async () => 
   assert.match(compactApp, /\/api\?action=ranking-share/);
   assert.match(compactApp, /referral_token:incomingShareReferralToken\(/);
   assert.match(compactApp, /data-whatsapp-share/);
+  assert.match(app, /1ª participação no ranking: 5/);
   assert.match(compactDuelApi, /scoreParticipationQueries\(sql,/);
   assert.match(compactDuelApi, /qualifyRankingShare\(sql,/);
   assert.match(compactScoring, /event_type='qualified_share'/);
