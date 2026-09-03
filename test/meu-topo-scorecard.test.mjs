@@ -46,7 +46,8 @@ assert.match(leaderboardApi, /points:Number\(row\.points\|\|0\)/);
 for (const label of ['Pontuação', 'Votos', 'Rankings', 'Sequência', 'Posição']) {
   assert.match(scorecard, new RegExp(label));
 }
-assert.match(scorecard, /cadavotolivreouescolhaválidanoduelosoma1ponto/i);
+assert.match(scorecard, /votolivreouduelo:1pontoporescolhaválida/i);
+assert.doesNotMatch(scorecard, /SuaforçanoTOPO/, 'the repeated large heading must stay removed');
 assert.match(
   compactApp,
   /personalAreaHeaderHTML\('activity'\).*personalScorecardHTML\(profileData\).*vipActivityLead/,
@@ -61,5 +62,10 @@ assert.match(
   /@media\(max-width:700px\)[\s\S]*\.profileScorecard\.profileMetrics\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
 );
 assert.match(compactCss, /\.profileScoreMetricPrimary\{[^}]*grid-column:1\/-1/);
+assert.match(
+  compactCss,
+  /\.profileScoreMetricPrimary\{[^}]*min-height:68px;[^}]*display:grid/,
+  'the mobile score highlight must be a short horizontal strip',
+);
 
-console.log('Meu Topo scorecard test passed: score, activity, streak, and position are first.');
+console.log('Meu Topo scorecard test passed: all five metrics fit in a compact first block.');
