@@ -17,6 +17,11 @@ import {
 import { rankingQuestion } from './ranking-titles.js';
 import { rankingImageSearchQueries, resolveRankingCover } from './ranking-image-policy.js';
 import { LOCAL_CITIES, localCityByLabel, localCityBySlug } from './seo-taxonomy.js';
+import {
+  PARTICIPATION_SCORE,
+  qualifyRankingShare,
+  scoreParticipationQueries,
+} from './participation-score.js';
 
 const sql = neon(process.env.DATABASE_URL);
 const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
@@ -34,10 +39,7 @@ const ANONYMOUS_LIMIT = 10;
 const ANONYMOUS_DUEL_LIMIT = 2;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
-const PARTICIPATION_SCORE = Object.freeze({
-  directVote: 1,
-  duelDecision: 1,
-});
+const RANKING_SHARE_CHANNELS = new Set(['native', 'whatsapp', 'duel', 'promotion']);
 const PROFILE_LEVEL_MILESTONES = Object.freeze([
   { at: 20, key: 'explorer', name: 'Explorador de rankings' },
   { at: 75, key: 'curator', name: 'Curador do TOPO' },
@@ -2548,6 +2550,41 @@ async function shareFavorites(req, res) {
   });
 }
 
+async function createRankingShare(req, res, body) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 200, { ok: true, tracked: false });
+
+  const deviceId = String(body.device_id || '');
+  const rankingId = String(body.ranking_id || '').trim();
+  const requestedChannel = String(body.channel || 'native').trim();
+  const channel = RANKING_SHARE_CHANNELS.has(requestedChannel) ? requestedChannel : 'native';
+  if (!isValidDevice(deviceId) || !isValidRankingId(rankingId)) {
+    return json(res, 400, { error: 'invalid_ranking_share' });
+  }
+  if (!(await ensureSessionDevice(user, deviceId))) {
+    return json(res, 409, { error: 'device_rekey_required' });
+  }
+
+  const token = randomBytes(18).toString('base64url');
+  const rows = await sql.query(
+    `
+      INSERT INTO ranking_share_referrals (
+        token, ranking_id, sharer_user_id, sharer_device_id, channel, created_at
+      )
+      SELECT $1, ranking.id, $2::uuid, $3, $4, now()
+      FROM rankings ranking
+      WHERE ranking.id = $5
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+      RETURNING token
+    `,
+    [token, user.id, deviceId, channel, rankingId],
+  );
+  if (!rows[0]?.token) return json(res, 404, { error: 'ranking_not_found' });
+
+  return json(res, 200, { ok: true, tracked: true, token: rows[0].token });
+}
+
 async function favoriteCollection(req, res) {
   const shareToken = favoriteShareToken(queryValue(req, 'token'));
   if (!shareToken) return json(res, 400, { error: 'invalid_favorite_collection' });
@@ -2612,6 +2649,129 @@ function currentVoteStreak(rows) {
   return streak;
 }
 
+async function syncUserScoreEvents(userId) {
+  if (!userId) return;
+  await sql.transaction([
+    sql.query(
+      `
+        INSERT INTO user_score_events (
+          user_id, event_type, event_key, ranking_id, points, created_at
+        )
+        SELECT
+          history.user_id,
+          'direct_vote',
+          history.option_id::text,
+          option.ranking_id,
+          $2,
+          history.first_voted_at
+        FROM user_vote_history history
+        JOIN ranking_options option ON option.id = history.option_id
+        JOIN rankings ranking ON ranking.id = option.ranking_id
+        WHERE history.user_id = $1::uuid
+          AND ranking.is_vip = false
+        ON CONFLICT (user_id, event_type, event_key) DO NOTHING
+      `,
+      [userId, PARTICIPATION_SCORE.directVote],
+    ),
+    sql.query(
+      `
+        WITH participation AS (
+          SELECT option.ranking_id, history.first_voted_at AS occurred_at
+          FROM user_vote_history history
+          JOIN ranking_options option ON option.id = history.option_id
+          JOIN rankings ranking ON ranking.id = option.ranking_id
+          WHERE history.user_id = $1::uuid
+            AND ranking.is_vip = false
+
+          UNION ALL
+
+          SELECT round.ranking_id, round.created_at AS occurred_at
+          FROM ranking_duel_rounds round
+          JOIN rankings ranking ON ranking.id = round.ranking_id
+          WHERE round.user_id = $1::uuid
+            AND round.skipped = false
+            AND ranking.is_vip = false
+        )
+        INSERT INTO user_score_events (
+          user_id, event_type, event_key, ranking_id, points, created_at
+        )
+        SELECT
+          $1::uuid,
+          'ranking_participation',
+          ranking_id,
+          ranking_id,
+          $2,
+          MIN(occurred_at)
+        FROM participation
+        GROUP BY ranking_id
+        ON CONFLICT (user_id, event_type, event_key) DO NOTHING
+      `,
+      [userId, PARTICIPATION_SCORE.rankingParticipation],
+    ),
+    sql.query(
+      `
+        INSERT INTO user_score_events (
+          user_id, event_type, event_key, ranking_id, points, created_at
+        )
+        SELECT
+          session.user_id,
+          'completed_duel',
+          session.ranking_id,
+          session.ranking_id,
+          $2,
+          session.updated_at
+        FROM ranking_duel_sessions session
+        JOIN rankings ranking ON ranking.id = session.ranking_id
+        WHERE session.user_id = $1::uuid
+          AND session.completed = true
+          AND ranking.is_vip = false
+        ON CONFLICT (user_id, event_type, event_key) DO NOTHING
+      `,
+      [userId, PARTICIPATION_SCORE.completedDuel],
+    ),
+    sql.query(
+      `
+        WITH activity AS (
+          SELECT history.first_voted_at AS occurred_at
+          FROM user_vote_history history
+          JOIN ranking_options option ON option.id = history.option_id
+          JOIN rankings ranking ON ranking.id = option.ranking_id
+          WHERE history.user_id = $1::uuid
+            AND ranking.is_vip = false
+
+          UNION ALL
+
+          SELECT round.created_at AS occurred_at
+          FROM ranking_duel_rounds round
+          JOIN rankings ranking ON ranking.id = round.ranking_id
+          WHERE round.user_id = $1::uuid
+            AND round.skipped = false
+            AND ranking.is_vip = false
+        ), active_days AS (
+          SELECT
+            (occurred_at AT TIME ZONE 'America/Sao_Paulo')::date AS active_day,
+            MIN(occurred_at) AS occurred_at
+          FROM activity
+          GROUP BY (occurred_at AT TIME ZONE 'America/Sao_Paulo')::date
+        )
+        INSERT INTO user_score_events (
+          user_id, event_type, event_key, ranking_id, points, created_at
+        )
+        SELECT
+          $1::uuid,
+          'active_day',
+          active_day::text,
+          NULL,
+          $2,
+          occurred_at
+        FROM active_days
+        ON CONFLICT (user_id, event_type, event_key) DO NOTHING
+      `,
+      [userId, PARTICIPATION_SCORE.activeDay],
+    ),
+  ]);
+}
+
 async function profile(req, res) {
   const user = await sessionUser(req);
   if (!user) return json(res, 401, { error: 'authentication_required' });
@@ -2621,6 +2781,7 @@ async function profile(req, res) {
   }
 
   await syncUserVoteHistory(user.id);
+  await syncUserScoreEvents(user.id);
 
   const [
     statsRows,
@@ -2641,43 +2802,78 @@ async function profile(req, res) {
           v.option_id,
           v.direction
         FROM votes v
+        JOIN ranking_options option ON option.id = v.option_id
+        JOIN rankings ranking ON ranking.id = option.ranking_id
         WHERE v.user_id = $1
+          AND ranking.is_vip = false
       ),
       direct_activity AS (
         SELECT option.ranking_id
         FROM user_vote_history history
         JOIN ranking_options option ON option.id = history.option_id
+        JOIN rankings ranking ON ranking.id = option.ranking_id
         WHERE history.user_id = $1
+          AND ranking.is_vip = false
       ),
       duel_activity AS (
         SELECT round.ranking_id
         FROM ranking_duel_rounds round
+        JOIN rankings ranking ON ranking.id = round.ranking_id
         WHERE round.user_id = $1
           AND round.skipped = false
+          AND ranking.is_vip = false
       ),
       activity_rankings AS (
         SELECT ranking_id FROM direct_activity
         UNION
-        SELECT session.ranking_id
-        FROM ranking_duel_sessions session
-        WHERE session.user_id = $1
+        SELECT ranking_id FROM duel_activity
+      ),
+      score_stats AS (
+        SELECT
+          COALESCE(SUM(event.points), 0)::int AS points,
+          COUNT(*) FILTER (WHERE event.event_type = 'completed_duel')::int
+            AS completed_duels,
+          COUNT(*) FILTER (WHERE event.event_type = 'qualified_share')::int
+            AS qualified_shares,
+          COALESCE(SUM(event.points) FILTER (
+            WHERE event.event_type = 'direct_vote'
+          ), 0)::int AS direct_vote_points,
+          COALESCE(SUM(event.points) FILTER (
+            WHERE event.event_type = 'ranking_participation'
+          ), 0)::int AS ranking_points,
+          COALESCE(SUM(event.points) FILTER (
+            WHERE event.event_type = 'completed_duel'
+          ), 0)::int AS completed_duel_points,
+          COALESCE(SUM(event.points) FILTER (
+            WHERE event.event_type = 'active_day'
+          ), 0)::int AS active_day_points,
+          COALESCE(SUM(event.points) FILTER (
+            WHERE event.event_type = 'qualified_share'
+          ), 0)::int AS share_points
+        FROM user_score_events event
+        WHERE event.user_id = $1::uuid
       )
       SELECT
         (
           (SELECT COUNT(*) FROM direct_activity)
           + (SELECT COUNT(*) FROM duel_activity)
         )::int AS votes,
-        (
-          (SELECT COUNT(*) FROM direct_activity) * $2::int
-          + (SELECT COUNT(*) FROM duel_activity) * $3::int
-        )::int AS points,
+        score.points,
         (SELECT COUNT(*)::int FROM direct_activity) AS direct_votes,
         (SELECT COUNT(*)::int FROM duel_activity) AS duel_points,
         (SELECT COUNT(*)::int FROM activity_rankings) AS rankings,
         (SELECT COUNT(*)::int FROM latest WHERE direction = 1) AS up_votes,
-        (SELECT COUNT(*)::int FROM latest WHERE direction = -1) AS down_votes
+        (SELECT COUNT(*)::int FROM latest WHERE direction = -1) AS down_votes,
+        score.completed_duels,
+        score.qualified_shares,
+        score.direct_vote_points,
+        score.ranking_points,
+        score.completed_duel_points,
+        score.active_day_points,
+        score.share_points
+      FROM score_stats score
     `,
-      [user.id, PARTICIPATION_SCORE.directVote, PARTICIPATION_SCORE.duelDecision],
+      [user.id],
     ),
     sql.query(
       `
@@ -2786,21 +2982,16 @@ async function profile(req, res) {
     ),
     sql.query(
       `
-      WITH activity AS (
-        SELECT first_voted_at AS occurred_at
-        FROM user_vote_history
-        WHERE user_id = $1
-        UNION ALL
-        SELECT created_at AS occurred_at
-        FROM ranking_duel_rounds
-        WHERE user_id = $1
-      )
-      SELECT DISTINCT (
+      SELECT (
         (now() AT TIME ZONE 'America/Sao_Paulo')::date
-        - (occurred_at AT TIME ZONE 'America/Sao_Paulo')::date
+        - event.event_key::date
       )::int AS "daysAgo"
-      FROM activity
-      WHERE occurred_at >= now() - interval '400 days'
+      FROM user_score_events event
+      WHERE event.user_id = $1::uuid
+        AND event.event_type = 'active_day'
+        AND event.event_key ~ '^\\d{4}-\\d{2}-\\d{2}$'
+        AND event.event_key::date >=
+          (now() AT TIME ZONE 'America/Sao_Paulo')::date - 400
       ORDER BY "daysAgo"
     `,
       [user.id],
@@ -2883,10 +3074,19 @@ async function profile(req, res) {
       votes: Number(stats.votes || 0),
       directVotes: Number(stats.direct_votes || 0),
       duelPoints: Number(stats.duel_points || 0),
+      completedDuels: Number(stats.completed_duels || 0),
+      qualifiedShares: Number(stats.qualified_shares || 0),
       rankings: Number(stats.rankings || 0),
       upVotes: Number(stats.up_votes || 0),
       downVotes: Number(stats.down_votes || 0),
       streak: currentVoteStreak(streakRows),
+      scoreBreakdown: {
+        directVotes: Number(stats.direct_vote_points || 0),
+        rankings: Number(stats.ranking_points || 0),
+        completedDuels: Number(stats.completed_duel_points || 0),
+        activeDays: Number(stats.active_day_points || 0),
+        qualifiedShares: Number(stats.share_points || 0),
+      },
     },
     doubleVotes: {
       ...doubleVotes,
@@ -2945,6 +3145,9 @@ async function leaderboard(req, res) {
         history.user_id,
         COUNT(*)::int AS direct_votes
       FROM user_vote_history history
+      JOIN ranking_options option ON option.id = history.option_id
+      JOIN rankings ranking ON ranking.id = option.ranking_id
+      WHERE ranking.is_vip = false
       GROUP BY history.user_id
     ),
     duel_stats AS (
@@ -2952,32 +3155,43 @@ async function leaderboard(req, res) {
         round.user_id,
         COUNT(*) FILTER (WHERE round.skipped = false)::int AS duel_votes
       FROM ranking_duel_rounds round
+      JOIN rankings ranking ON ranking.id = round.ranking_id
       WHERE round.user_id IS NOT NULL
+        AND ranking.is_vip = false
       GROUP BY round.user_id
     ),
     activity_rankings AS (
       SELECT history.user_id, option.ranking_id
       FROM user_vote_history history
       JOIN ranking_options option ON option.id = history.option_id
+      JOIN rankings ranking ON ranking.id = option.ranking_id
+      WHERE ranking.is_vip = false
       UNION
-      SELECT session.user_id, session.ranking_id
-      FROM ranking_duel_sessions session
-      WHERE session.user_id IS NOT NULL
+      SELECT round.user_id, round.ranking_id
+      FROM ranking_duel_rounds round
+      JOIN rankings ranking ON ranking.id = round.ranking_id
+      WHERE round.user_id IS NOT NULL
+        AND round.skipped = false
+        AND ranking.is_vip = false
     ),
     ranking_stats AS (
       SELECT user_id, COUNT(*)::int AS rankings
       FROM activity_rankings
       GROUP BY user_id
     ),
+    score_stats AS (
+      SELECT
+        event.user_id,
+        COALESCE(SUM(event.points), 0)::bigint AS points
+      FROM user_score_events event
+      GROUP BY event.user_id
+    ),
     scored AS (
       SELECT
         u.id AS "userId",
         u.display_name AS name,
         (COALESCE(direct.direct_votes, 0) + COALESCE(duel.duel_votes, 0))::int AS votes,
-        (
-          COALESCE(direct.direct_votes, 0) * $2::int
-          + COALESCE(duel.duel_votes, 0) * $3::int
-        )::int AS points,
+        COALESCE(score.points, 0)::bigint AS points,
         COALESCE(activity.rankings, 0)::int AS rankings,
         CASE
           WHEN COALESCE(p.show_avatar_on_leaderboard, true)
@@ -2988,6 +3202,7 @@ async function leaderboard(req, res) {
       LEFT JOIN direct_stats direct ON direct.user_id = u.id
       LEFT JOIN duel_stats duel ON duel.user_id = u.id
       LEFT JOIN ranking_stats activity ON activity.user_id = u.id
+      LEFT JOIN score_stats score ON score.user_id = u.id
       LEFT JOIN user_profiles p ON p.user_id = u.id
     ),
     ranked AS (
@@ -3020,7 +3235,7 @@ async function leaderboard(req, res) {
     WHERE position <= 10 OR "userId" = $1
     ORDER BY position, name
   `,
-    [user.id, PARTICIPATION_SCORE.directVote, PARTICIPATION_SCORE.duelDecision],
+    [user.id],
   );
 
   return json(res, 200, {
@@ -5290,6 +5505,7 @@ async function saveTop3(req, res, body) {
 async function saveDuel(req, res, body) {
   const deviceId = String(body.device_id || '');
   const rankingId = String(body.ranking_id || '').trim();
+  const referralToken = String(body.referral_token || '');
   const optionIds = [
     ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
   ];
@@ -5462,6 +5678,15 @@ async function saveDuel(req, res, body) {
       [sessionId, championAfterOptionId, potAfter, rankingId, deviceId, tracksAnonymousDuel],
     ),
   );
+  if (userId && !skipped) {
+    statements.push(
+      ...scoreParticipationQueries(sql, {
+        userId,
+        rankingId,
+        duelSessionId: sessionId,
+      }),
+    );
+  }
 
   try {
     await sql.transaction(statements);
@@ -5469,6 +5694,19 @@ async function saveDuel(req, res, body) {
     if (error?.code !== '23505') throw error;
     const modes = await rankingVotingModeState(rankingId, context.user, deviceId, true);
     return json(res, 409, { error: 'duel_state_changed', ...modes });
+  }
+
+  if (!skipped && referralToken) {
+    try {
+      await qualifyRankingShare(sql, {
+        token: referralToken,
+        rankingId,
+        voterUserId: userId,
+        deviceId,
+      });
+    } catch (error) {
+      console.error('TOPO ranking share qualification error', error);
+    }
   }
 
   const [modes, currentViewer, scoreUpdate, orderAfter] = await Promise.all([
@@ -5492,6 +5730,7 @@ async function vote(req, res, body) {
   const optionId = Number(body.option_id);
   const direction = Number(body.direction);
   const requestedWeight = body.weight === undefined ? 1 : Number(body.weight);
+  const referralToken = String(body.referral_token || '');
 
   if (
     !isValidDevice(deviceId) ||
@@ -5757,6 +5996,13 @@ async function vote(req, res, body) {
           [user.id, optionId],
         ),
       );
+      statements.push(
+        ...scoreParticipationQueries(sql, {
+          userId: user.id,
+          rankingId: option.ranking_id,
+          optionId,
+        }),
+      );
     }
 
     await sql.transaction(statements);
@@ -5808,6 +6054,19 @@ async function vote(req, res, body) {
         [deviceId, optionId, direction],
       ),
     ]);
+  }
+
+  if (direction !== 0 && referralToken) {
+    try {
+      await qualifyRankingShare(sql, {
+        token: referralToken,
+        rankingId: option.ranking_id,
+        voterUserId: user?.id || null,
+        deviceId,
+      });
+    } catch (error) {
+      console.error('TOPO ranking share qualification error', error);
+    }
   }
 
   const [stateRows, updatedViewer, orderAfter] = await Promise.all([
@@ -5946,6 +6205,7 @@ export default async function handler(req, res) {
         if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
         if (action === 'favorites') return addFavorite(req, res, body);
         if (action === 'favorite-share') return shareFavorites(req, res);
+        if (action === 'ranking-share') return createRankingShare(req, res, body);
         if (action === 'ranking-duel') return saveDuel(req, res, body);
         if (action === 'ranking-duel-reset') return resetDuel(req, res, body);
         if (action === 'comments') return writeComment(req, res, body);

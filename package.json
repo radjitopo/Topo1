@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check api.js && node --check duel-bottom-api.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
+    "check": "node --check api.js && node --check duel-bottom-api.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
     "test": "node --test test/*.test.mjs",
     "validate": "npm run check && npm test && npm run format:check",
     "format": "prettier --write .",
@@ -31,6 +31,7 @@
     "db:voting-modes": "node scripts/apply-voting-modes.mjs",
     "db:winner-stays": "node scripts/apply-voting-modes.mjs",
     "db:anonymous-duel-limit": "node scripts/apply-anonymous-duel-limit.mjs",
+    "db:participation-score": "node scripts/apply-participation-score.mjs",
     "db:public-top10": "node scripts/apply-public-top10.mjs",
     "db:public-option-targets": "node scripts/apply-public-option-targets.mjs",
     "db:option-relevance-review": "node scripts/apply-option-relevance-review.mjs",

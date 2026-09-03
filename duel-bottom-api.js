@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
 import baseHandler from './api.js';
+import { qualifyRankingShare, scoreParticipationQueries } from './participation-score.js';
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -222,6 +223,7 @@ async function saveBottomUpDuel(req, res) {
 
   const deviceId = String(body.device_id || '');
   const rankingId = String(body.ranking_id || '').trim();
+  const referralToken = String(body.referral_token || '');
   const optionIds = [
     ...new Set((Array.isArray(body.option_ids) ? body.option_ids : []).map(Number)),
   ];
@@ -371,6 +373,15 @@ async function saveBottomUpDuel(req, res) {
       [sessionId, championAfterOptionId, potAfter, rankingId, deviceId, tracksAnonymousDuel],
     ),
   );
+  if (userId && !skipped) {
+    statements.push(
+      ...scoreParticipationQueries(sql, {
+        userId,
+        rankingId,
+        duelSessionId: sessionId,
+      }),
+    );
+  }
 
   try {
     await sql.transaction(statements);
@@ -378,6 +389,19 @@ async function saveBottomUpDuel(req, res) {
     if (error?.code !== '23505') throw error;
     const changed = await customizedState(req, rankingId, deviceId);
     return json(res, 409, { error: 'duel_state_changed', ...(changed.body || {}) });
+  }
+
+  if (!skipped && referralToken) {
+    try {
+      await qualifyRankingShare(sql, {
+        token: referralToken,
+        rankingId,
+        voterUserId: userId,
+        deviceId,
+      });
+    } catch (error) {
+      console.error('TOPO ranking share qualification error', error);
+    }
   }
 
   const [fresh, scoreUpdate] = await Promise.all([

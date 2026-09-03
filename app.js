@@ -1364,6 +1364,7 @@ async function loadVipArea() {
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
+  bindWhatsAppShares();
   bindNativeShares();
   bindProfileRankingActivityMore(feed);
   document
@@ -1693,14 +1694,37 @@ function whatsAppIconHTML() {
 function nativeShareIconHTML() {
   return '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 11v8h14v-8"></path></svg>';
 }
-function whatsAppShareURL(r) {
+function incomingShareReferralToken(rankingId = internalId()) {
+  const token = queryParams.get('via') || '';
+  return rankingId === internalId() && /^[a-zA-Z0-9_-]{24,64}$/.test(token) ? token : '';
+}
+async function trackedRankingShareURL(rankingId, rawURL, channel = 'native') {
+  const url = new URL(rawURL, location.origin),
+    inboundToken = incomingShareReferralToken(rankingId);
+  if (!viewer.registered) {
+    if (inboundToken) url.searchParams.set('via', inboundToken);
+    return url.toString();
+  }
+
+  url.searchParams.delete('via');
+  try {
+    const response = await fetch('/api?action=ranking-share', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ device_id: deviceId, ranking_id: rankingId, channel }),
+      }),
+      result = await response.json().catch(() => ({}));
+    if (response.ok && result.tracked && result.token) url.searchParams.set('via', result.token);
+  } catch {}
+  return url.toString();
+}
+function whatsAppShareURL(r, url = location.origin + rankingPath(r.id)) {
   const leader = r?.opts?.[0]?.label || '',
-    url = location.origin + rankingPath(r.id),
     text = `*${r.q}*\n${leader ? '🥇 ' + leader + ' está no topo agora.\n' : ''}Vote e mude o ranking no TOPO:\n${url}`;
   return 'https://wa.me/?text=' + encodeURIComponent(text);
 }
 function whatsAppShareHTML(r, compact = false) {
-  return `<a class="whatsappShare ${compact ? 'compact' : ''}" href="${escapeHTML(whatsAppShareURL(r))}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHTML(r.q)} no WhatsApp">${whatsAppIconHTML()}${compact ? '' : '<span>WhatsApp</span>'}</a>`;
+  return `<a class="whatsappShare ${compact ? 'compact' : ''}" href="${escapeHTML(whatsAppShareURL(r))}" data-whatsapp-share="${escapeHTML(r.id)}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar ${escapeHTML(r.q)} no WhatsApp">${whatsAppIconHTML()}${compact ? '' : '<span>WhatsApp</span>'}</a>`;
 }
 function nativeShareHTML(r, compact = false) {
   return `<button class="nativeShare ${compact ? 'compact' : ''}" type="button" data-native-share="${escapeHTML(r.id)}" title="Instagram e outros" aria-label="Compartilhar ${escapeHTML(r.q)} no Instagram ou em outro aplicativo">${nativeShareIconHTML()}${compact ? '' : '<span>Instagram e outros</span>'}</button>`;
@@ -1736,8 +1760,8 @@ function rankingOptionPromotionURL(r, option) {
   url.hash = `opcao-${option.id}`;
   return url.toString();
 }
-function rankingOptionPromotionText(r, option) {
-  return `Estamos na disputa pelo TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${rankingOptionPromotionURL(r, option)}`;
+function rankingOptionPromotionText(r, option, url = rankingOptionPromotionURL(r, option)) {
+  return `Estamos na disputa pelo TOPO!\n\nVote em ${option.label} no ranking “${r.q}”.\n\n${url}`;
 }
 function rankingOptionPromotionHTML(r) {
   if (r.vip || !r.opts?.length || !topoLocal.isLocalRanking(r)) return '';
@@ -1967,11 +1991,15 @@ function downloadRankingPromotionCard(blob, option) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
 }
-async function downloadRankingOptionStory(r, option) {
+async function downloadRankingOptionStory(
+  r,
+  option,
+  shareURL = rankingOptionPromotionURL(r, option),
+) {
   const canvas = await rankingOptionPromotionCanvas(r, option),
     blob = await rankingPromotionBlob(canvas);
   downloadRankingPromotionCard(blob, option);
-  const copied = await copyRankingPromotionText(rankingOptionPromotionURL(r, option));
+  const copied = await copyRankingPromotionText(shareURL);
   toast(
     copied
       ? 'Story baixado. Link copiado para o adesivo do Instagram.'
@@ -2009,9 +2037,34 @@ function openRankingOptionPromotion(r) {
     whatsApp.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
   };
   select.onchange = renderSelection;
+  whatsApp.onclick = async (event) => {
+    event.preventDefault();
+    const option = selectedOption,
+      shareURL = await trackedRankingShareURL(
+        r.id,
+        rankingOptionPromotionURL(r, option),
+        'promotion',
+      ),
+      text = rankingOptionPromotionText(r, option, shareURL);
+    textField.value = text;
+    location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  };
   copyButton.onclick = async () => {
-    const copied = await copyRankingPromotionText(textField.value);
-    toast(copied ? 'Texto e link copiados.' : 'Não consegui copiar automaticamente.');
+    copyButton.disabled = true;
+    try {
+      const option = selectedOption,
+        shareURL = await trackedRankingShareURL(
+          r.id,
+          rankingOptionPromotionURL(r, option),
+          'promotion',
+        ),
+        text = rankingOptionPromotionText(r, option, shareURL),
+        copied = await copyRankingPromotionText(text);
+      textField.value = text;
+      toast(copied ? 'Texto e link copiados.' : 'Não consegui copiar automaticamente.');
+    } finally {
+      copyButton.disabled = false;
+    }
   };
   storyButton.onclick = async () => {
     const option = selectedOption,
@@ -2019,7 +2072,12 @@ function openRankingOptionPromotion(r) {
     storyButton.disabled = true;
     storyButton.textContent = 'PREPARANDO STORY…';
     try {
-      await downloadRankingOptionStory(r, option);
+      const shareURL = await trackedRankingShareURL(
+        r.id,
+        rankingOptionPromotionURL(r, option),
+        'promotion',
+      );
+      await downloadRankingOptionStory(r, option, shareURL);
     } catch {
       toast('Não consegui gerar o Story. Tente novamente.');
     } finally {
@@ -2880,6 +2938,7 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
         ranking_id: r.id,
         option_ids: optionIds,
         winner_option_id: winnerOptionId,
+        referral_token: incomingShareReferralToken(r.id),
       },
       startOptionIds = sharedDuelStartOptionIds();
     if (startOptionIds.length === 2) payload.start_option_ids = startOptionIds;
@@ -2934,7 +2993,7 @@ function sharedDuelURL(r, pair) {
 async function shareCurrentDuel(r) {
   const pair = votingModeStateFor(r)?.duel?.pair || [];
   if (pair.length !== 2) return;
-  const url = sharedDuelURL(r, pair),
+  const url = await trackedRankingShareURL(r.id, sharedDuelURL(r, pair), 'duel'),
     versus = `${pair[0].label} × ${pair[1].label}`,
     data = {
       title: `${versus} — Duelo do Topo`,
@@ -4276,7 +4335,7 @@ function profileLeaderboardHTML(entries = []) {
     })
     .join(
       '',
-    )}</div><p class="profileLeaderboardNote">Cada voto livre ou escolha válida no duelo soma 1 ponto. Em caso de empate, vale a variedade de rankings.</p>`;
+    )}</div><p class="profileLeaderboardNote">Flecha: 1 ponto · ranking novo: 5 · Duelo completo: 10 · dia ativo: 10 · compartilhamento com voto: 20. Até 3 compartilhamentos por dia.</p>`;
 }
 function bindProfileLeaderboardReports(root = document) {
   root.querySelectorAll('[data-report-name]').forEach((button) => {
@@ -4639,7 +4698,7 @@ function mountInternalShare() {
 async function shareRanking(button) {
   const r = rankings.find((ranking) => ranking.id === button.dataset.nativeShare);
   if (!r) return;
-  const url = location.origin + rankingPath(r.id),
+  const url = await trackedRankingShareURL(r.id, location.origin + rankingPath(r.id), 'native'),
     leader = r.opts?.[0]?.label || '',
     data = {
       title: r.q,
@@ -4662,6 +4721,22 @@ async function shareRanking(button) {
     toast('Não consegui abrir o compartilhamento neste navegador.');
   }
 }
+async function shareRankingWhatsApp(button) {
+  const r = rankings.find((ranking) => ranking.id === button.dataset.whatsappShare);
+  if (!r) return;
+  button.setAttribute('aria-busy', 'true');
+  const url = await trackedRankingShareURL(r.id, location.origin + rankingPath(r.id), 'whatsapp');
+  button.removeAttribute('aria-busy');
+  location.href = whatsAppShareURL(r, url);
+}
+function bindWhatsAppShares() {
+  document.querySelectorAll('[data-whatsapp-share]').forEach((button) => {
+    button.onclick = (event) => {
+      event.preventDefault();
+      void shareRankingWhatsApp(button);
+    };
+  });
+}
 function bindNativeShares() {
   document
     .querySelectorAll('[data-native-share]')
@@ -4682,6 +4757,7 @@ function bindVotes() {
     .querySelectorAll('[data-double-vote]')
     .forEach((b) => (b.onclick = () => toggleDoubleVote(b)));
   mountInternalShare();
+  bindWhatsAppShares();
   bindNativeShares();
   bindFavoriteButtons();
   bindDuelLaunchers();
@@ -4757,6 +4833,9 @@ function applyVoteResult(optionId, result) {
 
 async function submitVoteChange(button, { optionId, direction, weight, showHelp = false }) {
   const rankOrder = rankings.map((r) => r.id),
+    rankingForVote = rankings.find((ranking) =>
+      ranking.opts?.some((option) => Number(option.id) === Number(optionId)),
+    ),
     controls = [
       ...((button.closest('[data-duel-pair]') || button.closest('.actions'))?.querySelectorAll(
         'button',
@@ -4767,7 +4846,13 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
     const res = await fetch('/api', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ device_id: deviceId, option_id: optionId, direction, weight }),
+        body: JSON.stringify({
+          device_id: deviceId,
+          option_id: optionId,
+          direction,
+          weight,
+          referral_token: incomingShareReferralToken(rankingForVote?.id),
+        }),
       }),
       result = await res.json();
     if (res.status === 403 && result.error === 'registration_required') {

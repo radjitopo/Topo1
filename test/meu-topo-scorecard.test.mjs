@@ -23,14 +23,11 @@ const scorecard = compactApp.slice(
   compactApp.indexOf('functionpersonalActivityHTML'),
 );
 
-assert.match(
-  compactApi,
-  /constPARTICIPATION_SCORE=Object\.freeze\(\{directVote:1,duelDecision:1,?\}\)/,
-);
 assert.match(profileApi, /duel_activityAS\(/);
 assert.match(profileApi, /round\.skipped=false/);
-assert.match(profileApi, /ASpoints/);
-assert.match(profileApi, /SELECTcreated_atASoccurred_atFROMranking_duel_rounds/);
+assert.match(profileApi, /FROMuser_score_eventsevent/);
+assert.match(profileApi, /SUM\(event\.points\)/);
+assert.match(profileApi, /event\.event_type='active_day'/);
 assert.match(
   compactApi.slice(
     compactApi.indexOf('asyncfunctiondoubleVoteState'),
@@ -40,6 +37,7 @@ assert.match(
 );
 assert.match(leaderboardApi, /WITHdirect_statsAS\(/);
 assert.match(leaderboardApi, /duel_statsAS\(/);
+assert.match(leaderboardApi, /score_statsAS\(/);
 assert.match(leaderboardApi, /scored\.pointsDESC/);
 assert.match(leaderboardApi, /points:Number\(row\.points\|\|0\)/);
 
