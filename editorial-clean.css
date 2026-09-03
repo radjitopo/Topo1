@@ -7585,50 +7585,130 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
   opacity: 0.65;
 }
 
-body.popElectric.vipPage .personalActivityOverview {
-  margin-top: 42px;
-  border-top: 5px solid var(--clean-ink);
-  padding-top: 16px;
+body.popElectric.vipPage .profileScorecard {
+  margin: 22px 0 10px;
+  border: 2px solid var(--clean-ink);
+  background: #fff;
 }
 
-body.popElectric.vipPage .profileMetrics {
+body.popElectric.vipPage .profileScorecardHead {
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 20px 17px;
+}
+
+body.popElectric.vipPage .profileScorecardHead h2 {
+  margin: 5px 0 0;
+  color: var(--clean-ink);
+  font:
+    900 clamp(25px, 3vw, 36px) / 0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric.vipPage .profileScorecardHead p {
+  max-width: 330px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    700 11px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.vipPage .profileScorecard .profileMetrics {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0;
-  margin-top: 10px;
+  grid-template-columns: minmax(175px, 1.35fr) repeat(4, minmax(105px, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--clean-ink);
   padding: 0;
 }
 
-body.popElectric.vipPage .profileMetrics > span {
+body.popElectric.vipPage .profileScorecard .profileMetrics > span {
   min-width: 0;
-  min-height: 64px;
-  align-content: center;
-  border-right: 1px solid var(--clean-line);
-  padding: 12px 16px;
+  min-height: 112px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: #fff;
+  padding: 17px 15px;
 }
 
-body.popElectric.vipPage .profileMetrics > span:first-child {
-  padding-left: 0;
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary {
+  background: var(--clean-ink);
+  color: #fff;
+  padding-left: 20px;
 }
 
-body.popElectric.vipPage .profileMetrics > span:last-child {
-  border-right: 0;
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScorePosition {
+  box-shadow: inset 0 5px 0 var(--clean-sage);
 }
 
-body.popElectric.vipPage .profileMetrics strong {
+body.popElectric.vipPage .profileScorecard .profileMetrics strong {
   color: var(--clean-ink);
   font:
-    800 27px/1 Arial,
+    900 clamp(24px, 2.5vw, 34px) / 0.95 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.055em;
 }
 
-body.popElectric.vipPage .profileMetrics small {
+body.popElectric.vipPage .profileScorecard .profileMetrics small {
   color: var(--clean-muted);
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.popElectric.vipPage .profileScorecard .profileMetrics em {
+  color: var(--clean-muted);
+  font:
+    700 9px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+  font-style: normal;
+}
+
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary strong,
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary small {
+  color: #fff;
+}
+
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary em {
+  color: #c9c9c9;
+}
+
+body.popElectric.vipPage .profileScorecardLink {
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--clean-ink);
+  color: var(--clean-ink);
+  padding: 0 20px;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+  text-decoration: none;
+}
+
+body.popElectric.vipPage .profileScorecardLink:hover,
+body.popElectric.vipPage .profileScorecardLink:focus-visible {
+  background: var(--clean-sage-soft);
 }
 
 body.popElectric.vipPage .personalActivityDashboard {
@@ -7895,18 +7975,49 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
     grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   }
 
-  body.popElectric.vipPage .profileMetrics > span,
-  body.popElectric.vipPage .profileMetrics > span:first-child {
-    min-height: 56px;
-    padding: 9px 8px;
+  body.popElectric.vipPage .profileScorecard {
+    margin-top: 16px;
   }
 
-  body.popElectric.vipPage .profileMetrics > span:first-child {
-    padding-left: 0;
+  body.popElectric.vipPage .profileScorecardHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+    padding: 15px 14px 14px;
   }
 
-  body.popElectric.vipPage .profileMetrics strong {
-    font-size: clamp(20px, 5.8vw, 24px);
+  body.popElectric.vipPage .profileScorecardHead h2 {
+    font-size: 29px;
+  }
+
+  body.popElectric.vipPage .profileScorecardHead p {
+    max-width: none;
+    font-size: 10px;
+  }
+
+  body.popElectric.vipPage .profileScorecard .profileMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.popElectric.vipPage .profileScorecard .profileMetrics > span {
+    min-height: 88px;
+    padding: 14px 12px;
+  }
+
+  body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary {
+    min-height: 104px;
+    grid-column: 1 / -1;
+    padding-left: 14px;
+  }
+
+  body.popElectric.vipPage .profileScorecard .profileMetrics strong {
+    font-size: clamp(24px, 7.6vw, 31px);
+  }
+
+  body.popElectric.vipPage .profileScorecardLink {
+    min-height: 46px;
+    justify-content: space-between;
+    padding: 0 14px;
   }
 
   body.popElectric.vipPage .personalActivityDashboard {

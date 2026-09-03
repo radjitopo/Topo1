@@ -1289,6 +1289,15 @@ function personalAreaHeaderHTML(active = 'activity') {
   return `<section class="personalHubHeader"><div><span class="portalKicker">Seu espaço pessoal</span><h1>Meu Topo</h1><p>Sua atividade e seu perfil reunidos no mesmo lugar.</p></div><nav class="personalHubTabs" aria-label="Áreas do Meu Topo"><a class="${activityCurrent ? 'active' : ''}" href="/vip" ${activityCurrent ? 'aria-current="page"' : ''}>Minha atividade</a><a class="${profileCurrent ? 'active' : ''}" href="${escapeHTML(profilePath)}" ${profileCurrent ? 'aria-current="page"' : ''}>Perfil</a></nav></section>`;
 }
 
+function personalScorecardHTML(data = null) {
+  const loaded = Boolean(data),
+    stats = data?.stats || {},
+    value = (number, suffix = '') =>
+      loaded ? `${fmt(Math.max(0, Number(number || 0)))}${suffix}` : '—',
+    streak = Math.max(0, Number(stats.streak || 0));
+  return `<section class="profileScorecard" aria-labelledby="profileScorecardTitle"><div class="profileScorecardHead"><div><span class="portalKicker">Seu placar</span><h2 id="profileScorecardTitle">Sua força no TOPO</h2></div><p>Hoje, cada voto livre ou escolha válida no duelo soma 1 ponto.</p></div><div class="profileMetrics" aria-label="Resumo da sua participação"><span class="profileScoreMetric profileScoreMetricPrimary"><small>Pontuação</small><strong>${value(stats.points ?? stats.votes)}</strong><em>pontos no TOPO</em></span><span class="profileScoreMetric"><small>Votos</small><strong>${value(stats.votes)}</strong><em>${loaded ? `${fmt(stats.directVotes || 0)} livres + ${fmt(stats.duelPoints || 0)} no duelo` : 'livres + duelo'}</em></span><span class="profileScoreMetric"><small>Rankings</small><strong>${value(stats.rankings)}</strong><em>participados</em></span><span class="profileScoreMetric"><small>Sequência</small><strong>${value(streak, loaded ? ` dia${streak === 1 ? '' : 's'}` : '')}</strong><em>votando sem parar</em></span><span class="profileScoreMetric profileScorePosition"><small>Posição</small><strong id="profileScorecardPosition" aria-live="polite">—</strong><em>entre as pessoas</em></span></div><a class="profileScorecardLink" href="#profileLeaderboardSection">VER RANKING DE PESSOAS <span aria-hidden="true">↓</span></a></section>`;
+}
+
 function personalActivityHTML(data = null) {
   if (!data)
     return '<section class="profileSection profileRecentSection personalActivityUnavailable"><div class="profileSectionHead"><div class="sectionLabel">Sua participação</div><span>atividade no TOPO</span></div><p class="profileHint">Não consegui carregar seu histórico agora. Seus favoritos e rankings continuam disponíveis acima.</p></section>';
@@ -1303,7 +1312,7 @@ function personalActivityHTML(data = null) {
     powerSummary = progress.unlocked
       ? `${fmt(doubleVotes.available || 0)} livre${Number(doubleVotes.available || 0) === 1 ? '' : 's'} · ${fmt(doubleVotes.active || 0)} em uso`
       : 'valem 2 pontos';
-  return `<section class="personalActivityOverview"><span class="portalKicker">Sua participação</span><div class="profileMetrics" aria-label="Resumo da sua atividade"><span><strong>${fmt(stats.votes || 0)}</strong><small>votos ativos</small></span><span><strong>${fmt(stats.rankings || 0)}</strong><small>rankings participados</small></span><span><strong>${fmt(stats.streak || 0)} dia${Number(stats.streak || 0) === 1 ? '' : 's'}</strong><small>sequência</small></span></div></section>${profileRankingActivityHTML(data.rankingActivity)}<div class="profileDashboard personalActivityDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(data.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(data.recent)}</section>`;
+  return `${profileRankingActivityHTML(data.rankingActivity)}<div class="profileDashboard personalActivityDashboard"><section class="profileSection profilePowerSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos duplos</div><span>${powerSummary}</span></div><div class="profilePowerList">${profileDoubleVotesHTML(doubleVotes)}</div><p class="profileComingSoon"><strong>Como usar:</strong> vote normalmente e toque no pequeno botão 2× que aparece ao lado da seta escolhida. Toque no 2× novamente para voltar ao voto simples; toque na seta marcada para remover o voto inteiro.</p></section><section class="profileSection profileVoteStyle"><div class="profileSectionHead"><div class="sectionLabel">Seu jeito de votar</div><span>votos ativos</span></div><div class="profileVoteSplit" aria-label="${upPercent}% para cima e ${downPercent}% para baixo"><span class="up" style="width:${upPercent}%"></span><span class="down" style="width:${downPercent}%"></span></div><div class="profileVoteLegend"><span><i class="up"></i><strong>${fmt(up)} ↑</strong> para cima</span><span><i class="down"></i><strong>${fmt(down)} ↓</strong> para baixo</span></div><div class="profileSubhead">Categorias favoritas</div>${profileCategoriesHTML(data.categories)}</section></div><section class="profileSection profileRecentSection"><div class="profileSectionHead"><div class="sectionLabel">Seus votos recentes</div><span>últimas escolhas</span></div>${profileRecentHTML(data.recent)}</section>`;
 }
 
 async function loadVipArea() {
@@ -1351,7 +1360,7 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `${personalAreaHeaderHTML('activity')}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
+  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
@@ -4249,7 +4258,7 @@ function profileLeaderboardHTML(entries = []) {
   return `<div class="profileLeaderboardList">${entries
     .map((entry) => {
       const position = Math.max(0, Number(entry.position || 0)),
-        votes = Math.max(0, Number(entry.votes || 0)),
+        points = Math.max(0, Number(entry.points ?? entry.votes ?? 0)),
         rankingsCount = Math.max(0, Number(entry.rankings || 0)),
         gap =
           previousPosition && position > previousPosition + 1
@@ -4261,13 +4270,13 @@ function profileLeaderboardHTML(entries = []) {
         reportAction = entry.isCurrent
           ? ''
           : `<button class="profileNameReport ${entry.reportedByCurrent ? 'reported' : ''}" type="button" data-report-name data-user-id="${escapeHTML(entry.userId)}" data-user-name="${escapeHTML(entry.name || 'Pessoa no TOPO')}" ${entry.reportedByCurrent ? 'disabled' : ''}>${entry.reportedByCurrent ? 'nome denunciado' : 'denunciar nome'}</button>`,
-        row = `<div class="profileLeaderboardRow ${entry.isCurrent ? 'current' : ''}"><span class="profileLeaderboardPosition top${Math.min(position, 3)}">${position}</span><span class="profileLeaderboardAvatar">${avatar}</span><span class="profileLeaderboardPerson"><strong>${escapeHTML(entry.name || 'Pessoa no TOPO')}${entry.isCurrent ? '<em>você</em>' : ''}</strong><small>${escapeHTML(profileLevel(votes))} · ${fmt(rankingsCount)} ranking${rankingsCount === 1 ? '' : 's'}</small>${reportAction}</span><span class="profileLeaderboardScore"><strong>${fmt(votes)}</strong><small>votos</small></span></div>`;
+        row = `<div class="profileLeaderboardRow ${entry.isCurrent ? 'current' : ''}"><span class="profileLeaderboardPosition top${Math.min(position, 3)}">${position}</span><span class="profileLeaderboardAvatar">${avatar}</span><span class="profileLeaderboardPerson"><strong>${escapeHTML(entry.name || 'Pessoa no TOPO')}${entry.isCurrent ? '<em>você</em>' : ''}</strong><small>${escapeHTML(profileLevel(points))} · ${fmt(rankingsCount)} ranking${rankingsCount === 1 ? '' : 's'}</small>${reportAction}</span><span class="profileLeaderboardScore"><strong>${fmt(points)}</strong><small>pontos</small></span></div>`;
       previousPosition = position;
       return gap + row;
     })
     .join(
       '',
-    )}</div><p class="profileLeaderboardNote">A posição considera os votos conquistados e, em caso de empate, a variedade de rankings.</p>`;
+    )}</div><p class="profileLeaderboardNote">Cada voto livre ou escolha válida no duelo soma 1 ponto. Em caso de empate, vale a variedade de rankings.</p>`;
 }
 function bindProfileLeaderboardReports(root = document) {
   root.querySelectorAll('[data-report-name]').forEach((button) => {
@@ -4322,12 +4331,8 @@ async function loadProfileLeaderboard() {
       current = entries.find((entry) => entry.isCurrent);
     section.innerHTML = `<div class="profileSectionHead"><div class="sectionLabel">Ranking da comunidade</div><span>Top 10</span></div>${profileLeaderboardHTML(entries)}`;
     bindProfileLeaderboardReports(section);
-    const metrics = document.querySelector('.profileMetrics');
-    if (current && metrics && !metrics.querySelector('.profileMetricRank'))
-      metrics.insertAdjacentHTML(
-        'beforeend',
-        `<span class="profileMetricRank"><strong>${fmt(current.position)}º</strong><small>na comunidade</small></span>`,
-      );
+    const scorecardPosition = document.getElementById('profileScorecardPosition');
+    if (current && scorecardPosition) scorecardPosition.textContent = `${fmt(current.position)}º`;
   } catch {
     section.innerHTML =
       '<div class="profileSectionHead"><div class="sectionLabel">Ranking da comunidade</div><span>Top 10</span></div><p class="profileHint">Não consegui carregar o ranking agora.</p>';

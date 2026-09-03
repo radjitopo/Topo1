@@ -34,6 +34,10 @@ const ANONYMOUS_LIMIT = 10;
 const ANONYMOUS_DUEL_LIMIT = 2;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
+const PARTICIPATION_SCORE = Object.freeze({
+  directVote: 1,
+  duelDecision: 1,
+});
 const PROFILE_LEVEL_MILESTONES = Object.freeze([
   { at: 20, key: 'explorer', name: 'Explorador de rankings' },
   { at: 75, key: 'curator', name: 'Curador do TOPO' },
@@ -660,9 +664,16 @@ async function doubleVoteState(user) {
   const [historyRows, activeRows] = await Promise.all([
     sql.query(
       `
-      SELECT COUNT(*)::int AS total
-      FROM user_vote_history
-      WHERE user_id = $1
+      SELECT (
+        (SELECT COUNT(*) FROM user_vote_history WHERE user_id = $1)
+        +
+        (
+          SELECT COUNT(*)
+          FROM ranking_duel_rounds
+          WHERE user_id = $1
+            AND skipped = false
+        )
+      )::int AS total
     `,
       [user.id],
     ),
@@ -2632,25 +2643,41 @@ async function profile(req, res) {
         FROM votes v
         WHERE v.user_id = $1
       ),
-      activity_rankings AS (
+      direct_activity AS (
         SELECT option.ranking_id
         FROM user_vote_history history
         JOIN ranking_options option ON option.id = history.option_id
         WHERE history.user_id = $1
+      ),
+      duel_activity AS (
+        SELECT round.ranking_id
+        FROM ranking_duel_rounds round
+        WHERE round.user_id = $1
+          AND round.skipped = false
+      ),
+      activity_rankings AS (
+        SELECT ranking_id FROM direct_activity
         UNION
         SELECT session.ranking_id
         FROM ranking_duel_sessions session
         WHERE session.user_id = $1
       )
       SELECT
-        COUNT(*)::int AS votes,
+        (
+          (SELECT COUNT(*) FROM direct_activity)
+          + (SELECT COUNT(*) FROM duel_activity)
+        )::int AS votes,
+        (
+          (SELECT COUNT(*) FROM direct_activity) * $2::int
+          + (SELECT COUNT(*) FROM duel_activity) * $3::int
+        )::int AS points,
+        (SELECT COUNT(*)::int FROM direct_activity) AS direct_votes,
+        (SELECT COUNT(*)::int FROM duel_activity) AS duel_points,
         (SELECT COUNT(*)::int FROM activity_rankings) AS rankings,
-        COUNT(*) FILTER (WHERE l.direction = 1)::int AS up_votes,
-        COUNT(*) FILTER (WHERE l.direction = -1)::int AS down_votes
-      FROM latest l
-      JOIN ranking_options o ON o.id = l.option_id
+        (SELECT COUNT(*)::int FROM latest WHERE direction = 1) AS up_votes,
+        (SELECT COUNT(*)::int FROM latest WHERE direction = -1) AS down_votes
     `,
-      [user.id],
+      [user.id, PARTICIPATION_SCORE.directVote, PARTICIPATION_SCORE.duelDecision],
     ),
     sql.query(
       `
@@ -2759,13 +2786,21 @@ async function profile(req, res) {
     ),
     sql.query(
       `
+      WITH activity AS (
+        SELECT first_voted_at AS occurred_at
+        FROM user_vote_history
+        WHERE user_id = $1
+        UNION ALL
+        SELECT created_at AS occurred_at
+        FROM ranking_duel_rounds
+        WHERE user_id = $1
+      )
       SELECT DISTINCT (
         (now() AT TIME ZONE 'America/Sao_Paulo')::date
-        - (first_voted_at AT TIME ZONE 'America/Sao_Paulo')::date
+        - (occurred_at AT TIME ZONE 'America/Sao_Paulo')::date
       )::int AS "daysAgo"
-      FROM user_vote_history
-      WHERE user_id = $1
-        AND first_voted_at >= now() - interval '400 days'
+      FROM activity
+      WHERE occurred_at >= now() - interval '400 days'
       ORDER BY "daysAgo"
     `,
       [user.id],
@@ -2844,7 +2879,10 @@ async function profile(req, res) {
       showAvatarOnLeaderboard: savedProfile.showAvatarOnLeaderboard !== false,
     },
     stats: {
+      points: Number(stats.points || 0),
       votes: Number(stats.votes || 0),
+      directVotes: Number(stats.direct_votes || 0),
+      duelPoints: Number(stats.duel_points || 0),
       rankings: Number(stats.rankings || 0),
       upVotes: Number(stats.up_votes || 0),
       downVotes: Number(stats.down_votes || 0),
@@ -2902,36 +2940,71 @@ async function leaderboard(req, res) {
 
   const rows = await sql.query(
     `
-    WITH ranked AS (
+    WITH direct_stats AS (
+      SELECT
+        history.user_id,
+        COUNT(*)::int AS direct_votes
+      FROM user_vote_history history
+      GROUP BY history.user_id
+    ),
+    duel_stats AS (
+      SELECT
+        round.user_id,
+        COUNT(*) FILTER (WHERE round.skipped = false)::int AS duel_votes
+      FROM ranking_duel_rounds round
+      WHERE round.user_id IS NOT NULL
+      GROUP BY round.user_id
+    ),
+    activity_rankings AS (
+      SELECT history.user_id, option.ranking_id
+      FROM user_vote_history history
+      JOIN ranking_options option ON option.id = history.option_id
+      UNION
+      SELECT session.user_id, session.ranking_id
+      FROM ranking_duel_sessions session
+      WHERE session.user_id IS NOT NULL
+    ),
+    ranking_stats AS (
+      SELECT user_id, COUNT(*)::int AS rankings
+      FROM activity_rankings
+      GROUP BY user_id
+    ),
+    scored AS (
       SELECT
         u.id AS "userId",
         u.display_name AS name,
-        COUNT(h.option_id)::int AS votes,
-        COUNT(DISTINCT o.ranking_id)::int AS rankings,
-        DENSE_RANK() OVER (
-          ORDER BY
-            COUNT(h.option_id) DESC,
-            COUNT(DISTINCT o.ranking_id) DESC
-        )::int AS position,
+        (COALESCE(direct.direct_votes, 0) + COALESCE(duel.duel_votes, 0))::int AS votes,
+        (
+          COALESCE(direct.direct_votes, 0) * $2::int
+          + COALESCE(duel.duel_votes, 0) * $3::int
+        )::int AS points,
+        COALESCE(activity.rankings, 0)::int AS rankings,
         CASE
           WHEN COALESCE(p.show_avatar_on_leaderboard, true)
             THEN p.avatar_data
           ELSE NULL
         END AS "avatarData"
       FROM users u
-      LEFT JOIN user_vote_history h ON h.user_id = u.id
-      LEFT JOIN ranking_options o ON o.id = h.option_id
+      LEFT JOIN direct_stats direct ON direct.user_id = u.id
+      LEFT JOIN duel_stats duel ON duel.user_id = u.id
+      LEFT JOIN ranking_stats activity ON activity.user_id = u.id
       LEFT JOIN user_profiles p ON p.user_id = u.id
-      GROUP BY
-        u.id,
-        u.display_name,
-        p.avatar_data,
-        p.show_avatar_on_leaderboard
+    ),
+    ranked AS (
+      SELECT
+        scored.*,
+        DENSE_RANK() OVER (
+          ORDER BY
+            scored.points DESC,
+            scored.rankings DESC
+        )::int AS position
+      FROM scored
     )
     SELECT
       "userId",
       name,
       votes,
+      points,
       rankings,
       position,
       "avatarData",
@@ -2947,7 +3020,7 @@ async function leaderboard(req, res) {
     WHERE position <= 10 OR "userId" = $1
     ORDER BY position, name
   `,
-    [user.id],
+    [user.id, PARTICIPATION_SCORE.directVote, PARTICIPATION_SCORE.duelDecision],
   );
 
   return json(res, 200, {
@@ -2955,6 +3028,7 @@ async function leaderboard(req, res) {
       userId: row.userId,
       name: row.name,
       votes: Number(row.votes || 0),
+      points: Number(row.points || 0),
       rankings: Number(row.rankings || 0),
       position: Number(row.position || 0),
       avatarData: row.avatarData || null,
