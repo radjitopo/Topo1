@@ -18,11 +18,11 @@ for (const ranking of catalog) {
   removed += before - ranking.opts.length;
 
   if (ranking.localCategoryKey === 'vegan') {
-    ranking.localCategory = 'Restaurante vegano';
+    ranking.localCategory = 'Restaurante/lanchonete vegano/vegetariano';
     ranking.question =
       ranking.id === veganFloripaRefresh.rankingId
         ? veganFloripaRefresh.question
-        : `Qual é o melhor restaurante vegano em ${ranking.city}?`;
+        : `Qual é o melhor restaurante/lanchonete vegano ou vegetariano em ${ranking.city}?`;
   }
 
   if (ranking.opts.length < 5) {

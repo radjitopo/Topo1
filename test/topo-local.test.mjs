@@ -78,6 +78,10 @@ test('the exact 16 Topo Local categories classify independently', () => {
     assert.equal(local.groupForRanking(ranking), expected, id);
     assert.equal(local.isLocalRanking(ranking), true, id);
   }
+  assert.equal(
+    local.collectionPath('Manaus', 'Restaurante/lanchonete vegano/vegetariano'),
+    '/local/manaus/restaurante-lanchonete-vegano-vegetariano',
+  );
 });
 
 test('general place rankings stay outside Topo Local', () => {

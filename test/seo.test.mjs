@@ -16,6 +16,7 @@ import {
   isClubPlayerRanking,
   localCityBySlug,
   localCollectionPath,
+  localGroupBySlug,
   localGroupForRanking,
 } from '../seo-taxonomy.js';
 import { buildSitemap } from '../sitemap.js';
@@ -110,6 +111,18 @@ test('SEO taxonomy creates stable category, city and local collection URLs', () 
   assert.equal(
     localCollectionPath('florianopolis', 'sushi-japones'),
     '/local/florianopolis/sushi-japones',
+  );
+  const veganGroup = localGroupForRanking({
+    id: 'restaurantes-veganos-manaus',
+    category: 'Manaus',
+    question: 'Qual é o melhor restaurante/lanchonete vegano ou vegetariano em Manaus?',
+  });
+  assert.equal(veganGroup?.label, 'Restaurante/lanchonete vegano/vegetariano');
+  assert.equal(veganGroup?.slug, 'restaurante-lanchonete-vegano-vegetariano');
+  assert.equal(localGroupBySlug('restaurante-vegano'), veganGroup);
+  assert.equal(
+    localCollectionPath('manaus', veganGroup),
+    '/local/manaus/restaurante-lanchonete-vegano-vegetariano',
   );
 });
 

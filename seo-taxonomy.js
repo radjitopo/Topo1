@@ -210,11 +210,12 @@ export function localCityBySlug(slug) {
 
 const localGroupDefinitions = [
   {
-    label: 'Restaurante vegano',
+    label: 'Restaurante/lanchonete vegano/vegetariano',
     description:
-      'Restaurantes e estabelecimentos veganos escolhidos por quem conhece a cena local.',
+      'Restaurantes e lanchonetes veganos ou vegetarianos escolhidos por quem conhece a cena local.',
     id: /^(?:restaurantes?\s+veganos?|veganos?)(?:\s|$)/,
-    question: /\b(?:restaurante|estabelecimento)\s+vegano\b|\bcomida\s+vegana\b/,
+    question:
+      /\b(?:restaurante|lanchonete|estabelecimento)\s+(?:vegano|vegetariano)\b|\bcomida\s+(?:vegana|vegetariana)\b/,
   },
   {
     label: 'Restaurante por quilo',
@@ -321,6 +322,8 @@ export const LOCAL_GROUPS = Object.freeze(
 
 const localGroupBySlugMap = new Map(LOCAL_GROUPS.map((group) => [group.slug, group]));
 const localGroupByLabelMap = new Map(LOCAL_GROUPS.map((group) => [group.label, group]));
+const veganVegetarianGroup = localGroupByLabelMap.get('Restaurante/lanchonete vegano/vegetariano');
+if (veganVegetarianGroup) localGroupBySlugMap.set('restaurante-vegano', veganVegetarianGroup);
 
 export function localGroupBySlug(slug) {
   return localGroupBySlugMap.get(String(slug || '').toLowerCase()) || null;
