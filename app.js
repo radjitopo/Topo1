@@ -3041,9 +3041,15 @@ function bindRankingVoteModes(r) {
     };
   });
 }
+function syncRankingModeLayout(votingOpen = true) {
+  document
+    .querySelector('.rankingMain')
+    ?.classList.toggle('rankingDuelFirst', votingOpen && activeRankingVoteMode() === 'duelo');
+}
 function renderRankingVoteExperience(r, loadState = true) {
   const panel = document.getElementById('rankingVotingPanel');
   if (!panel) return;
+  syncRankingModeLayout();
   document.querySelectorAll('[data-ranking-vote-mode]').forEach((button) => {
     const active = button.dataset.rankingVoteMode === activeRankingVoteMode();
     button.classList.toggle('active', active);
@@ -3702,6 +3708,7 @@ function renderInternal() {
   const rankingHead = `<div class="rankHead"><span class="categoryWrap"><a class="category" href="${categoryPath}">${vip ? 'Meu Topo' : escapeHTML(categoryLabel(r))}</a>${newBadgeHTML(r)}</span><span class="total">Top ${visibleLimit}</span></div>`,
     compactHero = `<div class="rankingCompactHero${cover ? '' : ' rankingCompactHeroNoImage'}${rankingTitleSizeClass(r.q)}">${cover}<div class="rankingCompactHeroCopy">${rankingHead}<h1>${escapeHTML(r.q)}</h1>${description}</div></div>`;
   feed.innerHTML = `${ownerBar}<article class="rank rankingMain" id="votar">${compactHero}${rankingPersonalActionsHTML(r, 'desktop')}${closedNotice}${rankingPersonalActionsHTML(r, 'mobile')}${rankingOptionPromotionHTML(r)}${rankingVoteModeHTML(r, votingOpen)}<div id="rankingVotingPanel" role="tabpanel">${rankingVotePanelHTML(r, votingOpen)}</div>${rankingOptionSuggestionHTML(r)}</article>${rankingContinuationHTML(r)}${commentsShellHTML()}${editorialHTML(r)}<div class="end"><a class="backLink" href="${homePath}">← voltar para ${r.vipOwned ? 'seus rankings privados' : vip ? 'o Meu Topo' : `todos os rankings ${local ? 'locais' : ''}`}</a></div>`;
+  syncRankingModeLayout(votingOpen);
   syncRankingContinuationFlow();
   if (r.vipOwned) {
     document.getElementById('vipOwnerCopy').onclick = () => copyVipRankingLink(r.id);

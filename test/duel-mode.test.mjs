@@ -54,9 +54,13 @@ test('Voto Livre starts without a black bar and explains the stronger duel', asy
 });
 
 test('tab changes stay in place instead of navigating the ranking page', async () => {
-  const app = await readFile(new URL('app.js', root), 'utf8');
+  const [app, style] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+  ]);
   const tabs = extractTopLevelDeclaration(app, 'rankingVoteModeHTML');
   const updateUrl = extractTopLevelDeclaration(app, 'updateVoteModeUrl');
+  const syncLayout = extractTopLevelDeclaration(app, 'syncRankingModeLayout');
 
   assert.match(tabs, /<button/);
   assert.doesNotMatch(tabs, /href=/);
@@ -65,6 +69,16 @@ test('tab changes stay in place instead of navigating the ranking page', async (
   assert.match(updateUrl, /url\.searchParams\.set\('modo',\s*mode\)/);
   assert.doesNotMatch(updateUrl, /location\.(?:assign|replace)/);
   assert.doesNotMatch(updateUrl, /scrollTo|scrollIntoView/);
+  assert.match(syncLayout, /rankingDuelFirst/);
+  assert.match(syncLayout, /activeRankingVoteMode\(\) === 'duelo'/);
+  assert.match(app, /function renderRankingVoteExperience[\s\S]*?syncRankingModeLayout\(\)/);
+  assert.match(
+    style,
+    /@media \(max-width: 700px\)[\s\S]*?rankingPage \.siteSearch \{[\s\S]*?display: none;/,
+  );
+  assert.match(style, /\.rankingDuelFirst \.rankingVoteModes \{[\s\S]*?order: 1;/);
+  assert.match(style, /\.rankingDuelFirst #rankingVotingPanel \{[\s\S]*?order: 2;/);
+  assert.match(style, /\.rankingDuelFirst \.rankingPersonalActionsMobile \{[\s\S]*?order: 3;/);
 });
 
 test('Ganha, Fica keeps its own sessions and only adds a hidden bonus every 4 points', async () => {
