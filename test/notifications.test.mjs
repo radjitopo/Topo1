@@ -12,6 +12,7 @@ test('the notification center is persisted, generated and visible beside Meu Top
     readFile(new URL('../migrations/20260824_notifications.sql', import.meta.url), 'utf8'),
   ]);
   const compactApp = compactSource(app);
+  const compactCss = compactSource(css);
 
   assert.match(migration, /CREATE TABLE IF NOT EXISTS user_notifications/);
   assert.match(migration, /notification_last_seen_at/);
@@ -35,6 +36,10 @@ test('the notification center is persisted, generated and visible beside Meu Top
   );
   assert.match(css, /\.notificationPanel/);
   assert.match(css, /\.notificationBadge/);
+  assert.match(
+    compactCss,
+    /@media\(max-width:560px\)\{\.notificationPanel\{[^}]*position:fixed[^}]*right:14px[^}]*left:8px[^}]*width:auto/,
+  );
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(index, /style\.css\?v=20260825-9-seo/);
 });

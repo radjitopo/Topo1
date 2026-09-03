@@ -1344,6 +1344,22 @@ h2,
   font-size: 10px;
   line-height: 1.4;
 }
+@media (max-width: 560px) {
+  .notificationPanel {
+    position: fixed;
+    top: 62px;
+    right: 14px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 74px);
+    max-height: calc(100dvh - 74px);
+  }
+  .notificationList {
+    max-height: calc(100vh - 136px);
+    max-height: calc(100dvh - 136px);
+  }
+}
 .accountLink {
   font-size: 11px;
   color: var(--accent);
