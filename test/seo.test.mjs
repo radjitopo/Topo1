@@ -102,6 +102,14 @@ test('SEO taxonomy creates stable category, city and local collection URLs', () 
   );
   assert.equal(
     localGroupForRanking({
+      id: 'botecos-floripa',
+      category: 'Florianópolis',
+      question: 'Qual é o melhor boteco em Florianópolis?',
+    })?.slug,
+    'botecos',
+  );
+  assert.equal(
+    localGroupForRanking({
       id: 'eventos-esportivos-floripa',
       category: 'Florianópolis',
       question: 'Qual tipo de evento esportivo é o favorito em Florianópolis?',
@@ -302,7 +310,7 @@ test('Vercel routes every public collection and private account shell through SE
     index,
     /\/app\.js\?v=20260827-1-vip-area-[^"']*-navigation-loading-search-city-search-submit-city/,
   );
-  assert.match(index, /\/topo-local\.js\?v=20260825-6-seo-legacy-city-routing/);
+  assert.match(index, /\/topo-local\.js\?v=20260903-1-bars-botecos/);
   assert.match(index, /id="searchCity" name="cidade" type="hidden"/);
   assert.doesNotMatch(index, /vote · veja · continue/);
   assert.match(editorialCss, /html\.clientBooting #feed\[data-server-rendered='true'\]/);

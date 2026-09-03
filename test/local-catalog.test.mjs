@@ -13,14 +13,14 @@ const exclusions = JSON.parse(
 
 const expectedCategories = local.groupOrder.slice(1);
 
-test('the local seed is a complete 21 by 16 matrix', () => {
-  assert.equal(catalog.length, 336);
-  assert.equal(new Set(catalog.map((ranking) => ranking.id)).size, 336);
+test('the local seed is a complete 21 by 17 matrix', () => {
+  assert.equal(catalog.length, 357);
+  assert.equal(new Set(catalog.map((ranking) => ranking.id)).size, 357);
   assert.deepEqual([...new Set(catalog.map((ranking) => ranking.city))], local.cityOrder);
 
   for (const city of local.cityOrder) {
     const cityRankings = catalog.filter((ranking) => ranking.city === city);
-    assert.equal(cityRankings.length, 16, city);
+    assert.equal(cityRankings.length, 17, city);
     assert.deepEqual(
       cityRankings.map((ranking) => ranking.localCategory),
       expectedCategories,
@@ -32,7 +32,7 @@ test('the local seed is a complete 21 by 16 matrix', () => {
 test('the curated local options are usable and unique inside each ranking', () => {
   assert.equal(
     catalog.reduce((total, ranking) => total + ranking.opts.length, 0),
-    6668,
+    7088,
   );
   for (const ranking of catalog) {
     assert.ok(ranking.opts.length >= 5 && ranking.opts.length <= 20, ranking.id);

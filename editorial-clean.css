@@ -7833,6 +7833,23 @@ body.popElectric.vipPage .profileRankingActivityWinner {
   padding-right: 8px;
 }
 
+body.popElectric.vipPage .profileRankingActivityContinue {
+  width: max-content;
+  min-height: 27px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 3px;
+  border: 1px solid var(--clean-ink);
+  padding: 0 8px;
+  background: var(--clean-ink);
+  color: #fff;
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+}
+
 body.popElectric.vipPage .profileRankingActivityCard:hover .profileRankingActivityCopy > b,
 body.popElectric.vipPage .profileRankingActivityCard:focus-visible .profileRankingActivityCopy > b {
   text-decoration: underline;
@@ -8076,6 +8093,10 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
     grid-column: 2;
     border-left: 0;
     padding: 0 8px 13px 0;
+  }
+
+  body.popElectric.vipPage .profileRankingActivityContinue {
+    min-height: 25px;
   }
 
   body.popElectric.vipPage .profileSection {

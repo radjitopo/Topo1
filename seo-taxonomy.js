@@ -255,10 +255,18 @@ const localGroupDefinitions = [
     question: /\b(?:cafe|cafeteria)\b/,
   },
   {
+    label: 'Botecos',
+    description:
+      'Botecos populares e tradicionais, com balcão, cerveja, petiscos e identidade de bairro.',
+    id: /^(?:botecos?|botequins?|butecos?|butiquins?)(?:\s|$)/,
+    question: /\b(?:boteco|botecos|botequim|botequins|buteco|butecos|butiquim)\b/,
+  },
+  {
     label: 'Bares',
-    description: 'Bares, pubs e botecos da cidade para descobrir, comparar e votar.',
+    description:
+      'Coquetelarias, gastrobares, pubs, rooftops e casas de vinho ou cerveja para descobrir e votar.',
     id: /^bares?(?:\s|$)/,
-    question: /\b(?:bar|bares|boteco|botequim|pub)\b/,
+    question: /\b(?:bar|bares|pub|gastrobar|coquetelaria)\b/,
   },
   {
     label: 'Salão de beleza',

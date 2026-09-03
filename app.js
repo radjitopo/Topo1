@@ -4253,8 +4253,12 @@ function profileRankingActivityHTML(items = []) {
           ? `<strong>${escapeHTML(item.winner)}</strong>`
           : item.played && !item.completed
             ? '<strong>Continuar escolhendo</strong>'
+            : '',
+        continueAction =
+          item.played && !item.completed
+            ? '<span class="profileRankingActivityContinue">CONTINUAR DUELO →</span>'
             : '';
-      return `<a class="profileRankingActivityCard" data-profile-activity-card href="${escapeHTML(href)}" ${index >= PROFILE_RANKING_ACTIVITY_PAGE_SIZE ? 'hidden' : ''}><span class="profileRankingActivityImage">${item.image ? `<img src="${escapeHTML(item.image)}" alt="" loading="lazy">` : '<b aria-hidden="true">TOPO</b>'}</span><span class="profileRankingActivityCopy"><span>${tags}</span><b>${escapeHTML(item.question)}</b><small>${escapeHTML(item.category || '')}</small></span><span class="profileRankingActivityWinner"><small>${winnerLabel}</small>${winner}</span></a>`;
+      return `<a class="profileRankingActivityCard" data-profile-activity-card href="${escapeHTML(href)}" ${index >= PROFILE_RANKING_ACTIVITY_PAGE_SIZE ? 'hidden' : ''}><span class="profileRankingActivityImage">${item.image ? `<img src="${escapeHTML(item.image)}" alt="" loading="lazy">` : '<b aria-hidden="true">TOPO</b>'}</span><span class="profileRankingActivityCopy"><span>${tags}</span><b>${escapeHTML(item.question)}</b><small>${escapeHTML(item.category || '')}</small></span><span class="profileRankingActivityWinner"><small>${winnerLabel}</small>${winner}${continueAction}</span></a>`;
     })
     .join('');
   const remaining = Math.max(0, activity.length - PROFILE_RANKING_ACTIVITY_PAGE_SIZE),

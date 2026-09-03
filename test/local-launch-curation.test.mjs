@@ -149,9 +149,11 @@ test('a brand occupies at most one position in each ranking', () => {
   }
 });
 
-test('the reviewed overlay is exactly reflected by the local catalog', () => {
+test('the reviewed launch overlay remains reflected outside the newer bar split', () => {
   const catalogById = new Map(catalog.map((ranking) => [ranking.id, ranking]));
-  for (const reviewed of refresh.rankings) {
+  for (const reviewed of refresh.rankings.filter(
+    (ranking) => !ranking.rankingId.startsWith('bares-'),
+  )) {
     const ranking = catalogById.get(reviewed.rankingId);
     assert.ok(ranking, reviewed.rankingId);
     assert.equal(ranking.city, reviewed.city);
@@ -195,5 +197,7 @@ test('future catalog builds retain the reviewed overlay', () => {
   assert.match(generator, /baseCatalogRevision/);
   assert.match(builder, /local-launch-curation-2026-09\.json/);
   assert.match(builder, /localLaunchById/);
+  assert.match(builder, /local-bars-botecos-2026-09\.json/);
+  assert.match(builder, /barsBotecosById/);
   assert.match(builder, /LOCAL_PUBLIC_MINIMUM_OPTION_COUNT = 5/);
 });

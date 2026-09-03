@@ -31,6 +31,7 @@
     'Sushi/Japonês',
     'Café/Cafeteria',
     'Bares',
+    'Botecos',
     'Salão de beleza',
     'Barbearia',
     'Academia',
@@ -115,9 +116,14 @@
       question: /\b(?:cafe|cafeteria)\b/,
     },
     {
+      name: 'Botecos',
+      id: /^(?:botecos?|botequins?|butecos?|butiquins?)(?:\s|$)/,
+      question: /\b(?:boteco|botecos|botequim|botequins|buteco|butecos|butiquim)\b/,
+    },
+    {
       name: 'Bares',
       id: /^bares?(?:\s|$)/,
-      question: /\b(?:bar|bares|boteco|botequim|pub)\b/,
+      question: /\b(?:bar|bares|pub|gastrobar|coquetelaria)\b/,
     },
     {
       name: 'Salão de beleza',

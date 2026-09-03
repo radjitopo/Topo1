@@ -12,6 +12,7 @@ const categoryExamples = [
   ['sushi-brasilia', 'Qual é o melhor sushi em Brasília?', 'Sushi/Japonês'],
   ['cafes-brasilia', 'Qual é o melhor café em Brasília?', 'Café/Cafeteria'],
   ['bares-brasilia', 'Qual é o melhor bar em Brasília?', 'Bares'],
+  ['botecos-brasilia', 'Qual é o melhor boteco em Brasília?', 'Botecos'],
   ['saloes-beleza-brasilia', 'Qual é o melhor salão de beleza em Brasília?', 'Salão de beleza'],
   ['barbearias-brasilia', 'Qual é a melhor barbearia em Brasília?', 'Barbearia'],
   ['academias-brasilia', 'Qual é a melhor academia em Brasília?', 'Academia'],
@@ -71,7 +72,7 @@ const rankings = [
   },
 ];
 
-test('the exact 16 Topo Local categories classify independently', () => {
+test('the exact 17 Topo Local categories classify independently', () => {
   assert.deepEqual(local.groupOrder, ['Todos', ...categoryExamples.map(([, , group]) => group)]);
   for (const [id, , expected] of categoryExamples) {
     const ranking = rankings.find((item) => item.id === id);
@@ -165,7 +166,7 @@ test('the public shell, API and routes expose the complete local experience', as
   assert.match(index, /data-experience="topo"/);
   assert.match(index, /data-experience="local" href="\/local"/);
   assert.match(index, /id="citySelect"/);
-  assert.match(index, /topo-local\.js\?v=20260825-6-seo/);
+  assert.match(index, /topo-local\.js\?v=20260903-1-bars-botecos/);
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(index, /pop-electric\.css\?v=20260826-13-compact-categories/);
   assert.match(api, /x-vercel-ip-city/);

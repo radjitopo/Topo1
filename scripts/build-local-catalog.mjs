@@ -23,8 +23,31 @@ const cafesFloripaRefresh = JSON.parse(
 const localLaunchCuration = JSON.parse(
   await readFile(new URL('../data/local-launch-curation-2026-09.json', import.meta.url), 'utf8'),
 );
+const barsBotecosCuration = JSON.parse(
+  await readFile(new URL('../data/local-bars-botecos-2026-09.json', import.meta.url), 'utf8'),
+);
 const localLaunchById = new Map(
   localLaunchCuration.rankings.map((ranking) => [ranking.rankingId, ranking]),
+);
+const barsBotecosById = new Map(
+  barsBotecosCuration.cities.flatMap((city) => [
+    [
+      `bares-${city.slug}`,
+      {
+        categoryLabel: 'Bares',
+        question: `Qual é o melhor bar em ${city.city}?`,
+        options: city.bars,
+      },
+    ],
+    [
+      `botecos-${city.slug}`,
+      {
+        categoryLabel: 'Botecos',
+        question: `Qual é o melhor boteco em ${city.city}?`,
+        options: city.botecos,
+      },
+    ],
+  ]),
 );
 
 const cities = Object.freeze([
@@ -62,6 +85,8 @@ const images = Object.freeze({
     'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=82',
   cafe: 'https://images.unsplash.com/photo-1561522983-385a76fbb4cb?auto=format&fit=crop&crop=entropy&w=1200&q=82',
   bar: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=82',
+  boteco:
+    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=82',
   beauty:
     'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=82',
   barber:
@@ -87,7 +112,8 @@ const patterns = Object.freeze({
   burger: /\b(?:burger|burguer|hamburguer|hamburgueria|hamburger)\b/,
   sushi: /\b(?:sushi|temaki|temakeria|japa|japones|japanese|izakaya|ramen|yakisoba|nikkei|kappo)\b/,
   cafe: /\b(?:cafe|cafeteria|coffee|cafes)\b/,
-  bar: /\b(?:bar|bares|pub|boteco|botequim|cervejaria|choperia|taproom|beer|bier)\b/,
+  bar: /\b(?:bar|bares|pub|cervejaria|choperia|taproom|beer|bier|gastrobar|cocktail)\b/,
+  boteco: /\b(?:boteco|botecos|botequim|botequins|buteco|butecos|butiquim)\b/,
   barber: /\b(?:barber|barbearia|barbeiro|barbershop|cavalheiros?)\b/,
   beauty: /\b(?:salao|beleza|beauty|cabeleireir|hair|esmalteria|estetica|studio)\b/,
   gym: /\b(?:academia|fitness|crossfit|cross training|gym|pilates|musculacao)\b/,
@@ -187,6 +213,7 @@ function categoryId(key, city) {
     sushi: `sushi-${city.slug}`,
     cafe: `cafes-${city.slug}`,
     bar: `bares-${city.slug}`,
+    boteco: `botecos-${city.slug}`,
     beauty: `saloes-beleza-${city.slug}`,
     barber: `barbearias-${city.slug}`,
     gym: `academias-${city.slug}`,
@@ -253,9 +280,19 @@ const categories = Object.freeze([
     question: (city) => `Qual é o melhor bar em ${city.name}?`,
     image: images.bar,
     match: (place) =>
-      ['bar', 'pub', 'biergarten'].includes(place.tags.amenity) ||
-      (['restaurant', 'cafe', 'nightclub'].includes(place.tags.amenity) &&
-        patterns.bar.test(searchable(place))),
+      !patterns.boteco.test(searchable(place)) &&
+      (['bar', 'pub', 'biergarten'].includes(place.tags.amenity) ||
+        (['restaurant', 'cafe', 'nightclub'].includes(place.tags.amenity) &&
+          patterns.bar.test(searchable(place)))),
+  },
+  {
+    key: 'boteco',
+    label: 'Botecos',
+    question: (city) => `Qual é o melhor boteco em ${city.name}?`,
+    image: images.boteco,
+    match: (place) =>
+      ['bar', 'pub', 'biergarten', 'restaurant'].includes(place.tags.amenity) &&
+      patterns.boteco.test(searchable(place)),
   },
   {
     key: 'beauty',
@@ -520,18 +557,22 @@ function makeRanking(city, category, labels) {
   const isVeganFloripa = id === veganFloripaRefresh.rankingId;
   const isCafesFloripa = id === cafesFloripaRefresh.rankingId;
   const launchCuration = localLaunchById.get(id);
+  const barsBotecosReview = barsBotecosById.get(id);
   const rejected = new Set([
     ...(exclusions[id] || []),
     ...(isVeganFloripa ? veganFloripaRefresh.excludedLabels : []),
   ]);
-  const baseLabels = launchCuration
-    ? launchCuration.options
-    : isVeganFloripa
-      ? veganFloripaRefresh.options
-      : isCafesFloripa
-        ? cafesFloripaRefresh.options
-        : labels;
-  const expansion = launchCuration ? [] : publicOptionExpansion.local[id] || [];
+  const baseLabels = barsBotecosReview
+    ? barsBotecosReview.options
+    : launchCuration
+      ? launchCuration.options
+      : isVeganFloripa
+        ? veganFloripaRefresh.options
+        : isCafesFloripa
+          ? cafesFloripaRefresh.options
+          : labels;
+  const expansion =
+    barsBotecosReview || launchCuration ? [] : publicOptionExpansion.local[id] || [];
   const curatedLabels = [...baseLabels, ...expansion]
     .filter((label) => !rejected.has(label))
     .filter((label, index, all) => all.indexOf(label) === index)
@@ -541,10 +582,12 @@ function makeRanking(city, category, labels) {
     city: city.name,
     citySlug: city.slug,
     state: city.state,
-    localCategory: launchCuration?.categoryLabel || category.label,
+    localCategory:
+      barsBotecosReview?.categoryLabel || launchCuration?.categoryLabel || category.label,
     localCategoryKey: category.key,
     category: city.name,
     question:
+      barsBotecosReview?.question ||
       launchCuration?.question ||
       (isVeganFloripa
         ? veganFloripaRefresh.question
@@ -556,7 +599,7 @@ function makeRanking(city, category, labels) {
     is_active:
       curatedLabels.length >= LOCAL_PUBLIC_MINIMUM_OPTION_COUNT &&
       curatedLabels.length <= LOCAL_PUBLIC_OPTION_COUNT,
-    preserveExistingOptions: !launchCuration && existingIds.has(id),
+    preserveExistingOptions: !barsBotecosReview && !launchCuration && existingIds.has(id),
     opts: curatedLabels.map((label, index) => ({
       label,
       position: index + 1,
@@ -581,7 +624,11 @@ function rankingsFromSeed(seed) {
   }
   return cities.flatMap((city) =>
     categories.map((category) => {
-      const labels = category.fixedOptions || seed.cities?.[city.slug]?.[category.key];
+      const id = categoryId(category.key, city);
+      const labels =
+        category.fixedOptions ||
+        barsBotecosById.get(id)?.options ||
+        seed.cities?.[city.slug]?.[category.key];
       if (!Array.isArray(labels)) {
         throw new Error(`Sementes ausentes para ${city.slug}/${category.key}.`);
       }
@@ -718,12 +765,13 @@ async function main() {
   if (args.has('--sql')) {
     const rankings = JSON.parse(await readFile(OUTPUT_URL, 'utf8')).map((ranking) => {
       const launchCuration = localLaunchById.get(ranking.id);
+      const barsBotecosReview = barsBotecosById.get(ranking.id);
       const opts = [
         ...(ranking.opts || []),
-        ...(!launchCuration ? publicOptionExpansion.local[ranking.id] || [] : []).map((label) => ({
-          label,
-          baseline_score: 0,
-        })),
+        ...(!launchCuration && !barsBotecosReview
+          ? publicOptionExpansion.local[ranking.id] || []
+          : []
+        ).map((label) => ({ label, baseline_score: 0 })),
       ]
         .filter(
           (option, index, all) =>

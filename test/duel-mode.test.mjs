@@ -244,10 +244,14 @@ test('Meu Topo lists voted and played rankings with the personal winner', async 
   assert.match(activity, /Seu vencedor/);
   assert.match(activity, /Seu líder até agora/);
   assert.match(activity, /\?modo=duelo/);
+  assert.match(activity, /item\.played && !item\.completed/);
+  assert.match(activity, /profileRankingActivityContinue/);
+  assert.match(activity, /CONTINUAR DUELO →/);
   assert.match(app, /PROFILE_RANKING_ACTIVITY_PAGE_SIZE = 5/);
   assert.match(activity, /data-profile-activity-card/);
   assert.match(activity, /data-profile-activity-more/);
   assert.match(app, /bindProfileRankingActivityMore\(feed\)/);
   assert.match(style, /\.profileRankingActivityCard\[hidden\]/);
   assert.match(style, /\.profileRankingActivityMore/);
+  assert.match(style, /\.profileRankingActivityContinue/);
 });
