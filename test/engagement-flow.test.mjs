@@ -70,8 +70,18 @@ assert.match(
 );
 assert.match(
   compactApp,
-  /\$\{viewer\.anonymousLimit\|\|DEFAULT_ANONYMOUS_LIMIT\}votosusados/,
-  'the registration prompt must always show the configured anonymous limit',
+  /DEFAULT_ANONYMOUS_DUEL_LIMIT=2/,
+  'signed-out visitors must receive two complete duels in the client',
+);
+assert.match(
+  compactApi,
+  /ANONYMOUS_DUEL_LIMIT=2/,
+  'the API must enforce the same two-duel registration threshold',
+);
+assert.match(
+  compactApp,
+  /valeolimitequechegarprimeiro/,
+  'the help text must explain that the first reached limit requires registration',
 );
 
 assert.match(

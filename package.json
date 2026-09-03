@@ -30,6 +30,7 @@
     "db:vote-identity": "node scripts/apply-vote-identity.mjs",
     "db:voting-modes": "node scripts/apply-voting-modes.mjs",
     "db:winner-stays": "node scripts/apply-voting-modes.mjs",
+    "db:anonymous-duel-limit": "node scripts/apply-anonymous-duel-limit.mjs",
     "db:public-top10": "node scripts/apply-public-top10.mjs",
     "db:public-option-targets": "node scripts/apply-public-option-targets.mjs",
     "db:option-relevance-review": "node scripts/apply-option-relevance-review.mjs",

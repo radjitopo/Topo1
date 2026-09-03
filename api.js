@@ -31,6 +31,7 @@ const clerkClient = CLERK_SECRET_KEY
     })
   : null;
 const ANONYMOUS_LIMIT = 10;
+const ANONYMOUS_DUEL_LIMIT = 2;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
 const PROFILE_LEVEL_MILESTONES = Object.freeze([
@@ -563,14 +564,62 @@ function suggestionFlag(value) {
   return null;
 }
 
-async function anonymousUsed(deviceId) {
-  if (!isValidDevice(deviceId)) return 0;
+async function anonymousParticipation(deviceId) {
+  if (!isValidDevice(deviceId)) {
+    return { votesUsed: 0, duelsCompleted: 0, activeDuels: 0 };
+  }
 
-  const [row] = await sql.query('SELECT votes_used FROM anonymous_usage WHERE device_id = $1', [
-    deviceId,
-  ]);
+  const [row] = await sql.query(
+    `
+    SELECT
+      COALESCE((
+        SELECT usage.votes_used
+        FROM anonymous_vote_usage usage
+        WHERE usage.device_id = $1
+      ), 0)::int AS "votesUsed",
+      COALESCE((
+        SELECT usage.duels_completed
+        FROM anonymous_duel_usage usage
+        WHERE usage.device_id = $1
+      ), 0)::int AS "duelsCompleted",
+      (
+        SELECT COUNT(*)::int
+        FROM ranking_duel_sessions session
+        WHERE session.device_id = $1
+          AND session.user_id IS NULL
+          AND session.completed = false
+      ) AS "activeDuels"
+  `,
+    [deviceId],
+  );
 
-  return Number(row?.votes_used || 0);
+  return {
+    votesUsed: Number(row?.votesUsed || 0),
+    duelsCompleted: Number(row?.duelsCompleted || 0),
+    activeDuels: Number(row?.activeDuels || 0),
+  };
+}
+
+function anonymousRegistrationReason(participation, includeActiveDuels = false) {
+  if (participation.votesUsed >= ANONYMOUS_LIMIT) return 'votes';
+  if (participation.duelsCompleted >= ANONYMOUS_DUEL_LIMIT) return 'duels';
+  if (
+    includeActiveDuels &&
+    participation.duelsCompleted + participation.activeDuels >= ANONYMOUS_DUEL_LIMIT
+  ) {
+    return 'duel_slots';
+  }
+  return '';
+}
+
+async function registrationRequired(res, user, deviceId, privateVoting, reason) {
+  const currentViewer = await viewerFor(user, deviceId, false, privateVoting);
+  return json(res, 403, {
+    error: 'registration_required',
+    reason,
+    limit: reason === 'votes' ? ANONYMOUS_LIMIT : ANONYMOUS_DUEL_LIMIT,
+    viewer: currentViewer,
+  });
 }
 
 function unlockedDoubleVoteCount(totalVotes) {
@@ -916,13 +965,22 @@ async function notifications(req, res, body = null) {
 }
 
 async function viewerFor(user, deviceId, votingRequiresAccount = false, privateVoting = false) {
-  const [used, doubleVotes] = await Promise.all([anonymousUsed(deviceId), doubleVoteState(user)]);
+  const [participation, doubleVotes] = await Promise.all([
+    anonymousParticipation(deviceId),
+    doubleVoteState(user),
+  ]);
+  const anonymousLimitReason = user ? '' : anonymousRegistrationReason(participation);
 
   return {
     registered: Boolean(user),
     isModerator: isModerator(user),
-    anonymousUsed: used,
+    anonymousUsed: participation.votesUsed,
     anonymousLimit: ANONYMOUS_LIMIT,
+    anonymousDuelsUsed: participation.duelsCompleted,
+    anonymousDuelLimit: ANONYMOUS_DUEL_LIMIT,
+    anonymousActiveDuels: participation.activeDuels,
+    anonymousLimitReason,
+    anonymousAccessExhausted: Boolean(anonymousLimitReason),
     rankingLimit: RANKING_LIMIT,
     votingRequiresAccount: !user && votingRequiresAccount,
     privateVoting: privateVoting === true,
@@ -4984,6 +5042,13 @@ async function resetDuel(req, res, body) {
 
   const userId = context.user?.id || null;
   const ownerKey = userId ? `user:${userId}` : `device:${deviceId}`;
+  if (!context.user && context.ranking.isVip !== true) {
+    const participation = await anonymousParticipation(deviceId);
+    const reason = anonymousRegistrationReason(participation, true);
+    if (reason) {
+      return registrationRequired(res, context.user, deviceId, false, reason);
+    }
+  }
   const deleteSession = userId
     ? sql.query(
         `
@@ -5071,8 +5136,12 @@ async function saveTop3(req, res, body) {
 
   const hadBallot = Number(currentSelections[0]?.total || 0) > 0;
   const consumesAnonymousVote = !context.user && context.ranking.isVip !== true && !hadBallot;
-  if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
-    return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
+  if (consumesAnonymousVote) {
+    const participation = await anonymousParticipation(deviceId);
+    const reason = anonymousRegistrationReason(participation);
+    if (reason) {
+      return registrationRequired(res, context.user, deviceId, false, reason);
+    }
   }
 
   const statements = [
@@ -5084,7 +5153,7 @@ async function saveTop3(req, res, body) {
     statements.push(
       sql.query(
         `
-        INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
+        INSERT INTO anonymous_vote_usage (device_id, votes_used, updated_at)
         SELECT $1, 1, now()
         WHERE NOT EXISTS (
           SELECT 1
@@ -5095,7 +5164,7 @@ async function saveTop3(req, res, body) {
         )
         ON CONFLICT (device_id)
         DO UPDATE SET
-          votes_used = anonymous_usage.votes_used + 1,
+          votes_used = anonymous_vote_usage.votes_used + 1,
           updated_at = now()
       `,
         [deviceId, rankingId],
@@ -5177,9 +5246,13 @@ async function saveDuel(req, res, body) {
 
   const skipped = winnerOptionId === null;
   const orderBefore = skipped ? '' : await rankingOrderSignature(rankingId);
-  const consumesAnonymousVote = !context.user && context.ranking.isVip !== true && !skipped;
-  if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
-    return json(res, 403, { error: 'registration_required', limit: ANONYMOUS_LIMIT });
+  const tracksAnonymousDuel = !context.user && context.ranking.isVip !== true;
+  if (tracksAnonymousDuel && !modesBefore.duel.sessionId) {
+    const participation = await anonymousParticipation(deviceId);
+    const reason = anonymousRegistrationReason(participation, true);
+    if (reason) {
+      return registrationRequired(res, context.user, deviceId, false, reason);
+    }
   }
 
   const roundId = randomUUID(),
@@ -5274,46 +5347,47 @@ async function saveDuel(req, res, body) {
     ),
     sql.query(
       `
-      UPDATE ranking_duel_sessions session
-      SET
-        champion_option_id = $2::bigint,
-        pot = $3,
-        completed = (
-          SELECT CASE
-            WHEN $2::bigint IS NULL THEN COUNT(*) < 2
-            ELSE COUNT(*) < 1
-          END
-          FROM ranking_options option
-          WHERE option.ranking_id = $4
-            AND NOT EXISTS (
-              SELECT 1
-              FROM ranking_duel_rounds round
-              JOIN ranking_duel_entries entry ON entry.round_id = round.id
-              WHERE round.session_id = session.id
-                AND entry.option_id = option.id
-            )
-        ),
-        updated_at = now()
-      WHERE session.id = $1
-    `,
-      [sessionId, championAfterOptionId, potAfter, rankingId],
-    ),
-  );
-  if (consumesAnonymousVote) {
-    statements.push(
-      sql.query(
-        `
-        INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
-        VALUES ($1, 1, now())
+      WITH updated_session AS (
+        UPDATE ranking_duel_sessions session
+        SET
+          champion_option_id = $2::bigint,
+          pot = $3,
+          completed = (
+            SELECT CASE
+              WHEN $2::bigint IS NULL THEN COUNT(*) < 2
+              ELSE COUNT(*) < 1
+            END
+            FROM ranking_options option
+            WHERE option.ranking_id = $4
+              AND NOT EXISTS (
+                SELECT 1
+                FROM ranking_duel_rounds round
+                JOIN ranking_duel_entries entry ON entry.round_id = round.id
+                WHERE round.session_id = session.id
+                  AND entry.option_id = option.id
+              )
+          ),
+          updated_at = now()
+        WHERE session.id = $1
+        RETURNING completed
+      ),
+      tracked_completion AS (
+        INSERT INTO anonymous_duel_usage (device_id, duels_completed, updated_at)
+        SELECT $5, 1, now()
+        FROM updated_session
+        WHERE $6::boolean = true
+          AND completed = true
         ON CONFLICT (device_id)
         DO UPDATE SET
-          votes_used = anonymous_usage.votes_used + 1,
+          duels_completed = anonymous_duel_usage.duels_completed + 1,
           updated_at = now()
-      `,
-        [deviceId],
-      ),
-    );
-  }
+        RETURNING duels_completed
+      )
+      SELECT completed FROM updated_session
+    `,
+      [sessionId, championAfterOptionId, potAfter, rankingId, deviceId, tracksAnonymousDuel],
+    ),
+  );
 
   try {
     await sql.transaction(statements);
@@ -5457,11 +5531,12 @@ async function vote(req, res, body) {
   const consumesAnonymousVote =
     !user && option.isVip !== true && direction !== 0 && !hasCurrentVote;
 
-  if (consumesAnonymousVote && (await anonymousUsed(deviceId)) >= ANONYMOUS_LIMIT) {
-    return json(res, 403, {
-      error: 'registration_required',
-      limit: ANONYMOUS_LIMIT,
-    });
+  if (consumesAnonymousVote) {
+    const participation = await anonymousParticipation(deviceId);
+    const reason = anonymousRegistrationReason(participation);
+    if (reason) {
+      return registrationRequired(res, user, deviceId, false, reason);
+    }
   }
 
   let weight = direction === 0 ? 0 : 1;
@@ -5634,11 +5709,11 @@ async function vote(req, res, body) {
       ),
       sql.query(
         `
-        INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
+        INSERT INTO anonymous_vote_usage (device_id, votes_used, updated_at)
         VALUES ($1, 1, now())
         ON CONFLICT (device_id)
         DO UPDATE SET
-          votes_used = anonymous_usage.votes_used + 1,
+          votes_used = anonymous_vote_usage.votes_used + 1,
           updated_at = now()
       `,
         [deviceId],

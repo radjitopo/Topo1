@@ -180,6 +180,18 @@ function samePair(expected, submitted) {
   return left.length === 2 && right.length === 2 && left.every((id, index) => id === right[index]);
 }
 
+function anonymousRegistrationReason(viewer, includeActiveDuels = false) {
+  const voteLimit = Number(viewer.anonymousLimit || 10);
+  const duelLimit = Number(viewer.anonymousDuelLimit || 2);
+  const votesUsed = Number(viewer.anonymousUsed || 0);
+  const duelsUsed = Number(viewer.anonymousDuelsUsed || 0);
+  const activeDuels = Number(viewer.anonymousActiveDuels || 0);
+  if (votesUsed >= voteLimit) return 'votes';
+  if (duelsUsed >= duelLimit) return 'duels';
+  if (includeActiveDuels && duelsUsed + activeDuels >= duelLimit) return 'duel_slots';
+  return '';
+}
+
 async function officialOptionState(optionId) {
   const [row] = await sql.query(
     `
@@ -242,14 +254,18 @@ async function saveBottomUpDuel(req, res) {
   }
 
   const skipped = winnerOptionId === null;
-  const consumesAnonymousVote = !viewer.registered && viewer.privateVoting !== true && !skipped;
-  if (
-    consumesAnonymousVote &&
-    Number(viewer.anonymousUsed || 0) >= Number(viewer.anonymousLimit || 10)
-  ) {
+  const tracksAnonymousDuel = !viewer.registered && viewer.privateVoting !== true;
+  const registrationReason =
+    tracksAnonymousDuel && !duel.sessionId ? anonymousRegistrationReason(viewer, true) : '';
+  if (registrationReason) {
     return json(res, 403, {
       error: 'registration_required',
-      limit: Number(viewer.anonymousLimit || 10),
+      reason: registrationReason,
+      limit:
+        registrationReason === 'votes'
+          ? Number(viewer.anonymousLimit || 10)
+          : Number(viewer.anonymousDuelLimit || 2),
+      viewer,
     });
   }
 
@@ -318,41 +334,43 @@ async function saveBottomUpDuel(req, res) {
     ),
     sql.query(
       `
-        UPDATE ranking_duel_sessions session
-        SET champion_option_id = $2::bigint,
-            pot = $3,
-            completed = (
-              SELECT CASE WHEN $2::bigint IS NULL THEN COUNT(*) < 2 ELSE COUNT(*) < 1 END
-              FROM ranking_options option
-              WHERE option.ranking_id = $4
-                AND NOT EXISTS (
-                  SELECT 1
-                  FROM ranking_duel_rounds round
-                  JOIN ranking_duel_entries entry ON entry.round_id = round.id
-                  WHERE round.session_id = session.id
-                    AND entry.option_id = option.id
-                )
-            ),
+        WITH updated_session AS (
+          UPDATE ranking_duel_sessions session
+          SET champion_option_id = $2::bigint,
+              pot = $3,
+              completed = (
+                SELECT CASE WHEN $2::bigint IS NULL THEN COUNT(*) < 2 ELSE COUNT(*) < 1 END
+                FROM ranking_options option
+                WHERE option.ranking_id = $4
+                  AND NOT EXISTS (
+                    SELECT 1
+                    FROM ranking_duel_rounds round
+                    JOIN ranking_duel_entries entry ON entry.round_id = round.id
+                    WHERE round.session_id = session.id
+                      AND entry.option_id = option.id
+                  )
+              ),
+              updated_at = now()
+          WHERE session.id = $1
+          RETURNING completed
+        ),
+        tracked_completion AS (
+          INSERT INTO anonymous_duel_usage (device_id, duels_completed, updated_at)
+          SELECT $5, 1, now()
+          FROM updated_session
+          WHERE $6::boolean = true
+            AND completed = true
+          ON CONFLICT (device_id)
+          DO UPDATE SET
+            duels_completed = anonymous_duel_usage.duels_completed + 1,
             updated_at = now()
-        WHERE session.id = $1
+          RETURNING duels_completed
+        )
+        SELECT completed FROM updated_session
       `,
-      [sessionId, championAfterOptionId, potAfter, rankingId],
+      [sessionId, championAfterOptionId, potAfter, rankingId, deviceId, tracksAnonymousDuel],
     ),
   );
-
-  if (consumesAnonymousVote) {
-    statements.push(
-      sql.query(
-        `
-          INSERT INTO anonymous_usage (device_id, votes_used, updated_at)
-          VALUES ($1, 1, now())
-          ON CONFLICT (device_id)
-          DO UPDATE SET votes_used = anonymous_usage.votes_used + 1, updated_at = now()
-        `,
-        [deviceId],
-      ),
-    );
-  }
 
   try {
     await sql.transaction(statements);

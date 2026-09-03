@@ -42,6 +42,7 @@ function rankingTitleSizeClass(value) {
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 10;
+const DEFAULT_ANONYMOUS_DUEL_LIMIT = 2;
 const googlePlaceProfiles = Object.freeze({
   libre: Object.freeze({
     id: 'libre',
@@ -133,6 +134,11 @@ let rankings = [],
     isModerator: false,
     anonymousUsed: 0,
     anonymousLimit: DEFAULT_ANONYMOUS_LIMIT,
+    anonymousDuelsUsed: 0,
+    anonymousDuelLimit: DEFAULT_ANONYMOUS_DUEL_LIMIT,
+    anonymousActiveDuels: 0,
+    anonymousLimitReason: '',
+    anonymousAccessExhausted: false,
     rankingLimit: 20,
     votingRequiresAccount: false,
   },
@@ -708,7 +714,12 @@ function renderAccount() {
       loading: false,
       open: false,
     };
-    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${viewer.privateVoting && isVipExperience() ? 'acesso privado' : viewer.votingRequiresAccount ? 'entre para votar' : `${fmt(viewer.anonymousUsed || 0)}/${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos`}</span>`;
+    const voteLimit = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT,
+      duelLimit = viewer.anonymousDuelLimit || DEFAULT_ANONYMOUS_DUEL_LIMIT,
+      voteCount = Math.min(Number(viewer.anonymousUsed || 0), voteLimit),
+      duelCount = Math.min(Number(viewer.anonymousDuelsUsed || 0), duelLimit),
+      requiresAccount = viewer.votingRequiresAccount || viewer.anonymousAccessExhausted;
+    accountEl.innerHTML = `<a class="accountLink accountEnter" href="/entrar">Entrar</a><span class="voteMeter">${viewer.privateVoting && isVipExperience() ? 'acesso privado' : requiresAccount ? 'entre para votar' : `${fmt(voteCount)}/${voteLimit} votos · ${fmt(duelCount)}/${duelLimit} duelos`}</span>`;
   }
 }
 document.addEventListener('click', (event) => {
@@ -2813,9 +2824,17 @@ async function loadRankingVotingModes(r, force = false) {
 }
 function handleVotingModeBlock(response, result, r) {
   if (response.status === 403 && result.error === 'registration_required') {
-    viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
+    if (result.viewer) viewer = result.viewer;
+    const reason = result.reason || viewer.anonymousLimitReason || 'votes';
+    if (reason === 'votes' && !result.viewer) {
+      viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
+      viewer.anonymousAccessExhausted = true;
+    } else if (reason === 'duels' && !result.viewer) {
+      viewer.anonymousDuelsUsed = viewer.anonymousDuelLimit || DEFAULT_ANONYMOUS_DUEL_LIMIT;
+      viewer.anonymousAccessExhausted = true;
+    }
     renderAccount();
-    showRegistrationWall();
+    showRegistrationWall(reason);
     return true;
   }
   if (response.status === 403 && result.error === 'account_required_on_this_device') {
@@ -4573,12 +4592,26 @@ function showVoteHelp() {
   if (localStorage.getItem('topo_vote_help_seen')) return;
   localStorage.setItem('topo_vote_help_seen', '1');
   showModal(
-    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>20 opções, conforme o ranking</b>. Sem cadastro, tem <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres no total</b>. Os votos duplos aparecem na sua atividade no Meu Topo.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
+    `<div class="modalKicker">Como funciona</div><div class="modalTitle">Você mexe no ranking.</div><div class="modalText">Se concorda com a posição, deixe como está.</div><div class="howRows"><div class="howRow"><span class="howIcon up">↑</span><span class="howCopy">Acha que deveria estar mais acima.</span></div><div class="howRow"><span class="howIcon down">↓</span><span class="howCopy">Acha que deveria estar mais abaixo.</span></div><div class="howRow"><span class="howIcon double">2×</span><span class="howCopy">Depois de votar, use o pequeno botão 2× ao lado da seta para reforçar esse voto.</span></div></div><div class="modalText">Você pode mexer em até <b>20 opções, conforme o ranking</b>. Sem cadastro, pode usar <b>${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos livres</b> ou concluir <b>${viewer.anonymousDuelLimit || DEFAULT_ANONYMOUS_DUEL_LIMIT} Duelos</b> — vale o limite que chegar primeiro. Os votos duplos aparecem na sua atividade no Meu Topo.</div><div class="modalActions"><button class="main" data-close>Entendi</button></div>`,
   );
 }
-function showRegistrationWall() {
+function showRegistrationWall(reason = viewer.anonymousLimitReason || 'votes') {
+  const voteLimit = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT,
+    duelLimit = viewer.anonymousDuelLimit || DEFAULT_ANONYMOUS_DUEL_LIMIT,
+    kicker =
+      reason === 'votes'
+        ? `${voteLimit} votos livres usados`
+        : reason === 'duel_slots'
+          ? `${duelLimit} Duelos já iniciados`
+          : `${duelLimit} Duelos concluídos`,
+    explanation =
+      reason === 'votes'
+        ? `Você já usou seus ${voteLimit} votos livres.`
+        : reason === 'duel_slots'
+          ? `Você já iniciou seus ${duelLimit} Duelos gratuitos.`
+          : `Você já concluiu seus ${duelLimit} Duelos gratuitos.`;
   showModal(
-    `<div class="modalKicker">${viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT} votos usados</div><div class="modalTitle">Quer continuar mexendo no TOPO?</div><div class="modalText">Continue com Google em poucos segundos. Se preferir, receba um código por e-mail.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
+    `<div class="modalKicker">${kicker}</div><div class="modalTitle">Para continuar, faça seu cadastro.</div><div class="modalText">${explanation} Entre para continuar votando e guardar seus vencedores no Meu Topo. Use Google ou receba um código por e-mail.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
   );
 }
 function showAccountRequired() {
@@ -4733,9 +4766,17 @@ async function submitVoteChange(button, { optionId, direction, weight, showHelp 
       }),
       result = await res.json();
     if (res.status === 403 && result.error === 'registration_required') {
-      viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
+      if (result.viewer) viewer = result.viewer;
+      const reason = result.reason || viewer.anonymousLimitReason || 'votes';
+      if (reason === 'votes' && !result.viewer) {
+        viewer.anonymousUsed = viewer.anonymousLimit || DEFAULT_ANONYMOUS_LIMIT;
+        viewer.anonymousAccessExhausted = true;
+      } else if (reason === 'duels' && !result.viewer) {
+        viewer.anonymousDuelsUsed = viewer.anonymousDuelLimit || DEFAULT_ANONYMOUS_DUEL_LIMIT;
+        viewer.anonymousAccessExhausted = true;
+      }
       renderAccount();
-      showRegistrationWall();
+      showRegistrationWall(reason);
       return false;
     }
     if (res.status === 403 && result.error === 'account_required_on_this_device') {

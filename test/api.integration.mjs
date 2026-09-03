@@ -50,6 +50,8 @@ async function cleanup() {
     sql.query('DELETE FROM ranking_duel_sessions WHERE device_id = $1', [deviceId]),
     sql.query('DELETE FROM ranking_duel_rounds WHERE device_id = $1', [deviceId]),
     sql.query('DELETE FROM votes WHERE device_id = $1', [deviceId]),
+    sql.query('DELETE FROM anonymous_duel_usage WHERE device_id = $1', [deviceId]),
+    sql.query('DELETE FROM anonymous_vote_usage WHERE device_id = $1', [deviceId]),
     sql.query('DELETE FROM anonymous_usage WHERE device_id = $1', [deviceId]),
   ]);
 }
@@ -69,6 +71,8 @@ try {
   assert.ok(bootstrap.body.localCities.some((entry) => entry.city === 'Florianópolis'));
   assert.equal(bootstrap.body.viewer.registered, false);
   assert.equal(bootstrap.body.viewer.anonymousLimit, 10);
+  assert.equal(bootstrap.body.viewer.anonymousDuelsUsed, 0);
+  assert.equal(bootstrap.body.viewer.anonymousDuelLimit, 2);
   assert.equal(bootstrap.body.viewer.rankingLimit, 20);
   assert.ok(bootstrap.body.rankings.every((ranking) => ranking.opts.length >= 3));
 
@@ -133,7 +137,8 @@ try {
     },
   });
   assert.equal(firstDuel.statusCode, 200);
-  assert.equal(firstDuel.body.viewer.anonymousUsed, 2);
+  assert.equal(firstDuel.body.viewer.anonymousUsed, 1);
+  assert.equal(firstDuel.body.viewer.anonymousDuelsUsed, 0);
   assert.equal(firstDuel.body.duel.seenOptions, 2);
   assert.equal(firstDuel.body.duel.pot, 1);
   assert.equal(firstDuel.body.duel.champion.optionId, pair[0]);
@@ -155,7 +160,8 @@ try {
     },
   });
   assert.equal(secondDuel.statusCode, 200);
-  assert.equal(secondDuel.body.viewer.anonymousUsed, 3);
+  assert.equal(secondDuel.body.viewer.anonymousUsed, 1);
+  assert.equal(secondDuel.body.viewer.anonymousDuelsUsed, 0);
   assert.equal(secondDuel.body.duel.seenOptions, 3);
   assert.equal(secondDuel.body.duel.pot, 2);
   assert.equal(secondDuel.body.duel.champion.optionId, challenger);
