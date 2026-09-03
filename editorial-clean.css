@@ -7586,39 +7586,9 @@ body.popElectric.rankingPage .rankingEditorVipPassword input:disabled {
 }
 
 body.popElectric.vipPage .profileScorecard {
-  margin: 16px 0 8px;
+  margin: 8px 0 6px;
   border: 2px solid var(--clean-ink);
   background: #fff;
-}
-
-body.popElectric.vipPage .profileScorecardHead {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 11px 14px;
-}
-
-body.popElectric.vipPage .profileScorecardHead h2 {
-  margin: 0;
-  color: var(--clean-ink);
-  font:
-    900 12px/1 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-body.popElectric.vipPage .profileScorecardHead p {
-  margin: 0;
-  color: var(--clean-muted);
-  font:
-    700 11px/1.3 Arial,
-    Helvetica,
-    sans-serif;
-  text-align: right;
 }
 
 body.popElectric.vipPage .profileScorecard .profileMetrics {
@@ -7633,30 +7603,30 @@ body.popElectric.vipPage .profileScorecard .profileMetrics {
 
 body.popElectric.vipPage .profileScorecard .profileMetrics > span {
   min-width: 0;
-  min-height: 82px;
+  min-height: 64px;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   background: #fff;
-  padding: 12px 13px;
+  padding: 9px 10px;
 }
 
 body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary {
   background: var(--clean-ink);
   color: #fff;
-  padding-left: 14px;
+  padding-left: 12px;
 }
 
 body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScorePosition {
-  box-shadow: inset 0 5px 0 var(--clean-sage);
+  box-shadow: inset 0 3px 0 var(--clean-sage);
 }
 
 body.popElectric.vipPage .profileScorecard .profileMetrics strong {
   color: var(--clean-ink);
   font:
-    900 clamp(23px, 2.35vw, 31px) / 0.95 Arial,
+    900 clamp(19px, 2vw, 25px) / 0.95 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: -0.055em;
@@ -7690,15 +7660,19 @@ body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetric
   color: #c9c9c9;
 }
 
+body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary strong {
+  font-size: clamp(34px, 3.7vw, 44px);
+}
+
 body.popElectric.vipPage .profileScorecardLink {
-  min-height: 36px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
   border-top: 1px solid var(--clean-ink);
   color: var(--clean-ink);
-  padding: 0 14px;
+  padding: 0 10px;
   font:
     900 10px/1 Arial,
     Helvetica,
@@ -7977,40 +7951,23 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
   }
 
   body.popElectric.vipPage .profileScorecard {
-    margin-top: 12px;
-  }
-
-  body.popElectric.vipPage .profileScorecardHead {
-    align-items: center;
-    flex-direction: row;
-    gap: 10px;
-    padding: 10px 11px;
-  }
-
-  body.popElectric.vipPage .profileScorecardHead h2 {
-    flex: 0 0 auto;
-    font-size: 11px;
-  }
-
-  body.popElectric.vipPage .profileScorecardHead p {
-    min-width: 0;
-    font-size: 10px;
-    line-height: 1.2;
-    text-align: right;
+    margin-top: 6px;
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics > span {
-    min-height: 64px;
-    gap: 3px;
-    padding: 9px 10px;
+    min-height: 48px;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    text-align: center;
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary {
-    min-height: 68px;
+    min-height: 58px;
     display: grid;
     grid-column: 1 / -1;
     grid-template-areas:
@@ -8018,8 +7975,9 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
       'detail value';
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    column-gap: 12px;
-    padding: 10px 12px;
+    column-gap: 10px;
+    padding: 7px 10px;
+    text-align: left;
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary small {
@@ -8029,7 +7987,7 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
 
   body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary strong {
     grid-area: value;
-    font-size: 34px;
+    font-size: 44px;
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics > .profileScoreMetricPrimary em {
@@ -8038,13 +7996,22 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
   }
 
   body.popElectric.vipPage .profileScorecard .profileMetrics strong {
-    font-size: clamp(22px, 6.8vw, 27px);
+    font-size: clamp(18px, 5.4vw, 22px);
+  }
+
+  body.popElectric.vipPage
+    .profileScorecard
+    .profileMetrics
+    > span:not(.profileScoreMetricPrimary)
+    em {
+    display: none;
   }
 
   body.popElectric.vipPage .profileScorecardLink {
-    min-height: 38px;
+    min-height: 30px;
     justify-content: space-between;
-    padding: 0 11px;
+    padding: 0 9px;
+    font-size: 9px;
   }
 
   body.popElectric.vipPage .personalActivityDashboard {

@@ -46,7 +46,7 @@ assert.match(leaderboardApi, /points:Number\(row\.points\|\|0\)/);
 for (const label of ['Pontuação', 'Votos', 'Rankings', 'Sequência', 'Posição']) {
   assert.match(scorecard, new RegExp(label));
 }
-assert.match(scorecard, /votolivreouduelo:1pontoporescolhaválida/i);
+assert.doesNotMatch(scorecard, /Seuplacar/i, 'the redundant scorecard heading must stay removed');
 assert.doesNotMatch(scorecard, /SuaforçanoTOPO/, 'the repeated large heading must stay removed');
 assert.match(
   compactApp,
@@ -59,13 +59,18 @@ assert.match(compactCss, /\.profileScorecard\{/);
 assert.match(compactCss, /\.profileScorecard\.profileMetrics\{/);
 assert.match(
   compactCss,
-  /@media\(max-width:700px\)[\s\S]*\.profileScorecard\.profileMetrics\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,
+  /@media\(max-width:700px\)[\s\S]*\.profileScorecard\.profileMetrics\{grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/,
 );
 assert.match(compactCss, /\.profileScoreMetricPrimary\{[^}]*grid-column:1\/-1/);
 assert.match(
   compactCss,
-  /\.profileScoreMetricPrimary\{[^}]*min-height:68px;[^}]*display:grid/,
+  /\.profileScoreMetricPrimary\{[^}]*min-height:58px;[^}]*display:grid/,
   'the mobile score highlight must be a short horizontal strip',
 );
+assert.match(
+  compactCss,
+  /\.profileScoreMetricPrimarystrong\{[^}]*font-size:44px/,
+  'the total score must remain the visual focus',
+);
 
-console.log('Meu Topo scorecard test passed: all five metrics fit in a compact first block.');
+console.log('Meu Topo scorecard test passed: total points lead a dense five-metric block.');
