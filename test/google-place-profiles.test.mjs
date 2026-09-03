@@ -6,7 +6,7 @@ import { compactSource, extractTopLevelDeclaration } from './source-helpers.mjs'
 
 const root = new URL('../', import.meta.url);
 
-test('Google Maps profiles are limited to Libre and Desvio in the vegan Floripa ranking', async () => {
+test('no ranking option currently exposes a Google Maps profile link', async () => {
   const app = await readFile(new URL('app.js', root), 'utf8');
   const profiles = extractTopLevelDeclaration(app, 'googlePlaceProfiles');
   const normalizeLabel = extractTopLevelDeclaration(app, 'normalizedGooglePlaceOptionLabel');
@@ -20,29 +20,21 @@ test('Google Maps profiles are limited to Libre and Desvio in the vegan Floripa 
   vm.runInContext(
     `${profiles}\n${normalizeLabel}\n${findProfile}\n` +
       `globalThis.profileKeys = Object.keys(googlePlaceProfiles).sort();\n` +
-      `globalThis.libre = googlePlaceProfileForOption({ id: 'restaurantes-veganos-floripa' }, { label: 'Libre Cozinha' })?.id;\n` +
-      `globalThis.desvio = googlePlaceProfileForOption({ id: 'restaurantes-veganos-floripa' }, { label: 'Desvio' })?.id;\n` +
-      `globalThis.libreRating = googlePlaceProfiles.libre.rating;\n` +
-      `globalThis.libreReviews = googlePlaceProfiles.libre.reviewCount;\n` +
-      `globalThis.desvioRating = googlePlaceProfiles.desvio.rating;\n` +
-      `globalThis.desvioReviews = googlePlaceProfiles.desvio.reviewCount;\n` +
+      `globalThis.libre = googlePlaceProfileForOption({ id: 'restaurantes-veganos-floripa' }, { label: 'Libre Cozinha' });\n` +
+      `globalThis.desvio = googlePlaceProfileForOption({ id: 'restaurantes-veganos-floripa' }, { label: 'Desvio' });\n` +
       `globalThis.otherOption = googlePlaceProfileForOption({ id: 'restaurantes-veganos-floripa' }, { label: 'Girassol Veg' });\n` +
       `globalThis.otherRanking = googlePlaceProfileForOption({ id: 'bares-floripa' }, { label: 'Desvio' });`,
     context,
   );
 
-  assert.deepEqual([...context.profileKeys], ['desvio', 'libre']);
-  assert.equal(context.libre, 'libre');
-  assert.equal(context.desvio, 'desvio');
-  assert.equal(context.libreRating, '4,9');
-  assert.equal(context.libreReviews, 128);
-  assert.equal(context.desvioRating, '4,7');
-  assert.equal(context.desvioReviews, 588);
+  assert.deepEqual([...context.profileKeys], []);
+  assert.equal(context.libre, null);
+  assert.equal(context.desvio, null);
   assert.equal(context.otherOption, null);
   assert.equal(context.otherRanking, null);
 });
 
-test('clicking either allowed name opens the live official Google Maps panel', async () => {
+test('Google Maps profile support remains ready for a future opt-in allowlist', async () => {
   const [app, editorial, template] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),

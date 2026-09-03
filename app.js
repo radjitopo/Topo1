@@ -43,34 +43,7 @@ const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 10;
 const DEFAULT_ANONYMOUS_DUEL_LIMIT = 2;
-const googlePlaceProfiles = Object.freeze({
-  libre: Object.freeze({
-    id: 'libre',
-    rankingId: 'restaurantes-veganos-floripa',
-    optionLabels: ['libre cozinha'],
-    displayName: 'Libre Cozinha',
-    rating: '4,9',
-    reviewCount: 128,
-    ratingCheckedAt: '02/09/2026',
-    mapUrl:
-      'https://www.google.com/maps/place/LIBRE+-+COZINHA/@-27.6567798,-48.4840168,17z/data=!3m1!4b1!4m6!3m5!1s0x95273ba1f6a8e1af:0x8eaacec299f51e9c!8m2!3d-27.6567798!4d-48.4840168!16s%2Fg%2F11vsv6l8m7?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
-    embedUrl:
-      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3533.9577195105094!2d-48.4840168!3d-27.6567798!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95273ba1f6a8e1af%3A0x8eaacec299f51e9c!2sLIBRE%20-%20COZINHA!5e0!3m2!1spt-BR!2sbr!4v1788371200299!5m2!1spt-BR!2sbr',
-  }),
-  desvio: Object.freeze({
-    id: 'desvio',
-    rankingId: 'restaurantes-veganos-floripa',
-    optionLabels: ['desvio', 'desvio veg'],
-    displayName: 'Desvio',
-    rating: '4,7',
-    reviewCount: 588,
-    ratingCheckedAt: '02/09/2026',
-    mapUrl:
-      'https://www.google.com/maps/place/Desvio+Veg/@-27.5983625,-48.5488766,17z/data=!3m1!4b1!4m6!3m5!1s0x9527383ab57785cb:0x4a5de6cc77021d38!8m2!3d-27.5983625!4d-48.5488766!16s%2Fg%2F11f4_r0rnj?entry=ttu&g_ep=EgoyMDI2MDgzMS4wIKXMDSoASAFQAw%3D%3D',
-    embedUrl:
-      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3535.8441032818355!2d-48.54887660000001!3d-27.598362499999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9527383ab57785cb%3A0x4a5de6cc77021d38!2sDesvio%20Veg!5e0!3m2!1spt-BR!2sbr!4v1788371161963!5m2!1spt-BR!2sbr',
-  }),
-});
+const googlePlaceProfiles = Object.freeze({});
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
   Música: 'musica',
