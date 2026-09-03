@@ -76,11 +76,11 @@ assert.match(
   /\.profileScoreMetricPrimarystrong\{[^}]*color:var\(--clean-gold\)/,
   'the total score must use the gold accent',
 );
-assert.match(compactCss, /\.profileScorePosition\{box-shadow:none/);
 assert.match(
   compactCss,
-  /\.profileScorePositionstrong\{[^}]*width:fit-content;[^}]*border-bottom:3pxsolidvar\(--clean-coral\)/,
-  'the position must use a short red underline below its number',
+  /\.profileScorePosition\{box-shadow:inset0-3px0var\(--clean-coral\)/,
+  'the position must use a full-width red line along the bottom of its cell',
 );
+assert.doesNotMatch(compactCss, /\.profileScorePositionstrong\{[^}]*border-bottom/);
 
 console.log('Meu Topo scorecard test passed: total points lead a dense five-metric block.');
