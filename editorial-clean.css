@@ -8446,6 +8446,82 @@ body.popElectric .modalCard.rankingPromotionModalCard {
   padding: 22px;
 }
 
+body.popElectric .modalCard.accountGateModalCard {
+  width: min(500px, 100%);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  border: 2px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  box-shadow: none;
+  padding: 22px;
+}
+
+body.popElectric .accountGateModalCard .modalKicker {
+  color: var(--clean-coral);
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+}
+
+body.popElectric .accountGateModalCard .modalTitle {
+  margin: 7px 0 12px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(30px, 5vw, 40px) / 0.97 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric .accountGateModalCard .modalText {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    600 15px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .modalActions.accountGateActions {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 8px;
+  margin-top: 18px;
+}
+
+body.popElectric .accountGateActions a {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-paper);
+  color: var(--clean-ink);
+  padding: 10px;
+  font:
+    900 11px/1.1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.035em;
+  text-align: center;
+  text-decoration: none;
+}
+
+body.popElectric .accountGateActions .main {
+  border-color: var(--clean-ink);
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .accountGateActions a:hover,
+body.popElectric .accountGateActions a:focus-visible {
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+}
+
 body.popElectric .rankingPromotionModalHead {
   display: flex;
   align-items: flex-start;
@@ -9038,6 +9114,18 @@ body.popElectric .rankingPromotionActions button:focus-visible {
 }
 
 @media (max-width: 700px) {
+  body.popElectric .modalCard.accountGateModalCard {
+    padding: 18px;
+  }
+
+  body.popElectric .accountGateModalCard .modalText {
+    font-size: 14px;
+  }
+
+  body.popElectric .modalActions.accountGateActions {
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  }
+
   body.popElectric.rankingPage .rankingOptionPromotionLauncher {
     min-height: 36px;
     grid-template-columns: auto minmax(0, 1fr) auto;

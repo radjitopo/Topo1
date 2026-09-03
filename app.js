@@ -2929,8 +2929,9 @@ async function submitDuelResult(button, r, winnerOptionId = null) {
     if (!response.ok) throw result;
     applyVotingModeResult(r, result);
   } catch {
-    controls.forEach((control) => (control.disabled = false));
     toast('Não consegui registrar esta partida');
+  } finally {
+    controls.forEach((control) => (control.disabled = false));
   }
 }
 async function restartDuel(button, r) {
@@ -2949,9 +2950,10 @@ async function restartDuel(button, r) {
     rankingVotingState = null;
     await load();
   } catch {
+    toast('Não consegui reiniciar o duelo');
+  } finally {
     button.disabled = false;
     button.textContent = label;
-    toast('Não consegui reiniciar o duelo');
   }
 }
 function chooseDuelOption(button, r) {
@@ -4621,9 +4623,9 @@ async function logout() {
     location.href = '/';
   }
 }
-function showModal(content) {
+function showModal(content, cardClass = '') {
   let layer = document.getElementById('modalLayer');
-  layer.innerHTML = `<div class="modalCard">${content}</div>`;
+  layer.innerHTML = `<div class="modalCard${cardClass ? ` ${cardClass}` : ''}" role="dialog" aria-modal="true">${content}</div>`;
   layer.classList.add('show');
   layer
     .querySelectorAll('[data-close]')
@@ -4650,14 +4652,18 @@ function showRegistrationWall(reason = viewer.anonymousLimitReason || 'votes') {
         ? `Você já usou seus ${voteLimit} votos livres.`
         : reason === 'duel_slots'
           ? `Você já iniciou seus ${duelLimit} Duelos gratuitos.`
-          : `Você já concluiu seus ${duelLimit} Duelos gratuitos.`;
+          : `Você já concluiu seus ${duelLimit} Duelos gratuitos.`,
+    returnPath = encodeURIComponent(location.pathname + location.search);
   showModal(
-    `<div class="modalKicker">${kicker}</div><div class="modalTitle">Para continuar, faça seu cadastro.</div><div class="modalText">${explanation} Entre para continuar votando e guardar seus vencedores no Meu Topo. Use Google ou receba um código por e-mail.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar ou criar conta</a></div>`,
+    `<div class="modalKicker">${kicker}</div><div class="modalTitle">Para continuar, faça seu cadastro.</div><div class="modalText">${explanation} Entre para continuar votando e guardar seus vencedores no Meu Topo. Use Google ou receba um código por e-mail.</div><div class="modalActions accountGateActions"><a class="accountGateBack" href="/">VOLTAR AO INÍCIO</a><a class="main" href="/entrar?voltar=${returnPath}">ENTRAR OU CRIAR CONTA</a></div>`,
+    'accountGateModalCard',
   );
 }
 function showAccountRequired() {
+  const returnPath = encodeURIComponent(location.pathname + location.search);
   showModal(
-    `<div class="modalKicker">Conta protegida</div><div class="modalTitle">Entre novamente para votar.</div><div class="modalText">Este aparelho já foi ligado a uma conta. Assim ninguém cria votos extras apenas saindo e entrando novamente.</div><div class="modalActions"><button data-close>Agora não</button><a class="main" href="/entrar">Entrar</a></div>`,
+    `<div class="modalKicker">Conta protegida</div><div class="modalTitle">Entre novamente para votar.</div><div class="modalText">Este aparelho já foi ligado a uma conta. Assim ninguém cria votos extras apenas saindo e entrando novamente.</div><div class="modalActions accountGateActions"><a class="accountGateBack" href="/">VOLTAR AO INÍCIO</a><a class="main" href="/entrar?modo=entrar&voltar=${returnPath}">ENTRAR NOVAMENTE</a></div>`,
+    'accountGateModalCard',
   );
 }
 function mountInternalShare() {
