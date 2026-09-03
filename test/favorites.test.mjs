@@ -79,6 +79,9 @@ test('Meu Topo renders favorites, a heart toggle and one collection share action
   assert.match(style, /\.favoriteToggle/);
   assert.match(style, /\.favoriteGrid/);
   assert.match(style, /\.favoritePublicHero/);
+  assert.match(style, /\.favoriteCard\s*\{[^}]*grid-template-columns: 88px minmax\(0, 1fr\)/s);
+  assert.match(style, /\.favoriteCardMedia\s*\{[^}]*min-height: 124px/s);
+  assert.match(style, /\.favoriteCardActions\s*\{[^}]*flex-direction: row;[^}]*padding-top: 7px/s);
   assert.match(page, /favoritos: \['Favoritos — TOPO'/);
   assert.match(vercel, /favoritos\/\(\[\^\/\]\+\)/);
 });
