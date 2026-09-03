@@ -4416,7 +4416,8 @@ body.popElectric .moderationRankingOpen {
   }
 
   body.popElectric .top {
-    position: static;
+    position: relative;
+    z-index: 200;
   }
 
   body.popElectric .top header {

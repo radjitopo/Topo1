@@ -4,15 +4,17 @@ import test from 'node:test';
 import { compactSource } from './source-helpers.mjs';
 
 test('the notification center is persisted, generated and visible beside Meu Topo', async () => {
-  const [api, app, css, index, migration] = await Promise.all([
+  const [api, app, css, editorial, index, migration] = await Promise.all([
     readFile(new URL('../api.js', import.meta.url), 'utf8'),
     readFile(new URL('../app.js', import.meta.url), 'utf8'),
     readFile(new URL('../style.css', import.meta.url), 'utf8'),
+    readFile(new URL('../editorial-clean.css', import.meta.url), 'utf8'),
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../migrations/20260824_notifications.sql', import.meta.url), 'utf8'),
   ]);
   const compactApp = compactSource(app);
   const compactCss = compactSource(css);
+  const compactEditorial = compactSource(editorial);
 
   assert.match(migration, /CREATE TABLE IF NOT EXISTS user_notifications/);
   assert.match(migration, /notification_last_seen_at/);
@@ -40,6 +42,7 @@ test('the notification center is persisted, generated and visible beside Meu Top
     compactCss,
     /@media\(max-width:560px\)\{\.notificationPanel\{[^}]*position:fixed[^}]*right:14px[^}]*left:8px[^}]*width:auto/,
   );
+  assert.match(compactEditorial, /body\.popElectric\.top\{position:relative;z-index:200/);
   assert.match(index, /app\.js\?v=20260827-1-vip-area/);
   assert.match(index, /style\.css\?v=20260825-9-seo/);
 });
