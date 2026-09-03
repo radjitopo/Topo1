@@ -70,5 +70,17 @@ assert.match(
   /\.profileScoreMetricPrimarystrong\{[^}]*font-size:44px/,
   'the total score must remain the visual focus',
 );
+assert.match(compactCss, /--clean-gold:#f4c430/);
+assert.match(
+  compactCss,
+  /\.profileScoreMetricPrimarystrong\{[^}]*color:var\(--clean-gold\)/,
+  'the total score must use the gold accent',
+);
+assert.match(compactCss, /\.profileScorePosition\{box-shadow:none/);
+assert.match(
+  compactCss,
+  /\.profileScorePositionstrong\{[^}]*width:fit-content;[^}]*border-bottom:3pxsolidvar\(--clean-coral\)/,
+  'the position must use a short red underline below its number',
+);
 
 console.log('Meu Topo scorecard test passed: total points lead a dense five-metric block.');
