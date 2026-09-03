@@ -65,20 +65,22 @@ test('next ranking advances through the category and then into the next category
   assert.equal(context.nextRankingForTest(context.inputRankings[2]).id, 'musica-livre');
 });
 
-test('next and random never return a voted or completed ranking', () => {
+test('next and random never return a voted, started or completed ranking', () => {
   const context = navigationContext(0.99);
   const current = ranking('atual', 'Esporte', 1, { duelCompleted: true });
   context.inputRankings = [
     current,
     ranking('votado', 'Esporte', 2, { opts: [{ mine: -1 }] }),
-    ranking('concluido', 'Música', 3, { duelCompleted: true }),
-    ranking('pendente', 'Cinema', 4),
+    ranking('duelo-iniciado', 'Música', 3, { duelStarted: true }),
+    ranking('concluido', 'Música', 4, { duelStarted: true, duelCompleted: true }),
+    ranking('pendente', 'Cinema', 5),
   ];
 
   assert.equal(context.nextRankingForTest(current).id, 'pendente');
   assert.equal(context.randomRankingForTest(current).id, 'pendente');
 
-  context.inputRankings[3].duelCompleted = true;
+  context.inputRankings[4].duelStarted = true;
+  context.inputRankings[4].duelCompleted = true;
   assert.equal(context.nextRankingForTest(current), null);
   assert.equal(context.randomRankingForTest(current), null);
 });

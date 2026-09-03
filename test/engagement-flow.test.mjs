@@ -14,8 +14,13 @@ const compactEditorialStyle = compactSource(editorialStyle);
 assert.match(compactApp, /functionnextRankingFor\(r\)/, 'ranking pages must choose a next ranking');
 assert.match(
   compactApp,
-  /functionrankingNeedsParticipation\(r\)\{returnmyVoteCount\(r\)===0&&r\?\.duelCompleted!==true;/,
-  'continuation must exclude both voted rankings and completed duels',
+  /functionrandomDuelRanking\([^)]*\)\{[\s\S]*?rankingNeedsParticipation\(ranking\)/,
+  'the Home duel launcher must choose only a completely unexplored ranking',
+);
+assert.match(
+  compactApp,
+  /functionrankingNeedsParticipation\(r\)\{returnmyVoteCount\(r\)===0&&r\?\.duelStarted!==true&&r\?\.duelCompleted!==true;/,
+  'continuation must only include rankings without votes or any duel session',
 );
 assert.match(
   compactApp,
@@ -39,8 +44,18 @@ assert.match(
 );
 assert.match(
   compactApi,
+  /\(mds\.ranking_idISNOTNULL\)ASduel_started/,
+  'the catalog must tell the client whether this viewer started a duel',
+);
+assert.match(
+  compactApi,
   /COALESCE\(mds\.completed,false\)ASduel_completed/,
   'the catalog must tell the client which duels this viewer completed',
+);
+assert.match(
+  compactApp,
+  /r\.duelStarted=Boolean\(result\.duel\?\.sessionId\)/,
+  'starting a duel must immediately mark the ranking as explored in the client',
 );
 assert.match(
   compactApp,

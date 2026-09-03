@@ -1352,6 +1352,7 @@ async function catalog(req, res) {
         WHEN mdv.direction = mv.direction THEN 2
         ELSE 1
       END::int AS my_weight,
+      (mds.ranking_id IS NOT NULL) AS duel_started,
       COALESCE(mds.completed, false) AS duel_completed
     FROM eligible_rankings r
     JOIN ranking_options o ON o.ranking_id = r.id
@@ -1442,6 +1443,7 @@ async function catalog(req, res) {
         myVoteCount: Number(row.my_vote_count || 0),
         vip: row.is_vip === true,
         favorite: row.is_favorite === true,
+        duelStarted: row.duel_started === true,
         duelCompleted: row.duel_completed === true,
         vipHasPassword: row.vip_has_password === true,
         vipUnlocked: row.is_vip === true ? true : undefined,

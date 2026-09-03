@@ -15,6 +15,7 @@ const selected = [
   'isNewRanking',
   'isFirstShowCandidate',
   'myVoteCount',
+  'rankingNeedsParticipation',
   'priorityBucket',
   'favoriteAffinity',
   'smartShuffle',
@@ -64,6 +65,18 @@ assert.equal(context.priorityBucketForTest(newRanking('new')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('unvoted')), 0);
 assert.equal(context.priorityBucketForTest(oldRanking('partial', 3)), 1);
 assert.equal(context.priorityBucketForTest(oldRanking('complete', 10)), 2);
+assert.equal(
+  context.priorityBucketForTest({ ...oldRanking('duel-started'), duelStarted: true }),
+  1,
+);
+assert.equal(
+  context.priorityBucketForTest({
+    ...oldRanking('duel-completed'),
+    duelStarted: true,
+    duelCompleted: true,
+  }),
+  2,
+);
 assert.equal(context.isFirstShowCandidateForTest(newRanking('new')), true);
 assert.equal(context.isFirstShowCandidateForTest(oldRanking('old')), false);
 assert.deepEqual(
@@ -78,9 +91,16 @@ const recommended = context.categoryPriorityRankingsForTest([
   { ...oldRanking('relevant-unvoted'), votes: 80, todayVotes: 4 },
   { ...newRanking('new-unvoted'), votes: 0, todayVotes: 0 },
   { ...oldRanking('quiet-unvoted'), votes: 3, todayVotes: 0 },
+  {
+    ...oldRanking('duel-completed'),
+    votes: 1000,
+    todayVotes: 100,
+    duelStarted: true,
+    duelCompleted: true,
+  },
 ]);
 assert.equal(
   recommended.map((ranking) => ranking.id).join(','),
-  'relevant-unvoted,quiet-unvoted,new-unvoted,popular-voted',
+  'relevant-unvoted,quiet-unvoted,new-unvoted,popular-voted,duel-completed',
 );
-console.log('Priority test passed: unvoted rankings lead in total-vote order.');
+console.log('Priority test passed: unexplored rankings lead in total-vote order.');

@@ -350,7 +350,7 @@ function myVoteCount(r) {
   return (r?.opts || []).reduce((n, o) => n + (Number(o.mine) !== 0 ? 1 : 0), 0);
 }
 function rankingNeedsParticipation(r) {
-  return myVoteCount(r) === 0 && r?.duelCompleted !== true;
+  return myVoteCount(r) === 0 && r?.duelStarted !== true && r?.duelCompleted !== true;
 }
 function rankingSequenceCompare(a, b) {
   const aTime = Date.parse(a?.createdAt || ''),
@@ -377,7 +377,11 @@ function sharedDuelStartOptionIds() {
 }
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
-      (ranking) => !ranking.vip && ranking.id !== excludeRankingId && ranking.opts?.length >= 2,
+      (ranking) =>
+        !ranking.vip &&
+        ranking.id !== excludeRankingId &&
+        ranking.opts?.length >= 2 &&
+        rankingNeedsParticipation(ranking),
     ),
     pool = shuffle(available);
   return pool[0] || null;
@@ -385,8 +389,8 @@ function randomDuelRanking(excludeRankingId = '') {
 function priorityBucket(r) {
   const n = myVoteCount(r),
     limit = Math.min(r.opts.length, Number(viewer.rankingLimit || 20));
-  if (n === 0) return 0;
-  if (n < limit) return 1;
+  if (rankingNeedsParticipation(r)) return 0;
+  if (r?.duelCompleted !== true && n < limit) return 1;
   return 2;
 }
 function favoriteAffinity(r, favorites) {
@@ -1606,7 +1610,9 @@ function choosePortalHero(list) {
     if (current) return current;
   }
   const seen = firstShowSeen(),
-    first = pool.find((r) => isFirstShowCandidate(r) && !seen.has(r.id)),
+    first = pool.find(
+      (r) => rankingNeedsParticipation(r) && isFirstShowCandidate(r) && !seen.has(r.id),
+    ),
     previous = localStorage.getItem(lastHeroKey) || '',
     hero = first || pool.find((r) => r.id !== previous) || pool[0];
   sessionHeroId = hero.id;
@@ -2221,7 +2227,7 @@ function categoryPriorityRankings(list) {
   return sortForExperience(
     list,
     (a, b) =>
-      (myVoteCount(a) > 0) - (myVoteCount(b) > 0) ||
+      priorityBucket(a) - priorityBucket(b) ||
       Number(b.votes || 0) - Number(a.votes || 0) ||
       Number(b.todayVotes || 0) - Number(a.todayVotes || 0) ||
       (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0),
@@ -2303,10 +2309,10 @@ function renderCategoryHome(visible) {
     description = teamsSection
       ? 'Os melhores jogadores da história de cada clube, reunidos numa seção própria.'
       : local
-        ? `Só rankings de ${selectedCity}. Troque a cidade para explorar outro lugar.`
+        ? `Só rankings de ${selectedCity}. Os inéditos para você aparecem primeiro.`
         : isAll
-          ? 'Os mais votados que você ainda não avaliou aparecem primeiro.'
-          : 'Abra um ranking, veja os itens e vote.';
+          ? 'Os rankings que você ainda não votou nem jogou aparecem primeiro.'
+          : 'Inéditos para você aparecem primeiro.';
   document.title = local
     ? `${isAll ? 'Rankings' : activeGroup} em ${selectedCity} — TOPO LOCAL`
     : teamsSection
@@ -2347,7 +2353,7 @@ function duelHomeCalloutHTML() {
 function launchRandomDuel(excludeRankingId = '') {
   const ranking = randomDuelRanking(excludeRankingId);
   if (!ranking) {
-    toast('Você já votou em quase tudo. Volte às flechas para rever suas escolhas.');
+    toast('Você já explorou todos os rankings disponíveis.');
     return;
   }
   location.assign(`${rankingPath(ranking.id)}?modo=duelo#votar`);
@@ -2511,12 +2517,12 @@ function relatedFor(r) {
       .map((candidate) => ({
         candidate,
         score: relatedScore(r, candidate, explicitIds),
-        unvoted: myVoteCount(candidate) === 0,
+        unexplored: rankingNeedsParticipation(candidate),
       }))
       .filter((item) => item.score > 0)
       .sort(
         (a, b) =>
-          Number(b.unvoted) - Number(a.unvoted) ||
+          Number(b.unexplored) - Number(a.unexplored) ||
           b.score - a.score ||
           Number(b.candidate.votes || 0) - Number(a.candidate.votes || 0),
       );
@@ -2596,10 +2602,10 @@ function rankingFlowActionsHTML(r, extraClass = '') {
       ? leavesLocal
         ? `${categoryLabel(next)} · outro ranking do TOPO`
         : sameCategory
-          ? `${categoryLabel(next)} · ainda não concluído`
+          ? `${categoryLabel(next)} · ainda não explorado`
           : `${categoryLabel(next)} · próxima categoria`
       : 'Continuar descobrindo',
-    randomHint = 'Uma surpresa ainda não concluída',
+    randomHint = 'Uma surpresa que você ainda não explorou',
     className = `rankingFlowActions${extraClass ? ` ${extraClass}` : ''}`;
   return `<div class="${className}">${next ? `<a class="rankingFlowButton primary" href="${rankingPath(next.id)}"><span><strong>Próximo ranking</strong><small>${escapeHTML(nextHint)}</small></span><b>→</b></a>` : ''}${random ? `<a class="rankingFlowButton" href="${rankingPath(random.id)}"><span><strong>Ranking aleatório</strong><small>${randomHint}</small></span><b>↻</b></a>` : ''}</div>`;
 }
@@ -2832,6 +2838,7 @@ function applyVotingModeResult(r, result) {
     updatedOption.score = Number(scoreUpdate.score);
     r.opts.sort((a, b) => b.score - a.score || a.originalPosition - b.originalPosition);
   }
+  r.duelStarted = Boolean(result.duel?.sessionId);
   r.duelCompleted = result.duel?.completed === true;
   rankingVotingState = {
     ...result,

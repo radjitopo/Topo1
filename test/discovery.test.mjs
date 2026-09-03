@@ -57,7 +57,7 @@ assert.doesNotMatch(
 );
 assert.match(
   source,
-  /'Abra um ranking, veja os itens e vote\.'/,
+  /'Inéditos para você aparecem primeiro\.'/,
   'category introductions must stay concise so rankings appear sooner on mobile',
 );
 const categoryHomeSource = extractTopLevelDeclaration(source, 'renderCategoryHome');
