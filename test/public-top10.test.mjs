@@ -31,15 +31,13 @@ const [
   readFile(new URL('package.json', root), 'utf8'),
 ]);
 
-test('public rankings use 20 Local options and 14 general options', () => {
+test('public rankings use up to 20 verified Local options and 14 general options', () => {
   assert.match(api, /const GENERAL_PUBLIC_OPTION_COUNT = 14;/);
   assert.match(api, /options\.length !== GENERAL_PUBLIC_OPTION_COUNT/);
   assert.match(catalog, /const GENERAL_PUBLIC_OPTION_COUNT = 14;/);
   assert.match(cityCatalog, /const LOCAL_PUBLIC_OPTION_COUNT = 20;/);
-  assert.match(
-    localCatalogBuilder,
-    /is_active: curatedLabels\.length === LOCAL_PUBLIC_OPTION_COUNT/,
-  );
+  assert.match(localCatalogBuilder, /const LOCAL_PUBLIC_MINIMUM_OPTION_COUNT = 5;/);
+  assert.match(localCatalogBuilder, /curatedLabels\.length >= LOCAL_PUBLIC_MINIMUM_OPTION_COUNT/);
   assert.ok(Object.keys(expansion.general).length >= 50);
   assert.ok(Object.values(expansion.general).every((labels) => labels.length >= 4));
   assert.ok(
@@ -49,14 +47,11 @@ test('public rankings use 20 Local options and 14 general options', () => {
           .size >= 14,
     ),
   );
+  assert.ok(localCatalog.every((ranking) => ranking.opts.length >= 5 && ranking.opts.length <= 20));
   assert.ok(
-    localCatalog.every((ranking) => {
-      const labels = [
-        ...ranking.opts.map(({ label }) => label),
-        ...(expansion.local[ranking.id] || []),
-      ];
-      return new Set(labels).size >= 20;
-    }),
+    localCatalog
+      .filter((ranking) => ranking.city !== 'Florianópolis' && ranking.localCategoryKey !== 'vegan')
+      .every((ranking) => ranking.opts.length === 20),
   );
   assert.match(app, /visibleOptionCount = 10/);
   assert.match(app, /Ver mais \$\{next\}/);

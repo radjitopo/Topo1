@@ -1,0 +1,2988 @@
+{
+  "city": "Campinas",
+  "state": "SP",
+  "categories": {
+    "burger": [
+      {
+        "name": "T.T. Burger Campinas",
+        "rating": 4.8,
+        "reviews": 639,
+        "sponsored": false,
+        "lat": -22.8929875,
+        "lng": -47.0548239,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Lifebox Burger - Campinas",
+        "rating": 4.8,
+        "reviews": 3767,
+        "sponsored": false,
+        "lat": -22.890715,
+        "lng": -47.0496927,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Thanks Burger",
+        "rating": 4.8,
+        "reviews": 4666,
+        "sponsored": false,
+        "lat": -22.9001361,
+        "lng": -47.0493507,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bom Beef Burgers Campinas",
+        "rating": 4.2,
+        "reviews": 1139,
+        "sponsored": false,
+        "lat": -22.8966194,
+        "lng": -47.0518674,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Do Super",
+        "rating": 4.6,
+        "reviews": 927,
+        "sponsored": false,
+        "lat": -22.9129259,
+        "lng": -47.0475741,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Bullguer",
+        "rating": 4.4,
+        "reviews": 2049,
+        "sponsored": false,
+        "lat": -22.8931131,
+        "lng": -47.0268399,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "World Burger's Artesanal",
+        "rating": 4.8,
+        "reviews": 529,
+        "sponsored": false,
+        "lat": -22.9413669,
+        "lng": -47.1568957,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Cabana Burger (Campinas)",
+        "rating": 4.7,
+        "reviews": 1140,
+        "sponsored": false,
+        "lat": -22.8920122,
+        "lng": -47.0263965,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Instinto Burger Campinas",
+        "rating": 4.7,
+        "reviews": 1277,
+        "sponsored": false,
+        "lat": -22.8976197,
+        "lng": -47.0517831,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "THE BLACK BURGUER - HAMBURGUERIA",
+        "rating": 4.8,
+        "reviews": 615,
+        "sponsored": false,
+        "lat": -22.9423725,
+        "lng": -47.1839951,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Madero Container Cambuí Campinas",
+        "rating": 4.4,
+        "reviews": 849,
+        "sponsored": false,
+        "lat": -22.898004,
+        "lng": -47.0492366,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria caverna do urso",
+        "rating": 4.7,
+        "reviews": 763,
+        "sponsored": false,
+        "lat": -22.8772232,
+        "lng": -47.0478054,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Butcher Super Smash",
+        "rating": 4.8,
+        "reviews": 184,
+        "sponsored": false,
+        "lat": -22.8941734,
+        "lng": -47.0585459,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Madero & Jeronimo Track Alecrins",
+        "rating": 4.4,
+        "reviews": 5321,
+        "sponsored": false,
+        "lat": -22.8889592,
+        "lng": -47.0540511,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Estação Burgers - Campinas",
+        "rating": 4.8,
+        "reviews": 604,
+        "sponsored": false,
+        "lat": -22.8894065,
+        "lng": -47.0654775,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bronco Burger - Cambuí",
+        "rating": 4.6,
+        "reviews": 2322,
+        "sponsored": false,
+        "lat": -22.8956409,
+        "lng": -47.0589672,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Calibre Burguer Campinas",
+        "rating": 4.6,
+        "reviews": 159,
+        "sponsored": false,
+        "lat": -22.9156692,
+        "lng": -47.085524,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "The Simple Shop - Hamburgueria",
+        "rating": 5,
+        "reviews": 769,
+        "sponsored": false,
+        "lat": -22.8921776,
+        "lng": -47.0537691,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Big Jack Hamburgueria - Castelo",
+        "rating": 4.2,
+        "reviews": 497,
+        "sponsored": false,
+        "lat": -22.8898018,
+        "lng": -47.0762854,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bronco Burger - Barão Geraldo",
+        "rating": 4.5,
+        "reviews": 2760,
+        "sponsored": false,
+        "lat": -22.823702,
+        "lng": -47.0832648,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      }
+    ],
+    "pizza": [
+      {
+        "name": "Bráz",
+        "rating": 4.6,
+        "reviews": 3881,
+        "sponsored": false,
+        "lat": -22.9002964,
+        "lng": -47.0535997,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Engenho Paulista",
+        "rating": 4.6,
+        "reviews": 3804,
+        "sponsored": false,
+        "lat": -22.8977659,
+        "lng": -47.0532652,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Ritorno",
+        "rating": 4.5,
+        "reviews": 2535,
+        "sponsored": false,
+        "lat": -22.9041579,
+        "lng": -47.0486285,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza Marcante Campinas",
+        "rating": 4.6,
+        "reviews": 2048,
+        "sponsored": false,
+        "lat": -22.8983762,
+        "lng": -47.0650472,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "La Braciera Napoletana",
+        "rating": 4.8,
+        "reviews": 3126,
+        "sponsored": false,
+        "lat": -22.8933352,
+        "lng": -47.0508184,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria e Restaurante Prime Italian",
+        "rating": 4.5,
+        "reviews": 3183,
+        "sponsored": false,
+        "lat": -22.8991583,
+        "lng": -47.0525309,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzad'oro",
+        "rating": 4.5,
+        "reviews": 1786,
+        "sponsored": false,
+        "lat": -22.9052396,
+        "lng": -47.0475643,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Venzonne | Cambuí - Campinas",
+        "rating": 4.8,
+        "reviews": 456,
+        "sponsored": false,
+        "lat": -22.8914888,
+        "lng": -47.0498828,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Espaço Nobre Pizzaria",
+        "rating": 4.6,
+        "reviews": 6825,
+        "sponsored": false,
+        "lat": -22.9074531,
+        "lng": -47.0963105,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Fascina - Campinas",
+        "rating": 4.8,
+        "reviews": 793,
+        "sponsored": false,
+        "lat": -22.8823419,
+        "lng": -47.0661904,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "430 Gradi Napoletana Cambuí",
+        "rating": 4.5,
+        "reviews": 745,
+        "sponsored": false,
+        "lat": -22.9024839,
+        "lng": -47.0522375,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Bonelli Restaurante e Pizzaria",
+        "rating": 4.4,
+        "reviews": 2621,
+        "sponsored": false,
+        "lat": -22.88332,
+        "lng": -47.056816,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante e Pizzaria Monte Bello",
+        "rating": 4.4,
+        "reviews": 3518,
+        "sponsored": false,
+        "lat": -22.8986528,
+        "lng": -47.0553347,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Amaretto | Shopping Iguatemi",
+        "rating": 4.4,
+        "reviews": 1637,
+        "sponsored": false,
+        "lat": -22.8926057,
+        "lng": -47.0277746,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mega Pizza Forneria",
+        "rating": 4.5,
+        "reviews": 1027,
+        "sponsored": false,
+        "lat": -22.9031544,
+        "lng": -47.0829595,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Serata • Pizza & Cucina",
+        "rating": 4.7,
+        "reviews": 1082,
+        "sponsored": false,
+        "lat": -22.8900111,
+        "lng": -47.0781039,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Ragatella",
+        "rating": 4.5,
+        "reviews": 377,
+        "sponsored": false,
+        "lat": -22.8917422,
+        "lng": -47.0509913,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza do Dadá - Restaurante",
+        "rating": 4.4,
+        "reviews": 4782,
+        "sponsored": false,
+        "lat": -22.869822,
+        "lng": -47.064013,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Maremonti Campinas",
+        "rating": 4.3,
+        "reviews": 1175,
+        "sponsored": false,
+        "lat": -22.8646547,
+        "lng": -47.0226631,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza 92 - Campinas",
+        "rating": 4.5,
+        "reviews": 263,
+        "sponsored": false,
+        "lat": -22.8675532,
+        "lng": -47.0447519,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "D'autore Restaurante",
+        "rating": 4.6,
+        "reviews": 1301,
+        "sponsored": false,
+        "lat": -22.892301,
+        "lng": -47.05241,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Olivetto",
+        "rating": 4.7,
+        "reviews": 1637,
+        "sponsored": false,
+        "lat": -22.8934901,
+        "lng": -47.0494631,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "LUME",
+        "rating": 4.7,
+        "reviews": 1141,
+        "sponsored": false,
+        "lat": -22.8924392,
+        "lng": -47.0548619,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Cantina Fellini",
+        "rating": 4.7,
+        "reviews": 4140,
+        "sponsored": false,
+        "lat": -22.8939589,
+        "lng": -47.0524673,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina Brunelli",
+        "rating": 4.7,
+        "reviews": 2420,
+        "sponsored": false,
+        "lat": -22.8967438,
+        "lng": -47.0568899,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pobre Juan Campinas",
+        "rating": 4.5,
+        "reviews": 1671,
+        "sponsored": false,
+        "lat": -22.864289,
+        "lng": -47.022793,
+        "withinBounds": true,
+        "primaryCategory": "Argentina"
+      },
+      {
+        "name": "Famiglia Gianni",
+        "rating": 4.7,
+        "reviews": 4620,
+        "sponsored": false,
+        "lat": -22.8901601,
+        "lng": -47.0393338,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Bellini",
+        "rating": 4.7,
+        "reviews": 1400,
+        "sponsored": false,
+        "lat": -22.9022936,
+        "lng": -47.0482071,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "ENTRE TAÇAS WINE BAR E RESTAURANTE",
+        "rating": 4.7,
+        "reviews": 1130,
+        "sponsored": false,
+        "lat": -22.8944068,
+        "lng": -47.0514876,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Jangada Cambui",
+        "rating": 4.6,
+        "reviews": 1947,
+        "sponsored": false,
+        "lat": -22.90063,
+        "lng": -47.0484724,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "Di Paolo",
+        "rating": 4.8,
+        "reviews": 1425,
+        "sponsored": false,
+        "lat": -22.8645623,
+        "lng": -47.023252,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Rosário",
+        "rating": 4.5,
+        "reviews": 1982,
+        "sponsored": false,
+        "lat": -22.9042168,
+        "lng": -47.0606977,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Mãe Terra Culinária Natural Cambuí",
+        "rating": 4.8,
+        "reviews": 770,
+        "sponsored": false,
+        "lat": -22.8982297,
+        "lng": -47.0494647,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Theo Medeiros",
+        "rating": 4.6,
+        "reviews": 1276,
+        "sponsored": false,
+        "lat": -22.8913757,
+        "lng": -47.0541397,
+        "withinBounds": true,
+        "primaryCategory": "Bistrô"
+      },
+      {
+        "name": "Restaurante & Parrillada El Tranvía (Campinas)",
+        "rating": 4.6,
+        "reviews": 787,
+        "sponsored": false,
+        "lat": -22.9051265,
+        "lng": -47.038452,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Domuus Campinas - Cozinha Contemporânea",
+        "rating": 4.6,
+        "reviews": 1131,
+        "sponsored": false,
+        "lat": -22.8944793,
+        "lng": -47.0514926,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Benedito",
+        "rating": 4.7,
+        "reviews": 3242,
+        "sponsored": false,
+        "lat": -22.8923418,
+        "lng": -47.0522343,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Kaizen Japanese Food",
+        "rating": 4.6,
+        "reviews": 3653,
+        "sponsored": false,
+        "lat": -22.8940345,
+        "lng": -47.0303885,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Vila Paraíso",
+        "rating": 4.5,
+        "reviews": 5155,
+        "sponsored": false,
+        "lat": -22.8907482,
+        "lng": -46.9401539,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Carní Espaço Gastronômico",
+        "rating": 4.8,
+        "reviews": 4077,
+        "sponsored": false,
+        "lat": -22.8870652,
+        "lng": -46.9773506,
+        "withinBounds": true,
+        "primaryCategory": "Carne"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "Tirashi House - Japanese Food",
+        "rating": 4.9,
+        "reviews": 966,
+        "sponsored": false,
+        "lat": -22.8857804,
+        "lng": -47.0689055,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Shinki Sushi Campinas",
+        "rating": 4.9,
+        "reviews": 6071,
+        "sponsored": false,
+        "lat": -22.8938193,
+        "lng": -47.0578618,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kaishi Sushi Campinas",
+        "rating": 4.6,
+        "reviews": 3416,
+        "sponsored": false,
+        "lat": -22.9029905,
+        "lng": -47.0505471,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Shikaku Campinas",
+        "rating": 4.8,
+        "reviews": 1278,
+        "sponsored": false,
+        "lat": -22.8966271,
+        "lng": -47.0521049,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kaizen Japanese Food",
+        "rating": 4.6,
+        "reviews": 3653,
+        "sponsored": false,
+        "lat": -22.8940345,
+        "lng": -47.0303885,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Ikigai Exclusive Sushi Campinas",
+        "rating": 4.8,
+        "reviews": 4366,
+        "sponsored": false,
+        "lat": -22.8982335,
+        "lng": -47.0545198,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "IKI Japanese Cuisine",
+        "rating": 4.8,
+        "reviews": 948,
+        "sponsored": false,
+        "lat": -22.8940111,
+        "lng": -47.0479347,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Katori Sushi Campinas",
+        "rating": 4.6,
+        "reviews": 1854,
+        "sponsored": false,
+        "lat": -22.9021746,
+        "lng": -47.046129,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Okaya Sushi Campinas",
+        "rating": 4.6,
+        "reviews": 6107,
+        "sponsored": false,
+        "lat": -22.9011314,
+        "lng": -47.0520637,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sumirê Japanese Restaurant",
+        "rating": 4.7,
+        "reviews": 1636,
+        "sponsored": false,
+        "lat": -22.832744,
+        "lng": -47.0768488,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kindai - Campinas",
+        "rating": 4.4,
+        "reviews": 939,
+        "sponsored": false,
+        "lat": -22.9023403,
+        "lng": -47.0482017,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kanu restaurante",
+        "rating": 4.5,
+        "reviews": 581,
+        "sponsored": false,
+        "lat": -22.9009136,
+        "lng": -47.0394129,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Restaurante Kosushi - Iguatemi Campinas",
+        "rating": 4.5,
+        "reviews": 377,
+        "sponsored": false,
+        "lat": -22.8919337,
+        "lng": -47.0257008,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Nashi",
+        "rating": 4.6,
+        "reviews": 1826,
+        "sponsored": false,
+        "lat": -22.9059435,
+        "lng": -47.0406479,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Mitsui Culinária Japonesa",
+        "rating": 4.8,
+        "reviews": 373,
+        "sponsored": false,
+        "lat": -22.8625718,
+        "lng": -47.0430311,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Satoshy Sushi Barão Geraldo",
+        "rating": 4.8,
+        "reviews": 4356,
+        "sponsored": false,
+        "lat": -22.8337748,
+        "lng": -47.0784091,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tanchou Sushi",
+        "rating": 4.6,
+        "reviews": 2201,
+        "sponsored": false,
+        "lat": -22.8801257,
+        "lng": -47.0543744,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Shoubai Japanese Cuisine",
+        "rating": 4.3,
+        "reviews": 1662,
+        "sponsored": false,
+        "lat": -22.892718,
+        "lng": -47.0542827,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kazu Sushi Cambui",
+        "rating": 4.6,
+        "reviews": 1894,
+        "sponsored": false,
+        "lat": -22.898454,
+        "lng": -47.0494647,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kazu sushi Barão Geraldo",
+        "rating": 4.5,
+        "reviews": 452,
+        "sponsored": false,
+        "lat": -22.825129,
+        "lng": -47.072075,
+        "withinBounds": true,
+        "primaryCategory": "Culinária japonesa autêntica"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Barbearia Cambuí - Campinas",
+        "rating": 4.9,
+        "reviews": 957,
+        "sponsored": false,
+        "lat": -22.8913091,
+        "lng": -47.0558427,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Gold Mustache - Unidade Centro",
+        "rating": 4.9,
+        "reviews": 952,
+        "sponsored": false,
+        "lat": -22.90886,
+        "lng": -47.05692,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "A Barbearia l Nova Campinas",
+        "rating": 4.9,
+        "reviews": 778,
+        "sponsored": false,
+        "lat": -22.9062677,
+        "lng": -47.0450058,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Duque Barbearia",
+        "rating": 4.9,
+        "reviews": 567,
+        "sponsored": false,
+        "lat": -22.9089426,
+        "lng": -47.0557668,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Don Barba | Barbearia & Pub",
+        "rating": 4.9,
+        "reviews": 543,
+        "sponsored": false,
+        "lat": -22.8896144,
+        "lng": -47.0779707,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Confraria da Barba | Cambuí - Campinas SP",
+        "rating": 4.9,
+        "reviews": 1158,
+        "sponsored": false,
+        "lat": -22.8989855,
+        "lng": -47.0493351,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Black Bart Barbearia & Pub - Barbearia Campinas",
+        "rating": 5,
+        "reviews": 1085,
+        "sponsored": false,
+        "lat": -22.8893928,
+        "lng": -47.0645446,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "A Barbearia l Taquaral",
+        "rating": 4.8,
+        "reviews": 464,
+        "sponsored": false,
+        "lat": -22.8765604,
+        "lng": -47.0482865,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "A Barbearia l Cambuí",
+        "rating": 4.8,
+        "reviews": 313,
+        "sponsored": false,
+        "lat": -22.8904842,
+        "lng": -47.0538194,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Fast Barbershop",
+        "rating": 5,
+        "reviews": 296,
+        "sponsored": false,
+        "lat": -22.8890095,
+        "lng": -47.0761809,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "King of Kings Barbearia",
+        "rating": 4.7,
+        "reviews": 1631,
+        "sponsored": false,
+        "lat": -22.909446,
+        "lng": -47.094789,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Estação Campinas",
+        "rating": 5,
+        "reviews": 364,
+        "sponsored": false,
+        "lat": -22.9100209,
+        "lng": -47.0930026,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "The Barber’s Barbearia",
+        "rating": 4.9,
+        "reviews": 228,
+        "sponsored": false,
+        "lat": -22.9201612,
+        "lng": -47.0748118,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Barba Real",
+        "rating": 4.9,
+        "reviews": 243,
+        "sponsored": false,
+        "lat": -22.8838607,
+        "lng": -47.0682519,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Don Patrício",
+        "rating": 5,
+        "reviews": 261,
+        "sponsored": false,
+        "lat": -22.8884366,
+        "lng": -47.0451368,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Alpha Barber Club | Cambuí",
+        "rating": 5,
+        "reviews": 290,
+        "sponsored": false,
+        "lat": -22.8888044,
+        "lng": -47.0550496,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "CAPITA BARBEARIA",
+        "rating": 4.7,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.8980476,
+        "lng": -47.0657912,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia VK",
+        "rating": 4.9,
+        "reviews": 363,
+        "sponsored": false,
+        "lat": -22.894184,
+        "lng": -47.0789685,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barber and Coffee",
+        "rating": 4.8,
+        "reviews": 508,
+        "sponsored": false,
+        "lat": -22.8520074,
+        "lng": -47.0534758,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Black Barba Barbearia",
+        "rating": 4.9,
+        "reviews": 320,
+        "sponsored": false,
+        "lat": -22.9142994,
+        "lng": -47.0478684,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Cadiquê Café - Matriz",
+        "rating": 4.8,
+        "reviews": 1380,
+        "sponsored": false,
+        "lat": -22.884526,
+        "lng": -47.059798,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Wood Especiais",
+        "rating": 4.8,
+        "reviews": 496,
+        "sponsored": false,
+        "lat": -22.9045255,
+        "lng": -47.0582948,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Regina",
+        "rating": 4.5,
+        "reviews": 2676,
+        "sponsored": false,
+        "lat": -22.9031601,
+        "lng": -47.0595703,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "D.Origem Cafés Especiais",
+        "rating": 4.8,
+        "reviews": 275,
+        "sponsored": false,
+        "lat": -22.906669,
+        "lng": -47.0518441,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Abigail Coffee Company",
+        "rating": 4.7,
+        "reviews": 1837,
+        "sponsored": false,
+        "lat": -22.8969318,
+        "lng": -47.0557742,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "LILE CAFÉ ️",
+        "rating": 4.8,
+        "reviews": 709,
+        "sponsored": false,
+        "lat": -22.8923325,
+        "lng": -47.0514031,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Container",
+        "rating": 4.5,
+        "reviews": 2187,
+        "sponsored": false,
+        "lat": -22.8912941,
+        "lng": -47.049909,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cafeteria Cambuí",
+        "rating": 4.7,
+        "reviews": 952,
+        "sponsored": false,
+        "lat": -22.8936071,
+        "lng": -47.0556067,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Maloe Café",
+        "rating": 4.8,
+        "reviews": 453,
+        "sponsored": false,
+        "lat": -22.8916748,
+        "lng": -47.0555784,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Coelho Branco Café Secreto",
+        "rating": 4.6,
+        "reviews": 584,
+        "sponsored": false,
+        "lat": -22.9022161,
+        "lng": -47.0490846,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "1727 Coffee Roasters",
+        "rating": 4.7,
+        "reviews": 666,
+        "sponsored": false,
+        "lat": -22.822905,
+        "lng": -47.0822501,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Kurubi",
+        "rating": 4.7,
+        "reviews": 758,
+        "sponsored": false,
+        "lat": -22.8977884,
+        "lng": -47.0654716,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Wood Cafés Especiais II",
+        "rating": 4.7,
+        "reviews": 343,
+        "sponsored": false,
+        "lat": -22.9002104,
+        "lng": -47.0400432,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Pontes",
+        "rating": 4.9,
+        "reviews": 197,
+        "sponsored": false,
+        "lat": -22.9042342,
+        "lng": -47.058746,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Malabarista Cafés Especiais, Galleria Shopping",
+        "rating": 4.8,
+        "reviews": 363,
+        "sponsored": false,
+        "lat": -22.8634117,
+        "lng": -47.0234647,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Franquia Café Conceito Cambuí",
+        "rating": 4.7,
+        "reviews": 638,
+        "sponsored": false,
+        "lat": -22.9006723,
+        "lng": -47.0493887,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Dona Baunilha Doceria Campinas",
+        "rating": 4.7,
+        "reviews": 2051,
+        "sponsored": false,
+        "lat": -22.8967948,
+        "lng": -47.0491986,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Quiero Café",
+        "rating": 4.5,
+        "reviews": 1725,
+        "sponsored": false,
+        "lat": -22.9048328,
+        "lng": -47.0404009,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "A Priori Café",
+        "rating": 4.8,
+        "reviews": 101,
+        "sponsored": false,
+        "lat": -22.9064752,
+        "lng": -47.0581214,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Cheirin Bão Campinas Centro",
+        "rating": 4.7,
+        "reviews": 306,
+        "sponsored": false,
+        "lat": -22.9021433,
+        "lng": -47.0597776,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Symetria",
+        "rating": 4.7,
+        "reviews": 766,
+        "sponsored": false,
+        "lat": -22.8959776,
+        "lng": -47.0742415,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Casa L'Ellit",
+        "rating": 4.6,
+        "reviews": 371,
+        "sponsored": false,
+        "lat": -22.8994765,
+        "lng": -47.0451891,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Channel Studio da Beleza Campinas",
+        "rating": 4.6,
+        "reviews": 438,
+        "sponsored": false,
+        "lat": -22.906523,
+        "lng": -47.0634764,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Laen Beauty & Spa - Salão De Beleza Campinas",
+        "rating": 4.8,
+        "reviews": 374,
+        "sponsored": false,
+        "lat": -22.9034989,
+        "lng": -47.0401511,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Beleza e Art Unidade Taquaral | Salão de Beleza Campinas",
+        "rating": 4.7,
+        "reviews": 395,
+        "sponsored": false,
+        "lat": -22.8777734,
+        "lng": -47.0452264,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Beleza Feminina | Salão de Beleza em Campinas",
+        "rating": 5,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -22.906268,
+        "lng": -47.0578934,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio W Campinas",
+        "rating": 4.5,
+        "reviews": 440,
+        "sponsored": false,
+        "lat": -22.8925987,
+        "lng": -47.0289248,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza Cheia De Charme Campinas",
+        "rating": 4.2,
+        "reviews": 419,
+        "sponsored": false,
+        "lat": -22.9045478,
+        "lng": -47.0591784,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Hermas Beleza - Salão de Beleza Campinas",
+        "rating": 4.9,
+        "reviews": 304,
+        "sponsored": false,
+        "lat": -22.8994842,
+        "lng": -47.0419395,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Bkcabelos - Salão de Beleza",
+        "rating": 4.9,
+        "reviews": 917,
+        "sponsored": false,
+        "lat": -22.9300563,
+        "lng": -47.0925503,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Cris Gata Salão de Beleza",
+        "rating": 4.8,
+        "reviews": 376,
+        "sponsored": false,
+        "lat": -22.9009304,
+        "lng": -47.0405874,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Espaço Fluir Saúde e Beleza em Campinas",
+        "rating": 5,
+        "reviews": 353,
+        "sponsored": false,
+        "lat": -22.915508,
+        "lng": -47.0811022,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Elas Belezaria salão de beleza completo, desde 2015. Parque Itália, Campinas SP.",
+        "rating": 4.7,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.9200232,
+        "lng": -47.0693191,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Visagismo Intencional",
+        "rating": 4.9,
+        "reviews": 434,
+        "sponsored": false,
+        "lat": -22.9071739,
+        "lng": -47.0507189,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "George Cabeleireiros | Salão de Beleza em Campinas",
+        "rating": 4.8,
+        "reviews": 173,
+        "sponsored": false,
+        "lat": -22.9000668,
+        "lng": -47.0494463,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Pedro Souza",
+        "rating": 4.9,
+        "reviews": 393,
+        "sponsored": false,
+        "lat": -22.9065674,
+        "lng": -47.0988084,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "JARBES SALLES HAIR CONCEPT | Cabeleireiro Unissex - Cambui Campinas SP",
+        "rating": 4.7,
+        "reviews": 185,
+        "sponsored": false,
+        "lat": -22.8953369,
+        "lng": -47.0468012,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Yuki Cabeleireiro",
+        "rating": 4.9,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -22.8817338,
+        "lng": -47.055223,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Casa VR Salão de Beleza",
+        "rating": 4.7,
+        "reviews": 117,
+        "sponsored": false,
+        "lat": -22.9035065,
+        "lng": -47.03738,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Celso Kamura - Salão de Beleza em Cambuí",
+        "rating": 4.6,
+        "reviews": 354,
+        "sponsored": false,
+        "lat": -22.8906335,
+        "lng": -47.055166,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Bar do Carioca",
+        "rating": 4.7,
+        "reviews": 4644,
+        "sponsored": false,
+        "lat": -22.8942377,
+        "lng": -47.0778377,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Catedral do Chopp",
+        "rating": 4.5,
+        "reviews": 7923,
+        "sponsored": false,
+        "lat": -22.9053515,
+        "lng": -47.0473824,
+        "withinBounds": true,
+        "primaryCategory": "Chop bar"
+      },
+      {
+        "name": "Boteco Vidottinho - Cambuí",
+        "rating": 4.4,
+        "reviews": 2993,
+        "sponsored": false,
+        "lat": -22.8968,
+        "lng": -47.0511,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "City Bar Campinas",
+        "rating": 4.4,
+        "reviews": 1392,
+        "sponsored": false,
+        "lat": -22.901356,
+        "lng": -47.0537783,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Facca Bar",
+        "rating": 4.6,
+        "reviews": 1932,
+        "sponsored": false,
+        "lat": -22.9048459,
+        "lng": -47.0580744,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "SeoRosa | Cambuí",
+        "rating": 4.6,
+        "reviews": 2853,
+        "sponsored": false,
+        "lat": -22.8995352,
+        "lng": -47.050288,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Grainne's - Irish Pub",
+        "rating": 4.5,
+        "reviews": 5545,
+        "sponsored": false,
+        "lat": -22.8994802,
+        "lng": -47.0492034,
+        "withinBounds": true,
+        "primaryCategory": "Bares"
+      },
+      {
+        "name": "Tatu Bola Bar",
+        "rating": 4.8,
+        "reviews": 7720,
+        "sponsored": false,
+        "lat": -22.896793,
+        "lng": -47.0495872,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Maria Bonjour Bar",
+        "rating": 4.6,
+        "reviews": 1968,
+        "sponsored": false,
+        "lat": -22.8341525,
+        "lng": -47.0784155,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Coronel Mostarda",
+        "rating": 4.6,
+        "reviews": 1366,
+        "sponsored": false,
+        "lat": -22.8994351,
+        "lng": -47.0494381,
+        "withinBounds": true,
+        "primaryCategory": "Bares"
+      },
+      {
+        "name": "Beach Bar Tropical",
+        "rating": 4.8,
+        "reviews": 1351,
+        "sponsored": false,
+        "lat": -22.8822702,
+        "lng": -47.0661904,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar Voga",
+        "rating": 4.4,
+        "reviews": 2627,
+        "sponsored": false,
+        "lat": -22.9025986,
+        "lng": -47.057487,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Zin'Bar",
+        "rating": 4.5,
+        "reviews": 5741,
+        "sponsored": false,
+        "lat": -22.8832501,
+        "lng": -47.0613741,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Bar da Vendinha",
+        "rating": 4.7,
+        "reviews": 2336,
+        "sponsored": false,
+        "lat": -22.9177941,
+        "lng": -47.0578956,
+        "withinBounds": true,
+        "primaryCategory": "Lanchonete"
+      },
+      {
+        "name": "Possante Bar",
+        "rating": 4.4,
+        "reviews": 1158,
+        "sponsored": false,
+        "lat": -22.8811188,
+        "lng": -47.055016,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Boteco São Bento Cambuí",
+        "rating": 4.4,
+        "reviews": 5545,
+        "sponsored": false,
+        "lat": -22.8990779,
+        "lng": -47.0504769,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Clube Nashville",
+        "rating": 4.5,
+        "reviews": 1688,
+        "sponsored": false,
+        "lat": -22.8831107,
+        "lng": -47.0426744,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Dom Dama Restaurante e Bar",
+        "rating": 4.7,
+        "reviews": 1488,
+        "sponsored": false,
+        "lat": -22.8778591,
+        "lng": -47.0526087,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Folks Pub Sertanejo - Campinas",
+        "rating": 4.3,
+        "reviews": 1619,
+        "sponsored": false,
+        "lat": -22.8960202,
+        "lng": -47.0476803,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Bar Preste Atenção",
+        "rating": 4.6,
+        "reviews": 1620,
+        "sponsored": false,
+        "lat": -22.8980285,
+        "lng": -47.0651464,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Famiglia Gianni",
+        "rating": 4.7,
+        "reviews": 4620,
+        "sponsored": false,
+        "lat": -22.8901601,
+        "lng": -47.0393338,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina Fellini",
+        "rating": 4.7,
+        "reviews": 4140,
+        "sponsored": false,
+        "lat": -22.8939589,
+        "lng": -47.0524673,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Artesanalli Massas & Molhos",
+        "rating": 4.6,
+        "reviews": 2009,
+        "sponsored": false,
+        "lat": -22.8947482,
+        "lng": -47.050966,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina Brunelli",
+        "rating": 4.7,
+        "reviews": 2420,
+        "sponsored": false,
+        "lat": -22.8967438,
+        "lng": -47.0568899,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Bellini",
+        "rating": 4.7,
+        "reviews": 1400,
+        "sponsored": false,
+        "lat": -22.9022936,
+        "lng": -47.0482071,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Romanos",
+        "rating": 4.6,
+        "reviews": 2353,
+        "sponsored": false,
+        "lat": -22.8938039,
+        "lng": -47.0514981,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Trieste cucina",
+        "rating": 4.8,
+        "reviews": 286,
+        "sponsored": false,
+        "lat": -22.9231257,
+        "lng": -47.0564964,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Macarronada Italiana",
+        "rating": 4.5,
+        "reviews": 8627,
+        "sponsored": false,
+        "lat": -22.9199476,
+        "lng": -47.0585163,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Di Paolo",
+        "rating": 4.8,
+        "reviews": 1425,
+        "sponsored": false,
+        "lat": -22.8645623,
+        "lng": -47.023252,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Duo Bruschetteria & Cucina",
+        "rating": 4.6,
+        "reviews": 742,
+        "sponsored": false,
+        "lat": -22.894421,
+        "lng": -47.0548334,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Cucina Mediterranea Iguatemi: Massas, Risoto, Vinho, Delivery, Campinas",
+        "rating": 4.6,
+        "reviews": 1966,
+        "sponsored": false,
+        "lat": -22.8922441,
+        "lng": -47.0276776,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "IL Balcone",
+        "rating": 4.8,
+        "reviews": 1881,
+        "sponsored": false,
+        "lat": -22.9033007,
+        "lng": -47.0499308,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Ninetto Trattoria",
+        "rating": 4.7,
+        "reviews": 2630,
+        "sponsored": false,
+        "lat": -22.8449168,
+        "lng": -47.0644738,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Abbraccio Cucina Italiana",
+        "rating": 4.4,
+        "reviews": 4575,
+        "sponsored": false,
+        "lat": -22.8918852,
+        "lng": -47.0263053,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pizzaria e Restaurante Prime Italian",
+        "rating": 4.5,
+        "reviews": 3183,
+        "sponsored": false,
+        "lat": -22.8991583,
+        "lng": -47.0525309,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "La Bottega Famiglia Casagrande",
+        "rating": 4.4,
+        "reviews": 84,
+        "sponsored": false,
+        "lat": -22.8929631,
+        "lng": -47.0556766,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      }
+    ],
+    "gym": [
+      {
+        "name": "Campinas Fit Moraes Sales",
+        "rating": 4.6,
+        "reviews": 1117,
+        "sponsored": false,
+        "lat": -22.9056312,
+        "lng": -47.0533795,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Winner Academia Campinas",
+        "rating": 4.7,
+        "reviews": 499,
+        "sponsored": false,
+        "lat": -22.8754384,
+        "lng": -47.0357974,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Gaviões 24h Premium - Taquaral",
+        "rating": 4.8,
+        "reviews": 498,
+        "sponsored": false,
+        "lat": -22.8785354,
+        "lng": -47.0593708,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "A Academia - Unidade Nova Campinas",
+        "rating": 4.6,
+        "reviews": 355,
+        "sponsored": false,
+        "lat": -22.8940563,
+        "lng": -47.0417366,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Billers Academia Campinas",
+        "rating": 5,
+        "reviews": 279,
+        "sponsored": false,
+        "lat": -22.9196497,
+        "lng": -47.048875,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia Campinas Fit",
+        "rating": 4.5,
+        "reviews": 343,
+        "sponsored": false,
+        "lat": -22.9008944,
+        "lng": -47.0618612,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Equilíbrio Ideal do Corpo",
+        "rating": 4.8,
+        "reviews": 291,
+        "sponsored": false,
+        "lat": -22.8941557,
+        "lng": -47.0626977,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Bodytech Campinas Dom Pedro",
+        "rating": 4.5,
+        "reviews": 505,
+        "sponsored": false,
+        "lat": -22.8488643,
+        "lng": -47.0642874,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Reviva",
+        "rating": 4.9,
+        "reviews": 253,
+        "sponsored": false,
+        "lat": -22.8851725,
+        "lng": -47.0674011,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Max Premium Academia - LEVEL Jiu Jitsu Cambuí Campinas",
+        "rating": 4.8,
+        "reviews": 220,
+        "sponsored": false,
+        "lat": -22.8977162,
+        "lng": -47.0513863,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia 24 Health Club - Unidade Cambuí",
+        "rating": 4.2,
+        "reviews": 236,
+        "sponsored": false,
+        "lat": -22.8945522,
+        "lng": -47.0578834,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "RB ACADEMIA",
+        "rating": 4.6,
+        "reviews": 105,
+        "sponsored": false,
+        "lat": -22.9101014,
+        "lng": -47.0561123,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Top Team Academia",
+        "rating": 4.7,
+        "reviews": 188,
+        "sponsored": false,
+        "lat": -22.8804044,
+        "lng": -47.0492176,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Smart Fit - Campinas Shopping",
+        "rating": 4.4,
+        "reviews": 1394,
+        "sponsored": false,
+        "lat": -22.93271,
+        "lng": -47.078281,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia A W Gym",
+        "rating": 4.8,
+        "reviews": 232,
+        "sponsored": false,
+        "lat": -22.8807388,
+        "lng": -47.0677755,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "EXTREME ACADEMIA CAMPINAS",
+        "rating": 4.6,
+        "reviews": 251,
+        "sponsored": false,
+        "lat": -22.8549893,
+        "lng": -47.0516058,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Fábrica do Corpo",
+        "rating": 4.5,
+        "reviews": 160,
+        "sponsored": false,
+        "lat": -22.9007347,
+        "lng": -47.0637176,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia 26fit Campinas SP",
+        "rating": 4.7,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -22.9194126,
+        "lng": -47.0520122,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Olympus Academia",
+        "rating": 4.8,
+        "reviews": 422,
+        "sponsored": false,
+        "lat": -22.9188954,
+        "lng": -47.0856197,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "A Academia - Unidade Cambuí",
+        "rating": 4.6,
+        "reviews": 227,
+        "sponsored": false,
+        "lat": -22.8928062,
+        "lng": -47.0545335,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      }
+    ],
+    "pet": [
+      {
+        "name": "Animal Center - Norte Sul",
+        "rating": 4.5,
+        "reviews": 498,
+        "sponsored": false,
+        "lat": -22.8883333,
+        "lng": -47.0441667,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petland Av.Brasil - Banho e Tosa em Campinas",
+        "rating": 4.6,
+        "reviews": 191,
+        "sponsored": false,
+        "lat": -22.8930618,
+        "lng": -47.0614382,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Eco Center Pet",
+        "rating": 4.5,
+        "reviews": 1441,
+        "sponsored": false,
+        "lat": -22.9184897,
+        "lng": -47.1066985,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Aboli - Kão Pet Shop",
+        "rating": 4.5,
+        "reviews": 923,
+        "sponsored": false,
+        "lat": -22.9293313,
+        "lng": -47.0396979,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Central Pet Shop",
+        "rating": 4.6,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.9094849,
+        "lng": -47.0612335,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Animal & Cia Pet Shop Campinas",
+        "rating": 4.9,
+        "reviews": 183,
+        "sponsored": false,
+        "lat": -22.872536,
+        "lng": -47.0305029,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Dom Pedro",
+        "rating": 4.4,
+        "reviews": 6225,
+        "sponsored": false,
+        "lat": -22.8487869,
+        "lng": -47.0619775,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Cambuí",
+        "rating": 4.4,
+        "reviews": 2011,
+        "sponsored": false,
+        "lat": -22.9070515,
+        "lng": -47.0425068,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Aqui o Bicho Pega Oficial - Pet Shop | Rações | Quatree Supreme",
+        "rating": 4.9,
+        "reviews": 205,
+        "sponsored": false,
+        "lat": -22.9334991,
+        "lng": -47.0517196,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Molhado",
+        "rating": 4.7,
+        "reviews": 247,
+        "sponsored": false,
+        "lat": -22.9108765,
+        "lng": -47.0538417,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Petz Campinas Norte Sul",
+        "rating": 4.5,
+        "reviews": 262,
+        "sponsored": false,
+        "lat": -22.9039457,
+        "lng": -47.0464242,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Cobasi Ruy Rodrigues - Campinas",
+        "rating": 4.6,
+        "reviews": 2671,
+        "sponsored": false,
+        "lat": -22.9461548,
+        "lng": -47.1097598,
+        "withinBounds": true,
+        "primaryCategory": "Loja de suprimentos para animais de estimação"
+      },
+      {
+        "name": "PetCamp",
+        "rating": 4.5,
+        "reviews": 5057,
+        "sponsored": false,
+        "lat": -22.9187097,
+        "lng": -47.0610925,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petland Jasmim - Campinas/SP",
+        "rating": 4.7,
+        "reviews": 75,
+        "sponsored": false,
+        "lat": -22.8554452,
+        "lng": -47.0490771,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "PetCamp",
+        "rating": 4.6,
+        "reviews": 1157,
+        "sponsored": false,
+        "lat": -22.8989306,
+        "lng": -47.0478853,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Cobasi Taquaral - Campinas",
+        "rating": 4.5,
+        "reviews": 3309,
+        "sponsored": false,
+        "lat": -22.8726489,
+        "lng": -47.0636222,
+        "withinBounds": true,
+        "primaryCategory": "Loja de suprimentos para animais de estimação"
+      },
+      {
+        "name": "Pássaros & Cia",
+        "rating": 4.8,
+        "reviews": 708,
+        "sponsored": false,
+        "lat": -22.8813173,
+        "lng": -47.0657531,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Castelo Campinas",
+        "rating": 4.8,
+        "reviews": 36,
+        "sponsored": false,
+        "lat": -22.8889505,
+        "lng": -47.0802974,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Well dog Campinas",
+        "rating": 4.8,
+        "reviews": 46,
+        "sponsored": false,
+        "lat": -22.8932473,
+        "lng": -47.055244,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Love Pet Campinas Banho, Tosa, Rações e Acessórios",
+        "rating": 5,
+        "reviews": 33,
+        "sponsored": false,
+        "lat": -22.8751751,
+        "lng": -47.026214,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "Nico Paneteria",
+        "rating": 4.5,
+        "reviews": 14704,
+        "sponsored": false,
+        "lat": -22.8895471,
+        "lng": -47.0765783,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Pão do Cambuí",
+        "rating": 4.5,
+        "reviews": 7333,
+        "sponsored": false,
+        "lat": -22.9036935,
+        "lng": -47.0488447,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Pão da Primavera Boulangerie | Panificadora",
+        "rating": 4.5,
+        "reviews": 5408,
+        "sponsored": false,
+        "lat": -22.859014,
+        "lng": -47.046969,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Il Panettiere",
+        "rating": 4.7,
+        "reviews": 1070,
+        "sponsored": false,
+        "lat": -22.8925937,
+        "lng": -47.053219,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Confeitaria Romana",
+        "rating": 4.3,
+        "reviews": 8465,
+        "sponsored": false,
+        "lat": -22.8938978,
+        "lng": -47.053175,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Adélia Boulangerie",
+        "rating": 4.2,
+        "reviews": 2270,
+        "sponsored": false,
+        "lat": -22.8964131,
+        "lng": -47.0549824,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Boulangerie De France",
+        "rating": 4.3,
+        "reviews": 2812,
+        "sponsored": false,
+        "lat": -22.9059611,
+        "lng": -47.0381334,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Alemã",
+        "rating": 4.4,
+        "reviews": 8529,
+        "sponsored": false,
+        "lat": -22.8326155,
+        "lng": -47.0772059,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Abelha Gulosa-Flamboyant",
+        "rating": 4.4,
+        "reviews": 7332,
+        "sponsored": false,
+        "lat": -22.8828811,
+        "lng": -47.0340822,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Pão do Bosque",
+        "rating": 4.6,
+        "reviews": 1669,
+        "sponsored": false,
+        "lat": -22.9114628,
+        "lng": -47.053791,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Piracam",
+        "rating": 4.4,
+        "reviews": 5283,
+        "sponsored": false,
+        "lat": -22.9147866,
+        "lng": -47.0433282,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Lagoa do Taquaral",
+        "rating": 4.3,
+        "reviews": 1384,
+        "sponsored": false,
+        "lat": -22.8766179,
+        "lng": -47.0445111,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "PANIFICADORA E CONFEITARIA RIVIERA",
+        "rating": 4.3,
+        "reviews": 3118,
+        "sponsored": false,
+        "lat": -22.8957786,
+        "lng": -47.0568575,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Die Oma Casinha de Pedras",
+        "rating": 4.3,
+        "reviews": 970,
+        "sponsored": false,
+        "lat": -22.8921819,
+        "lng": -47.0556601,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Pão da Vida Campinas",
+        "rating": 4.4,
+        "reviews": 1181,
+        "sponsored": false,
+        "lat": -22.898899,
+        "lng": -47.064376,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Massa Pura",
+        "rating": 4.6,
+        "reviews": 460,
+        "sponsored": false,
+        "lat": -22.8913736,
+        "lng": -47.0548904,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Nico Paneteria Centro",
+        "rating": 4.3,
+        "reviews": 2700,
+        "sponsored": false,
+        "lat": -22.9081314,
+        "lng": -47.0579265,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Sacramento",
+        "rating": 4.4,
+        "reviews": 3768,
+        "sponsored": false,
+        "lat": -22.8974255,
+        "lng": -47.0627064,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Notre Pain | Padaria Artesanal - Campinas",
+        "rating": 4.3,
+        "reviews": 414,
+        "sponsored": false,
+        "lat": -22.9032957,
+        "lng": -47.0396884,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Crisabel Pães e Gastronomia Afetiva",
+        "rating": 4.4,
+        "reviews": 3211,
+        "sponsored": false,
+        "lat": -22.8889969,
+        "lng": -47.0721876,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "buffet": [
+      {
+        "name": "Restaurante Armazém da Fazenda",
+        "rating": 4.6,
+        "reviews": 14998,
+        "sponsored": false,
+        "lat": -22.9187227,
+        "lng": -47.0598536,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Kilo Grill",
+        "rating": 4.4,
+        "reviews": 787,
+        "sponsored": false,
+        "lat": -22.921233,
+        "lng": -47.054089,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Eden Bar",
+        "rating": 4.4,
+        "reviews": 3330,
+        "sponsored": false,
+        "lat": -22.9038874,
+        "lng": -47.059216,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "E de casa campinas restaurante",
+        "rating": 4.9,
+        "reviews": 239,
+        "sponsored": false,
+        "lat": -22.9079159,
+        "lng": -47.0605068,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Mãe Terra Culinária Natural Cambuí",
+        "rating": 4.8,
+        "reviews": 770,
+        "sponsored": false,
+        "lat": -22.8982297,
+        "lng": -47.0494647,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "DonDorê",
+        "rating": 4.8,
+        "reviews": 6408,
+        "sponsored": false,
+        "lat": -22.9063718,
+        "lng": -47.0597053,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Palatus - Barata Ribeiro",
+        "rating": 4.6,
+        "reviews": 991,
+        "sponsored": false,
+        "lat": -22.8960419,
+        "lng": -47.0622287,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Rei do Almoço",
+        "rating": 4.5,
+        "reviews": 1868,
+        "sponsored": false,
+        "lat": -22.9058999,
+        "lng": -47.0627489,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Panela de Barro Campinas",
+        "rating": 4.4,
+        "reviews": 1234,
+        "sponsored": false,
+        "lat": -22.8911474,
+        "lng": -47.0784131,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vicino",
+        "rating": 4.7,
+        "reviews": 234,
+        "sponsored": false,
+        "lat": -22.9045295,
+        "lng": -47.0573604,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "CASA D'AVÓ",
+        "rating": 4.7,
+        "reviews": 1423,
+        "sponsored": false,
+        "lat": -22.8914598,
+        "lng": -47.0796528,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Estância D'Oliveira",
+        "rating": 4.6,
+        "reviews": 7299,
+        "sponsored": false,
+        "lat": -22.8611005,
+        "lng": -47.0433702,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Dona Glicé Restaurante - Centro",
+        "rating": 4.4,
+        "reviews": 2070,
+        "sponsored": false,
+        "lat": -22.9085021,
+        "lng": -47.0577289,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "CANTO MINEIRO",
+        "rating": 4.6,
+        "reviews": 1232,
+        "sponsored": false,
+        "lat": -22.8894705,
+        "lng": -47.072654,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Amadeus",
+        "rating": 4.5,
+        "reviews": 785,
+        "sponsored": false,
+        "lat": -22.8956128,
+        "lng": -47.0631887,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Bate Papo",
+        "rating": 4.4,
+        "reviews": 969,
+        "sponsored": false,
+        "lat": -22.895906,
+        "lng": -47.0583783,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Nova Casablanca Restaurante",
+        "rating": 4.7,
+        "reviews": 438,
+        "sponsored": false,
+        "lat": -22.8919055,
+        "lng": -47.0634948,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Cortiletto Ristorante",
+        "rating": 4.6,
+        "reviews": 1519,
+        "sponsored": false,
+        "lat": -22.8855689,
+        "lng": -47.0560865,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Villani Trevo",
+        "rating": 4.5,
+        "reviews": 712,
+        "sponsored": false,
+        "lat": -22.9191196,
+        "lng": -47.0642134,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Bardana Restaurante",
+        "rating": 4.4,
+        "reviews": 2969,
+        "sponsored": false,
+        "lat": -22.823749,
+        "lng": -47.070647,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Único Brechó Cambuí | O Maior e + Completo com as melhores marcas com até 80% de economia!",
+        "rating": 4.6,
+        "reviews": 1074,
+        "sponsored": false,
+        "lat": -22.8960938,
+        "lng": -47.05528,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Dig For Fashion Campinas - Brechó",
+        "rating": 4.7,
+        "reviews": 885,
+        "sponsored": false,
+        "lat": -22.8953065,
+        "lng": -47.0558387,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Dona Flor Brechó Campinas - Moda Circular",
+        "rating": 4.8,
+        "reviews": 33,
+        "sponsored": false,
+        "lat": -22.9054383,
+        "lng": -47.0526204,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Burguesinha Brechó Chic",
+        "rating": 4.3,
+        "reviews": 373,
+        "sponsored": false,
+        "lat": -22.897275,
+        "lng": -47.0525433,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "MARY E MARIA BRECHÓ",
+        "rating": 4.9,
+        "reviews": 158,
+        "sponsored": false,
+        "lat": -22.8983559,
+        "lng": -47.0652019,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "BRECHÓ DA MODA CAMPINAS",
+        "rating": 4.5,
+        "reviews": 22,
+        "sponsored": false,
+        "lat": -22.9343437,
+        "lng": -47.0985353,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Super Brechó Infantil Campinas",
+        "rating": 4.8,
+        "reviews": 427,
+        "sponsored": false,
+        "lat": -22.9069618,
+        "lng": -47.0641684,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Vibes Brechó Campinas",
+        "rating": 5,
+        "reviews": 136,
+        "sponsored": false,
+        "lat": -22.8988065,
+        "lng": -47.0791729,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Peça Rara Brechó | Campinas - Cambuí",
+        "rating": 4.5,
+        "reviews": 62,
+        "sponsored": false,
+        "lat": -22.894425,
+        "lng": -47.0525693,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "NOVO RUMO BRECHÓ - DO BÁSICO QUE VOCÊ AMA, AO LUXO QUE VOCÊ MERECE.",
+        "rating": 4.9,
+        "reviews": 63,
+        "sponsored": false,
+        "lat": -22.8906763,
+        "lng": -47.0510797,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Burguesinha Brechó Chic - Avenida Brasil - Campinas",
+        "rating": 4.6,
+        "reviews": 269,
+        "sponsored": false,
+        "lat": -22.885327,
+        "lng": -47.0695361,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      },
+      {
+        "name": "Brechó Ramos",
+        "rating": 4.6,
+        "reviews": 20,
+        "sponsored": false,
+        "lat": -22.9021527,
+        "lng": -47.0620084,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Básico Brechó Campinas",
+        "rating": 4.9,
+        "reviews": 91,
+        "sponsored": false,
+        "lat": -22.8870023,
+        "lng": -47.0601172,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "mercado das pulgas",
+        "rating": 4.3,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.9049361,
+        "lng": -47.0653224,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Via Brechó Roupas femininas",
+        "rating": 4.7,
+        "reviews": 12,
+        "sponsored": false,
+        "lat": -22.9019796,
+        "lng": -47.0584023,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Amari Brechó",
+        "rating": 4.8,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -22.9059185,
+        "lng": -47.0665212,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó MAE Maria Rosa",
+        "rating": 4.9,
+        "reviews": 7,
+        "sponsored": false,
+        "lat": -22.8687445,
+        "lng": -47.0647684,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Mutt Brechó",
+        "rating": 4.8,
+        "reviews": 34,
+        "sponsored": false,
+        "lat": -22.8989753,
+        "lng": -47.0837305,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Mix Estilos Brecho",
+        "rating": 4.6,
+        "reviews": 13,
+        "sponsored": false,
+        "lat": -22.900548,
+        "lng": -47.0663409,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó",
+        "rating": 4.9,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.8959753,
+        "lng": -47.0586293,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      }
+    ],
+    "vegan": [
+      {
+        "name": "We Can Veg It",
+        "rating": 4.8,
+        "reviews": 2140,
+        "sponsored": false,
+        "lat": -22.890116,
+        "lng": -47.067409,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Vegetalle",
+        "rating": 4.8,
+        "reviews": 1145,
+        "sponsored": false,
+        "lat": -22.8725071,
+        "lng": -47.0556659,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "A Boa do Dia Vegan",
+        "rating": 5,
+        "reviews": 105,
+        "sponsored": false,
+        "lat": -22.9055605,
+        "lng": -47.0828835,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Juana Vegan",
+        "rating": 4.9,
+        "reviews": 430,
+        "sponsored": false,
+        "lat": -22.9113604,
+        "lng": -47.0843313,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Chama Verde Restaurante e Churrascaria Vegana",
+        "rating": 4.7,
+        "reviews": 263,
+        "sponsored": false,
+        "lat": -22.8932605,
+        "lng": -47.0613051,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Sal Marinho Restaurante Vegetariano",
+        "rating": 4.7,
+        "reviews": 585,
+        "sponsored": false,
+        "lat": -22.9047673,
+        "lng": -47.0548047,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Estação Gourmet Vegetariano",
+        "rating": 4.7,
+        "reviews": 341,
+        "sponsored": false,
+        "lat": -22.9015732,
+        "lng": -47.0600596,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Mow Culinária Vegana",
+        "rating": 4.8,
+        "reviews": 348,
+        "sponsored": false,
+        "lat": -22.8291996,
+        "lng": -47.0783104,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Mãe Terra Culinária Natural Cambuí",
+        "rating": 4.8,
+        "reviews": 770,
+        "sponsored": false,
+        "lat": -22.8982297,
+        "lng": -47.0494647,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Raízes Zen Restaurante Natural",
+        "rating": 4.5,
+        "reviews": 1157,
+        "sponsored": false,
+        "lat": -22.8258648,
+        "lng": -47.0827084,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Bom Dia Pra Nois, Culinária afetiva",
+        "rating": 4.8,
+        "reviews": 51,
+        "sponsored": false,
+        "lat": -22.8913377,
+        "lng": -47.0400213,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Veg Home",
+        "rating": 4.9,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.9963433,
+        "lng": -47.1420391,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Naturol Gastronomia - Alimentação Saudável Campinas GLUTEN FREE",
+        "rating": 4.5,
+        "reviews": 236,
+        "sponsored": false,
+        "lat": -22.8950513,
+        "lng": -47.0494647,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Bem Vegano",
+        "rating": 5,
+        "reviews": 24,
+        "sponsored": false,
+        "lat": -22.9430945,
+        "lng": -47.0444699,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Nutrir - Restaurante Vegetariano, Loja Produtos Naturais e Congelados",
+        "rating": 4.5,
+        "reviews": 571,
+        "sponsored": false,
+        "lat": -22.9007764,
+        "lng": -47.059543,
+        "withinBounds": true,
+        "primaryCategory": "Vegetariana"
+      },
+      {
+        "name": "Dona Fiica Gastronomia Saúdavel",
+        "rating": 4.7,
+        "reviews": 589,
+        "sponsored": false,
+        "lat": -22.8987216,
+        "lng": -47.0547954,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Restaurante Maneva",
+        "rating": 4.9,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.8223664,
+        "lng": -47.0767703,
+        "withinBounds": true,
+        "primaryCategory": "Vegetariana"
+      },
+      {
+        "name": "Veg Wrap",
+        "rating": 4.6,
+        "reviews": 144,
+        "sponsored": false,
+        "lat": -22.8261981,
+        "lng": -47.0723285,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -23.05,
+      -22.75,
+      -47.25,
+      -46.85
+    ],
+    "outsideRemoved": 5,
+    "withoutCoordinates": 0
+  }
+}

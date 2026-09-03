@@ -32,7 +32,7 @@ test('the local seed is a complete 21 by 16 matrix', () => {
 test('the curated local options are usable and unique inside each ranking', () => {
   assert.equal(
     catalog.reduce((total, ranking) => total + ranking.opts.length, 0),
-    6605,
+    6668,
   );
   for (const ranking of catalog) {
     assert.ok(ranking.opts.length >= 5 && ranking.opts.length <= 20, ranking.id);
@@ -58,11 +58,11 @@ test('the curated local options are usable and unique inside each ranking', () =
   }
   assert.equal(
     catalog.find((ranking) => ranking.id === 'restaurantes-veganos-manaus').opts.length,
-    5,
+    11,
   );
   assert.equal(
     catalog.find((ranking) => ranking.id === 'restaurantes-veganos-guarulhos').opts.length,
-    5,
+    10,
   );
 });
 
@@ -83,6 +83,11 @@ test('the frontend taxonomy recognizes every generated ranking', () => {
   }
 });
 
-test('the 17 existing rankings keep their current options and votes during the load', () => {
-  assert.equal(catalog.filter((ranking) => ranking.preserveExistingOptions).length, 17);
+test('only the seven previously curated Florianópolis rankings preserve existing options', () => {
+  assert.equal(catalog.filter((ranking) => ranking.preserveExistingOptions).length, 7);
+  assert.ok(
+    catalog
+      .filter((ranking) => ranking.preserveExistingOptions)
+      .every((ranking) => ranking.city === 'Florianópolis'),
+  );
 });

@@ -39,7 +39,7 @@
     'Restaurante italiano',
     'Padaria',
     'Restaurante por quilo',
-    'Restaurante vegano',
+    'Restaurante/lanchonete vegano/vegetariano',
     'Brechó',
   ]);
 
@@ -79,9 +79,10 @@
   );
   const groupRules = Object.freeze([
     {
-      name: 'Restaurante vegano',
+      name: 'Restaurante/lanchonete vegano/vegetariano',
       id: /^(?:restaurantes?\s+veganos?|veganos?)(?:\s|$)/,
-      question: /\b(?:restaurante|estabelecimento)\s+vegano\b|\bcomida\s+vegana\b/,
+      question:
+        /\b(?:restaurante|lanchonete|estabelecimento)\s+(?:vegano|vegetariano)\b|\bcomida\s+(?:vegana|vegetariana)\b/,
     },
     {
       name: 'Restaurante por quilo',

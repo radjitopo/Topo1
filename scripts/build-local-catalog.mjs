@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 const USER_AGENT = 'SomosTopoCatalog/1.0 (https://somostopo.com.br; contato@somostopo.com.br)';
 const LOCAL_PUBLIC_OPTION_COUNT = 20;
+const LOCAL_PUBLIC_MINIMUM_OPTION_COUNT = 5;
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
@@ -15,6 +16,15 @@ const publicOptionExpansion = JSON.parse(
 );
 const veganFloripaRefresh = JSON.parse(
   await readFile(new URL('../data/vegan-floripa-refresh.json', import.meta.url), 'utf8'),
+);
+const cafesFloripaRefresh = JSON.parse(
+  await readFile(new URL('../data/cafes-floripa-refresh.json', import.meta.url), 'utf8'),
+);
+const localLaunchCuration = JSON.parse(
+  await readFile(new URL('../data/local-launch-curation-2026-09.json', import.meta.url), 'utf8'),
+);
+const localLaunchById = new Map(
+  localLaunchCuration.rankings.map((ranking) => [ranking.rankingId, ranking]),
 );
 
 const cities = Object.freeze([
@@ -315,8 +325,9 @@ const categories = Object.freeze([
   },
   {
     key: 'vegan',
-    label: 'Restaurante vegano',
-    question: (city) => `Qual é o melhor restaurante vegano em ${city.name}?`,
+    label: 'Restaurante/lanchonete vegano/vegetariano',
+    question: (city) =>
+      `Qual é o melhor restaurante/lanchonete vegano ou vegetariano em ${city.name}?`,
     image: images.vegan,
     match: (place) =>
       (isFoodEstablishment(place) || ['health_food', 'organic'].includes(place.tags.shop)) &&
@@ -507,12 +518,21 @@ function bestOptions(elements, category) {
 function makeRanking(city, category, labels) {
   const id = categoryId(category.key, city);
   const isVeganFloripa = id === veganFloripaRefresh.rankingId;
+  const isCafesFloripa = id === cafesFloripaRefresh.rankingId;
+  const launchCuration = localLaunchById.get(id);
   const rejected = new Set([
     ...(exclusions[id] || []),
     ...(isVeganFloripa ? veganFloripaRefresh.excludedLabels : []),
   ]);
-  const baseLabels = isVeganFloripa ? veganFloripaRefresh.options : labels;
-  const curatedLabels = [...baseLabels, ...(publicOptionExpansion.local[id] || [])]
+  const baseLabels = launchCuration
+    ? launchCuration.options
+    : isVeganFloripa
+      ? veganFloripaRefresh.options
+      : isCafesFloripa
+        ? cafesFloripaRefresh.options
+        : labels;
+  const expansion = launchCuration ? [] : publicOptionExpansion.local[id] || [];
+  const curatedLabels = [...baseLabels, ...expansion]
     .filter((label) => !rejected.has(label))
     .filter((label, index, all) => all.indexOf(label) === index)
     .slice(0, LOCAL_PUBLIC_OPTION_COUNT);
@@ -521,14 +541,22 @@ function makeRanking(city, category, labels) {
     city: city.name,
     citySlug: city.slug,
     state: city.state,
-    localCategory: category.label,
+    localCategory: launchCuration?.categoryLabel || category.label,
     localCategoryKey: category.key,
     category: city.name,
-    question: isVeganFloripa ? veganFloripaRefresh.question : category.question(city),
+    question:
+      launchCuration?.question ||
+      (isVeganFloripa
+        ? veganFloripaRefresh.question
+        : isCafesFloripa
+          ? cafesFloripaRefresh.question
+          : category.question(city)),
     image_url: category.image,
     baseline_votes: 0,
-    is_active: curatedLabels.length === LOCAL_PUBLIC_OPTION_COUNT,
-    preserveExistingOptions: existingIds.has(id),
+    is_active:
+      curatedLabels.length >= LOCAL_PUBLIC_MINIMUM_OPTION_COUNT &&
+      curatedLabels.length <= LOCAL_PUBLIC_OPTION_COUNT,
+    preserveExistingOptions: !launchCuration && existingIds.has(id),
     opts: curatedLabels.map((label, index) => ({
       label,
       position: index + 1,
@@ -575,11 +603,11 @@ function validate(rankings, allowIncomplete = false, requireCompleteMatrix = tru
   const invalidActive = rankings.filter(
     (ranking) =>
       ranking.opts.length > LOCAL_PUBLIC_OPTION_COUNT ||
-      (ranking.is_active && ranking.opts.length !== LOCAL_PUBLIC_OPTION_COUNT),
+      (ranking.is_active && ranking.opts.length < LOCAL_PUBLIC_MINIMUM_OPTION_COUNT),
   );
   if (invalidActive.length && !allowIncomplete) {
     throw new Error(
-      `Há ${invalidActive.length} rankings públicos sem exatamente ${LOCAL_PUBLIC_OPTION_COUNT} opções:\n${invalidActive
+      `Há ${invalidActive.length} rankings públicos fora do intervalo de ${LOCAL_PUBLIC_MINIMUM_OPTION_COUNT} a ${LOCAL_PUBLIC_OPTION_COUNT} opções:\n${invalidActive
         .map((ranking) => `${ranking.id}: ${ranking.opts.length}`)
         .join('\n')}`,
     );
@@ -689,9 +717,10 @@ async function main() {
   const args = new Set(process.argv.slice(2));
   if (args.has('--sql')) {
     const rankings = JSON.parse(await readFile(OUTPUT_URL, 'utf8')).map((ranking) => {
+      const launchCuration = localLaunchById.get(ranking.id);
       const opts = [
         ...(ranking.opts || []),
-        ...(publicOptionExpansion.local[ranking.id] || []).map((label) => ({
+        ...(!launchCuration ? publicOptionExpansion.local[ranking.id] || [] : []).map((label) => ({
           label,
           baseline_score: 0,
         })),
@@ -704,7 +733,9 @@ async function main() {
         .map((option, index) => ({ ...option, position: index + 1 }));
       return {
         ...ranking,
-        is_active: opts.length === LOCAL_PUBLIC_OPTION_COUNT,
+        is_active:
+          opts.length >= LOCAL_PUBLIC_MINIMUM_OPTION_COUNT &&
+          opts.length <= LOCAL_PUBLIC_OPTION_COUNT,
         opts,
       };
     });

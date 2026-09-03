@@ -1,0 +1,2798 @@
+{
+  "city": "Teresina",
+  "state": "PI",
+  "categories": {
+    "burger": [
+      {
+        "name": "Tatu Burger | Hamburgueria Artesanal | Zona Sul",
+        "rating": 4.9,
+        "reviews": 138,
+        "sponsored": false,
+        "lat": -5.0991516,
+        "lng": -42.7892501,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "EMPORIO BURGUER",
+        "rating": 4.9,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -5.1461573,
+        "lng": -42.7795269,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hambúrgueria Burguer-Ho",
+        "rating": 4.6,
+        "reviews": 240,
+        "sponsored": false,
+        "lat": -5.0808039,
+        "lng": -42.8044434,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Chicago Burguers",
+        "rating": 4.7,
+        "reviews": 434,
+        "sponsored": false,
+        "lat": -5.0710449,
+        "lng": -42.7653552,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "O Javali - Burguer e Churras",
+        "rating": 4.8,
+        "reviews": 64,
+        "sponsored": false,
+        "lat": -5.0854007,
+        "lng": -42.8104805,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bruthus Burger - Unidade Ininga",
+        "rating": 4.5,
+        "reviews": 2112,
+        "sponsored": false,
+        "lat": -5.0663861,
+        "lng": -42.7968111,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "45’ Burger e Pizza - Jóquei",
+        "rating": 4.8,
+        "reviews": 1007,
+        "sponsored": false,
+        "lat": -5.0640356,
+        "lng": -42.7880836,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "45’ Burger Sul - Hambúrguer Artesanal",
+        "rating": 4.7,
+        "reviews": 146,
+        "sponsored": false,
+        "lat": -5.113679,
+        "lng": -42.8047101,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "La Chapa Burger",
+        "rating": 4.7,
+        "reviews": 168,
+        "sponsored": false,
+        "lat": -5.068024,
+        "lng": -42.784958,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Nosh Burger",
+        "rating": 4.9,
+        "reviews": 357,
+        "sponsored": false,
+        "lat": -5.0483789,
+        "lng": -42.8151827,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Duff's Hamburgueria",
+        "rating": 4.4,
+        "reviews": 636,
+        "sponsored": false,
+        "lat": -5.0633223,
+        "lng": -42.7951102,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "My Love burguer",
+        "rating": 4.6,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -5.1927988,
+        "lng": -42.7489596,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Alecrim Hamburgueria",
+        "rating": 4.8,
+        "reviews": 26,
+        "sponsored": false,
+        "lat": -5.0707195,
+        "lng": -42.7836911,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "BurguerSul",
+        "rating": 4.4,
+        "reviews": 189,
+        "sponsored": false,
+        "lat": -5.1146147,
+        "lng": -42.8066679,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Tortugo",
+        "rating": 4.6,
+        "reviews": 616,
+        "sponsored": false,
+        "lat": -5.0640902,
+        "lng": -42.7937267,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Brasil Burguer",
+        "rating": 4.6,
+        "reviews": 19,
+        "sponsored": false,
+        "lat": -5.0985501,
+        "lng": -42.8034663,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Os Chapas Hamburgueria - TRÊS ANDARES",
+        "rating": 4.5,
+        "reviews": 213,
+        "sponsored": false,
+        "lat": -5.1180486,
+        "lng": -42.7855786,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "iPhome - Mocambinho",
+        "rating": 4.9,
+        "reviews": 1591,
+        "sponsored": false,
+        "lat": -5.0232497,
+        "lng": -42.807078,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Burguer Vibes The",
+        "rating": 4.6,
+        "reviews": 16,
+        "sponsored": false,
+        "lat": -5.1074746,
+        "lng": -42.8035766,
+        "withinBounds": true,
+        "primaryCategory": "Fast Food"
+      },
+      {
+        "name": "madrugão Hamburgueria",
+        "rating": 4.5,
+        "reviews": 264,
+        "sponsored": false,
+        "lat": -5.1177968,
+        "lng": -42.8047652,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Coco Bambu Teresina",
+        "rating": 4.9,
+        "reviews": 26121,
+        "sponsored": false,
+        "lat": -5.0697594,
+        "lng": -42.7879956,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Santa Grelha Teresina",
+        "rating": 4.8,
+        "reviews": 869,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Vasto Teresina",
+        "rating": 5,
+        "reviews": 4070,
+        "sponsored": false,
+        "lat": -5.0693732,
+        "lng": -42.7881604,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Faustino Restaurante",
+        "rating": 4.6,
+        "reviews": 3323,
+        "sponsored": false,
+        "lat": -5.0698871,
+        "lng": -42.7815074,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "São João Restaurante",
+        "rating": 4.6,
+        "reviews": 1188,
+        "sponsored": false,
+        "lat": -5.0645293,
+        "lng": -42.7937006,
+        "withinBounds": true,
+        "primaryCategory": "Carne"
+      },
+      {
+        "name": "Ryori Teresina",
+        "rating": 4.9,
+        "reviews": 1355,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Vertigo Restaurante",
+        "rating": 4.5,
+        "reviews": 704,
+        "sponsored": false,
+        "lat": -5.0649157,
+        "lng": -42.7905516,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Coco Bambu Teresina Shopping",
+        "rating": 5,
+        "reviews": 7976,
+        "sponsored": false,
+        "lat": -5.0844641,
+        "lng": -42.7889428,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Favorito Comidas Típicas",
+        "rating": 4.7,
+        "reviews": 1742,
+        "sponsored": false,
+        "lat": -5.071249,
+        "lng": -42.79322,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Texas Picanharia",
+        "rating": 4.5,
+        "reviews": 3308,
+        "sponsored": false,
+        "lat": -5.0675213,
+        "lng": -42.7846844,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Zio Cucina",
+        "rating": 4.4,
+        "reviews": 958,
+        "sponsored": false,
+        "lat": -5.0751473,
+        "lng": -42.7948898,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Confraria Uchôa",
+        "rating": 4.6,
+        "reviews": 1420,
+        "sponsored": false,
+        "lat": -5.084913,
+        "lng": -42.780501,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vito Fogo",
+        "rating": 4.7,
+        "reviews": 177,
+        "sponsored": false,
+        "lat": -5.0729697,
+        "lng": -42.7770294,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vignoli - Teresina",
+        "rating": 4.6,
+        "reviews": 862,
+        "sponsored": false,
+        "lat": -5.0698341,
+        "lng": -42.7866864,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Restaurante Malaguetta",
+        "rating": 4.5,
+        "reviews": 2306,
+        "sponsored": false,
+        "lat": -5.0679847,
+        "lng": -42.7832316,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Facheiro Teresina",
+        "rating": 4.3,
+        "reviews": 770,
+        "sponsored": false,
+        "lat": -5.0725762,
+        "lng": -42.7825524,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Olik Bistrô",
+        "rating": 4.7,
+        "reviews": 760,
+        "sponsored": false,
+        "lat": -5.067032,
+        "lng": -42.7902955,
+        "withinBounds": true,
+        "primaryCategory": "Bistrô"
+      },
+      {
+        "name": "Grand Cru",
+        "rating": 4.7,
+        "reviews": 1006,
+        "sponsored": false,
+        "lat": -5.0723738,
+        "lng": -42.7952232,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Carneiro na Brasa da Zefinha",
+        "rating": 4.6,
+        "reviews": 1375,
+        "sponsored": false,
+        "lat": -5.0797365,
+        "lng": -42.7781602,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Cazole Restaurante",
+        "rating": 4.4,
+        "reviews": 2614,
+        "sponsored": false,
+        "lat": -5.060121,
+        "lng": -42.7882939,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "Ryori Teresina",
+        "rating": 4.9,
+        "reviews": 1355,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Robataria THE Sushi+Grill",
+        "rating": 4.7,
+        "reviews": 761,
+        "sponsored": false,
+        "lat": -5.0591298,
+        "lng": -42.8215872,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Namu Culinária Oriental",
+        "rating": 4.6,
+        "reviews": 728,
+        "sponsored": false,
+        "lat": -5.0737038,
+        "lng": -42.7792677,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Nakata Sushi Bar",
+        "rating": 4.5,
+        "reviews": 985,
+        "sponsored": false,
+        "lat": -5.1185336,
+        "lng": -42.8008776,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Restaurante Anisan",
+        "rating": 4.7,
+        "reviews": 558,
+        "sponsored": false,
+        "lat": -5.0686735,
+        "lng": -42.789795,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tokio Teresina Sushi",
+        "rating": 4.3,
+        "reviews": 550,
+        "sponsored": false,
+        "lat": -5.0644076,
+        "lng": -42.785517,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Restaurante Sushimy Teresina",
+        "rating": 4.6,
+        "reviews": 494,
+        "sponsored": false,
+        "lat": -5.0642351,
+        "lng": -42.7844478,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Nippon Sushi & Culinária Japonesa em Morada do Sol, Teresina",
+        "rating": 4.3,
+        "reviews": 551,
+        "sponsored": false,
+        "lat": -5.0693564,
+        "lng": -42.7674531,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Sushibar Nossa Senhora de Fatima",
+        "rating": 4.4,
+        "reviews": 780,
+        "sponsored": false,
+        "lat": -5.0661483,
+        "lng": -42.7933273,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "H2 Sushi - Comida Japonesa",
+        "rating": 4.8,
+        "reviews": 61,
+        "sponsored": false,
+        "lat": -5.1065934,
+        "lng": -42.7633093,
+        "withinBounds": true,
+        "primaryCategory": "Sushi para viagem"
+      },
+      {
+        "name": "Morgan Sushi",
+        "rating": 4.5,
+        "reviews": 377,
+        "sponsored": false,
+        "lat": -5.062656,
+        "lng": -42.78908,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Takashi Sushi - TK",
+        "rating": 4.8,
+        "reviews": 58,
+        "sponsored": false,
+        "lat": -5.0743996,
+        "lng": -42.785377,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sushimy",
+        "rating": 4.6,
+        "reviews": 385,
+        "sponsored": false,
+        "lat": -5.0649304,
+        "lng": -42.7646712,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Coco Bambu Teresina",
+        "rating": 4.9,
+        "reviews": 26121,
+        "sponsored": false,
+        "lat": -5.0697594,
+        "lng": -42.7879956,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sushirus Centenário",
+        "rating": 4.6,
+        "reviews": 1301,
+        "sponsored": false,
+        "lat": -5.0681951,
+        "lng": -42.818539,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Fogo Campeiro Teresina",
+        "rating": 4.6,
+        "reviews": 6752,
+        "sponsored": false,
+        "lat": -5.0736725,
+        "lng": -42.789841,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sushirus Homero",
+        "rating": 4.5,
+        "reviews": 1318,
+        "sponsored": false,
+        "lat": -5.0635995,
+        "lng": -42.7843658,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Vasto Teresina",
+        "rating": 5,
+        "reviews": 4070,
+        "sponsored": false,
+        "lat": -5.0693732,
+        "lng": -42.7881604,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "pizza": [
+      {
+        "name": "Forneria Favorito",
+        "rating": 4.5,
+        "reviews": 692,
+        "sponsored": false,
+        "lat": -5.0631028,
+        "lng": -42.7933074,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Forneria Massas e Churrascos",
+        "rating": 4.5,
+        "reviews": 3225,
+        "sponsored": false,
+        "lat": -5.0748958,
+        "lng": -42.7735937,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Vignoli - Teresina",
+        "rating": 4.6,
+        "reviews": 862,
+        "sponsored": false,
+        "lat": -5.0698341,
+        "lng": -42.7866864,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Forno Paulista",
+        "rating": 4.6,
+        "reviews": 815,
+        "sponsored": false,
+        "lat": -5.1136613,
+        "lng": -42.8046655,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Forno Paulista",
+        "rating": 4.4,
+        "reviews": 1240,
+        "sponsored": false,
+        "lat": -5.06519,
+        "lng": -42.787799,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "D'Goes Pizzaria",
+        "rating": 4.4,
+        "reviews": 2115,
+        "sponsored": false,
+        "lat": -5.1034981,
+        "lng": -42.7903527,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mercatto Forno & Brasa",
+        "rating": 4.4,
+        "reviews": 1307,
+        "sponsored": false,
+        "lat": -5.0684406,
+        "lng": -42.7925661,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Leblon Prime Pizza",
+        "rating": 4.7,
+        "reviews": 1433,
+        "sponsored": false,
+        "lat": -5.075087,
+        "lng": -42.8186914,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Forno a Lenha",
+        "rating": 4.2,
+        "reviews": 1659,
+        "sponsored": false,
+        "lat": -5.0715546,
+        "lng": -42.8155279,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "La Boca",
+        "rating": 4.4,
+        "reviews": 1162,
+        "sponsored": false,
+        "lat": -5.0646271,
+        "lng": -42.7629671,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Savóri Pizza Morada do Sol",
+        "rating": 4.2,
+        "reviews": 1139,
+        "sponsored": false,
+        "lat": -5.0707204,
+        "lng": -42.7645925,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria em Teresina - Fratelli Pizzaria",
+        "rating": 5,
+        "reviews": 21,
+        "sponsored": false,
+        "lat": -5.0777473,
+        "lng": -42.8090791,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Maná Pizzas e Churrascos",
+        "rating": 4.5,
+        "reviews": 3135,
+        "sponsored": false,
+        "lat": -5.0716838,
+        "lng": -42.7668545,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzarina",
+        "rating": 4.6,
+        "reviews": 146,
+        "sponsored": false,
+        "lat": -5.0625171,
+        "lng": -42.7838945,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Don Rafaelle esposito pizza & chopp",
+        "rating": 4.5,
+        "reviews": 1154,
+        "sponsored": false,
+        "lat": -5.1372872,
+        "lng": -42.7915549,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Forno Paulista Pizzaria",
+        "rating": 4.4,
+        "reviews": 527,
+        "sponsored": false,
+        "lat": -5.070361,
+        "lng": -42.7760345,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Grelhatta Forneria",
+        "rating": 4.6,
+        "reviews": 134,
+        "sponsored": false,
+        "lat": -5.0678511,
+        "lng": -42.794992,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Giga Pizza",
+        "rating": 4.4,
+        "reviews": 990,
+        "sponsored": false,
+        "lat": -5.0623328,
+        "lng": -42.7792324,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzamille",
+        "rating": 4,
+        "reviews": 92,
+        "sponsored": false,
+        "lat": -5.084829,
+        "lng": -42.789292,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Domino's Pizza - Teresina",
+        "rating": 4.2,
+        "reviews": 1114,
+        "sponsored": false,
+        "lat": -5.0709513,
+        "lng": -42.7924363,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Varanda Boteco",
+        "rating": 4.8,
+        "reviews": 853,
+        "sponsored": false,
+        "lat": -5.0641967,
+        "lng": -42.7942116,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Al Capone Pub Rock and Blues",
+        "rating": 4.6,
+        "reviews": 1007,
+        "sponsored": false,
+        "lat": -5.0633219,
+        "lng": -42.793419,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Base Mix Pub",
+        "rating": 4.6,
+        "reviews": 649,
+        "sponsored": false,
+        "lat": -5.081739,
+        "lng": -42.815858,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Zero Grau Choperia - Street.",
+        "rating": 4.6,
+        "reviews": 753,
+        "sponsored": false,
+        "lat": -5.0788831,
+        "lng": -42.7806616,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Ar Livre Espaço Cultural",
+        "rating": 4.4,
+        "reviews": 1050,
+        "sponsored": false,
+        "lat": -5.083284,
+        "lng": -42.795716,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Dose Dupla",
+        "rating": 4.3,
+        "reviews": 439,
+        "sponsored": false,
+        "lat": -5.0556824,
+        "lng": -42.7715659,
+        "withinBounds": true,
+        "primaryCategory": "Bares"
+      },
+      {
+        "name": "Lights Music & Bar",
+        "rating": 4.7,
+        "reviews": 357,
+        "sponsored": false,
+        "lat": -5.0793977,
+        "lng": -42.8184352,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Resenha Bar e Churrascaria",
+        "rating": 4.4,
+        "reviews": 1243,
+        "sponsored": false,
+        "lat": -5.0744085,
+        "lng": -42.7832336,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "HD BAR PRIME - Bar em Teresina - Bar Zona Sul",
+        "rating": 4.7,
+        "reviews": 96,
+        "sponsored": false,
+        "lat": -5.1409117,
+        "lng": -42.784132,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "V2 Restobar",
+        "rating": 4.6,
+        "reviews": 226,
+        "sponsored": false,
+        "lat": -5.1026376,
+        "lng": -42.8022425,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Agaves",
+        "rating": 4.5,
+        "reviews": 490,
+        "sponsored": false,
+        "lat": -5.0677895,
+        "lng": -42.7875579,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Da Lagoa",
+        "rating": 4.6,
+        "reviews": 64,
+        "sponsored": false,
+        "lat": -5.1077826,
+        "lng": -42.8124914,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Teresina Bar",
+        "rating": 4.5,
+        "reviews": 381,
+        "sponsored": false,
+        "lat": -5.0136892,
+        "lng": -42.7771512,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Locomotiva Irish Pub",
+        "rating": 4.6,
+        "reviews": 885,
+        "sponsored": false,
+        "lat": -5.0680607,
+        "lng": -42.7931063,
+        "withinBounds": true,
+        "primaryCategory": "Pub irlandês"
+      },
+      {
+        "name": "Boteco Teresina Original",
+        "rating": 4.3,
+        "reviews": 687,
+        "sponsored": false,
+        "lat": -5.0690981,
+        "lng": -42.7872067,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Daniel Bar",
+        "rating": 4.3,
+        "reviews": 791,
+        "sponsored": false,
+        "lat": -5.0955895,
+        "lng": -42.7928645,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Frank Bar",
+        "rating": 4.6,
+        "reviews": 183,
+        "sponsored": false,
+        "lat": -5.111318,
+        "lng": -42.7583341,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Boteco do Zé Original",
+        "rating": 4.5,
+        "reviews": 66,
+        "sponsored": false,
+        "lat": -5.0687477,
+        "lng": -42.7882367,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Segundo’s",
+        "rating": 4.7,
+        "reviews": 85,
+        "sponsored": false,
+        "lat": -5.0726906,
+        "lng": -42.8183337,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Relax Barbearia Teresina",
+        "rating": 5,
+        "reviews": 2061,
+        "sponsored": false,
+        "lat": -5.0766053,
+        "lng": -42.7972265,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Bunker Barbearia Matriz",
+        "rating": 5,
+        "reviews": 53,
+        "sponsored": false,
+        "lat": -5.0692647,
+        "lng": -42.7766178,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barba Negra | Barbearia em Teresina",
+        "rating": 4.8,
+        "reviews": 376,
+        "sponsored": false,
+        "lat": -5.0714984,
+        "lng": -42.7675438,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Berg Barbearia",
+        "rating": 4.8,
+        "reviews": 273,
+        "sponsored": false,
+        "lat": -5.0733004,
+        "lng": -42.7740961,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia em Teresina | Adega Barbearia",
+        "rating": 4.9,
+        "reviews": 308,
+        "sponsored": false,
+        "lat": -5.1050266,
+        "lng": -42.7607939,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Virtuz Barbearia",
+        "rating": 5,
+        "reviews": 263,
+        "sponsored": false,
+        "lat": -5.0675203,
+        "lng": -42.7867194,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "LB BARBEARIA THE",
+        "rating": 5,
+        "reviews": 252,
+        "sponsored": false,
+        "lat": -5.088093,
+        "lng": -42.7729695,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Hollywood barbershop",
+        "rating": 5,
+        "reviews": 319,
+        "sponsored": false,
+        "lat": -5.0486511,
+        "lng": -42.8157942,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Bozzi Barbearia",
+        "rating": 5,
+        "reviews": 585,
+        "sponsored": false,
+        "lat": -5.0666483,
+        "lng": -42.7822694,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Meraki -Teresina",
+        "rating": 4.9,
+        "reviews": 176,
+        "sponsored": false,
+        "lat": -5.069974,
+        "lng": -42.7760436,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "JS Barbearia",
+        "rating": 4.6,
+        "reviews": 153,
+        "sponsored": false,
+        "lat": -5.0968601,
+        "lng": -42.8041904,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "VICIS TRADICIONAL BARBEARIA",
+        "rating": 5,
+        "reviews": 125,
+        "sponsored": false,
+        "lat": -5.082348,
+        "lng": -42.788451,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Bravo Barbearia",
+        "rating": 5,
+        "reviews": 94,
+        "sponsored": false,
+        "lat": -5.0790271,
+        "lng": -42.7867517,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Maverick",
+        "rating": 4.6,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -5.0761928,
+        "lng": -42.8158799,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Pablos Barbearia",
+        "rating": 4.9,
+        "reviews": 360,
+        "sponsored": false,
+        "lat": -5.0330088,
+        "lng": -42.8133168,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barber 10 Barbearia",
+        "rating": 5,
+        "reviews": 52,
+        "sponsored": false,
+        "lat": -5.030599,
+        "lng": -42.8097405,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Santorini Barbershop - Parque São João",
+        "rating": 4.9,
+        "reviews": 224,
+        "sponsored": false,
+        "lat": -5.1302809,
+        "lng": -42.8004742,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Business Barbearia",
+        "rating": 5,
+        "reviews": 180,
+        "sponsored": false,
+        "lat": -5.0790064,
+        "lng": -42.7809157,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia julião",
+        "rating": 4.9,
+        "reviews": 112,
+        "sponsored": false,
+        "lat": -5.0961822,
+        "lng": -42.7987432,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "BORVA BARBEARIA - DIRCEU I",
+        "rating": 5,
+        "reviews": 115,
+        "sponsored": false,
+        "lat": -5.0986305,
+        "lng": -42.7531524,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Salão de Beleza SENHORITA & BEM ESTAR I Cabelereiro I SPA - Cabelo, Unha - Jóquei",
+        "rating": 4.9,
+        "reviews": 253,
+        "sponsored": false,
+        "lat": -5.078188,
+        "lng": -42.792831,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "SpaBeauty Salão de beleza e Estética em Teresina",
+        "rating": 4.7,
+        "reviews": 195,
+        "sponsored": false,
+        "lat": -5.0785871,
+        "lng": -42.7909311,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Beleza & Cia",
+        "rating": 4.8,
+        "reviews": 921,
+        "sponsored": false,
+        "lat": -5.0648995,
+        "lng": -42.7872444,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de beleza teresina - Antônia Costa Hair Studio - Cabeleireiro teresina",
+        "rating": 4.9,
+        "reviews": 41,
+        "sponsored": false,
+        "lat": -5.0395913,
+        "lng": -42.8183288,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Atelier Salão de Beleza em Teresina",
+        "rating": 5,
+        "reviews": 25,
+        "sponsored": false,
+        "lat": -5.0753365,
+        "lng": -42.7761094,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Mulher Bonita Centro",
+        "rating": 4.7,
+        "reviews": 277,
+        "sponsored": false,
+        "lat": -5.0821106,
+        "lng": -42.8088582,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Trato Cabelos",
+        "rating": 4.8,
+        "reviews": 97,
+        "sponsored": false,
+        "lat": -5.075423,
+        "lng": -42.791778,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Sol e Mar Cabelos",
+        "rating": 4.8,
+        "reviews": 381,
+        "sponsored": false,
+        "lat": -5.0642255,
+        "lng": -42.7888031,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Werner Coiffeur Teresina",
+        "rating": 4.9,
+        "reviews": 37,
+        "sponsored": false,
+        "lat": -5.063804,
+        "lng": -42.7862876,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Maria Beleza & SPA",
+        "rating": 5,
+        "reviews": 241,
+        "sponsored": false,
+        "lat": -5.071023,
+        "lng": -42.7894263,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Espaço Mulher",
+        "rating": 4.6,
+        "reviews": 110,
+        "sponsored": false,
+        "lat": -5.0689707,
+        "lng": -42.7906983,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Silvia's Hair",
+        "rating": 4.4,
+        "reviews": 276,
+        "sponsored": false,
+        "lat": -5.084735,
+        "lng": -42.789514,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão Anne Beleza",
+        "rating": 4.6,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -5.0849907,
+        "lng": -42.8168778,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Neide Hair Vision - Especialistas em Mechas",
+        "rating": 4.6,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -5.070821,
+        "lng": -42.7672014,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão Beleza e Arte",
+        "rating": 4.7,
+        "reviews": 73,
+        "sponsored": false,
+        "lat": -5.024889,
+        "lng": -42.809478,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Morena Flor Teresina",
+        "rating": 5,
+        "reviews": 71,
+        "sponsored": false,
+        "lat": -5.0307006,
+        "lng": -42.8107223,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão Designer",
+        "rating": 4.8,
+        "reviews": 79,
+        "sponsored": false,
+        "lat": -5.0868394,
+        "lng": -42.8156844,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Mulher Bonita Jóquei",
+        "rating": 4.6,
+        "reviews": 239,
+        "sponsored": false,
+        "lat": -5.0716027,
+        "lng": -42.7892846,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Vera Cabelos",
+        "rating": 4.7,
+        "reviews": 151,
+        "sponsored": false,
+        "lat": -5.1029973,
+        "lng": -42.7551647,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão Mais Bonita",
+        "rating": 4.8,
+        "reviews": 39,
+        "sponsored": false,
+        "lat": -5.0555,
+        "lng": -42.7824182,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Oiko Lounge Café",
+        "rating": 4.9,
+        "reviews": 652,
+        "sponsored": false,
+        "lat": -5.1000099,
+        "lng": -42.7552565,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cafeteria Mais1.Café - Jóquei Teresina (Co-working)",
+        "rating": 4.9,
+        "reviews": 180,
+        "sponsored": false,
+        "lat": -5.0793108,
+        "lng": -42.7933835,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Vichy Café",
+        "rating": 4.2,
+        "reviews": 168,
+        "sponsored": false,
+        "lat": -5.076817,
+        "lng": -42.7800387,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Miraflores Café",
+        "rating": 4.5,
+        "reviews": 134,
+        "sponsored": false,
+        "lat": -5.0779493,
+        "lng": -42.7915918,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "Maria Café",
+        "rating": 4.4,
+        "reviews": 122,
+        "sponsored": false,
+        "lat": -5.0634128,
+        "lng": -42.7991971,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Tisa café",
+        "rating": 4.6,
+        "reviews": 76,
+        "sponsored": false,
+        "lat": -5.0639049,
+        "lng": -42.7914393,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Dom Cafetero",
+        "rating": 4.6,
+        "reviews": 180,
+        "sponsored": false,
+        "lat": -5.0642099,
+        "lng": -42.7860671,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "The Coffee",
+        "rating": 4.6,
+        "reviews": 109,
+        "sponsored": false,
+        "lat": -5.0684556,
+        "lng": -42.792583,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Prático Piauí",
+        "rating": 5,
+        "reviews": 41,
+        "sponsored": false,
+        "lat": -5.0769094,
+        "lng": -42.7943067,
+        "withinBounds": true,
+        "primaryCategory": "Loja de café"
+      },
+      {
+        "name": "Villa Coffee",
+        "rating": 4.2,
+        "reviews": 92,
+        "sponsored": false,
+        "lat": -5.1350968,
+        "lng": -42.8020369,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Marché du Gâteau",
+        "rating": 4.7,
+        "reviews": 78,
+        "sponsored": false,
+        "lat": -5.066686,
+        "lng": -42.7961322,
+        "withinBounds": true,
+        "primaryCategory": "Doces"
+      },
+      {
+        "name": "Fazendaria",
+        "rating": 4.6,
+        "reviews": 1012,
+        "sponsored": false,
+        "lat": -5.0697311,
+        "lng": -42.7914352,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "La Pâtisserie Favorito",
+        "rating": 4.5,
+        "reviews": 709,
+        "sponsored": false,
+        "lat": -5.0649533,
+        "lng": -42.7939643,
+        "withinBounds": true,
+        "primaryCategory": "Oriental"
+      },
+      {
+        "name": "Casa 521",
+        "rating": 5,
+        "reviews": 77,
+        "sponsored": false,
+        "lat": -5.070211,
+        "lng": -42.7871882,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "WJ Café",
+        "rating": 4.1,
+        "reviews": 13,
+        "sponsored": false,
+        "lat": -5.0774772,
+        "lng": -42.7823817,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "B.Lem Padaria Portuguesa",
+        "rating": 4.9,
+        "reviews": 249,
+        "sponsored": false,
+        "lat": -5.077199,
+        "lng": -42.8019226,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "Super Casa Conveniência",
+        "rating": 5,
+        "reviews": 468,
+        "sponsored": false,
+        "lat": -5.0633777,
+        "lng": -42.7963953,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Conveniência"
+      },
+      {
+        "name": "Vito Caffe & Vino",
+        "rating": 4.2,
+        "reviews": 78,
+        "sponsored": false,
+        "lat": -5.0767501,
+        "lng": -42.802213,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "gym": [
+      {
+        "name": "TimeFit Academia",
+        "rating": 4.5,
+        "reviews": 1021,
+        "sponsored": false,
+        "lat": -5.0749482,
+        "lng": -42.7870869,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Smart Fit - Av. Pref. Wall Ferraz",
+        "rating": 4.9,
+        "reviews": 117,
+        "sponsored": false,
+        "lat": -5.1292859,
+        "lng": -42.792136,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Smart Fit Teresina Shopping",
+        "rating": 4.5,
+        "reviews": 724,
+        "sponsored": false,
+        "lat": -5.0846915,
+        "lng": -42.7908304,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "MAXGYM ACADEMIA",
+        "rating": 4.8,
+        "reviews": 222,
+        "sponsored": false,
+        "lat": -5.0716354,
+        "lng": -42.7870163,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Line Athletic Academia",
+        "rating": 4.9,
+        "reviews": 51,
+        "sponsored": false,
+        "lat": -5.1139118,
+        "lng": -42.7935848,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "ACADEMIA BRASIL FITNESS",
+        "rating": 4.7,
+        "reviews": 127,
+        "sponsored": false,
+        "lat": -5.1461979,
+        "lng": -42.7860434,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Bodytech Shopping Rio Poty",
+        "rating": 4.6,
+        "reviews": 499,
+        "sponsored": false,
+        "lat": -5.077199,
+        "lng": -42.8019226,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Sigma Academia",
+        "rating": 4.7,
+        "reviews": 212,
+        "sponsored": false,
+        "lat": -5.060191,
+        "lng": -42.7553471,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "TheFit Academia",
+        "rating": 4.9,
+        "reviews": 39,
+        "sponsored": false,
+        "lat": -5.152535,
+        "lng": -42.7574218,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "The Fitness",
+        "rating": 4.5,
+        "reviews": 85,
+        "sponsored": false,
+        "lat": -5.0644415,
+        "lng": -42.8298542,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "OG FIT ACADEMIA",
+        "rating": 4.2,
+        "reviews": 355,
+        "sponsored": false,
+        "lat": -5.1209065,
+        "lng": -42.8026609,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Infinitty Academia",
+        "rating": 4.8,
+        "reviews": 50,
+        "sponsored": false,
+        "lat": -5.1390263,
+        "lng": -42.7780869,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Life Academia",
+        "rating": 4.7,
+        "reviews": 63,
+        "sponsored": false,
+        "lat": -5.0772914,
+        "lng": -42.8211135,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Biotraining Academia",
+        "rating": 4.7,
+        "reviews": 230,
+        "sponsored": false,
+        "lat": -5.076494,
+        "lng": -42.793055,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Modogym",
+        "rating": 4.6,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -5.1209027,
+        "lng": -42.8051056,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Simplifit Academias - Dirceu",
+        "rating": 4.4,
+        "reviews": 36,
+        "sponsored": false,
+        "lat": -5.103983,
+        "lng": -42.7436023,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Super Treino Academia Itarare",
+        "rating": 4.7,
+        "reviews": 159,
+        "sponsored": false,
+        "lat": -5.0978144,
+        "lng": -42.7522892,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Cia Trainning Academia",
+        "rating": 4.7,
+        "reviews": 302,
+        "sponsored": false,
+        "lat": -5.0322376,
+        "lng": -42.8121921,
+        "withinBounds": true,
+        "primaryCategory": "Personal Trainer para mulheres"
+      },
+      {
+        "name": "GymFortes Academia",
+        "rating": 4.5,
+        "reviews": 103,
+        "sponsored": false,
+        "lat": -5.1215884,
+        "lng": -42.8019393,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Mega Training Academia",
+        "rating": 4.6,
+        "reviews": 129,
+        "sponsored": false,
+        "lat": -5.1095177,
+        "lng": -42.7525391,
+        "withinBounds": true,
+        "primaryCategory": "Personal Trainer para mulheres"
+      }
+    ],
+    "pet": [
+      {
+        "name": "Terra Zoo Teresina - Pet Shop, Jardinagem e Agro",
+        "rating": 4.8,
+        "reviews": 343,
+        "sponsored": false,
+        "lat": -5.0702828,
+        "lng": -42.7777171,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Teresina",
+        "rating": 4.6,
+        "reviews": 1383,
+        "sponsored": false,
+        "lat": -5.0805388,
+        "lng": -42.7878917,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "G&G Pet Center",
+        "rating": 4.5,
+        "reviews": 525,
+        "sponsored": false,
+        "lat": -5.0658828,
+        "lng": -42.7700951,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Bicho Feliz Pet Shop Teresina",
+        "rating": 4.2,
+        "reviews": 123,
+        "sponsored": false,
+        "lat": -5.0697823,
+        "lng": -42.7909122,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Planeta Pet Shop",
+        "rating": 4.6,
+        "reviews": 281,
+        "sponsored": false,
+        "lat": -5.1128141,
+        "lng": -42.802502,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Vida Animal Pet Shop Teresina",
+        "rating": 4.4,
+        "reviews": 219,
+        "sponsored": false,
+        "lat": -5.0958878,
+        "lng": -42.7976858,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Cats&Dogs Teresina",
+        "rating": 4.7,
+        "reviews": 22,
+        "sponsored": false,
+        "lat": -5.0701622,
+        "lng": -42.7532185,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Emporium Cães e Gatos",
+        "rating": 4.6,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -5.073412,
+        "lng": -42.7793539,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Loja Animal's",
+        "rating": 4.2,
+        "reviews": 430,
+        "sponsored": false,
+        "lat": -5.067266,
+        "lng": -42.7933958,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Dr. Pet Teresina",
+        "rating": 5,
+        "reviews": 224,
+        "sponsored": false,
+        "lat": -5.095083,
+        "lng": -42.7967442,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Piauí Pet Shop",
+        "rating": 4.9,
+        "reviews": 36,
+        "sponsored": false,
+        "lat": -5.1404081,
+        "lng": -42.7762061,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petiaria - Pet shop, Clínica Veterinária e Estética Pet (Banho e Tosa)",
+        "rating": 4.7,
+        "reviews": 124,
+        "sponsored": false,
+        "lat": -5.0981809,
+        "lng": -42.7888361,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Pais e Filhos",
+        "rating": 5,
+        "reviews": 19,
+        "sponsored": false,
+        "lat": -5.0968163,
+        "lng": -42.7959027,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet's Life - clínica veterinária e petshop / oftalmologia veterinária/ cardiologia / dermatologia/ oncologia / cirurgias",
+        "rating": 4.6,
+        "reviews": 207,
+        "sponsored": false,
+        "lat": -5.0760331,
+        "lng": -42.8210581,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Espaço Animal - Centro Veterinário e Pet Shop",
+        "rating": 4.9,
+        "reviews": 107,
+        "sponsored": false,
+        "lat": -5.0947093,
+        "lng": -42.7935545,
+        "withinBounds": true,
+        "primaryCategory": "Veterinário"
+      },
+      {
+        "name": "Pet Fofo | Clínica Veterinária em Teresina",
+        "rating": 4.5,
+        "reviews": 224,
+        "sponsored": false,
+        "lat": -5.0468953,
+        "lng": -42.8119944,
+        "withinBounds": true,
+        "primaryCategory": "Veterinário"
+      },
+      {
+        "name": "Mundo dos Pets",
+        "rating": 4.9,
+        "reviews": 41,
+        "sponsored": false,
+        "lat": -5.064909,
+        "lng": -42.8188246,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "A Camponesa",
+        "rating": 4.4,
+        "reviews": 89,
+        "sponsored": false,
+        "lat": -5.0779002,
+        "lng": -42.8022197,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Amigos de Patas pet",
+        "rating": 4.9,
+        "reviews": 37,
+        "sponsored": false,
+        "lat": -5.1108901,
+        "lng": -42.7988277,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Fun Pet's",
+        "rating": 4.8,
+        "reviews": 40,
+        "sponsored": false,
+        "lat": -5.070132,
+        "lng": -42.754383,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Zio Cucina",
+        "rating": 4.4,
+        "reviews": 958,
+        "sponsored": false,
+        "lat": -5.0751473,
+        "lng": -42.7948898,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria Teresina: Massas, Risoto, Pizza, Delivery, Jóquei PI",
+        "rating": 4.7,
+        "reviews": 678,
+        "sponsored": false,
+        "lat": -5.0765423,
+        "lng": -42.7927214,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vignoli - Teresina",
+        "rating": 4.6,
+        "reviews": 862,
+        "sponsored": false,
+        "lat": -5.0698341,
+        "lng": -42.7866864,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vasto Teresina",
+        "rating": 5,
+        "reviews": 4070,
+        "sponsored": false,
+        "lat": -5.0693732,
+        "lng": -42.7881604,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Forneria Favorito",
+        "rating": 4.5,
+        "reviews": 692,
+        "sponsored": false,
+        "lat": -5.0631028,
+        "lng": -42.7933074,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Ital'in House - Teresina - Ininga",
+        "rating": 4.2,
+        "reviews": 122,
+        "sponsored": false,
+        "lat": -5.064004,
+        "lng": -42.7902094,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Coco Bambu Teresina",
+        "rating": 4.9,
+        "reviews": 26121,
+        "sponsored": false,
+        "lat": -5.0697594,
+        "lng": -42.7879956,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Santa Grelha Teresina",
+        "rating": 4.8,
+        "reviews": 869,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Faustino Restaurante",
+        "rating": 4.6,
+        "reviews": 3323,
+        "sponsored": false,
+        "lat": -5.0698871,
+        "lng": -42.7815074,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Coco Bambu Teresina Shopping",
+        "rating": 5,
+        "reviews": 7976,
+        "sponsored": false,
+        "lat": -5.0844641,
+        "lng": -42.7889428,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Ryori Teresina",
+        "rating": 4.9,
+        "reviews": 1355,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Forno e Parrilla Grand Cru",
+        "rating": 4.7,
+        "reviews": 380,
+        "sponsored": false,
+        "lat": -5.0703468,
+        "lng": -42.7915553,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vito Fogo",
+        "rating": 4.7,
+        "reviews": 177,
+        "sponsored": false,
+        "lat": -5.0729697,
+        "lng": -42.7770294,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Grand Cru",
+        "rating": 4.7,
+        "reviews": 1006,
+        "sponsored": false,
+        "lat": -5.0723738,
+        "lng": -42.7952232,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Olik Bistrô",
+        "rating": 4.7,
+        "reviews": 760,
+        "sponsored": false,
+        "lat": -5.067032,
+        "lng": -42.7902955,
+        "withinBounds": true,
+        "primaryCategory": "Bistrô"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "A Favorita Padaria",
+        "rating": 4.4,
+        "reviews": 2874,
+        "sponsored": false,
+        "lat": -5.0676678,
+        "lng": -42.7900953,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Modelo",
+        "rating": 4.3,
+        "reviews": 2120,
+        "sponsored": false,
+        "lat": -5.0892757,
+        "lng": -42.8080085,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Nacional",
+        "rating": 4.5,
+        "reviews": 441,
+        "sponsored": false,
+        "lat": -5.0813336,
+        "lng": -42.7609496,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Empório Bella The | Padaria | Zona Sul | Teresina",
+        "rating": 4.5,
+        "reviews": 857,
+        "sponsored": false,
+        "lat": -5.1182207,
+        "lng": -42.8001966,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "La Pâtisserie Favorito",
+        "rating": 4.5,
+        "reviews": 709,
+        "sponsored": false,
+        "lat": -5.0649533,
+        "lng": -42.7939643,
+        "withinBounds": true,
+        "primaryCategory": "Oriental"
+      },
+      {
+        "name": "B.Lem Padaria Portuguesa",
+        "rating": 4.9,
+        "reviews": 249,
+        "sponsored": false,
+        "lat": -5.077199,
+        "lng": -42.8019226,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Casa do Pão Prime",
+        "rating": 4.6,
+        "reviews": 702,
+        "sponsored": false,
+        "lat": -5.065,
+        "lng": -42.7602969,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Empório Bella The",
+        "rating": 4.6,
+        "reviews": 1091,
+        "sponsored": false,
+        "lat": -5.1379,
+        "lng": -42.8074609,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Império do Pão",
+        "rating": 4.5,
+        "reviews": 360,
+        "sponsored": false,
+        "lat": -5.0421255,
+        "lng": -42.8082755,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Empório Bella The | Padaria | Zona Leste | Teresina",
+        "rating": 4.6,
+        "reviews": 138,
+        "sponsored": false,
+        "lat": -5.0703999,
+        "lng": -42.7812589,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora E Bolaria Minha Prima",
+        "rating": 4.7,
+        "reviews": 466,
+        "sponsored": false,
+        "lat": -5.123599,
+        "lng": -42.7842818,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Panetone",
+        "rating": 4.5,
+        "reviews": 560,
+        "sponsored": false,
+        "lat": -5.1396833,
+        "lng": -42.7907557,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Sabor",
+        "rating": 4.6,
+        "reviews": 882,
+        "sponsored": false,
+        "lat": -5.0874423,
+        "lng": -42.7353686,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Ilhotas",
+        "rating": 4.4,
+        "reviews": 386,
+        "sponsored": false,
+        "lat": -5.0854789,
+        "lng": -42.7980561,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Pão Gostoso",
+        "rating": 4.2,
+        "reviews": 421,
+        "sponsored": false,
+        "lat": -5.0870928,
+        "lng": -42.775464,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Caramellos Padaria",
+        "rating": 4.4,
+        "reviews": 533,
+        "sponsored": false,
+        "lat": -5.070703,
+        "lng": -42.7703137,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Modelo",
+        "rating": 4.3,
+        "reviews": 749,
+        "sponsored": false,
+        "lat": -5.0625902,
+        "lng": -42.80003,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Modelo",
+        "rating": 4.4,
+        "reviews": 49,
+        "sponsored": false,
+        "lat": -5.0853787,
+        "lng": -42.8067196,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Brasil",
+        "rating": 4.5,
+        "reviews": 481,
+        "sponsored": false,
+        "lat": -5.0778764,
+        "lng": -42.8171242,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Mercado do Pão",
+        "rating": 4.4,
+        "reviews": 457,
+        "sponsored": false,
+        "lat": -5.0629703,
+        "lng": -42.7945291,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "buffet": [
+      {
+        "name": "Sabor Brasil - Restaurante self-service",
+        "rating": 4.5,
+        "reviews": 583,
+        "sponsored": false,
+        "lat": -5.0803904,
+        "lng": -42.771711,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Coco Bambu Teresina",
+        "rating": 4.9,
+        "reviews": 26121,
+        "sponsored": false,
+        "lat": -5.0697594,
+        "lng": -42.7879956,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Fogo Campeiro Teresina",
+        "rating": 4.6,
+        "reviews": 6752,
+        "sponsored": false,
+        "lat": -5.0736725,
+        "lng": -42.789841,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Gosto Na Boca Self-service",
+        "rating": 4.5,
+        "reviews": 394,
+        "sponsored": false,
+        "lat": -5.0743954,
+        "lng": -42.7731678,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Confraria Uchôa",
+        "rating": 4.6,
+        "reviews": 1420,
+        "sponsored": false,
+        "lat": -5.084913,
+        "lng": -42.780501,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Coração de Minas Self Service",
+        "rating": 4.5,
+        "reviews": 844,
+        "sponsored": false,
+        "lat": -5.097272,
+        "lng": -42.7876838,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Santa Grelha Teresina",
+        "rating": 4.8,
+        "reviews": 869,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Bom D + Self Service",
+        "rating": 4.5,
+        "reviews": 647,
+        "sponsored": false,
+        "lat": -5.0755093,
+        "lng": -42.7879678,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sabor Brasil - Restaurante self-service",
+        "rating": 4.6,
+        "reviews": 385,
+        "sponsored": false,
+        "lat": -5.0863961,
+        "lng": -42.8040338,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Temperatto Restaurante",
+        "rating": 4.5,
+        "reviews": 414,
+        "sponsored": false,
+        "lat": -5.0712773,
+        "lng": -42.7842513,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Vasto Teresina",
+        "rating": 5,
+        "reviews": 4070,
+        "sponsored": false,
+        "lat": -5.0693732,
+        "lng": -42.7881604,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Faustino Restaurante",
+        "rating": 4.6,
+        "reviews": 3323,
+        "sponsored": false,
+        "lat": -5.0698871,
+        "lng": -42.7815074,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Portela Grill - Restaurante Self-service",
+        "rating": 4.5,
+        "reviews": 936,
+        "sponsored": false,
+        "lat": -5.1144504,
+        "lng": -42.7999252,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "São João Restaurante",
+        "rating": 4.6,
+        "reviews": 1188,
+        "sponsored": false,
+        "lat": -5.0645293,
+        "lng": -42.7937006,
+        "withinBounds": true,
+        "primaryCategory": "Carne"
+      },
+      {
+        "name": "Costella's Buffet Livre",
+        "rating": 4.2,
+        "reviews": 628,
+        "sponsored": false,
+        "lat": -5.0743451,
+        "lng": -42.7895292,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante Divina",
+        "rating": 4.3,
+        "reviews": 214,
+        "sponsored": false,
+        "lat": -5.0910512,
+        "lng": -42.8098843,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Saborear Self-service",
+        "rating": 4.6,
+        "reviews": 192,
+        "sponsored": false,
+        "lat": -5.0896569,
+        "lng": -42.8148617,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "CARMEM CHEFF 😋",
+        "rating": 4.7,
+        "reviews": 951,
+        "sponsored": false,
+        "lat": -5.0783273,
+        "lng": -42.7912362,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Bom na Mesa",
+        "rating": 4.8,
+        "reviews": 23,
+        "sponsored": false,
+        "lat": -5.0910917,
+        "lng": -42.8044287,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Casa 7 Churrascaria",
+        "rating": 4.3,
+        "reviews": 2134,
+        "sponsored": false,
+        "lat": -5.0955556,
+        "lng": -42.7955556,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Peça Rara Brechó - Jóquei Teresina",
+        "rating": 5,
+        "reviews": 82,
+        "sponsored": false,
+        "lat": -5.0739416,
+        "lng": -42.7792598,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechorizei- brechó online em Teresina",
+        "rating": 4.6,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -5.0499071,
+        "lng": -42.7364039,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Chita Filó 💬 Gurupi",
+        "rating": 4.7,
+        "reviews": 10,
+        "sponsored": false,
+        "lat": -5.0860431,
+        "lng": -42.746666,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Closet Brechó | Roupas Feminas Estilosas e Acessíveis",
+        "rating": 4.6,
+        "reviews": 10,
+        "sponsored": false,
+        "lat": -5.0695254,
+        "lng": -42.7674969,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "MEU VELHO SEU NOVO BRECHÓ",
+        "rating": 4.8,
+        "reviews": 6,
+        "sponsored": false,
+        "lat": -5.0522839,
+        "lng": -42.7429865,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "D’ zapega store",
+        "rating": 4.8,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -5.0840694,
+        "lng": -42.8155209,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Ovelha Verde",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -5.089543,
+        "lng": -42.8075643,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Capi Brechó",
+        "rating": 5,
+        "reviews": 13,
+        "sponsored": false,
+        "lat": -5.1136597,
+        "lng": -42.807354,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "RENOVE | Second Hand Luxo",
+        "rating": 5,
+        "reviews": 15,
+        "sponsored": false,
+        "lat": -5.0710914,
+        "lng": -42.7641176,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Lojinha Lixo",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -5.0839632,
+        "lng": -42.8180832,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "IONE NOSSO BAZAR",
+        "rating": 5,
+        "reviews": 3,
+        "sponsored": false,
+        "lat": -5.0882114,
+        "lng": -42.8201152,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brecho Infantil Sementinhas",
+        "rating": 4,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -5.0916572,
+        "lng": -42.802723,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Desapego da Lenna",
+        "rating": 4.6,
+        "reviews": 5,
+        "sponsored": false,
+        "lat": -5.0513784,
+        "lng": -42.8156609,
+        "withinBounds": true,
+        "primaryCategory": "Loja de moda feminina"
+      },
+      {
+        "name": "Rat Brechó",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -5.0533274,
+        "lng": -42.81355,
+        "withinBounds": true,
+        "primaryCategory": "Loja"
+      }
+    ],
+    "vegan": [
+      {
+        "name": "Maniva - Comida da Terra",
+        "rating": 5,
+        "reviews": 21,
+        "sponsored": false,
+        "lat": -5.0859103,
+        "lng": -42.8142662,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Veggie Teresina",
+        "rating": 5,
+        "reviews": 2,
+        "sponsored": false,
+        "lat": -5.0681516,
+        "lng": -42.7609593,
+        "withinBounds": true,
+        "primaryCategory": "Vegetariana"
+      },
+      {
+        "name": "Caminho Saudável",
+        "rating": 4.8,
+        "reviews": 606,
+        "sponsored": false,
+        "lat": -5.1101911,
+        "lng": -42.7864304,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Gula Verde",
+        "rating": 4.6,
+        "reviews": 234,
+        "sponsored": false,
+        "lat": -5.0762356,
+        "lng": -42.7884018,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Coco Bambu Teresina",
+        "rating": 4.9,
+        "reviews": 26121,
+        "sponsored": false,
+        "lat": -5.0697594,
+        "lng": -42.7879956,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Flow Fresh To Go - Teresina",
+        "rating": 4.6,
+        "reviews": 33,
+        "sponsored": false,
+        "lat": -5.0699889,
+        "lng": -42.7852085,
+        "withinBounds": true,
+        "primaryCategory": "Alimentação saudável"
+      },
+      {
+        "name": "Nóris Cozinha Saudável - Honorina Paes Landim",
+        "rating": 4.5,
+        "reviews": 23,
+        "sponsored": false,
+        "lat": -5.0737962,
+        "lng": -42.792368,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vasto Teresina",
+        "rating": 5,
+        "reviews": 4070,
+        "sponsored": false,
+        "lat": -5.0693732,
+        "lng": -42.7881604,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Ryori Teresina",
+        "rating": 4.9,
+        "reviews": 1355,
+        "sponsored": false,
+        "lat": -5.0763266,
+        "lng": -42.801962,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Flor da Vida Teresina",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -5.0235609,
+        "lng": -42.771148,
+        "withinBounds": true,
+        "primaryCategory": "Sem glúten"
+      },
+      {
+        "name": "Mappa Mundi",
+        "rating": 4.4,
+        "reviews": 211,
+        "sponsored": false,
+        "lat": -5.0701786,
+        "lng": -42.7934119,
+        "withinBounds": true,
+        "primaryCategory": "Alimentação saudável"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -5.25,
+      -4.95,
+      -42.95,
+      -42.65
+    ],
+    "outsideRemoved": 25,
+    "withoutCoordinates": 0
+  }
+}

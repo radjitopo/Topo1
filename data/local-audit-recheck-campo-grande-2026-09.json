@@ -1,0 +1,2928 @@
+{
+  "city": "Campo Grande",
+  "state": "MS",
+  "categories": {
+    "burger": [
+      {
+        "name": "Madero Steak House Campo Grande",
+        "rating": 4.5,
+        "reviews": 3348,
+        "sponsored": false,
+        "lat": -20.458298,
+        "lng": -54.5879194,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Madero & Jeronimo Track Campo Grande",
+        "rating": 4.2,
+        "reviews": 1725,
+        "sponsored": false,
+        "lat": -20.4618837,
+        "lng": -54.6021745,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Safari Burger & Grill",
+        "rating": 4.7,
+        "reviews": 3094,
+        "sponsored": false,
+        "lat": -20.4535883,
+        "lng": -54.6101273,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Make Burgers Hamburgueria",
+        "rating": 4.7,
+        "reviews": 1838,
+        "sponsored": false,
+        "lat": -20.4590959,
+        "lng": -54.6012462,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Joga Burger",
+        "rating": 4.5,
+        "reviews": 1895,
+        "sponsored": false,
+        "lat": -20.4411306,
+        "lng": -54.5812791,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Becker's Burguer",
+        "rating": 4.9,
+        "reviews": 480,
+        "sponsored": false,
+        "lat": -20.4287412,
+        "lng": -54.571312,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Plenty Burger",
+        "rating": 4.8,
+        "reviews": 475,
+        "sponsored": false,
+        "lat": -20.4529517,
+        "lng": -54.6480385,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "OCEANIC BURGUER",
+        "rating": 4.7,
+        "reviews": 815,
+        "sponsored": false,
+        "lat": -20.4791582,
+        "lng": -54.5958777,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Tabua's Burguer | Hamburgueria Campo Grande MS",
+        "rating": 5,
+        "reviews": 447,
+        "sponsored": false,
+        "lat": -20.4436827,
+        "lng": -54.6014516,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "L.A. Burgerz",
+        "rating": 4.4,
+        "reviews": 217,
+        "sponsored": false,
+        "lat": -20.4465514,
+        "lng": -54.5748478,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Burger Pub",
+        "rating": 4.6,
+        "reviews": 973,
+        "sponsored": false,
+        "lat": -20.4612916,
+        "lng": -54.6085539,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "On Burger Cg",
+        "rating": 4.7,
+        "reviews": 407,
+        "sponsored": false,
+        "lat": -20.4932575,
+        "lng": -54.6166915,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Cavallo Burguer",
+        "rating": 4.5,
+        "reviews": 1353,
+        "sponsored": false,
+        "lat": -20.4575097,
+        "lng": -54.6031161,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Vô Necco Burger",
+        "rating": 4.7,
+        "reviews": 741,
+        "sponsored": false,
+        "lat": -20.4888395,
+        "lng": -54.6086218,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "NABRASA Burguer",
+        "rating": 4.7,
+        "reviews": 512,
+        "sponsored": false,
+        "lat": -20.4921854,
+        "lng": -54.6032141,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Mínimo's - Rodízio de mini-gostosuras",
+        "rating": 4.7,
+        "reviews": 9661,
+        "sponsored": false,
+        "lat": -20.4841576,
+        "lng": -54.5939712,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Jão - Hamburgueria",
+        "rating": 4.7,
+        "reviews": 111,
+        "sponsored": false,
+        "lat": -20.4525089,
+        "lng": -54.5981521,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Michellis Burger",
+        "rating": 4.6,
+        "reviews": 742,
+        "sponsored": false,
+        "lat": -20.479992,
+        "lng": -54.6106861,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Sauce Burguer House",
+        "rating": 4.7,
+        "reviews": 228,
+        "sponsored": false,
+        "lat": -20.4530844,
+        "lng": -54.6090903,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "El Parrudo Burger",
+        "rating": 4.9,
+        "reviews": 98,
+        "sponsored": false,
+        "lat": -20.4637808,
+        "lng": -54.5857621,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      }
+    ],
+    "pizza": [
+      {
+        "name": "La Gôndola Pizzaria",
+        "rating": 4.6,
+        "reviews": 3509,
+        "sponsored": false,
+        "lat": -20.4555737,
+        "lng": -54.6100606,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Giuseppe Pizzaria",
+        "rating": 4.7,
+        "reviews": 3603,
+        "sponsored": false,
+        "lat": -20.4597986,
+        "lng": -54.5847405,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Dom Pauligi Pizzaria",
+        "rating": 4.6,
+        "reviews": 1742,
+        "sponsored": false,
+        "lat": -20.4574459,
+        "lng": -54.607075,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Villa da Pizza",
+        "rating": 4.5,
+        "reviews": 1436,
+        "sponsored": false,
+        "lat": -20.460077,
+        "lng": -54.5954969,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pedaço da Pizza",
+        "rating": 4.7,
+        "reviews": 7000,
+        "sponsored": false,
+        "lat": -20.4820581,
+        "lng": -54.5946299,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Villa Raiano Massas e Pizzas",
+        "rating": 4.6,
+        "reviews": 1268,
+        "sponsored": false,
+        "lat": -20.4521488,
+        "lng": -54.5963392,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "DeLorenzo Pizzaria",
+        "rating": 4.6,
+        "reviews": 1110,
+        "sponsored": false,
+        "lat": -20.471619,
+        "lng": -54.5827144,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Romana",
+        "rating": 4.7,
+        "reviews": 977,
+        "sponsored": false,
+        "lat": -20.4587543,
+        "lng": -54.6026971,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza do Jorge",
+        "rating": 4.7,
+        "reviews": 763,
+        "sponsored": false,
+        "lat": -20.4465605,
+        "lng": -54.5751145,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Basta Pizza e Pane",
+        "rating": 4.6,
+        "reviews": 1643,
+        "sponsored": false,
+        "lat": -20.452621,
+        "lng": -54.5989361,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Famiglia Bressani Pizzeria & Trattoria",
+        "rating": 4.7,
+        "reviews": 589,
+        "sponsored": false,
+        "lat": -20.484651,
+        "lng": -54.5552105,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza67 - Sua Pizza Artesanal",
+        "rating": 4.8,
+        "reviews": 909,
+        "sponsored": false,
+        "lat": -20.4217759,
+        "lng": -54.6247176,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzeria Número 1",
+        "rating": 4.9,
+        "reviews": 918,
+        "sponsored": false,
+        "lat": -20.458262,
+        "lng": -54.6082208,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Cantina Romana",
+        "rating": 4.7,
+        "reviews": 5157,
+        "sponsored": false,
+        "lat": -20.4589608,
+        "lng": -54.6028247,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Don Zito Pizzaria",
+        "rating": 4.3,
+        "reviews": 2641,
+        "sponsored": false,
+        "lat": -20.4772932,
+        "lng": -54.5943106,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "San Marino Pizzas",
+        "rating": 4.6,
+        "reviews": 818,
+        "sponsored": false,
+        "lat": -20.4730808,
+        "lng": -54.6108949,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Luigi Pizzeria",
+        "rating": 4.5,
+        "reviews": 7435,
+        "sponsored": false,
+        "lat": -20.4538592,
+        "lng": -54.6462384,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizza Na Pedra",
+        "rating": 4.5,
+        "reviews": 1846,
+        "sponsored": false,
+        "lat": -20.4196867,
+        "lng": -54.560566,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Campo Grande",
+        "rating": 4.7,
+        "reviews": 99,
+        "sponsored": false,
+        "lat": -20.4879624,
+        "lng": -54.6470956,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "La'Banna Pizzaria",
+        "rating": 4.6,
+        "reviews": 418,
+        "sponsored": false,
+        "lat": -20.4821321,
+        "lng": -54.6235051,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Coco Bambu Campo Grande: Restaurante, Peixe, Camarão, Carnes, Lagosta, MS",
+        "rating": 4.9,
+        "reviews": 21872,
+        "sponsored": false,
+        "lat": -20.4576625,
+        "lng": -54.5879072,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "Restaurante Almoço e Tal",
+        "rating": 4.9,
+        "reviews": 1853,
+        "sponsored": false,
+        "lat": -20.461874,
+        "lng": -54.6154823,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Les Amis Bistrô",
+        "rating": 4.7,
+        "reviews": 750,
+        "sponsored": false,
+        "lat": -20.4645739,
+        "lng": -54.6079628,
+        "withinBounds": true,
+        "primaryCategory": "Bistrô"
+      },
+      {
+        "name": "Casa do Peixe",
+        "rating": 4.7,
+        "reviews": 3598,
+        "sponsored": false,
+        "lat": -20.4639167,
+        "lng": -54.630468,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante de peixe"
+      },
+      {
+        "name": "Casa Colonial",
+        "rating": 4.6,
+        "reviews": 1071,
+        "sponsored": false,
+        "lat": -20.4606609,
+        "lng": -54.5984611,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Cantina Romana",
+        "rating": 4.7,
+        "reviews": 5157,
+        "sponsored": false,
+        "lat": -20.4589608,
+        "lng": -54.6028247,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "MANURA CHURRASCARIA E COZINHA ÁRABE",
+        "rating": 4.8,
+        "reviews": 2044,
+        "sponsored": false,
+        "lat": -20.4552163,
+        "lng": -54.6145584,
+        "withinBounds": true,
+        "primaryCategory": "Churrascaria"
+      },
+      {
+        "name": "Yallah! Restaurante Árabe em Campo Grande",
+        "rating": 4.7,
+        "reviews": 1904,
+        "sponsored": false,
+        "lat": -20.4638729,
+        "lng": -54.6026842,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante árabe"
+      },
+      {
+        "name": "Cantina Masseria",
+        "rating": 4.6,
+        "reviews": 4797,
+        "sponsored": false,
+        "lat": -20.4600695,
+        "lng": -54.5956594,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "MARRUÁ GOURMET",
+        "rating": 4.6,
+        "reviews": 1229,
+        "sponsored": false,
+        "lat": -20.4470078,
+        "lng": -54.5914099,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Vermelho Grill",
+        "rating": 4.6,
+        "reviews": 2279,
+        "sponsored": false,
+        "lat": -20.4578687,
+        "lng": -54.5780598,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Restaurante Peixaria Lagoa Morena",
+        "rating": 4.5,
+        "reviews": 1495,
+        "sponsored": false,
+        "lat": -20.4626694,
+        "lng": -54.6046333,
+        "withinBounds": true,
+        "primaryCategory": "Ambiente familiar"
+      },
+      {
+        "name": "Territorio Ristorante",
+        "rating": 4.6,
+        "reviews": 1728,
+        "sponsored": false,
+        "lat": -20.4567413,
+        "lng": -54.6006317,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sabor em ilhas",
+        "rating": 4.6,
+        "reviews": 2099,
+        "sponsored": false,
+        "lat": -20.479618,
+        "lng": -54.603322,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Centralle Osteria",
+        "rating": 4.6,
+        "reviews": 304,
+        "sponsored": false,
+        "lat": -20.4637264,
+        "lng": -54.6102632,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Churrascaria Bezerro de Ouro",
+        "rating": 4.6,
+        "reviews": 1866,
+        "sponsored": false,
+        "lat": -20.4620664,
+        "lng": -54.584434,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Ernesto Café/Bar",
+        "rating": 4.6,
+        "reviews": 482,
+        "sponsored": false,
+        "lat": -20.455099,
+        "lng": -54.597823,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Churrascaria e Restaurante Costhelaria.",
+        "rating": 4.5,
+        "reviews": 1890,
+        "sponsored": false,
+        "lat": -20.4553909,
+        "lng": -54.5976829,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Restaurante DonaLu Campo Grande MS",
+        "rating": 4.6,
+        "reviews": 487,
+        "sponsored": false,
+        "lat": -20.4590123,
+        "lng": -54.610093,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Augustus Restaurante",
+        "rating": 4.5,
+        "reviews": 1493,
+        "sponsored": false,
+        "lat": -20.4697884,
+        "lng": -54.6073963,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "Japa Lounge",
+        "rating": 4.6,
+        "reviews": 1199,
+        "sponsored": false,
+        "lat": -20.4619095,
+        "lng": -54.6007596,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kobayashi Cozinha Oriental",
+        "rating": 4.7,
+        "reviews": 336,
+        "sponsored": false,
+        "lat": -20.455415,
+        "lng": -54.591818,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Império do Sushi | Delivery | Rodizío em Campo Grande",
+        "rating": 4.5,
+        "reviews": 2459,
+        "sponsored": false,
+        "lat": -20.465506,
+        "lng": -54.608137,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sushi Ya",
+        "rating": 4.3,
+        "reviews": 3906,
+        "sponsored": false,
+        "lat": -20.46348,
+        "lng": -54.608284,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sumida Sushi - Campo Grande MS",
+        "rating": 4.8,
+        "reviews": 226,
+        "sponsored": false,
+        "lat": -20.4494387,
+        "lng": -54.6185372,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Natori Sushi",
+        "rating": 4.4,
+        "reviews": 606,
+        "sponsored": false,
+        "lat": -20.4690138,
+        "lng": -54.6074981,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tako Cozinha Oriental",
+        "rating": 4.6,
+        "reviews": 975,
+        "sponsored": false,
+        "lat": -20.4875374,
+        "lng": -54.5932355,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Temakeria Sushi Bar",
+        "rating": 4.5,
+        "reviews": 1764,
+        "sponsored": false,
+        "lat": -20.4588374,
+        "lng": -54.6094311,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Maceh Sushi",
+        "rating": 4.9,
+        "reviews": 1072,
+        "sponsored": false,
+        "lat": -20.4572124,
+        "lng": -54.5996001,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Imakay Campo Grande",
+        "rating": 4.5,
+        "reviews": 709,
+        "sponsored": false,
+        "lat": -20.456686,
+        "lng": -54.597519,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Yamamori Culinária Oriental",
+        "rating": 4.7,
+        "reviews": 231,
+        "sponsored": false,
+        "lat": -20.4525469,
+        "lng": -54.6202812,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Torii Sushi Campo Grande",
+        "rating": 4.7,
+        "reviews": 1262,
+        "sponsored": false,
+        "lat": -20.4840975,
+        "lng": -54.5944387,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Oshent Sushi",
+        "rating": 4.5,
+        "reviews": 2434,
+        "sponsored": false,
+        "lat": -20.4841156,
+        "lng": -54.5943263,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Hayhay Sushi & Yakiniku - Unidade I",
+        "rating": 4.8,
+        "reviews": 386,
+        "sponsored": false,
+        "lat": -20.4397921,
+        "lng": -54.5720268,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "HayHay Cozinha Oriental - Unidade 2",
+        "rating": 4.8,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -20.4469825,
+        "lng": -54.575988,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tarê Sushi",
+        "rating": 4.3,
+        "reviews": 1522,
+        "sponsored": false,
+        "lat": -20.4790225,
+        "lng": -54.6030466,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "HashiYūgō",
+        "rating": 4.5,
+        "reviews": 421,
+        "sponsored": false,
+        "lat": -20.4575428,
+        "lng": -54.6031768,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Hong Kong",
+        "rating": 4.6,
+        "reviews": 1871,
+        "sponsored": false,
+        "lat": -20.4648292,
+        "lng": -54.6279398,
+        "withinBounds": true,
+        "primaryCategory": "Chinesa"
+      },
+      {
+        "name": "Hikari Sushi & Sobaria",
+        "rating": 4.6,
+        "reviews": 1881,
+        "sponsored": false,
+        "lat": -20.4729157,
+        "lng": -54.6382497,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Roppongi Sushi House",
+        "rating": 4.5,
+        "reviews": 1080,
+        "sponsored": false,
+        "lat": -20.4527114,
+        "lng": -54.596796,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Barbearia Campo Grande Barbershop",
+        "rating": 4.9,
+        "reviews": 161,
+        "sponsored": false,
+        "lat": -20.4607255,
+        "lng": -54.6087936,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Barber Cartel Club Avenida Ceará",
+        "rating": 4.7,
+        "reviews": 518,
+        "sponsored": false,
+        "lat": -20.4669883,
+        "lng": -54.5911198,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "La Mafia Barbearia - Campo Grande",
+        "rating": 5,
+        "reviews": 163,
+        "sponsored": false,
+        "lat": -20.4579589,
+        "lng": -54.6119504,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "ZONA SUL BARBEARIA em Campo Grande no Mato Grosso do Sul",
+        "rating": 5,
+        "reviews": 4001,
+        "sponsored": false,
+        "lat": -20.4909253,
+        "lng": -54.5991582,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Homem Primata",
+        "rating": 4.9,
+        "reviews": 323,
+        "sponsored": false,
+        "lat": -20.4626863,
+        "lng": -54.6122928,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Kings - Barbearia em Campo Grande/MS",
+        "rating": 4.8,
+        "reviews": 143,
+        "sponsored": false,
+        "lat": -20.4642626,
+        "lng": -54.6068486,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Mióla - Tijuca",
+        "rating": 4.8,
+        "reviews": 310,
+        "sponsored": false,
+        "lat": -20.5220832,
+        "lng": -54.6664314,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Gold Style | Campo Grande MS | Barbearia por assinatura",
+        "rating": 4.8,
+        "reviews": 234,
+        "sponsored": false,
+        "lat": -20.4972777,
+        "lng": -54.6661619,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Miola - Carandá Bosque",
+        "rating": 5,
+        "reviews": 255,
+        "sponsored": false,
+        "lat": -20.4419961,
+        "lng": -54.5653756,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Brooklyn Barbearia Cg",
+        "rating": 5,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -20.436824,
+        "lng": -54.6176327,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "ELITE 67 BARBEARIA",
+        "rating": 4.9,
+        "reviews": 152,
+        "sponsored": false,
+        "lat": -20.491344,
+        "lng": -54.5993796,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Monarca",
+        "rating": 4.8,
+        "reviews": 204,
+        "sponsored": false,
+        "lat": -20.4636431,
+        "lng": -54.5850191,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Mr. Aldo Barbearia (Lords) – Vila Planalto | Barba e Corte Masculino",
+        "rating": 4.8,
+        "reviews": 435,
+        "sponsored": false,
+        "lat": -20.4587332,
+        "lng": -54.6340246,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia El Camiño",
+        "rating": 4.8,
+        "reviews": 200,
+        "sponsored": false,
+        "lat": -20.4385118,
+        "lng": -54.6038944,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Barber Cartel Club Chácara Cachoeira",
+        "rating": 4.9,
+        "reviews": 253,
+        "sponsored": false,
+        "lat": -20.4627582,
+        "lng": -54.5837304,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Fox Barbearia",
+        "rating": 5,
+        "reviews": 549,
+        "sponsored": false,
+        "lat": -20.521668,
+        "lng": -54.5941846,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "JACK BARBEARIA - Unidade I",
+        "rating": 4.9,
+        "reviews": 216,
+        "sponsored": false,
+        "lat": -20.4772293,
+        "lng": -54.6382489,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Dom Pixote Barbearia",
+        "rating": 4.9,
+        "reviews": 346,
+        "sponsored": false,
+        "lat": -20.4787736,
+        "lng": -54.6468242,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Arena 77",
+        "rating": 4.9,
+        "reviews": 189,
+        "sponsored": false,
+        "lat": -20.4537795,
+        "lng": -54.6443085,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Anderson Nogueira",
+        "rating": 5,
+        "reviews": 244,
+        "sponsored": false,
+        "lat": -20.5163695,
+        "lng": -54.5938529,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Bar Mercearia",
+        "rating": 4.6,
+        "reviews": 5309,
+        "sponsored": false,
+        "lat": -20.464517,
+        "lng": -54.610144,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Blues Bar",
+        "rating": 4.7,
+        "reviews": 3103,
+        "sponsored": false,
+        "lat": -20.4642619,
+        "lng": -54.608876,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Salomé Bar Campo Grande",
+        "rating": 4.3,
+        "reviews": 1434,
+        "sponsored": false,
+        "lat": -20.4666179,
+        "lng": -54.6110543,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Lupland Biergarten",
+        "rating": 4.6,
+        "reviews": 992,
+        "sponsored": false,
+        "lat": -20.45394,
+        "lng": -54.5988003,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "O Irlandês Pub",
+        "rating": 4.6,
+        "reviews": 1806,
+        "sponsored": false,
+        "lat": -20.4606735,
+        "lng": -54.5882156,
+        "withinBounds": true,
+        "primaryCategory": "Pub irlandês"
+      },
+      {
+        "name": "Bada Bar",
+        "rating": 4.4,
+        "reviews": 633,
+        "sponsored": false,
+        "lat": -20.4587203,
+        "lng": -54.6013349,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Ponto Bar",
+        "rating": 4.6,
+        "reviews": 429,
+        "sponsored": false,
+        "lat": -20.4549099,
+        "lng": -54.6191585,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Drinks Bar 45",
+        "rating": 4.8,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -20.4745881,
+        "lng": -54.6165924,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Treze Bar",
+        "rating": 4.5,
+        "reviews": 211,
+        "sponsored": false,
+        "lat": -20.4645243,
+        "lng": -54.6126441,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Café Mostarda Bar e Restaurante",
+        "rating": 4.5,
+        "reviews": 2602,
+        "sponsored": false,
+        "lat": -20.4612805,
+        "lng": -54.5989421,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Koch Cervejaria Campo Grande",
+        "rating": 4.7,
+        "reviews": 915,
+        "sponsored": false,
+        "lat": -20.481618,
+        "lng": -54.5857848,
+        "withinBounds": true,
+        "primaryCategory": "Microcervejaria"
+      },
+      {
+        "name": "Capivas Cervejaria",
+        "rating": 4.7,
+        "reviews": 707,
+        "sponsored": false,
+        "lat": -20.4641036,
+        "lng": -54.6120444,
+        "withinBounds": true,
+        "primaryCategory": "Cervejaria"
+      },
+      {
+        "name": "Boteco Juanita",
+        "rating": 4.6,
+        "reviews": 850,
+        "sponsored": false,
+        "lat": -20.4643678,
+        "lng": -54.6050765,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Eden Beer - Cervejaria",
+        "rating": 4.7,
+        "reviews": 338,
+        "sponsored": false,
+        "lat": -20.4565644,
+        "lng": -54.6194325,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "NaFé Botequim",
+        "rating": 4.4,
+        "reviews": 870,
+        "sponsored": false,
+        "lat": -20.4500328,
+        "lng": -54.5898324,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Má Donna Bar",
+        "rating": 4.5,
+        "reviews": 124,
+        "sponsored": false,
+        "lat": -20.4589609,
+        "lng": -54.6182447,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Cervejaria PROSA",
+        "rating": 4.6,
+        "reviews": 315,
+        "sponsored": false,
+        "lat": -20.4518467,
+        "lng": -54.5963001,
+        "withinBounds": true,
+        "primaryCategory": "Cervejaria"
+      },
+      {
+        "name": "Lounge Do Habibi",
+        "rating": 4.7,
+        "reviews": 288,
+        "sponsored": false,
+        "lat": -20.4725637,
+        "lng": -54.6044833,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar Vexame",
+        "rating": 4.5,
+        "reviews": 139,
+        "sponsored": false,
+        "lat": -20.4547731,
+        "lng": -54.6199274,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Aguena Bar",
+        "rating": 4.5,
+        "reviews": 647,
+        "sponsored": false,
+        "lat": -20.4625292,
+        "lng": -54.6210813,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Botteghe Café",
+        "rating": 4.6,
+        "reviews": 692,
+        "sponsored": false,
+        "lat": -20.4621362,
+        "lng": -54.5987161,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Baristrô Cafés Especiais",
+        "rating": 4.7,
+        "reviews": 278,
+        "sponsored": false,
+        "lat": -20.4403519,
+        "lng": -54.5822402,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Gairdín - Café e Chá no Jardim - MS",
+        "rating": 4.7,
+        "reviews": 721,
+        "sponsored": false,
+        "lat": -20.4741826,
+        "lng": -54.6009269,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Beltrão",
+        "rating": 4.6,
+        "reviews": 1523,
+        "sponsored": false,
+        "lat": -20.4438841,
+        "lng": -54.5897132,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Kanto de Minas - Empório e Café",
+        "rating": 4.7,
+        "reviews": 2879,
+        "sponsored": false,
+        "lat": -20.4455978,
+        "lng": -54.6096736,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Café com Você",
+        "rating": 4.8,
+        "reviews": 112,
+        "sponsored": false,
+        "lat": -20.4570551,
+        "lng": -54.608773,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café + 5 Minutinhos",
+        "rating": 4.5,
+        "reviews": 1395,
+        "sponsored": false,
+        "lat": -20.4574553,
+        "lng": -54.6093012,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Tigre Café",
+        "rating": 4.6,
+        "reviews": 272,
+        "sponsored": false,
+        "lat": -20.4555753,
+        "lng": -54.5939461,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Doce Lembrança",
+        "rating": 4.7,
+        "reviews": 347,
+        "sponsored": false,
+        "lat": -20.4599641,
+        "lng": -54.6116445,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Katarina Coffee & Tea",
+        "rating": 4.7,
+        "reviews": 362,
+        "sponsored": false,
+        "lat": -20.4730208,
+        "lng": -54.6012572,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Sweet Café e Confeitaria",
+        "rating": 4.6,
+        "reviews": 1151,
+        "sponsored": false,
+        "lat": -20.4770554,
+        "lng": -54.5941011,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "The Coffee",
+        "rating": 4.7,
+        "reviews": 99,
+        "sponsored": false,
+        "lat": -20.4563066,
+        "lng": -54.5948456,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "8&18 Coffee & Bistrô",
+        "rating": 5,
+        "reviews": 30,
+        "sponsored": false,
+        "lat": -20.462112,
+        "lng": -54.61298,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Bourbon Café | Cafeteria",
+        "rating": 4.8,
+        "reviews": 414,
+        "sponsored": false,
+        "lat": -20.4475724,
+        "lng": -54.6081042,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Doce Grão - Doces, Saladas e Saudáveis",
+        "rating": 4.8,
+        "reviews": 420,
+        "sponsored": false,
+        "lat": -20.4830915,
+        "lng": -54.5946767,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "La Parisienne Boulangerie & Patisserie",
+        "rating": 4.6,
+        "reviews": 1478,
+        "sponsored": false,
+        "lat": -20.4545482,
+        "lng": -54.6020789,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Amiste Café Campo Grande",
+        "rating": 4.9,
+        "reviews": 140,
+        "sponsored": false,
+        "lat": -20.4535629,
+        "lng": -54.5938391,
+        "withinBounds": true,
+        "primaryCategory": "Loja de café"
+      },
+      {
+        "name": "Sutil Café & Bar",
+        "rating": 5,
+        "reviews": 131,
+        "sponsored": false,
+        "lat": -20.4483956,
+        "lng": -54.574814,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Diga Xis - Unidade Aero Rancho",
+        "rating": 4.9,
+        "reviews": 257,
+        "sponsored": false,
+        "lat": -20.5204701,
+        "lng": -54.6348817,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Pão & Tal Jardim dos Estados",
+        "rating": 4.5,
+        "reviews": 4669,
+        "sponsored": false,
+        "lat": -20.4565341,
+        "lng": -54.5995862,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Moça Bonita Cabelos",
+        "rating": 4.8,
+        "reviews": 1362,
+        "sponsored": false,
+        "lat": -20.4591003,
+        "lng": -54.6103937,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "FOUR Salon",
+        "rating": 4.8,
+        "reviews": 262,
+        "sponsored": false,
+        "lat": -20.4552527,
+        "lng": -54.5988678,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "L’Atelier Cris Garcia - Salão de Beleza - Campo Grande MS",
+        "rating": 4.8,
+        "reviews": 111,
+        "sponsored": false,
+        "lat": -20.453862,
+        "lng": -54.595124,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Angela Hitomi - Centro de Beleza",
+        "rating": 4.8,
+        "reviews": 153,
+        "sponsored": false,
+        "lat": -20.4514467,
+        "lng": -54.6049542,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de beleza -Villas Centro De Beleza",
+        "rating": 4.8,
+        "reviews": 462,
+        "sponsored": false,
+        "lat": -20.460656,
+        "lng": -54.582125,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Minei Centro de Beleza | Salão de beleza em Campo Grande MS",
+        "rating": 4.9,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -20.4582937,
+        "lng": -54.5988119,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "UMA Salão de Beleza Centro",
+        "rating": 4.9,
+        "reviews": 136,
+        "sponsored": false,
+        "lat": -20.4640215,
+        "lng": -54.6090624,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza em Campo Grande - MS - Studio JUNE Beauty",
+        "rating": 4.9,
+        "reviews": 148,
+        "sponsored": false,
+        "lat": -20.4402551,
+        "lng": -54.5665716,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Aime | Salão de Beleza",
+        "rating": 4.6,
+        "reviews": 196,
+        "sponsored": false,
+        "lat": -20.470674,
+        "lng": -54.5758984,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Galeria Centro de Beleza",
+        "rating": 4.7,
+        "reviews": 97,
+        "sponsored": false,
+        "lat": -20.4597851,
+        "lng": -54.5975584,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Ayala",
+        "rating": 4.7,
+        "reviews": 137,
+        "sponsored": false,
+        "lat": -20.5153999,
+        "lng": -54.6143453,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Solle Beauty",
+        "rating": 4.6,
+        "reviews": 694,
+        "sponsored": false,
+        "lat": -20.4626398,
+        "lng": -54.6099425,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "AURA Beleza Spa",
+        "rating": 4.6,
+        "reviews": 104,
+        "sponsored": false,
+        "lat": -20.4451129,
+        "lng": -54.5906743,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Casa Ronaldo's Espaço de Beleza",
+        "rating": 4.7,
+        "reviews": 249,
+        "sponsored": false,
+        "lat": -20.4551626,
+        "lng": -54.6038193,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza Cheia de Charme Loja 2",
+        "rating": 4.1,
+        "reviews": 355,
+        "sponsored": false,
+        "lat": -20.464955,
+        "lng": -54.6191562,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Jacques Janine Campo Grande",
+        "rating": 4.7,
+        "reviews": 214,
+        "sponsored": false,
+        "lat": -20.4654577,
+        "lng": -54.5839451,
+        "withinBounds": true,
+        "primaryCategory": "Centro de saúde e beleza"
+      },
+      {
+        "name": "Atemporal Salon - Cabelos cacheados, crespos e ondulados",
+        "rating": 4.9,
+        "reviews": 71,
+        "sponsored": false,
+        "lat": -20.4472439,
+        "lng": -54.6141436,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Beauty Ville Studio",
+        "rating": 5,
+        "reviews": 69,
+        "sponsored": false,
+        "lat": -20.4635943,
+        "lng": -54.6164142,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Primadonna Studio",
+        "rating": 5,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -20.5117762,
+        "lng": -54.632739,
+        "withinBounds": true,
+        "primaryCategory": "Cabeleireiro"
+      },
+      {
+        "name": "Beg Hair",
+        "rating": 4.7,
+        "reviews": 73,
+        "sponsored": false,
+        "lat": -20.4653889,
+        "lng": -54.6234007,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Cantina Romana",
+        "rating": 4.7,
+        "reviews": 5157,
+        "sponsored": false,
+        "lat": -20.4589608,
+        "lng": -54.6028247,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Centralle Osteria",
+        "rating": 4.6,
+        "reviews": 304,
+        "sponsored": false,
+        "lat": -20.4637264,
+        "lng": -54.6102632,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina Masseria",
+        "rating": 4.6,
+        "reviews": 4797,
+        "sponsored": false,
+        "lat": -20.4600695,
+        "lng": -54.5956594,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Fatto Di Amore Pasta & Riso",
+        "rating": 4.6,
+        "reviews": 355,
+        "sponsored": false,
+        "lat": -20.4790562,
+        "lng": -54.595895,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Farina - Cucina & Brace",
+        "rating": 4.4,
+        "reviews": 215,
+        "sponsored": false,
+        "lat": -20.4594626,
+        "lng": -54.5985721,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Asti Cucina",
+        "rating": 4.5,
+        "reviews": 397,
+        "sponsored": false,
+        "lat": -20.454147,
+        "lng": -54.5997094,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Grattugia | Restaurante",
+        "rating": 4.7,
+        "reviews": 146,
+        "sponsored": false,
+        "lat": -20.4575813,
+        "lng": -54.6035391,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Gran Sitári - Trattoria Contemporânea",
+        "rating": 4.6,
+        "reviews": 69,
+        "sponsored": false,
+        "lat": -20.4606313,
+        "lng": -54.5990218,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Famiglia Bressani Pizzeria & Trattoria",
+        "rating": 4.7,
+        "reviews": 589,
+        "sponsored": false,
+        "lat": -20.484651,
+        "lng": -54.5552105,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Terroir Vino e Cucina",
+        "rating": 4.6,
+        "reviews": 123,
+        "sponsored": false,
+        "lat": -20.4415169,
+        "lng": -54.5723405,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Ital'in House - Campo Grande - Jardim dos Estados",
+        "rating": 4,
+        "reviews": 68,
+        "sponsored": false,
+        "lat": -20.4565198,
+        "lng": -54.6054322,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Italo Pasta & Pizza",
+        "rating": 4.3,
+        "reviews": 53,
+        "sponsored": false,
+        "lat": -20.4581965,
+        "lng": -54.5878884,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Territorio Ristorante",
+        "rating": 4.6,
+        "reviews": 1728,
+        "sponsored": false,
+        "lat": -20.4567413,
+        "lng": -54.6006317,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Casa Colonial",
+        "rating": 4.6,
+        "reviews": 1071,
+        "sponsored": false,
+        "lat": -20.4606609,
+        "lng": -54.5984611,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "LA BUONA CUCINA",
+        "rating": 4.4,
+        "reviews": 19,
+        "sponsored": false,
+        "lat": -20.454377,
+        "lng": -54.6034901,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Trattoria 67",
+        "rating": 4.1,
+        "reviews": 143,
+        "sponsored": false,
+        "lat": -20.4526651,
+        "lng": -54.5960708,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Stazione Cucina Italiana",
+        "rating": 4.2,
+        "reviews": 90,
+        "sponsored": false,
+        "lat": -20.4570928,
+        "lng": -54.5990861,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Manjerina Risoteria",
+        "rating": 4.3,
+        "reviews": 32,
+        "sponsored": false,
+        "lat": -20.4951923,
+        "lng": -54.5966446,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "La Gôndola Pizzaria",
+        "rating": 4.6,
+        "reviews": 3509,
+        "sponsored": false,
+        "lat": -20.4555737,
+        "lng": -54.6100606,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Parma Culinária Artesanal",
+        "rating": 4.6,
+        "reviews": 52,
+        "sponsored": false,
+        "lat": -20.4514881,
+        "lng": -54.5899165,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "Pão & Tal Jardim dos Estados",
+        "rating": 4.5,
+        "reviews": 4669,
+        "sponsored": false,
+        "lat": -20.4565341,
+        "lng": -54.5995862,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Monte Líbano",
+        "rating": 4.5,
+        "reviews": 3677,
+        "sponsored": false,
+        "lat": -20.4751475,
+        "lng": -54.6069782,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Mais que Pão",
+        "rating": 4.5,
+        "reviews": 2338,
+        "sponsored": false,
+        "lat": -20.4770224,
+        "lng": -54.593362,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padoca do Enaldo",
+        "rating": 4.6,
+        "reviews": 1271,
+        "sponsored": false,
+        "lat": -20.4604255,
+        "lng": -54.6105895,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "La Parisienne Boulangerie & Patisserie",
+        "rating": 4.6,
+        "reviews": 1478,
+        "sponsored": false,
+        "lat": -20.4545482,
+        "lng": -54.6020789,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Rei do Trigo",
+        "rating": 4.8,
+        "reviews": 794,
+        "sponsored": false,
+        "lat": -20.5011519,
+        "lng": -54.6576311,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Trigou Padaria Artesanal - Pães de Fermentação Natural e Lenta",
+        "rating": 4.8,
+        "reviews": 309,
+        "sponsored": false,
+        "lat": -20.4570211,
+        "lng": -54.6070486,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Empório do Pão - PADARIA E CONFEITARIA",
+        "rating": 4.4,
+        "reviews": 1490,
+        "sponsored": false,
+        "lat": -20.4757062,
+        "lng": -54.6425058,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Fornello Pães e Café",
+        "rating": 4.4,
+        "reviews": 1493,
+        "sponsored": false,
+        "lat": -20.4460898,
+        "lng": -54.6088063,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Zoe Padoca Artesanal",
+        "rating": 4.7,
+        "reviews": 163,
+        "sponsored": false,
+        "lat": -20.4609814,
+        "lng": -54.5946007,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Dico Panificadora",
+        "rating": 4.3,
+        "reviews": 2193,
+        "sponsored": false,
+        "lat": -20.4505227,
+        "lng": -54.5871725,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Veneza Pães e Doces",
+        "rating": 4.4,
+        "reviews": 677,
+        "sponsored": false,
+        "lat": -20.4585775,
+        "lng": -54.6240264,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Vitória Pães – Padaria em Campo Grande, MS",
+        "rating": 4.5,
+        "reviews": 921,
+        "sponsored": false,
+        "lat": -20.479396,
+        "lng": -54.634951,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria e Confeitaria Sabor do Sul",
+        "rating": 4.5,
+        "reviews": 698,
+        "sponsored": false,
+        "lat": -20.4348536,
+        "lng": -54.5698571,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Giocondo Pães e Conveniência",
+        "rating": 4.6,
+        "reviews": 853,
+        "sponsored": false,
+        "lat": -20.441641,
+        "lng": -54.5864296,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora K & K",
+        "rating": 4.6,
+        "reviews": 1178,
+        "sponsored": false,
+        "lat": -20.4320152,
+        "lng": -54.6252388,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Toscano",
+        "rating": 4.5,
+        "reviews": 502,
+        "sponsored": false,
+        "lat": -20.4413409,
+        "lng": -54.6011586,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padarelli Padaria",
+        "rating": 4.6,
+        "reviews": 1932,
+        "sponsored": false,
+        "lat": -20.4736815,
+        "lng": -54.5831376,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Panificadora e Confeitaria Pão da Vida",
+        "rating": 4.5,
+        "reviews": 666,
+        "sponsored": false,
+        "lat": -20.4699883,
+        "lng": -54.632063,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Sweet Café e Confeitaria",
+        "rating": 4.6,
+        "reviews": 1151,
+        "sponsored": false,
+        "lat": -20.4770554,
+        "lng": -54.5941011,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "pet": [
+      {
+        "name": "PET HERE",
+        "rating": 4.5,
+        "reviews": 1254,
+        "sponsored": false,
+        "lat": -20.4555571,
+        "lng": -54.60526,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Outpet",
+        "rating": 4.6,
+        "reviews": 940,
+        "sponsored": false,
+        "lat": -20.4532872,
+        "lng": -54.5817662,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Campo Grande",
+        "rating": 4.5,
+        "reviews": 4612,
+        "sponsored": false,
+        "lat": -20.4590007,
+        "lng": -54.5847546,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Campo Grande Unidade III - Tamandaré",
+        "rating": 4.8,
+        "reviews": 192,
+        "sponsored": false,
+        "lat": -20.4210027,
+        "lng": -54.6232799,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Pet Lunar com Banho e Tosa em Campo Grande MS",
+        "rating": 5,
+        "reviews": 61,
+        "sponsored": false,
+        "lat": -20.4787572,
+        "lng": -54.5896658,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "PetsCão",
+        "rating": 4.7,
+        "reviews": 390,
+        "sponsored": false,
+        "lat": -20.4622514,
+        "lng": -54.5964946,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Pet Shop Campo Grande Unidade II - Nova Lima",
+        "rating": 4.8,
+        "reviews": 513,
+        "sponsored": false,
+        "lat": -20.388146,
+        "lng": -54.5636318,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Campo Grande - Unidade I - Estrela Dalva",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -20.428068,
+        "lng": -54.5524912,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop - Pompa Pet Boutique - Banho Tosa Exames Consultas e Vacinas - Campo Grande MS",
+        "rating": 5,
+        "reviews": 42,
+        "sponsored": false,
+        "lat": -20.4405672,
+        "lng": -54.6139428,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Afonso Pena",
+        "rating": 4.4,
+        "reviews": 502,
+        "sponsored": false,
+        "lat": -20.4660018,
+        "lng": -54.6265068,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop | Agro Boi Forte",
+        "rating": 4.3,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -20.4663661,
+        "lng": -54.6115891,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Animal Pet - Monte Castelo | Loja 3",
+        "rating": 4.7,
+        "reviews": 87,
+        "sponsored": false,
+        "lat": -20.4313954,
+        "lng": -54.5984089,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Big Pet",
+        "rating": 4.6,
+        "reviews": 326,
+        "sponsored": false,
+        "lat": -20.4590289,
+        "lng": -54.6337207,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Animal Pet -loja 2 santa camélia Pet shop campo grande MS",
+        "rating": 4.8,
+        "reviews": 106,
+        "sponsored": false,
+        "lat": -20.4336029,
+        "lng": -54.6481349,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Animal Pet -loja 1 Coophatrabalho Pet shop campo grande MS",
+        "rating": 4.6,
+        "reviews": 73,
+        "sponsored": false,
+        "lat": -20.4381155,
+        "lng": -54.6480367,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Dog In Box Rui Barbosa",
+        "rating": 4.6,
+        "reviews": 995,
+        "sponsored": false,
+        "lat": -20.4756162,
+        "lng": -54.6118955,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Top Vet Pet Shop e Consultório Veterinário",
+        "rating": 5,
+        "reviews": 31,
+        "sponsored": false,
+        "lat": -20.4505713,
+        "lng": -54.6181235,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "DIVINO PET",
+        "rating": 4.6,
+        "reviews": 161,
+        "sponsored": false,
+        "lat": -20.436486,
+        "lng": -54.651096,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Osso Meu",
+        "rating": 4.7,
+        "reviews": 76,
+        "sponsored": false,
+        "lat": -20.4632416,
+        "lng": -54.6295538,
+        "withinBounds": true,
+        "primaryCategory": "Loja"
+      },
+      {
+        "name": "Reinado Pet Shop",
+        "rating": 4.9,
+        "reviews": 103,
+        "sponsored": false,
+        "lat": -20.4574605,
+        "lng": -54.6295679,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "gym": [
+      {
+        "name": "Academia Pleno Vigor Tamandaré",
+        "rating": 4.8,
+        "reviews": 1420,
+        "sponsored": false,
+        "lat": -20.460394,
+        "lng": -54.6338326,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Allp Fit Academia Campo Grande - MS",
+        "rating": 4.9,
+        "reviews": 133,
+        "sponsored": false,
+        "lat": -20.4802742,
+        "lng": -54.6199978,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Super Série",
+        "rating": 4.7,
+        "reviews": 420,
+        "sponsored": false,
+        "lat": -20.4727929,
+        "lng": -54.6352091,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Praktika Academia",
+        "rating": 4.8,
+        "reviews": 269,
+        "sponsored": false,
+        "lat": -20.4742103,
+        "lng": -54.6067664,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Pleno Vigor Sóter",
+        "rating": 4.7,
+        "reviews": 43,
+        "sponsored": false,
+        "lat": -20.4311213,
+        "lng": -54.5743777,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Workout 365",
+        "rating": 4.7,
+        "reviews": 269,
+        "sponsored": false,
+        "lat": -20.4608564,
+        "lng": -54.5828186,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia BlueFit Afonso Pena",
+        "rating": 4.5,
+        "reviews": 680,
+        "sponsored": false,
+        "lat": -20.4592098,
+        "lng": -54.5928156,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "RUNNERS ACADEMIA",
+        "rating": 4.8,
+        "reviews": 119,
+        "sponsored": false,
+        "lat": -20.4635321,
+        "lng": -54.5839092,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "SkyFit Academia Unidade Bandeirantes - Academia em Campo Grande | MS",
+        "rating": 4.6,
+        "reviews": 350,
+        "sponsored": false,
+        "lat": -20.491458,
+        "lng": -54.6458489,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia BlueFit Campo Grande Centro",
+        "rating": 4.3,
+        "reviews": 262,
+        "sponsored": false,
+        "lat": -20.468175,
+        "lng": -54.6122217,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Bem Estar Academia",
+        "rating": 4.9,
+        "reviews": 242,
+        "sponsored": false,
+        "lat": -20.4215908,
+        "lng": -54.6238327,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Sol de Verão",
+        "rating": 4.5,
+        "reviews": 173,
+        "sponsored": false,
+        "lat": -20.4445691,
+        "lng": -54.6662554,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Formae Academia de Musculação e Ginástica",
+        "rating": 4.7,
+        "reviews": 203,
+        "sponsored": false,
+        "lat": -20.4473373,
+        "lng": -54.6013638,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Iron Life",
+        "rating": 4.7,
+        "reviews": 256,
+        "sponsored": false,
+        "lat": -20.4961095,
+        "lng": -54.6082636,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Performance - Mascarenhas",
+        "rating": 4.5,
+        "reviews": 489,
+        "sponsored": false,
+        "lat": -20.4372198,
+        "lng": -54.6149253,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Performance - Júlio de Castilho",
+        "rating": 4.4,
+        "reviews": 564,
+        "sponsored": false,
+        "lat": -20.4486716,
+        "lng": -54.6561608,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia BlueFit Vilas Boas",
+        "rating": 4.4,
+        "reviews": 211,
+        "sponsored": false,
+        "lat": -20.4775123,
+        "lng": -54.591914,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "O2 Fitness Academia",
+        "rating": 4.6,
+        "reviews": 63,
+        "sponsored": false,
+        "lat": -20.4656556,
+        "lng": -54.5895769,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Positivamente Academias - Unidade II",
+        "rating": 4.5,
+        "reviews": 582,
+        "sponsored": false,
+        "lat": -20.4749436,
+        "lng": -54.5831564,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Top Fitness CG",
+        "rating": 4.6,
+        "reviews": 325,
+        "sponsored": false,
+        "lat": -20.4915948,
+        "lng": -54.5987841,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Dig For Fashion Campo Grande - Brechó",
+        "rating": 4.9,
+        "reviews": 946,
+        "sponsored": false,
+        "lat": -20.4556257,
+        "lng": -54.5939929,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "La Na Treze Brechó",
+        "rating": 4.6,
+        "reviews": 30,
+        "sponsored": false,
+        "lat": -20.4577058,
+        "lng": -54.6170259,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      },
+      {
+        "name": "Peça Rara Brechó - Campo Grande",
+        "rating": 4.6,
+        "reviews": 107,
+        "sponsored": false,
+        "lat": -20.4573141,
+        "lng": -54.6020633,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Cacia",
+        "rating": 4.7,
+        "reviews": 179,
+        "sponsored": false,
+        "lat": -20.4623386,
+        "lng": -54.6225839,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "BRECHARIA",
+        "rating": 4.4,
+        "reviews": 36,
+        "sponsored": false,
+        "lat": -20.4464655,
+        "lng": -54.5746408,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "CENTRAL DE TROCAS OFICIAL - BRECHÓ FÍSICO EM CAMPO GRANDE-MS",
+        "rating": 4.8,
+        "reviews": 95,
+        "sponsored": false,
+        "lat": -20.475325,
+        "lng": -54.6098284,
+        "withinBounds": true,
+        "primaryCategory": "Loja de moda feminina"
+      },
+      {
+        "name": "Brechó Brand",
+        "rating": 5,
+        "reviews": 42,
+        "sponsored": false,
+        "lat": -20.5030453,
+        "lng": -54.6507803,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Arco da Velha Bazar & Brechó Pop",
+        "rating": 4.8,
+        "reviews": 111,
+        "sponsored": false,
+        "lat": -20.4654399,
+        "lng": -54.6114017,
+        "withinBounds": true,
+        "primaryCategory": "Antiquário"
+      },
+      {
+        "name": "Brechó Veste Bem",
+        "rating": 4.3,
+        "reviews": 42,
+        "sponsored": false,
+        "lat": -20.4367011,
+        "lng": -54.5913697,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Meio-Fio Brechó",
+        "rating": 5,
+        "reviews": 27,
+        "sponsored": false,
+        "lat": -20.4672965,
+        "lng": -54.6157904,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó veste bem CG",
+        "rating": 4.8,
+        "reviews": 95,
+        "sponsored": false,
+        "lat": -20.4649081,
+        "lng": -54.6237326,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      },
+      {
+        "name": "Casa Amarela Brechó - Moda Circular",
+        "rating": 5,
+        "reviews": 86,
+        "sponsored": false,
+        "lat": -20.4708533,
+        "lng": -54.5802595,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Santo Brechó Boutique",
+        "rating": 5,
+        "reviews": 21,
+        "sponsored": false,
+        "lat": -20.4919181,
+        "lng": -54.647867,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Entre Dedos e Prosa Brechó",
+        "rating": 5,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -20.4760289,
+        "lng": -54.6356084,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Camarim Brechó e Outlet",
+        "rating": 4.4,
+        "reviews": 7,
+        "sponsored": false,
+        "lat": -20.4540334,
+        "lng": -54.6286737,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "3 COLLAB | brechós",
+        "rating": 5,
+        "reviews": 18,
+        "sponsored": false,
+        "lat": -20.4697922,
+        "lng": -54.6050595,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Espaço Renove Brechó",
+        "rating": 5,
+        "reviews": 6,
+        "sponsored": false,
+        "lat": -20.4482133,
+        "lng": -54.611059,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "ME SALVA BRECHÓ",
+        "rating": 4.4,
+        "reviews": 7,
+        "sponsored": false,
+        "lat": -20.4179455,
+        "lng": -54.6349674,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brecho Freedom",
+        "rating": 5,
+        "reviews": 24,
+        "sponsored": false,
+        "lat": -20.4990034,
+        "lng": -54.6019727,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó da Lau",
+        "rating": 4.5,
+        "reviews": 15,
+        "sponsored": false,
+        "lat": -20.445654,
+        "lng": -54.659497,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      }
+    ],
+    "buffet": [
+      {
+        "name": "Restaurante Almoço e Tal",
+        "rating": 4.9,
+        "reviews": 1853,
+        "sponsored": false,
+        "lat": -20.461874,
+        "lng": -54.6154823,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sabor Enquilo Restaurante",
+        "rating": 4.5,
+        "reviews": 2959,
+        "sponsored": false,
+        "lat": -20.4609263,
+        "lng": -54.6140329,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Seu Gastão | Restaurante Self Service",
+        "rating": 4.7,
+        "reviews": 1498,
+        "sponsored": false,
+        "lat": -20.4436811,
+        "lng": -54.5650669,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Bom Almoço Restaurante",
+        "rating": 4.5,
+        "reviews": 1113,
+        "sponsored": false,
+        "lat": -20.4602825,
+        "lng": -54.6127727,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Aruanã Buffet e Restaurante",
+        "rating": 4.7,
+        "reviews": 1238,
+        "sponsored": false,
+        "lat": -20.4506036,
+        "lng": -54.6165951,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Lá In Casa",
+        "rating": 4.4,
+        "reviews": 1119,
+        "sponsored": false,
+        "lat": -20.450679,
+        "lng": -54.587862,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Canto do Cupim",
+        "rating": 4.6,
+        "reviews": 6678,
+        "sponsored": false,
+        "lat": -20.4629026,
+        "lng": -54.5896194,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Hora do Almoço",
+        "rating": 4.5,
+        "reviews": 1066,
+        "sponsored": false,
+        "lat": -20.4598909,
+        "lng": -54.6156859,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sabor Em Kilo Gourmet",
+        "rating": 4.5,
+        "reviews": 1477,
+        "sponsored": false,
+        "lat": -20.4634621,
+        "lng": -54.6152446,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sabor em ilhas",
+        "rating": 4.6,
+        "reviews": 2099,
+        "sponsored": false,
+        "lat": -20.479618,
+        "lng": -54.603322,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Sesc - Sabor & Arte (Centro - Campo Grande)",
+        "rating": 4.7,
+        "reviews": 603,
+        "sponsored": false,
+        "lat": -20.4609077,
+        "lng": -54.6157153,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante DonaLu Campo Grande MS",
+        "rating": 4.6,
+        "reviews": 487,
+        "sponsored": false,
+        "lat": -20.4590123,
+        "lng": -54.610093,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Celeiro do Sabor",
+        "rating": 4.8,
+        "reviews": 641,
+        "sponsored": false,
+        "lat": -20.4419912,
+        "lng": -54.5982552,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Cantina Masseria",
+        "rating": 4.6,
+        "reviews": 4797,
+        "sponsored": false,
+        "lat": -20.4600695,
+        "lng": -54.5956594,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sagrado Sabor - Av. Bandeirantes",
+        "rating": 4.8,
+        "reviews": 2018,
+        "sponsored": false,
+        "lat": -20.4755137,
+        "lng": -54.6332961,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "MANURA CHURRASCARIA E COZINHA ÁRABE",
+        "rating": 4.8,
+        "reviews": 2044,
+        "sponsored": false,
+        "lat": -20.4552163,
+        "lng": -54.6145584,
+        "withinBounds": true,
+        "primaryCategory": "Churrascaria"
+      },
+      {
+        "name": "Restaurante Estação 15",
+        "rating": 4.4,
+        "reviews": 817,
+        "sponsored": false,
+        "lat": -20.463564,
+        "lng": -54.6043762,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sabor em ilhas",
+        "rating": 4.7,
+        "reviews": 1016,
+        "sponsored": false,
+        "lat": -20.4715735,
+        "lng": -54.6326748,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Colher de Pau",
+        "rating": 4.7,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -20.4519733,
+        "lng": -54.6144657,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Cheiro Verde",
+        "rating": 4.6,
+        "reviews": 405,
+        "sponsored": false,
+        "lat": -20.4563992,
+        "lng": -54.6353502,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      }
+    ],
+    "vegan": [
+      {
+        "name": "Broto de Bambu Restaurante Vegetariano-Vegano",
+        "rating": 4.8,
+        "reviews": 426,
+        "sponsored": false,
+        "lat": -20.4573391,
+        "lng": -54.610377,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Trevo Veggie",
+        "rating": 4.8,
+        "reviews": 412,
+        "sponsored": false,
+        "lat": -20.4453249,
+        "lng": -54.6074424,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Mais que Salada - Restaurante Vegetariano",
+        "rating": 4.9,
+        "reviews": 359,
+        "sponsored": false,
+        "lat": -20.4630526,
+        "lng": -54.6161572,
+        "withinBounds": true,
+        "primaryCategory": "Vegetariana"
+      },
+      {
+        "name": "Floral Green Vegan",
+        "rating": 4.8,
+        "reviews": 42,
+        "sponsored": false,
+        "lat": -20.4949633,
+        "lng": -54.6081792,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Restaurante Viva a Vida - Centro",
+        "rating": 4.7,
+        "reviews": 808,
+        "sponsored": false,
+        "lat": -20.4674439,
+        "lng": -54.609624,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Two Brothers House",
+        "rating": 4.8,
+        "reviews": 124,
+        "sponsored": false,
+        "lat": -20.4975178,
+        "lng": -54.6076024,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Las Vegg - Cozinha Vegetariana e Vegana",
+        "rating": 3.9,
+        "reviews": 9,
+        "sponsored": false,
+        "lat": -20.5010876,
+        "lng": -54.5923544,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Restaurante Viva a Vida - Parque",
+        "rating": 4.7,
+        "reviews": 422,
+        "sponsored": false,
+        "lat": -20.4386866,
+        "lng": -54.5665475,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -20.62,
+      -20.3,
+      -54.78,
+      -54.45
+    ],
+    "outsideRemoved": 0,
+    "withoutCoordinates": 0
+  }
+}

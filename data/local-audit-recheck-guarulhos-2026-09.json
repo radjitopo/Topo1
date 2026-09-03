@@ -1,0 +1,2668 @@
+{
+  "city": "Guarulhos",
+  "state": "SP",
+  "categories": {
+    "burger": [
+      {
+        "name": "BlackRock Burger & Beer",
+        "rating": 4.6,
+        "reviews": 8031,
+        "sponsored": false,
+        "lat": -23.4557081,
+        "lng": -46.5327551,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Burger Makers",
+        "rating": 4.6,
+        "reviews": 1313,
+        "sponsored": false,
+        "lat": -23.4628029,
+        "lng": -46.5239153,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Vira Latas ®️",
+        "rating": 4.6,
+        "reviews": 2509,
+        "sponsored": false,
+        "lat": -23.4572014,
+        "lng": -46.5375989,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "General Prime Burger: Hambúrguer, Milkshake, Sobremesa, Guarulhos",
+        "rating": 4.7,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -23.4638648,
+        "lng": -46.5270708,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Temática Rec Burguer Guarulhos",
+        "rating": 4.6,
+        "reviews": 1188,
+        "sponsored": false,
+        "lat": -23.4562146,
+        "lng": -46.5323786,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bom Beef Burgers Bosque Maia",
+        "rating": 4.7,
+        "reviews": 314,
+        "sponsored": false,
+        "lat": -23.454789,
+        "lng": -46.533513,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Iron Burguer Guarulhos",
+        "rating": 4.3,
+        "reviews": 586,
+        "sponsored": false,
+        "lat": -23.4578394,
+        "lng": -46.5264519,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Gaúcho Hambúrguer",
+        "rating": 4.6,
+        "reviews": 558,
+        "sponsored": false,
+        "lat": -23.4500737,
+        "lng": -46.5411557,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Vikings Burger Hamburgueria Guarulhos",
+        "rating": 4.8,
+        "reviews": 141,
+        "sponsored": false,
+        "lat": -23.4775681,
+        "lng": -46.5446718,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "LA Sanduicheria Ltda.",
+        "rating": 4.8,
+        "reviews": 1045,
+        "sponsored": false,
+        "lat": -23.4475882,
+        "lng": -46.5573906,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Big Sobral",
+        "rating": 4.9,
+        "reviews": 188,
+        "sponsored": false,
+        "lat": -23.4330808,
+        "lng": -46.5127411,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Niú Burger 3 Beer",
+        "rating": 4.7,
+        "reviews": 624,
+        "sponsored": false,
+        "lat": -23.4602067,
+        "lng": -46.5293579,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "SAVVAN HOUSE HAMBURGUERIA - Guarulhos",
+        "rating": 5,
+        "reviews": 13,
+        "sponsored": false,
+        "lat": -23.4515765,
+        "lng": -46.5419915,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Nortux Burger - Nagumo Anel Viário",
+        "rating": 4.7,
+        "reviews": 169,
+        "sponsored": false,
+        "lat": -23.4730771,
+        "lng": -46.5471758,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bom Hambúrguer",
+        "rating": 4.5,
+        "reviews": 408,
+        "sponsored": false,
+        "lat": -23.4381869,
+        "lng": -46.5103477,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria Le Pinguê",
+        "rating": 4.7,
+        "reviews": 1075,
+        "sponsored": false,
+        "lat": -23.4674134,
+        "lng": -46.5419407,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "The Burger House",
+        "rating": 4.7,
+        "reviews": 666,
+        "sponsored": false,
+        "lat": -23.4504037,
+        "lng": -46.5447933,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "New Blend Burger & BBQ | Hamburgueria Artesanal | Vila Carmela | Guarulhos",
+        "rating": 4.9,
+        "reviews": 389,
+        "sponsored": false,
+        "lat": -23.3973047,
+        "lng": -46.3887116,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Três Bruxos Burger",
+        "rating": 4.9,
+        "reviews": 514,
+        "sponsored": false,
+        "lat": -23.4521662,
+        "lng": -46.5605165,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Rei Burger Guarulhos",
+        "rating": 4.6,
+        "reviews": 121,
+        "sponsored": false,
+        "lat": -23.4272361,
+        "lng": -46.5229046,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      }
+    ],
+    "pizza": [
+      {
+        "name": "Forneria Presidente",
+        "rating": 4.6,
+        "reviews": 1392,
+        "sponsored": false,
+        "lat": -23.4838752,
+        "lng": -46.5460968,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "A Senhora Pizza Guarulhos",
+        "rating": 4.4,
+        "reviews": 1938,
+        "sponsored": false,
+        "lat": -23.4780194,
+        "lng": -46.5449089,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Dona The Best Pizzas",
+        "rating": 4.7,
+        "reviews": 195,
+        "sponsored": false,
+        "lat": -23.4681503,
+        "lng": -46.5345544,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Rodriluccio",
+        "rating": 4.5,
+        "reviews": 1534,
+        "sponsored": false,
+        "lat": -23.4674095,
+        "lng": -46.5462258,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria do Lago",
+        "rating": 4.5,
+        "reviews": 1393,
+        "sponsored": false,
+        "lat": -23.4512317,
+        "lng": -46.565128,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Cantina Giovanni",
+        "rating": 4.7,
+        "reviews": 6037,
+        "sponsored": false,
+        "lat": -23.4557428,
+        "lng": -46.5588144,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Formaggio",
+        "rating": 4.5,
+        "reviews": 621,
+        "sponsored": false,
+        "lat": -23.4563349,
+        "lng": -46.5268998,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria e Esfiharia São Paulo",
+        "rating": 4.6,
+        "reviews": 493,
+        "sponsored": false,
+        "lat": -23.4605906,
+        "lng": -46.5241572,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria La Pietá - Unidade Vila Rio",
+        "rating": 4.3,
+        "reviews": 1663,
+        "sponsored": false,
+        "lat": -23.4392626,
+        "lng": -46.5366275,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Vettore - Guarulhos SP",
+        "rating": 4.6,
+        "reviews": 364,
+        "sponsored": false,
+        "lat": -23.442266,
+        "lng": -46.5359405,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mr. Texas Pizza",
+        "rating": 4.6,
+        "reviews": 1740,
+        "sponsored": false,
+        "lat": -23.4601795,
+        "lng": -46.5293035,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria do Nuccho",
+        "rating": 4.6,
+        "reviews": 356,
+        "sponsored": false,
+        "lat": -23.4663228,
+        "lng": -46.5349542,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Emporium pizzas",
+        "rating": 4.3,
+        "reviews": 1801,
+        "sponsored": false,
+        "lat": -23.4551086,
+        "lng": -46.53339,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "La Famiglia a casa da pizza",
+        "rating": 4.6,
+        "reviews": 177,
+        "sponsored": false,
+        "lat": -23.4519484,
+        "lng": -46.5523293,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mão na Roda Pizzaria Chopperia",
+        "rating": 4.6,
+        "reviews": 1035,
+        "sponsored": false,
+        "lat": -23.5071215,
+        "lng": -46.555495,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria La Paineira",
+        "rating": 4.4,
+        "reviews": 622,
+        "sponsored": false,
+        "lat": -23.4653208,
+        "lng": -46.5471659,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Rainha do Parque",
+        "rating": 4.6,
+        "reviews": 878,
+        "sponsored": false,
+        "lat": -23.4329737,
+        "lng": -46.5544671,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Mia",
+        "rating": 4,
+        "reviews": 946,
+        "sponsored": false,
+        "lat": -23.4607548,
+        "lng": -46.562595,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Graça Di Napolli Pizzaria e Trattoria",
+        "rating": 4.4,
+        "reviews": 443,
+        "sponsored": false,
+        "lat": -23.4435689,
+        "lng": -46.5399074,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Luna Mia",
+        "rating": 4.7,
+        "reviews": 232,
+        "sponsored": false,
+        "lat": -23.4604591,
+        "lng": -46.5231842,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Coco Bambu Guarulhos",
+        "rating": 4.9,
+        "reviews": 30554,
+        "sponsored": false,
+        "lat": -23.4435829,
+        "lng": -46.539884,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Cantina Giovanni",
+        "rating": 4.7,
+        "reviews": 6037,
+        "sponsored": false,
+        "lat": -23.4557428,
+        "lng": -46.5588144,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Macaxeira Restaurante & Cachaçaria",
+        "rating": 4.3,
+        "reviews": 9358,
+        "sponsored": false,
+        "lat": -23.4666068,
+        "lng": -46.5249191,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "PONTO KA RESTAURANTE",
+        "rating": 4.4,
+        "reviews": 3165,
+        "sponsored": false,
+        "lat": -23.4605109,
+        "lng": -46.5282539,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Vicino - Cucina & Vino",
+        "rating": 4.6,
+        "reviews": 1482,
+        "sponsored": false,
+        "lat": -23.4557847,
+        "lng": -46.5330002,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria Bosque Maia: Massa, Risoto, Vinho, Guarulhos SP",
+        "rating": 4.7,
+        "reviews": 1218,
+        "sponsored": false,
+        "lat": -23.4638996,
+        "lng": -46.5273789,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pezinho no Nordeste",
+        "rating": 4.6,
+        "reviews": 2404,
+        "sponsored": false,
+        "lat": -23.4635328,
+        "lng": -46.5435288,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Restaurante Guaru Center",
+        "rating": 4.3,
+        "reviews": 2939,
+        "sponsored": false,
+        "lat": -23.4723195,
+        "lng": -46.5269762,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Outback Steakhouse - Shopping Internacional",
+        "rating": 4.6,
+        "reviews": 10005,
+        "sponsored": false,
+        "lat": -23.4881295,
+        "lng": -46.5491937,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "O Lisboeta - Restaurante Português",
+        "rating": 4.5,
+        "reviews": 1403,
+        "sponsored": false,
+        "lat": -23.4607504,
+        "lng": -46.5303597,
+        "withinBounds": true,
+        "primaryCategory": "Portuguesa"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria: Massas, Risoto, Pizza, Vinho, Aeroporto, Guarulhos, SP",
+        "rating": 4.7,
+        "reviews": 942,
+        "sponsored": false,
+        "lat": -23.4263484,
+        "lng": -46.4831365,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Nonnetto Ristorante | Restaurante | Gastronomia Contemporânea | Restaurante Italiano",
+        "rating": 4.6,
+        "reviews": 644,
+        "sponsored": false,
+        "lat": -23.460364,
+        "lng": -46.52953,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Restaurante Ráscal - GRU",
+        "rating": 4.4,
+        "reviews": 1510,
+        "sponsored": false,
+        "lat": -23.4244675,
+        "lng": -46.4764306,
+        "withinBounds": true,
+        "primaryCategory": "Mediterrânea"
+      },
+      {
+        "name": "Nuovo Vino",
+        "rating": 4.4,
+        "reviews": 2585,
+        "sponsored": false,
+        "lat": -23.47191,
+        "lng": -46.5449279,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "BASE Steakhouse",
+        "rating": 4.6,
+        "reviews": 311,
+        "sponsored": false,
+        "lat": -23.4502321,
+        "lng": -46.4889862,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Olive Garden (GRU Terminal 3)",
+        "rating": 4.5,
+        "reviews": 2463,
+        "sponsored": false,
+        "lat": -23.4244702,
+        "lng": -46.4772046,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Jun Japanese Food (Unidade Paulo Faccini)",
+        "rating": 4.7,
+        "reviews": 9569,
+        "sponsored": false,
+        "lat": -23.457117,
+        "lng": -46.5314689,
+        "withinBounds": true,
+        "primaryCategory": "Asiática"
+      },
+      {
+        "name": "Outback Steakhouse - Parque Shopping Maia",
+        "rating": 4.5,
+        "reviews": 4264,
+        "sponsored": false,
+        "lat": -23.4435829,
+        "lng": -46.539884,
+        "withinBounds": true,
+        "primaryCategory": "Bife"
+      },
+      {
+        "name": "Divino Fogão - Aeroporto de Guarulhos",
+        "rating": 4.9,
+        "reviews": 3508,
+        "sponsored": false,
+        "lat": -23.4222931,
+        "lng": -46.4822245,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Choupana Restaurante & Pizzaria",
+        "rating": 4.5,
+        "reviews": 3698,
+        "sponsored": false,
+        "lat": -23.4734113,
+        "lng": -46.5329356,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "Kajiro Sushi Guarulhos",
+        "rating": 4.9,
+        "reviews": 3069,
+        "sponsored": false,
+        "lat": -23.4328724,
+        "lng": -46.4385357,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Izumi Sushi",
+        "rating": 4.4,
+        "reviews": 5359,
+        "sponsored": false,
+        "lat": -23.4647064,
+        "lng": -46.5260353,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Restaurante Japonês - Okazan Sushi Guarulhos",
+        "rating": 4.8,
+        "reviews": 5254,
+        "sponsored": false,
+        "lat": -23.4539873,
+        "lng": -46.5333862,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sushi Guarulhos",
+        "rating": 4.4,
+        "reviews": 1924,
+        "sponsored": false,
+        "lat": -23.4823691,
+        "lng": -46.5392452,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Zan Sushi Guarulhos",
+        "rating": 4.7,
+        "reviews": 2147,
+        "sponsored": false,
+        "lat": -23.4520383,
+        "lng": -46.5347049,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sushi Rosa De França Restaurante Japonês",
+        "rating": 4.8,
+        "reviews": 5258,
+        "sponsored": false,
+        "lat": -23.4476623,
+        "lng": -46.5470752,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sushi Taboão Guarulhos",
+        "rating": 4.9,
+        "reviews": 6645,
+        "sponsored": false,
+        "lat": -23.4249011,
+        "lng": -46.5042672,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Thikô Sushi Guarulhos",
+        "rating": 4.8,
+        "reviews": 1443,
+        "sponsored": false,
+        "lat": -23.4590187,
+        "lng": -46.5371155,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Kindô Sushi - Restaurante Japonês",
+        "rating": 4.8,
+        "reviews": 2309,
+        "sponsored": false,
+        "lat": -23.4561453,
+        "lng": -46.5607448,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Hakiro Sushi Guarulhos",
+        "rating": 4.8,
+        "reviews": 1452,
+        "sponsored": false,
+        "lat": -23.4516321,
+        "lng": -46.5303661,
+        "withinBounds": true,
+        "primaryCategory": "Asiática"
+      },
+      {
+        "name": "Jun Japanese Food (Unidade Paulo Faccini)",
+        "rating": 4.7,
+        "reviews": 9569,
+        "sponsored": false,
+        "lat": -23.457117,
+        "lng": -46.5314689,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "IKKA Culinária Japonesa",
+        "rating": 4.9,
+        "reviews": 1071,
+        "sponsored": false,
+        "lat": -23.4797719,
+        "lng": -46.5411648,
+        "withinBounds": true,
+        "primaryCategory": "Culinária japonesa autêntica"
+      },
+      {
+        "name": "YOISHII SUSHI",
+        "rating": 4.5,
+        "reviews": 1162,
+        "sponsored": false,
+        "lat": -23.4637905,
+        "lng": -46.5282291,
+        "withinBounds": true,
+        "primaryCategory": "Asiática"
+      },
+      {
+        "name": "Tsurukame Restaurante",
+        "rating": 4.6,
+        "reviews": 477,
+        "sponsored": false,
+        "lat": -23.4614889,
+        "lng": -46.5102567,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sushi Vila Galvão",
+        "rating": 4.8,
+        "reviews": 1788,
+        "sponsored": false,
+        "lat": -23.449985,
+        "lng": -46.5567005,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Sukiyaki",
+        "rating": 4.6,
+        "reviews": 887,
+        "sponsored": false,
+        "lat": -23.4333065,
+        "lng": -46.4353359,
+        "withinBounds": true,
+        "primaryCategory": "Asiática"
+      },
+      {
+        "name": "Sukiya Guarulhos",
+        "rating": 3.9,
+        "reviews": 3025,
+        "sponsored": false,
+        "lat": -23.4669509,
+        "lng": -46.523504,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Restaurante Japonês - JHOW JHOW JAPANESE FOOD",
+        "rating": 4.5,
+        "reviews": 1157,
+        "sponsored": false,
+        "lat": -23.4531248,
+        "lng": -46.5552399,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Gendai - Restaurante Japonês",
+        "rating": 3.8,
+        "reviews": 633,
+        "sponsored": false,
+        "lat": -23.4435689,
+        "lng": -46.5399074,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Studio Visage",
+        "rating": 4.9,
+        "reviews": 780,
+        "sponsored": false,
+        "lat": -23.4709094,
+        "lng": -46.5302646,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza Cheia de Charme - Unidade Guarulhos",
+        "rating": 4.5,
+        "reviews": 265,
+        "sponsored": false,
+        "lat": -23.4678803,
+        "lng": -46.5277007,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "ROCHA CONCEPT MAIA I Salão de Beleza",
+        "rating": 5,
+        "reviews": 197,
+        "sponsored": false,
+        "lat": -23.4534969,
+        "lng": -46.5348068,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Vitaliê Salão de Beleza",
+        "rating": 4.7,
+        "reviews": 153,
+        "sponsored": false,
+        "lat": -23.4746655,
+        "lng": -46.5455816,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Casa Franco Hair Salon",
+        "rating": 4.8,
+        "reviews": 418,
+        "sponsored": false,
+        "lat": -23.4613001,
+        "lng": -46.5310902,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Lorenzato 14 anos de Satisfação e Credibilidade",
+        "rating": 4.4,
+        "reviews": 284,
+        "sponsored": false,
+        "lat": -23.4678268,
+        "lng": -46.5270987,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Venus Cabeleireiros",
+        "rating": 4.7,
+        "reviews": 404,
+        "sponsored": false,
+        "lat": -23.4690776,
+        "lng": -46.5309564,
+        "withinBounds": true,
+        "primaryCategory": "Cabeleireiro"
+      },
+      {
+        "name": "Studio Adauto Rosa - Salão de Beleza em Guarulhos",
+        "rating": 4.9,
+        "reviews": 110,
+        "sponsored": false,
+        "lat": -23.4414264,
+        "lng": -46.5463651,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Espaço Aflore sua Beleza",
+        "rating": 5,
+        "reviews": 363,
+        "sponsored": false,
+        "lat": -23.4576798,
+        "lng": -46.5374231,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Casa Rosah | Salão de Beleza em Guarulhos | Especialista em Alisamentos",
+        "rating": 4.8,
+        "reviews": 74,
+        "sponsored": false,
+        "lat": -23.4653651,
+        "lng": -46.5183622,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Giral Concept Hair",
+        "rating": 4.9,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -23.4478424,
+        "lng": -46.5374798,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Edy Oliveira Salon Studio",
+        "rating": 5,
+        "reviews": 385,
+        "sponsored": false,
+        "lat": -23.459303,
+        "lng": -46.5371643,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Aninha Duarte Salão de Beleza",
+        "rating": 4.9,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -23.4661902,
+        "lng": -46.5602143,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Janevi Hair: Salão de Beleza em Guarulhos - Especialista em Mechas, Cor e Cortes Feminino",
+        "rating": 5,
+        "reviews": 58,
+        "sponsored": false,
+        "lat": -23.4415777,
+        "lng": -46.5564232,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio M.A",
+        "rating": 4.8,
+        "reviews": 146,
+        "sponsored": false,
+        "lat": -23.4590874,
+        "lng": -46.5324165,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Corte & Cortes",
+        "rating": 4.4,
+        "reviews": 826,
+        "sponsored": false,
+        "lat": -23.4844093,
+        "lng": -46.5429957,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Turquesa Beleza & Bem Estar - Internacional Shopping de Guarulhos",
+        "rating": 4.9,
+        "reviews": 563,
+        "sponsored": false,
+        "lat": -23.488051,
+        "lng": -46.5476117,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Só Quem Ama Progressiva",
+        "rating": 5,
+        "reviews": 183,
+        "sponsored": false,
+        "lat": -23.4527377,
+        "lng": -46.5182269,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Paulynha Cabeleireira",
+        "rating": 5,
+        "reviews": 435,
+        "sponsored": false,
+        "lat": -23.3982049,
+        "lng": -46.4322261,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Wbeauty - Salão de Beleza, Manicure, Progressiva e Maquiagem em Guarulhos - Bunduda",
+        "rating": 4.3,
+        "reviews": 102,
+        "sponsored": false,
+        "lat": -23.4455007,
+        "lng": -46.4079051,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Behap Café",
+        "rating": 4.7,
+        "reviews": 198,
+        "sponsored": false,
+        "lat": -23.4633632,
+        "lng": -46.5368856,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "Mecca Café",
+        "rating": 4.6,
+        "reviews": 945,
+        "sponsored": false,
+        "lat": -23.4549977,
+        "lng": -46.5289309,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cafeteria Napagife",
+        "rating": 4.7,
+        "reviews": 573,
+        "sponsored": false,
+        "lat": -23.4709347,
+        "lng": -46.5268585,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "BACOFFEE CAFETERIA",
+        "rating": 4.7,
+        "reviews": 260,
+        "sponsored": false,
+        "lat": -23.4556737,
+        "lng": -46.5339581,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Buenos Cafés - Cafeteria",
+        "rating": 4.9,
+        "reviews": 315,
+        "sponsored": false,
+        "lat": -23.4503993,
+        "lng": -46.5579278,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cheirin Bão Bosque Maia",
+        "rating": 4.6,
+        "reviews": 411,
+        "sponsored": false,
+        "lat": -23.4591798,
+        "lng": -46.5295574,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "DOCCINO CAFETERIA E CONFEITARIA",
+        "rating": 4.9,
+        "reviews": 229,
+        "sponsored": false,
+        "lat": -23.4662051,
+        "lng": -46.5463445,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "The Coffee Shop Nescafé T3: Café da manhã, Salgado, Café, Aeroporto, GRU",
+        "rating": 4.7,
+        "reviews": 954,
+        "sponsored": false,
+        "lat": -23.4265316,
+        "lng": -46.4738132,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cheirin Bão Centro",
+        "rating": 4.9,
+        "reviews": 387,
+        "sponsored": false,
+        "lat": -23.4696246,
+        "lng": -46.5238577,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Emporio Cafezin Caipira",
+        "rating": 4.9,
+        "reviews": 339,
+        "sponsored": false,
+        "lat": -23.4661573,
+        "lng": -46.5258379,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "The Coffee Shop Nescafé Leste: Café da manhã, Salgado, Café, Aeroporto, GRU, SP",
+        "rating": 4.7,
+        "reviews": 704,
+        "sponsored": false,
+        "lat": -23.4264562,
+        "lng": -46.4815052,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cafeteria São Paulo",
+        "rating": 4.4,
+        "reviews": 14,
+        "sponsored": false,
+        "lat": -23.4677922,
+        "lng": -46.5215637,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cafeteria em Guarulhos - GoCoffee Shopping Maia",
+        "rating": 3.9,
+        "reviews": 46,
+        "sponsored": false,
+        "lat": -23.4435689,
+        "lng": -46.5399074,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cheirin Bão",
+        "rating": 4.5,
+        "reviews": 99,
+        "sponsored": false,
+        "lat": -23.4809111,
+        "lng": -46.5408914,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Spegrano Cafés Especiais",
+        "rating": 5,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -23.4725435,
+        "lng": -46.5348952,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Degustê",
+        "rating": 5,
+        "reviews": 550,
+        "sponsored": false,
+        "lat": -23.4562506,
+        "lng": -46.4966992,
+        "withinBounds": true,
+        "primaryCategory": "Loja de cestas de presente"
+      },
+      {
+        "name": "Alameda Café",
+        "rating": 4,
+        "reviews": 30,
+        "sponsored": false,
+        "lat": -23.4469982,
+        "lng": -46.536833,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Florescer Cafeteira",
+        "rating": 4.7,
+        "reviews": 29,
+        "sponsored": false,
+        "lat": -23.4735942,
+        "lng": -46.5450104,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Q CaFê Bistrô",
+        "rating": 4.3,
+        "reviews": 51,
+        "sponsored": false,
+        "lat": -23.4716913,
+        "lng": -46.5309005,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      },
+      {
+        "name": "Casa São Bento Padaria",
+        "rating": 4.6,
+        "reviews": 10198,
+        "sponsored": false,
+        "lat": -23.4838284,
+        "lng": -46.542132,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Boteco Boa Vista",
+        "rating": 4.4,
+        "reviews": 6446,
+        "sponsored": false,
+        "lat": -23.4644183,
+        "lng": -46.5258163,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Amarelinhos Bar Centro",
+        "rating": 4.4,
+        "reviews": 1953,
+        "sponsored": false,
+        "lat": -23.4667382,
+        "lng": -46.5233674,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Diz o Ditado - Bar Do Lê",
+        "rating": 4.6,
+        "reviews": 977,
+        "sponsored": false,
+        "lat": -23.4620648,
+        "lng": -46.5227921,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Adega 33",
+        "rating": 4.3,
+        "reviews": 6410,
+        "sponsored": false,
+        "lat": -23.4649143,
+        "lng": -46.5252037,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "The Lord Black Irish Pub",
+        "rating": 4.5,
+        "reviews": 3965,
+        "sponsored": false,
+        "lat": -23.4715689,
+        "lng": -46.5338905,
+        "withinBounds": true,
+        "primaryCategory": "Pub irlandês"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Barbearia Maximus Barber Shop",
+        "rating": 4.9,
+        "reviews": 530,
+        "sponsored": false,
+        "lat": -23.4481766,
+        "lng": -46.5373252,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia 12 de Janeiro",
+        "rating": 5,
+        "reviews": 839,
+        "sponsored": false,
+        "lat": -23.4553821,
+        "lng": -46.508703,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Be King em Guarulhos | Unidade Nossa Sra. Mãe dos Homens",
+        "rating": 4.9,
+        "reviews": 1086,
+        "sponsored": false,
+        "lat": -23.4621662,
+        "lng": -46.5388565,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Gorila Barbershop",
+        "rating": 4.9,
+        "reviews": 305,
+        "sponsored": false,
+        "lat": -23.4543513,
+        "lng": -46.5628579,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Be King em Guarulhos | Unidade Vila Augusta",
+        "rating": 4.9,
+        "reviews": 1057,
+        "sponsored": false,
+        "lat": -23.4806901,
+        "lng": -46.5406382,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Mister Dom em Guarulhos | Unidade Alameda Yaya",
+        "rating": 4.9,
+        "reviews": 1711,
+        "sponsored": false,
+        "lat": -23.4586634,
+        "lng": -46.5458488,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "BARBEARIA MR. Shellby",
+        "rating": 4.8,
+        "reviews": 476,
+        "sponsored": false,
+        "lat": -23.4802824,
+        "lng": -46.5395423,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Zupa | Guarulhos",
+        "rating": 4.9,
+        "reviews": 251,
+        "sponsored": false,
+        "lat": -23.4485187,
+        "lng": -46.424758,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Mister Dom em Guarulhos | Unidade Cachoeira",
+        "rating": 4.9,
+        "reviews": 306,
+        "sponsored": false,
+        "lat": -23.4464232,
+        "lng": -46.5475025,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia ReArt em Guarulhos",
+        "rating": 5,
+        "reviews": 112,
+        "sponsored": false,
+        "lat": -23.4656665,
+        "lng": -46.544592,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia The Rock",
+        "rating": 5,
+        "reviews": 99,
+        "sponsored": false,
+        "lat": -23.4587504,
+        "lng": -46.5336204,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "KING BARBER GUARULHOS",
+        "rating": 4.7,
+        "reviews": 109,
+        "sponsored": false,
+        "lat": -23.4551741,
+        "lng": -46.5446867,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Do Luca",
+        "rating": 4.9,
+        "reviews": 510,
+        "sponsored": false,
+        "lat": -23.4476854,
+        "lng": -46.4110855,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Mr. Klaiff Barbearia",
+        "rating": 5,
+        "reviews": 236,
+        "sponsored": false,
+        "lat": -23.4452769,
+        "lng": -46.5495613,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Bonanza - Macedo",
+        "rating": 4.9,
+        "reviews": 529,
+        "sponsored": false,
+        "lat": -23.4603787,
+        "lng": -46.5200561,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Dom Pereira Barbearia",
+        "rating": 5,
+        "reviews": 624,
+        "sponsored": false,
+        "lat": -23.4517706,
+        "lng": -46.5512596,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Divina Gru Barbearia",
+        "rating": 4.5,
+        "reviews": 190,
+        "sponsored": false,
+        "lat": -23.451843,
+        "lng": -46.535109,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Doctor Shears - Barbearia em Guarulhos",
+        "rating": 4.9,
+        "reviews": 171,
+        "sponsored": false,
+        "lat": -23.467997,
+        "lng": -46.5330639,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia do Kauã",
+        "rating": 5,
+        "reviews": 40,
+        "sponsored": false,
+        "lat": -23.4417443,
+        "lng": -46.5216191,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Lord Jack Barbearia - Guarulhos - Timóteo Penteado",
+        "rating": 4.9,
+        "reviews": 61,
+        "sponsored": false,
+        "lat": -23.4594905,
+        "lng": -46.5368702,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "Casa São Bento Padaria",
+        "rating": 4.6,
+        "reviews": 10198,
+        "sponsored": false,
+        "lat": -23.4838284,
+        "lng": -46.542132,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Maria Cereja",
+        "rating": 4.4,
+        "reviews": 12572,
+        "sponsored": false,
+        "lat": -23.4609522,
+        "lng": -46.5281128,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Favos D'Mel",
+        "rating": 4.4,
+        "reviews": 7133,
+        "sponsored": false,
+        "lat": -23.4550032,
+        "lng": -46.5578889,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificadora Lar de Guarulhos",
+        "rating": 4.3,
+        "reviews": 2374,
+        "sponsored": false,
+        "lat": -23.4853074,
+        "lng": -46.5522615,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria City Bread",
+        "rating": 4.1,
+        "reviews": 9245,
+        "sponsored": false,
+        "lat": -23.4671623,
+        "lng": -46.5240026,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Barão Cecap",
+        "rating": 4.3,
+        "reviews": 5452,
+        "sponsored": false,
+        "lat": -23.4495095,
+        "lng": -46.4997107,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Munhoz Padaria",
+        "rating": 4.5,
+        "reviews": 2522,
+        "sponsored": false,
+        "lat": -23.5014228,
+        "lng": -46.5554119,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria City Bread",
+        "rating": 4.3,
+        "reviews": 3210,
+        "sponsored": false,
+        "lat": -23.4317593,
+        "lng": -46.5393363,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Nova Guarulhos Padaria",
+        "rating": 4.4,
+        "reviews": 3122,
+        "sponsored": false,
+        "lat": -23.480129,
+        "lng": -46.5397725,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Versailles",
+        "rating": 4.5,
+        "reviews": 9520,
+        "sponsored": false,
+        "lat": -23.4487407,
+        "lng": -46.5480126,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Chego Lá",
+        "rating": 4.5,
+        "reviews": 1776,
+        "sponsored": false,
+        "lat": -23.4528119,
+        "lng": -46.5271752,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Vila Moreira",
+        "rating": 4.6,
+        "reviews": 513,
+        "sponsored": false,
+        "lat": -23.4730788,
+        "lng": -46.5347333,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Da Vinci - Lago dos Patos Guarulhos",
+        "rating": 4.3,
+        "reviews": 324,
+        "sponsored": false,
+        "lat": -23.4517339,
+        "lng": -46.5610945,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Milaura - Pães artesanais",
+        "rating": 4.8,
+        "reviews": 90,
+        "sponsored": false,
+        "lat": -23.4695297,
+        "lng": -46.5397843,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Center Guarulhos Padaria",
+        "rating": 4.2,
+        "reviews": 1722,
+        "sponsored": false,
+        "lat": -23.4991037,
+        "lng": -46.5514115,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Estação Doces Confeitaria Artesanal",
+        "rating": 4.5,
+        "reviews": 583,
+        "sponsored": false,
+        "lat": -23.4563588,
+        "lng": -46.5383251,
+        "withinBounds": true,
+        "primaryCategory": "Doces"
+      },
+      {
+        "name": "Casa São Bento Padaria e Mercado",
+        "rating": 4.6,
+        "reviews": 2798,
+        "sponsored": false,
+        "lat": -23.445697,
+        "lng": -46.542362,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Guaru Pão Ind. e Com. Ltda",
+        "rating": 4.5,
+        "reviews": 1271,
+        "sponsored": false,
+        "lat": -23.464178,
+        "lng": -46.543069,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Jardim Brasil",
+        "rating": 4.6,
+        "reviews": 9015,
+        "sponsored": false,
+        "lat": -23.4792355,
+        "lng": -46.5820181,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria e Restaurante Donna Adriana",
+        "rating": 4.3,
+        "reviews": 1367,
+        "sponsored": false,
+        "lat": -23.4242901,
+        "lng": -46.5240926,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "gym": [
+      {
+        "name": "Skyfit Academia 24h - Guarulhos",
+        "rating": 4.8,
+        "reviews": 740,
+        "sponsored": false,
+        "lat": -23.456368,
+        "lng": -46.5320637,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Neofit - Musculação | Lutas | Dança | Academia Completa em Guarulhos",
+        "rating": 4.8,
+        "reviews": 855,
+        "sponsored": false,
+        "lat": -23.459692,
+        "lng": -46.566652,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Gaviões 24h - Vila Galvão",
+        "rating": 4.4,
+        "reviews": 756,
+        "sponsored": false,
+        "lat": -23.461153,
+        "lng": -46.562272,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "JT Academia Guarulhos",
+        "rating": 4.9,
+        "reviews": 529,
+        "sponsored": false,
+        "lat": -23.4305498,
+        "lng": -46.55264,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "ACADEMIA FOUR SWIM",
+        "rating": 4.4,
+        "reviews": 360,
+        "sponsored": false,
+        "lat": -23.4499654,
+        "lng": -46.5565832,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia RW FIT - Guarulhos",
+        "rating": 4.9,
+        "reviews": 146,
+        "sponsored": false,
+        "lat": -23.4684042,
+        "lng": -46.5200787,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Skyfit Academia - Vila Augusta - Guarulhos SP",
+        "rating": 4.7,
+        "reviews": 429,
+        "sponsored": false,
+        "lat": -23.4827183,
+        "lng": -46.5456829,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Avante FIT",
+        "rating": 4.6,
+        "reviews": 319,
+        "sponsored": false,
+        "lat": -23.4481701,
+        "lng": -46.5298921,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "SKYFIT ACADEMIA PIMENTAS - GUARULHOS SP",
+        "rating": 4.8,
+        "reviews": 919,
+        "sponsored": false,
+        "lat": -23.4490236,
+        "lng": -46.4075565,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia Gaviões 24h - Vila Augusta",
+        "rating": 3.9,
+        "reviews": 57,
+        "sponsored": false,
+        "lat": -23.4803609,
+        "lng": -46.5397304,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Cali'S Academia em Guarulhos - Fit Dance - Muay Thai - Zumba - Step - Strong Nation",
+        "rating": 4.7,
+        "reviews": 408,
+        "sponsored": false,
+        "lat": -23.4404423,
+        "lng": -46.5586617,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Sanches Sports",
+        "rating": 4.6,
+        "reviews": 514,
+        "sponsored": false,
+        "lat": -23.4688464,
+        "lng": -46.5392437,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Bodytech - Parque Shopping Maia",
+        "rating": 4.3,
+        "reviews": 105,
+        "sponsored": false,
+        "lat": -23.4432637,
+        "lng": -46.5400782,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Winners Company",
+        "rating": 4.3,
+        "reviews": 726,
+        "sponsored": false,
+        "lat": -23.458929,
+        "lng": -46.5368366,
+        "withinBounds": true,
+        "primaryCategory": "Personal trainer"
+      },
+      {
+        "name": "Academia Smart Fit - Av. Guarulhos",
+        "rating": 4.6,
+        "reviews": 630,
+        "sponsored": false,
+        "lat": -23.4916305,
+        "lng": -46.5451126,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Up Fitness Academia Guarulhos",
+        "rating": 5,
+        "reviews": 40,
+        "sponsored": false,
+        "lat": -23.4503822,
+        "lng": -46.5413322,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Acqua & Move Academia",
+        "rating": 4.7,
+        "reviews": 293,
+        "sponsored": false,
+        "lat": -23.465316,
+        "lng": -46.5481995,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Ativa Fit",
+        "rating": 4.6,
+        "reviews": 198,
+        "sponsored": false,
+        "lat": -23.4476088,
+        "lng": -46.5023249,
+        "withinBounds": true,
+        "primaryCategory": "Personal Trainer para mulheres"
+      },
+      {
+        "name": "Academia Motiva - Vila Fátima",
+        "rating": 4.6,
+        "reviews": 314,
+        "sponsored": false,
+        "lat": -23.4596276,
+        "lng": -46.5112206,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Smart Fit - Transguarulhense",
+        "rating": 4.6,
+        "reviews": 669,
+        "sponsored": false,
+        "lat": -23.4401011,
+        "lng": -46.540477,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      }
+    ],
+    "pet": [
+      {
+        "name": "Petz Guarulhos",
+        "rating": 4.4,
+        "reviews": 6137,
+        "sponsored": false,
+        "lat": -23.4896302,
+        "lng": -46.5460504,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Bosque Maia",
+        "rating": 4.5,
+        "reviews": 8098,
+        "sponsored": false,
+        "lat": -23.4602291,
+        "lng": -46.5286628,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Cobasi Guarulhos",
+        "rating": 4.5,
+        "reviews": 4773,
+        "sponsored": false,
+        "lat": -23.4766396,
+        "lng": -46.5299899,
+        "withinBounds": true,
+        "primaryCategory": "Loja de suprimentos para animais de estimação"
+      },
+      {
+        "name": "Pille Pet",
+        "rating": 4,
+        "reviews": 611,
+        "sponsored": false,
+        "lat": -23.4423924,
+        "lng": -46.5397569,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pets e Flora Pet Shop",
+        "rating": 4.8,
+        "reviews": 790,
+        "sponsored": false,
+        "lat": -23.414325,
+        "lng": -46.4554627,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Cajuru",
+        "rating": 4.6,
+        "reviews": 529,
+        "sponsored": false,
+        "lat": -23.4419997,
+        "lng": -46.5486939,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet shop dog de luxo",
+        "rating": 5,
+        "reviews": 351,
+        "sponsored": false,
+        "lat": -23.4395646,
+        "lng": -46.547927,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Zoori Pet Cocaia - Guarulhos",
+        "rating": 4.9,
+        "reviews": 416,
+        "sponsored": false,
+        "lat": -23.4450664,
+        "lng": -46.5211255,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Guarulhos Pimentas",
+        "rating": 4.5,
+        "reviews": 1170,
+        "sponsored": false,
+        "lat": -23.4413026,
+        "lng": -46.4074824,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Zoori Pet Lavras - Guarulhos",
+        "rating": 4.9,
+        "reviews": 384,
+        "sponsored": false,
+        "lat": -23.4048344,
+        "lng": -46.4350385,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Quero Banho / Centro Veterinário Macedo",
+        "rating": 4.5,
+        "reviews": 351,
+        "sponsored": false,
+        "lat": -23.4588383,
+        "lng": -46.5160572,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Dog's Day - Guarulhos",
+        "rating": 4.6,
+        "reviews": 148,
+        "sponsored": false,
+        "lat": -23.4543809,
+        "lng": -46.5391691,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Cobasi",
+        "rating": 4.6,
+        "reviews": 3569,
+        "sponsored": false,
+        "lat": -23.4644713,
+        "lng": -46.5300877,
+        "withinBounds": true,
+        "primaryCategory": "Loja de suprimentos para animais de estimação"
+      },
+      {
+        "name": "Lucali Pet Shop",
+        "rating": 4.2,
+        "reviews": 134,
+        "sponsored": false,
+        "lat": -23.448374,
+        "lng": -46.5394445,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Palmira",
+        "rating": 4.9,
+        "reviews": 131,
+        "sponsored": false,
+        "lat": -23.4338272,
+        "lng": -46.5657598,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Bionicão",
+        "rating": 4.6,
+        "reviews": 336,
+        "sponsored": false,
+        "lat": -23.4450466,
+        "lng": -46.5482298,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Home Pet Shop",
+        "rating": 5,
+        "reviews": 76,
+        "sponsored": false,
+        "lat": -23.4420263,
+        "lng": -46.526437,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Guarupet Store",
+        "rating": 4.4,
+        "reviews": 105,
+        "sponsored": false,
+        "lat": -23.4508451,
+        "lng": -46.474715,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Rações Renata - Timóteo Penteado",
+        "rating": 4.6,
+        "reviews": 1329,
+        "sponsored": false,
+        "lat": -23.4557587,
+        "lng": -46.5589475,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Consultório Veterinário E Pet Shop Bem Estar Animal",
+        "rating": 5,
+        "reviews": 89,
+        "sponsored": false,
+        "lat": -23.4797684,
+        "lng": -46.5413325,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Cantina Giovanni",
+        "rating": 4.7,
+        "reviews": 6037,
+        "sponsored": false,
+        "lat": -23.4557428,
+        "lng": -46.5588144,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vicino - Cucina & Vino",
+        "rating": 4.6,
+        "reviews": 1482,
+        "sponsored": false,
+        "lat": -23.4557847,
+        "lng": -46.5330002,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria Bosque Maia: Massa, Risoto, Vinho, Guarulhos SP",
+        "rating": 4.7,
+        "reviews": 1218,
+        "sponsored": false,
+        "lat": -23.4638996,
+        "lng": -46.5273789,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria: Massas, Risoto, Pizza, Vinho, Aeroporto, Guarulhos, SP",
+        "rating": 4.7,
+        "reviews": 942,
+        "sponsored": false,
+        "lat": -23.4263484,
+        "lng": -46.4831365,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Nonnetto Ristorante | Restaurante | Gastronomia Contemporânea | Restaurante Italiano",
+        "rating": 4.6,
+        "reviews": 644,
+        "sponsored": false,
+        "lat": -23.460364,
+        "lng": -46.52953,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Pecorino Bar & Trattoria Internacional Shopping: Massa, Risoto, Vinho, Guarulhos",
+        "rating": 4.6,
+        "reviews": 1451,
+        "sponsored": false,
+        "lat": -23.4881295,
+        "lng": -46.5491937,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina D'Elia",
+        "rating": 4.5,
+        "reviews": 711,
+        "sponsored": false,
+        "lat": -23.4836923,
+        "lng": -46.5422893,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "VÈRO PARMÊ - A Casa do Parmegiana",
+        "rating": 4.5,
+        "reviews": 1281,
+        "sponsored": false,
+        "lat": -23.4614857,
+        "lng": -46.5221758,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Ateliê das Massas",
+        "rating": 4.6,
+        "reviews": 665,
+        "sponsored": false,
+        "lat": -23.4712842,
+        "lng": -46.5370774,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Nuovo Vino",
+        "rating": 4.4,
+        "reviews": 2585,
+        "sponsored": false,
+        "lat": -23.47191,
+        "lng": -46.5449279,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Olive Garden (GRU Terminal 3)",
+        "rating": 4.5,
+        "reviews": 2463,
+        "sponsored": false,
+        "lat": -23.4244702,
+        "lng": -46.4772046,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      }
+    ],
+    "buffet": [
+      {
+        "name": "Forno & Fogão Grill",
+        "rating": 4.4,
+        "reviews": 2549,
+        "sponsored": false,
+        "lat": -23.4575171,
+        "lng": -46.5309282,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Divino Fogão - Aeroporto de Guarulhos",
+        "rating": 4.9,
+        "reviews": 3508,
+        "sponsored": false,
+        "lat": -23.4222931,
+        "lng": -46.4822245,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Coco Bambu Guarulhos",
+        "rating": 4.9,
+        "reviews": 30554,
+        "sponsored": false,
+        "lat": -23.4435829,
+        "lng": -46.539884,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante Cozinha Mineira",
+        "rating": 4.2,
+        "reviews": 1522,
+        "sponsored": false,
+        "lat": -23.4555886,
+        "lng": -46.5272341,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Finnus",
+        "rating": 4.5,
+        "reviews": 591,
+        "sponsored": false,
+        "lat": -23.4684247,
+        "lng": -46.5298113,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Appety Grill",
+        "rating": 4.7,
+        "reviews": 101,
+        "sponsored": false,
+        "lat": -23.467748,
+        "lng": -46.521186,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Guaru Center",
+        "rating": 4.3,
+        "reviews": 2939,
+        "sponsored": false,
+        "lat": -23.4723195,
+        "lng": -46.5269762,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Viola Brasileira Churrascaria",
+        "rating": 4.2,
+        "reviews": 994,
+        "sponsored": false,
+        "lat": -23.4667449,
+        "lng": -46.5275923,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "D'Brescia Churrascaria | Guarulhos",
+        "rating": 4.4,
+        "reviews": 1763,
+        "sponsored": false,
+        "lat": -23.4732338,
+        "lng": -46.5267653,
+        "withinBounds": true,
+        "primaryCategory": "Churrascaria"
+      },
+      {
+        "name": "Restaurante Potiguar — Self Service em Guarulhos",
+        "rating": 4.5,
+        "reviews": 1074,
+        "sponsored": false,
+        "lat": -23.4661688,
+        "lng": -46.4808208,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "PONTO KA RESTAURANTE",
+        "rating": 4.4,
+        "reviews": 3165,
+        "sponsored": false,
+        "lat": -23.4605109,
+        "lng": -46.5282539,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Flashback Restaurante",
+        "rating": 4.6,
+        "reviews": 639,
+        "sponsored": false,
+        "lat": -23.459484,
+        "lng": -46.5363625,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Ráscal - GRU",
+        "rating": 4.4,
+        "reviews": 1510,
+        "sponsored": false,
+        "lat": -23.4244675,
+        "lng": -46.4764306,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Armazém do Sabor",
+        "rating": 4.4,
+        "reviews": 645,
+        "sponsored": false,
+        "lat": -23.4546121,
+        "lng": -46.566027,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Malagueta | Centro de Guarulhos SP",
+        "rating": 4.6,
+        "reviews": 104,
+        "sponsored": false,
+        "lat": -23.4672889,
+        "lng": -46.5278089,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Churrascaria Bom Clima",
+        "rating": 4.5,
+        "reviews": 3074,
+        "sponsored": false,
+        "lat": -23.4564653,
+        "lng": -46.5185952,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Fazendinha",
+        "rating": 4.5,
+        "reviews": 1016,
+        "sponsored": false,
+        "lat": -23.4682167,
+        "lng": -46.5273649,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Dom Olivares Restaurante",
+        "rating": 4.7,
+        "reviews": 261,
+        "sponsored": false,
+        "lat": -23.4673311,
+        "lng": -46.5421572,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante e Churrascaria Vila Moreira",
+        "rating": 4.6,
+        "reviews": 1136,
+        "sponsored": false,
+        "lat": -23.4728533,
+        "lng": -46.5350898,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Kilokura",
+        "rating": 4.5,
+        "reviews": 195,
+        "sponsored": false,
+        "lat": -23.4836722,
+        "lng": -46.5505619,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Dig For Fashion Guarulhos - Brechó",
+        "rating": 4.8,
+        "reviews": 1168,
+        "sponsored": false,
+        "lat": -23.4552642,
+        "lng": -46.5341464,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Les Amis",
+        "rating": 4.3,
+        "reviews": 186,
+        "sponsored": false,
+        "lat": -23.4593798,
+        "lng": -46.5259464,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Peça Rara Guarulhos",
+        "rating": 4.7,
+        "reviews": 196,
+        "sponsored": false,
+        "lat": -23.4628542,
+        "lng": -46.5309542,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Burguesinha Brechó Chic - Guarulhos Renato Maia",
+        "rating": 4.6,
+        "reviews": 151,
+        "sponsored": false,
+        "lat": -23.456069,
+        "lng": -46.5273495,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Casa de Vó Brechó",
+        "rating": 4.6,
+        "reviews": 29,
+        "sponsored": false,
+        "lat": -23.4631873,
+        "lng": -46.5224159,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Dona Antônia",
+        "rating": 4.6,
+        "reviews": 38,
+        "sponsored": false,
+        "lat": -23.4602294,
+        "lng": -46.5343262,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Luz d'Aurora",
+        "rating": 4.6,
+        "reviews": 54,
+        "sponsored": false,
+        "lat": -23.4686695,
+        "lng": -46.5258188,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Megabazar",
+        "rating": 4.3,
+        "reviews": 60,
+        "sponsored": false,
+        "lat": -23.4643603,
+        "lng": -46.5425741,
+        "withinBounds": true,
+        "primaryCategory": "Bazar"
+      },
+      {
+        "name": "Brechó D'a Garimpo",
+        "rating": 5,
+        "reviews": 41,
+        "sponsored": false,
+        "lat": -23.4062828,
+        "lng": -46.4542449,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Bazar São Paulo",
+        "rating": 4.5,
+        "reviews": 62,
+        "sponsored": false,
+        "lat": -23.474599,
+        "lng": -46.544995,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Presentes"
+      },
+      {
+        "name": "Brechó - Vila Galvão",
+        "rating": 5,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -23.4605945,
+        "lng": -46.5650636,
+        "withinBounds": true,
+        "primaryCategory": "Loja"
+      },
+      {
+        "name": "Mania de Brecho",
+        "rating": 5,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -23.4414428,
+        "lng": -46.5172509,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "San Brechó",
+        "rating": 3.4,
+        "reviews": 20,
+        "sponsored": false,
+        "lat": -23.4686131,
+        "lng": -46.5444272,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Ateliê De Costura Coisa De Mulher",
+        "rating": 5,
+        "reviews": 2,
+        "sponsored": false,
+        "lat": -23.4387565,
+        "lng": -46.5255039,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Juju Bazar - Centro Guarulhos",
+        "rating": 4.5,
+        "reviews": 1188,
+        "sponsored": false,
+        "lat": -23.4697109,
+        "lng": -46.5309497,
+        "withinBounds": true,
+        "primaryCategory": "Bazar"
+      },
+      {
+        "name": "Brechó Jaque Desapego",
+        "rating": 5,
+        "reviews": 8,
+        "sponsored": false,
+        "lat": -23.4511199,
+        "lng": -46.5413795,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Blue Brecho",
+        "rating": 5,
+        "reviews": 15,
+        "sponsored": false,
+        "lat": -23.4673932,
+        "lng": -46.5282657,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Maria Valentina",
+        "rating": 4.7,
+        "reviews": 13,
+        "sponsored": false,
+        "lat": -23.465655,
+        "lng": -46.5521715,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó da Família",
+        "rating": 5,
+        "reviews": 26,
+        "sponsored": false,
+        "lat": -23.4638881,
+        "lng": -46.5191013,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Burguesinha Brechó Chic - Vila Augusta - Guarulhos",
+        "rating": 3.9,
+        "reviews": 15,
+        "sponsored": false,
+        "lat": -23.4803341,
+        "lng": -46.5401139,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      }
+    ],
+    "vegan": [
+      {
+        "name": "Veg Food Life",
+        "rating": 4.3,
+        "reviews": 16,
+        "sponsored": false,
+        "lat": -23.4424664,
+        "lng": -46.5213546,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Panveg",
+        "rating": 4.5,
+        "reviews": 26,
+        "sponsored": false,
+        "lat": -23.4300067,
+        "lng": -46.5406338,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Umami Gastronomia - Cozinha Vegetariana Inclusiva",
+        "rating": 4.9,
+        "reviews": 184,
+        "sponsored": false,
+        "lat": -23.5258659,
+        "lng": -46.5484188,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Restaurante Oka e Vegan",
+        "rating": 5,
+        "reviews": 93,
+        "sponsored": false,
+        "lat": -23.3209408,
+        "lng": -46.5871305,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Veganaassoo",
+        "rating": 5,
+        "reviews": 105,
+        "sponsored": false,
+        "lat": -23.4855408,
+        "lng": -46.4864023,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Vegana Cozinha Orgânica",
+        "rating": 4.9,
+        "reviews": 53,
+        "sponsored": false,
+        "lat": -23.4980548,
+        "lng": -46.4319547,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Coco Bambu Guarulhos",
+        "rating": 4.9,
+        "reviews": 30554,
+        "sponsored": false,
+        "lat": -23.4435829,
+        "lng": -46.539884,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -23.53,
+      -23.3,
+      -46.6,
+      -46.38
+    ],
+    "outsideRemoved": 13,
+    "withoutCoordinates": 0
+  }
+}

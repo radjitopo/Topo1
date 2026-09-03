@@ -1,0 +1,2858 @@
+{
+  "city": "Maceió",
+  "state": "AL",
+  "categories": {
+    "pizza": [
+      {
+        "name": "Grazie Pizza Napoletana",
+        "rating": 4.7,
+        "reviews": 2242,
+        "sponsored": false,
+        "lat": -9.6694035,
+        "lng": -35.7155664,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Del Popollo",
+        "rating": 4.7,
+        "reviews": 3621,
+        "sponsored": false,
+        "lat": -9.6112321,
+        "lng": -35.7204014,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Armazém Guimarães",
+        "rating": 4.6,
+        "reviews": 4561,
+        "sponsored": false,
+        "lat": -9.6509736,
+        "lng": -35.7012313,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "SantOrégano Pizzas e Massas",
+        "rating": 4.6,
+        "reviews": 3117,
+        "sponsored": false,
+        "lat": -9.5799989,
+        "lng": -35.658493,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Stella Cantina & Pizzaria",
+        "rating": 4.5,
+        "reviews": 3465,
+        "sponsored": false,
+        "lat": -9.6476185,
+        "lng": -35.704965,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Massarella",
+        "rating": 4.6,
+        "reviews": 2540,
+        "sponsored": false,
+        "lat": -9.6501839,
+        "lng": -35.7016241,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Calabria Massas e Pizzaria",
+        "rating": 4.8,
+        "reviews": 5602,
+        "sponsored": false,
+        "lat": -9.6587928,
+        "lng": -35.7141201,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Margheritta",
+        "rating": 4.4,
+        "reviews": 1136,
+        "sponsored": false,
+        "lat": -9.6574824,
+        "lng": -35.7063741,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Piccola Villa",
+        "rating": 4.6,
+        "reviews": 1205,
+        "sponsored": false,
+        "lat": -9.6632902,
+        "lng": -35.7090966,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Forneto",
+        "rating": 4.7,
+        "reviews": 1035,
+        "sponsored": false,
+        "lat": -9.6509974,
+        "lng": -35.7034256,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Piratas Picui",
+        "rating": 4.5,
+        "reviews": 5269,
+        "sponsored": false,
+        "lat": -9.6107051,
+        "lng": -35.7199078,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mercatto Pizzaria Farol",
+        "rating": 4.4,
+        "reviews": 5754,
+        "sponsored": false,
+        "lat": -9.6436709,
+        "lng": -35.7350653,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Saloon",
+        "rating": 4.4,
+        "reviews": 4138,
+        "sponsored": false,
+        "lat": -9.6132145,
+        "lng": -35.7178001,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Coconut Maceió",
+        "rating": 4.4,
+        "reviews": 2739,
+        "sponsored": false,
+        "lat": -9.6700344,
+        "lng": -35.7146491,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Piratas Picui",
+        "rating": 4.5,
+        "reviews": 6487,
+        "sponsored": false,
+        "lat": -9.6465375,
+        "lng": -35.7048223,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Sabatelli Pizza & Arte",
+        "rating": 4.7,
+        "reviews": 530,
+        "sponsored": false,
+        "lat": -9.6141126,
+        "lng": -35.7309326,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Timo Pizza e Vinho",
+        "rating": 4.6,
+        "reviews": 510,
+        "sponsored": false,
+        "lat": -9.6516938,
+        "lng": -35.7051004,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Fornaria e General - Jatiúca",
+        "rating": 4.4,
+        "reviews": 1280,
+        "sponsored": false,
+        "lat": -9.6491965,
+        "lng": -35.702219,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Super Pizza Ponta Verde",
+        "rating": 4.2,
+        "reviews": 2581,
+        "sponsored": false,
+        "lat": -9.6562157,
+        "lng": -35.6988103,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Vicenza Pizzaria na Pajuçara",
+        "rating": 4.8,
+        "reviews": 340,
+        "sponsored": false,
+        "lat": -9.6665004,
+        "lng": -35.7134924,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "New Hakata",
+        "rating": 4.4,
+        "reviews": 4969,
+        "sponsored": false,
+        "lat": -9.6484921,
+        "lng": -35.7052806,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Ina Sushi Bar",
+        "rating": 4.6,
+        "reviews": 696,
+        "sponsored": false,
+        "lat": -9.6532193,
+        "lng": -35.706051,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Naya Culinária Oriental | Sushi",
+        "rating": 4.9,
+        "reviews": 1354,
+        "sponsored": false,
+        "lat": -9.6503846,
+        "lng": -35.7107081,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Hatsu Izakaya",
+        "rating": 4.5,
+        "reviews": 281,
+        "sponsored": false,
+        "lat": -9.6605013,
+        "lng": -35.7002798,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tmaki Express",
+        "rating": 4.9,
+        "reviews": 401,
+        "sponsored": false,
+        "lat": -9.6587141,
+        "lng": -35.705884,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "UMI Sushi",
+        "rating": 4.4,
+        "reviews": 111,
+        "sponsored": false,
+        "lat": -9.66089,
+        "lng": -35.7046012,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Maki Izakaya",
+        "rating": 4.6,
+        "reviews": 56,
+        "sponsored": false,
+        "lat": -9.6270633,
+        "lng": -35.6972278,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tooka do Sushi | Unidade Jatiúca",
+        "rating": 4.6,
+        "reviews": 155,
+        "sponsored": false,
+        "lat": -9.6510021,
+        "lng": -35.7084608,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Yama Creative Sushi",
+        "rating": 4.7,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -9.6510186,
+        "lng": -35.7058535,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Brandão Exclusive Sushi",
+        "rating": 4.7,
+        "reviews": 656,
+        "sponsored": false,
+        "lat": -9.6505028,
+        "lng": -35.7014258,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Sushi Mizú Maceió",
+        "rating": 4.2,
+        "reviews": 517,
+        "sponsored": false,
+        "lat": -9.612626,
+        "lng": -35.7179817,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tooka do Sushi | Unidade Gruta",
+        "rating": 4.7,
+        "reviews": 345,
+        "sponsored": false,
+        "lat": -9.6166547,
+        "lng": -35.7386037,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Tepan Oriental",
+        "rating": 4.3,
+        "reviews": 1464,
+        "sponsored": false,
+        "lat": -9.6485627,
+        "lng": -35.7155446,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Chefranco Sushi Bar",
+        "rating": 4.6,
+        "reviews": 987,
+        "sponsored": false,
+        "lat": -9.6510363,
+        "lng": -35.7108561,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      },
+      {
+        "name": "Temakeria.com Maceio não recomendado",
+        "rating": 4.1,
+        "reviews": 232,
+        "sponsored": false,
+        "lat": -9.6428722,
+        "lng": -35.7054172,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Xian Ponta Verde",
+        "rating": 4.6,
+        "reviews": 1739,
+        "sponsored": false,
+        "lat": -9.6623261,
+        "lng": -35.6980899,
+        "withinBounds": true,
+        "primaryCategory": "Chinesa"
+      },
+      {
+        "name": "Masayuki Cozinha Oriental | Comida Japonesa e Chinesa",
+        "rating": 4.3,
+        "reviews": 89,
+        "sponsored": false,
+        "lat": -9.5442359,
+        "lng": -35.788832,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Yakimaki sushi Serraria",
+        "rating": 4.6,
+        "reviews": 75,
+        "sponsored": false,
+        "lat": -9.6021978,
+        "lng": -35.7215878,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Hiroshi Maceió",
+        "rating": 5,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -9.6408857,
+        "lng": -35.7207973,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "One Sushi Pajuçara",
+        "rating": 3.9,
+        "reviews": 116,
+        "sponsored": false,
+        "lat": -9.6648301,
+        "lng": -35.7101847,
+        "withinBounds": true,
+        "primaryCategory": "Sushi"
+      }
+    ],
+    "burger": [
+      {
+        "name": "Rustik Hamburgueria",
+        "rating": 4.4,
+        "reviews": 3122,
+        "sponsored": false,
+        "lat": -9.6653293,
+        "lng": -35.7108618,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "The Rooster Burger & Beer | Ponta Verde | Maceió",
+        "rating": 4.7,
+        "reviews": 676,
+        "sponsored": false,
+        "lat": -9.6584476,
+        "lng": -35.709798,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Mostardas Hamburgueria",
+        "rating": 4.4,
+        "reviews": 1077,
+        "sponsored": false,
+        "lat": -9.6489008,
+        "lng": -35.7008219,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Santo Burger N Beer",
+        "rating": 4.7,
+        "reviews": 354,
+        "sponsored": false,
+        "lat": -9.6514432,
+        "lng": -35.7058399,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "The Black Beef",
+        "rating": 4.6,
+        "reviews": 2292,
+        "sponsored": false,
+        "lat": -9.6514072,
+        "lng": -35.7023048,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Gama Burguer - Hamburgueria Artesanal Maceió",
+        "rating": 4.5,
+        "reviews": 322,
+        "sponsored": false,
+        "lat": -9.632619,
+        "lng": -35.7010031,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Rocca Burger",
+        "rating": 4.9,
+        "reviews": 717,
+        "sponsored": false,
+        "lat": -9.6510714,
+        "lng": -35.7040326,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Handy Burger Maceió - Hamburgueria Artesanal",
+        "rating": 4.9,
+        "reviews": 313,
+        "sponsored": false,
+        "lat": -9.6578477,
+        "lng": -35.7113298,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Getz Burger",
+        "rating": 4.7,
+        "reviews": 246,
+        "sponsored": false,
+        "lat": -9.626532,
+        "lng": -35.7328901,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "HUM!PAJU",
+        "rating": 4.5,
+        "reviews": 601,
+        "sponsored": false,
+        "lat": -9.6694341,
+        "lng": -35.715099,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Passaporte Gaúcho",
+        "rating": 4.5,
+        "reviews": 2396,
+        "sponsored": false,
+        "lat": -9.6530268,
+        "lng": -35.7327106,
+        "withinBounds": true,
+        "primaryCategory": "Lanchonete"
+      },
+      {
+        "name": "Sports Burger",
+        "rating": 4.7,
+        "reviews": 189,
+        "sponsored": false,
+        "lat": -9.6545424,
+        "lng": -35.701398,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Smasher Burger | Hamburgueria Ponta Verde",
+        "rating": 4.5,
+        "reviews": 107,
+        "sponsored": false,
+        "lat": -9.6596201,
+        "lng": -35.7022379,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Alpha Burgers - Hamburgueria artesanal em Maceió",
+        "rating": 4.8,
+        "reviews": 172,
+        "sponsored": false,
+        "lat": -9.6146875,
+        "lng": -35.7173128,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "O Rei do Hambúrguer - Centro",
+        "rating": 4.4,
+        "reviews": 60,
+        "sponsored": false,
+        "lat": -9.6641741,
+        "lng": -35.7396338,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Western Burger - Cidade Universitária",
+        "rating": 4.7,
+        "reviews": 340,
+        "sponsored": false,
+        "lat": -9.535151,
+        "lng": -35.7823734,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Artesão Chef - hamburgueria Maceió",
+        "rating": 4.8,
+        "reviews": 62,
+        "sponsored": false,
+        "lat": -9.6563855,
+        "lng": -35.7381502,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Marisas Burger | Hamburgueria Artesanal em Maceió",
+        "rating": 4.8,
+        "reviews": 87,
+        "sponsored": false,
+        "lat": -9.6607234,
+        "lng": -35.7040836,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Leãozinho",
+        "rating": 4.5,
+        "reviews": 1420,
+        "sponsored": false,
+        "lat": -9.6515011,
+        "lng": -35.7329786,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Sr. D Burger & Fries",
+        "rating": 4.9,
+        "reviews": 159,
+        "sponsored": false,
+        "lat": -9.6140695,
+        "lng": -35.7229486,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Marô Restaurante",
+        "rating": 4.8,
+        "reviews": 2910,
+        "sponsored": false,
+        "lat": -9.6685581,
+        "lng": -35.7142982,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante Janga Praia",
+        "rating": 4.9,
+        "reviews": 15759,
+        "sponsored": false,
+        "lat": -9.6631816,
+        "lng": -35.7055713,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "Bodega do Sertão",
+        "rating": 4.6,
+        "reviews": 20868,
+        "sponsored": false,
+        "lat": -9.6639925,
+        "lng": -35.7105865,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Divina Gula",
+        "rating": 4.6,
+        "reviews": 6173,
+        "sponsored": false,
+        "lat": -9.64634,
+        "lng": -35.704787,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Cheiro da Terra",
+        "rating": 4.6,
+        "reviews": 7004,
+        "sponsored": false,
+        "lat": -9.6730022,
+        "lng": -35.7169766,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sal e Brasa – Maceió",
+        "rating": 4.5,
+        "reviews": 14525,
+        "sponsored": false,
+        "lat": -9.6380136,
+        "lng": -35.698671,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Coconut Maceió",
+        "rating": 4.4,
+        "reviews": 2739,
+        "sponsored": false,
+        "lat": -9.6700344,
+        "lng": -35.7146491,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Maria Antonieta",
+        "rating": 4.7,
+        "reviews": 2919,
+        "sponsored": false,
+        "lat": -9.6509228,
+        "lng": -35.700968,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Imperador dos Camarões",
+        "rating": 4.6,
+        "reviews": 4104,
+        "sponsored": false,
+        "lat": -9.6651959,
+        "lng": -35.7099725,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Lopana",
+        "rating": 4.5,
+        "reviews": 17825,
+        "sponsored": false,
+        "lat": -9.6638128,
+        "lng": -35.7039438,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Massagueirinha Ponta Verde",
+        "rating": 4.5,
+        "reviews": 7328,
+        "sponsored": false,
+        "lat": -9.6568634,
+        "lng": -35.7087685,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "759 Parrilla",
+        "rating": 4.7,
+        "reviews": 4042,
+        "sponsored": false,
+        "lat": -9.6675637,
+        "lng": -35.7133698,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Micale",
+        "rating": 4.9,
+        "reviews": 2923,
+        "sponsored": false,
+        "lat": -9.6627516,
+        "lng": -35.6969145,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Restaurante Casa de Mainha | Self Service | Pajuçara",
+        "rating": 4.5,
+        "reviews": 8449,
+        "sponsored": false,
+        "lat": -9.6634979,
+        "lng": -35.7086601,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Vero Pasta & Vino",
+        "rating": 4.7,
+        "reviews": 1226,
+        "sponsored": false,
+        "lat": -9.6693684,
+        "lng": -35.715627,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Akuaba",
+        "rating": 4.6,
+        "reviews": 3502,
+        "sponsored": false,
+        "lat": -9.6451027,
+        "lng": -35.7014179,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "Restaurante Wanchako",
+        "rating": 4.5,
+        "reviews": 1659,
+        "sponsored": false,
+        "lat": -9.6559197,
+        "lng": -35.6999124,
+        "withinBounds": true,
+        "primaryCategory": "Peruana"
+      },
+      {
+        "name": "Restaurante Filé do Zezé",
+        "rating": 4.4,
+        "reviews": 3621,
+        "sponsored": false,
+        "lat": -9.6492374,
+        "lng": -35.702717,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Terraço Restaurante e Cervejaria",
+        "rating": 4.2,
+        "reviews": 4862,
+        "sponsored": false,
+        "lat": -9.6708079,
+        "lng": -35.7159009,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Don Capri",
+        "rating": 4.9,
+        "reviews": 3979,
+        "sponsored": false,
+        "lat": -9.6450212,
+        "lng": -35.7020662,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Lopana",
+        "rating": 4.5,
+        "reviews": 17825,
+        "sponsored": false,
+        "lat": -9.6638128,
+        "lng": -35.7039438,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Kanoa Beach Bar",
+        "rating": 4.3,
+        "reviews": 8826,
+        "sponsored": false,
+        "lat": -9.66385,
+        "lng": -35.705785,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Alagoana Choperia",
+        "rating": 4.2,
+        "reviews": 2991,
+        "sponsored": false,
+        "lat": -9.6514161,
+        "lng": -35.7029634,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Boteco Lugar Nenhum",
+        "rating": 4.5,
+        "reviews": 1994,
+        "sponsored": false,
+        "lat": -9.6539166,
+        "lng": -35.7078126,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Maikai",
+        "rating": 4.4,
+        "reviews": 5802,
+        "sponsored": false,
+        "lat": -9.649225,
+        "lng": -35.7049008,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Conversa Botequim",
+        "rating": 4.4,
+        "reviews": 1500,
+        "sponsored": false,
+        "lat": -9.6495101,
+        "lng": -35.7040201,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "El Lugar Bar",
+        "rating": 4.4,
+        "reviews": 1515,
+        "sponsored": false,
+        "lat": -9.651648,
+        "lng": -35.7079774,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Milk Beach",
+        "rating": 4.5,
+        "reviews": 1574,
+        "sponsored": false,
+        "lat": -9.5845848,
+        "lng": -35.6617147,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Boteco da Bola | Bar e Restaurante em Maceió",
+        "rating": 4.3,
+        "reviews": 1198,
+        "sponsored": false,
+        "lat": -9.6495903,
+        "lng": -35.7050313,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Lorde Nelson Rest Pub - Bar de Metal 🤘",
+        "rating": 4.6,
+        "reviews": 1264,
+        "sponsored": false,
+        "lat": -9.6694661,
+        "lng": -35.728982,
+        "withinBounds": true,
+        "primaryCategory": "Pub irlandês"
+      },
+      {
+        "name": "Estaiada Choperia & Drinkeria",
+        "rating": 4.4,
+        "reviews": 256,
+        "sponsored": false,
+        "lat": -9.658334,
+        "lng": -35.709465,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Orákulo Chopperia",
+        "rating": 4.4,
+        "reviews": 1472,
+        "sponsored": false,
+        "lat": -9.669469,
+        "lng": -35.7262233,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Rex Bar",
+        "rating": 4.3,
+        "reviews": 1173,
+        "sponsored": false,
+        "lat": -9.6707971,
+        "lng": -35.7253172,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Tanque Cheio",
+        "rating": 4.4,
+        "reviews": 1913,
+        "sponsored": false,
+        "lat": -9.5711162,
+        "lng": -35.7418859,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "The Public House",
+        "rating": 4.3,
+        "reviews": 158,
+        "sponsored": false,
+        "lat": -9.6615749,
+        "lng": -35.7039588,
+        "withinBounds": true,
+        "primaryCategory": "Pub irlandês"
+      },
+      {
+        "name": "Clube do Pirata",
+        "rating": 4.1,
+        "reviews": 1915,
+        "sponsored": false,
+        "lat": -9.663788,
+        "lng": -35.7029304,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Toca do Calango Gastrobar da Fábrica",
+        "rating": 4.7,
+        "reviews": 279,
+        "sponsored": false,
+        "lat": -9.669818,
+        "lng": -35.7220675,
+        "withinBounds": true,
+        "primaryCategory": "Gastropub"
+      },
+      {
+        "name": "Barraca Bar Brasil",
+        "rating": 4.2,
+        "reviews": 1090,
+        "sponsored": false,
+        "lat": -9.5934067,
+        "lng": -35.6703195,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Botequim da Poica",
+        "rating": 4.3,
+        "reviews": 1399,
+        "sponsored": false,
+        "lat": -9.6584768,
+        "lng": -35.7099287,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Jesse James",
+        "rating": 4.7,
+        "reviews": 611,
+        "sponsored": false,
+        "lat": -9.6593622,
+        "lng": -35.7071287,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Barbearia Velha Guarda | Barbearia em Maceió",
+        "rating": 5,
+        "reviews": 1330,
+        "sponsored": false,
+        "lat": -9.6428649,
+        "lng": -35.7089978,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Arena Barbearia | Jatiúca",
+        "rating": 4.5,
+        "reviews": 356,
+        "sponsored": false,
+        "lat": -9.6504455,
+        "lng": -35.7050764,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Look Barber Club | Barbearia em Maceió",
+        "rating": 5,
+        "reviews": 221,
+        "sponsored": false,
+        "lat": -9.6500316,
+        "lng": -35.7147767,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia La’Gringa - A melhor Barbearia na Jatiuca",
+        "rating": 4.8,
+        "reviews": 128,
+        "sponsored": false,
+        "lat": -9.6510678,
+        "lng": -35.7022455,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Cactu's | Jatiúca",
+        "rating": 4.9,
+        "reviews": 589,
+        "sponsored": false,
+        "lat": -9.653221,
+        "lng": -35.7128277,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Premium",
+        "rating": 5,
+        "reviews": 180,
+        "sponsored": false,
+        "lat": -9.6565068,
+        "lng": -35.7122572,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Amsterdã Rocha Barbearia 24 Horas",
+        "rating": 4.7,
+        "reviews": 174,
+        "sponsored": false,
+        "lat": -9.64882,
+        "lng": -35.700837,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Alagoana",
+        "rating": 4.9,
+        "reviews": 452,
+        "sponsored": false,
+        "lat": -9.6457325,
+        "lng": -35.7337543,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barong Barbearia",
+        "rating": 5,
+        "reviews": 574,
+        "sponsored": false,
+        "lat": -9.6495893,
+        "lng": -35.7066239,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Dom Miguel Barbearia",
+        "rating": 4.9,
+        "reviews": 151,
+        "sponsored": false,
+        "lat": -9.645804,
+        "lng": -35.7110751,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Don Feitosa",
+        "rating": 4.8,
+        "reviews": 231,
+        "sponsored": false,
+        "lat": -9.6347008,
+        "lng": -35.7260547,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Cavallero Barbearia",
+        "rating": 4.8,
+        "reviews": 143,
+        "sponsored": false,
+        "lat": -9.6536745,
+        "lng": -35.702832,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Karol Barbearia",
+        "rating": 5,
+        "reviews": 85,
+        "sponsored": false,
+        "lat": -9.6527486,
+        "lng": -35.7051071,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbuto Barbearia - Salvador Lyra",
+        "rating": 4.9,
+        "reviews": 200,
+        "sponsored": false,
+        "lat": -9.5635293,
+        "lng": -35.7462618,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Sertão Barbearia - Maceió",
+        "rating": 4.7,
+        "reviews": 100,
+        "sponsored": false,
+        "lat": -9.6676568,
+        "lng": -35.7443634,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "SR. ABROBA BARBEARIA",
+        "rating": 5,
+        "reviews": 207,
+        "sponsored": false,
+        "lat": -9.6504225,
+        "lng": -35.7083165,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Amsterdã Rocha Barbearia Ponta Verde",
+        "rating": 4.7,
+        "reviews": 100,
+        "sponsored": false,
+        "lat": -9.6590517,
+        "lng": -35.7050601,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Marques Barbearia | Maceió",
+        "rating": 5,
+        "reviews": 152,
+        "sponsored": false,
+        "lat": -9.6598503,
+        "lng": -35.7141565,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Boukk Barbearia | Jatiúca",
+        "rating": 5,
+        "reviews": 213,
+        "sponsored": false,
+        "lat": -9.6513834,
+        "lng": -35.7154986,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "BARBEARIA EMPODERE & ESTÉTICA",
+        "rating": 5,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -9.6614077,
+        "lng": -35.7093704,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Salão Bela Face | Corte com Visagismo, Salão de beleza em Maceió, Alagoas",
+        "rating": 4.9,
+        "reviews": 176,
+        "sponsored": false,
+        "lat": -9.5774204,
+        "lng": -35.7671999,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Bloom - Salão de Beleza e Barbearia",
+        "rating": 4.9,
+        "reviews": 294,
+        "sponsored": false,
+        "lat": -9.6600922,
+        "lng": -35.7043063,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Fios.",
+        "rating": 4.8,
+        "reviews": 138,
+        "sponsored": false,
+        "lat": -9.658747,
+        "lng": -35.7048885,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Patroas da beleza",
+        "rating": 5,
+        "reviews": 133,
+        "sponsored": false,
+        "lat": -9.6503465,
+        "lng": -35.7083106,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza SPA Aretha Afarelli",
+        "rating": 4.9,
+        "reviews": 193,
+        "sponsored": false,
+        "lat": -9.6499783,
+        "lng": -35.7143333,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Mutari Cabeleireiros",
+        "rating": 4.9,
+        "reviews": 258,
+        "sponsored": false,
+        "lat": -9.6564264,
+        "lng": -35.709045,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Turali - Salão de Beleza em Maceió",
+        "rating": 4.9,
+        "reviews": 139,
+        "sponsored": false,
+        "lat": -9.6510461,
+        "lng": -35.7118883,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "UNIQUE - Salão de Beleza.",
+        "rating": 4.5,
+        "reviews": 205,
+        "sponsored": false,
+        "lat": -9.6612068,
+        "lng": -35.7035609,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Stilo Salão de Beleza",
+        "rating": 4.8,
+        "reviews": 84,
+        "sponsored": false,
+        "lat": -9.6569432,
+        "lng": -35.7027939,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Espaço 172 - Maceió",
+        "rating": 4.7,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -9.651058,
+        "lng": -35.7041228,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Paulo Ariza Cabeleireiro",
+        "rating": 4.9,
+        "reviews": 80,
+        "sponsored": false,
+        "lat": -9.6509835,
+        "lng": -35.71294,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Fios Beauty Studio",
+        "rating": 4.3,
+        "reviews": 365,
+        "sponsored": false,
+        "lat": -9.627301,
+        "lng": -35.6991129,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Mega Mechas - Salão de Beleza em Maceió/AL",
+        "rating": 4.8,
+        "reviews": 12,
+        "sponsored": false,
+        "lat": -9.6686981,
+        "lng": -35.7156392,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Thiago Lyra Cabeleireiros",
+        "rating": 4.9,
+        "reviews": 184,
+        "sponsored": false,
+        "lat": -9.5514107,
+        "lng": -35.7474708,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Club Hair",
+        "rating": 4.4,
+        "reviews": 233,
+        "sponsored": false,
+        "lat": -9.6478794,
+        "lng": -35.7156945,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Allong Mega Hair - by Silvania Mega Hair | Fabricação, Aplicação e Manutenção de Mega Hair | Cabeleireira e Salão de Beleza",
+        "rating": 4.9,
+        "reviews": 122,
+        "sponsored": false,
+        "lat": -9.6597801,
+        "lng": -35.7140826,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Ariel Cabelo e Corpo",
+        "rating": 4.9,
+        "reviews": 152,
+        "sponsored": false,
+        "lat": -9.650992,
+        "lng": -35.713492,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Negra Beleza",
+        "rating": 4.8,
+        "reviews": 92,
+        "sponsored": false,
+        "lat": -9.5676273,
+        "lng": -35.7482013,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza Olga Falcão",
+        "rating": 4.6,
+        "reviews": 81,
+        "sponsored": false,
+        "lat": -9.6627181,
+        "lng": -35.700431,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão Spa da Beleza | Especialista em Perucas e Próteses Capilares",
+        "rating": 4.7,
+        "reviews": 38,
+        "sponsored": false,
+        "lat": -9.6602837,
+        "lng": -35.7086938,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Vila Rosa Café",
+        "rating": 4.7,
+        "reviews": 934,
+        "sponsored": false,
+        "lat": -9.6625543,
+        "lng": -35.7053855,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Le Brulé | Cafeteria",
+        "rating": 4.5,
+        "reviews": 1036,
+        "sponsored": false,
+        "lat": -9.6608333,
+        "lng": -35.7002778,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "Urban Coffee - Cafeteria & Bistrô",
+        "rating": 4.7,
+        "reviews": 297,
+        "sponsored": false,
+        "lat": -9.6569882,
+        "lng": -35.7026208,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Le Grain",
+        "rating": 4.6,
+        "reviews": 194,
+        "sponsored": false,
+        "lat": -9.6576995,
+        "lng": -35.7049832,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Villa Coffee | Cafeteria Bistrô",
+        "rating": 4.8,
+        "reviews": 252,
+        "sponsored": false,
+        "lat": -9.6538517,
+        "lng": -35.7079445,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café da Vó",
+        "rating": 4.5,
+        "reviews": 141,
+        "sponsored": false,
+        "lat": -9.667572,
+        "lng": -35.7430021,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Farol",
+        "rating": 4.8,
+        "reviews": 256,
+        "sponsored": false,
+        "lat": -9.663284,
+        "lng": -35.7327875,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Witz Coffee Cafeteria",
+        "rating": 5,
+        "reviews": 385,
+        "sponsored": false,
+        "lat": -9.6539506,
+        "lng": -35.7088093,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Kopi Coffee Store",
+        "rating": 4.6,
+        "reviews": 1041,
+        "sponsored": false,
+        "lat": -9.6617946,
+        "lng": -35.7017925,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café da Vila",
+        "rating": 4.4,
+        "reviews": 962,
+        "sponsored": false,
+        "lat": -9.6622284,
+        "lng": -35.7042548,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Lê Croá Café e Viennoiserie",
+        "rating": 4.6,
+        "reviews": 134,
+        "sponsored": false,
+        "lat": -9.6520161,
+        "lng": -35.7064005,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café do Porto",
+        "rating": 4.4,
+        "reviews": 562,
+        "sponsored": false,
+        "lat": -9.6571927,
+        "lng": -35.7382249,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café do Sobrado",
+        "rating": 4.6,
+        "reviews": 194,
+        "sponsored": false,
+        "lat": -9.6711564,
+        "lng": -35.7169903,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Palato Café",
+        "rating": 4.6,
+        "reviews": 599,
+        "sponsored": false,
+        "lat": -9.6559689,
+        "lng": -35.705394,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "The Coffeetown & C.O",
+        "rating": 4.7,
+        "reviews": 195,
+        "sponsored": false,
+        "lat": -9.6276766,
+        "lng": -35.6992105,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      },
+      {
+        "name": "Café com Amor Maceió",
+        "rating": 5,
+        "reviews": 277,
+        "sponsored": false,
+        "lat": -9.6300403,
+        "lng": -35.7183994,
+        "withinBounds": true,
+        "primaryCategory": "Loja de cestas de presente"
+      },
+      {
+        "name": "Ruca Confeitaria",
+        "rating": 4.7,
+        "reviews": 2504,
+        "sponsored": false,
+        "lat": -9.6626155,
+        "lng": -35.7028875,
+        "withinBounds": true,
+        "primaryCategory": "Doces"
+      },
+      {
+        "name": "RDV Roasters",
+        "rating": 4.8,
+        "reviews": 156,
+        "sponsored": false,
+        "lat": -9.6344174,
+        "lng": -35.699763,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café da Gruta",
+        "rating": 4.6,
+        "reviews": 511,
+        "sponsored": false,
+        "lat": -9.624892,
+        "lng": -35.729724,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Mais1Café - Jatiúca",
+        "rating": 4.7,
+        "reviews": 46,
+        "sponsored": false,
+        "lat": -9.6552413,
+        "lng": -35.7025904,
+        "withinBounds": true,
+        "primaryCategory": "Espresso bar"
+      }
+    ],
+    "gym": [
+      {
+        "name": "Academia CAM",
+        "rating": 4.9,
+        "reviews": 921,
+        "sponsored": false,
+        "lat": -9.660717,
+        "lng": -35.746464,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Top Fitness & Wellness",
+        "rating": 4.7,
+        "reviews": 212,
+        "sponsored": false,
+        "lat": -9.6670923,
+        "lng": -35.7132911,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Prem1um Fitness",
+        "rating": 4.7,
+        "reviews": 267,
+        "sponsored": false,
+        "lat": -9.6633527,
+        "lng": -35.7094348,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia Elitech Fit Graciliano Ramos",
+        "rating": 4.7,
+        "reviews": 383,
+        "sponsored": false,
+        "lat": -9.5536761,
+        "lng": -35.7549294,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Formafit Club",
+        "rating": 4.7,
+        "reviews": 158,
+        "sponsored": false,
+        "lat": -9.6487679,
+        "lng": -35.7042441,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Smart Fit - Palato",
+        "rating": 4.6,
+        "reviews": 1438,
+        "sponsored": false,
+        "lat": -9.6455632,
+        "lng": -35.7341281,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia em Maceió - MG Fitness",
+        "rating": 4.8,
+        "reviews": 27,
+        "sponsored": false,
+        "lat": -9.6543062,
+        "lng": -35.7593672,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Space Gym - Academia em Maceió, AL",
+        "rating": 4.8,
+        "reviews": 73,
+        "sponsored": false,
+        "lat": -9.5437628,
+        "lng": -35.7519598,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Bluefit Maceió - Unidade Ponta Verde",
+        "rating": 4.4,
+        "reviews": 331,
+        "sponsored": false,
+        "lat": -9.6556085,
+        "lng": -35.7059047,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Club Fitness",
+        "rating": 4.6,
+        "reviews": 241,
+        "sponsored": false,
+        "lat": -9.6120016,
+        "lng": -35.7271432,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "GYM FIT MCZ",
+        "rating": 4.6,
+        "reviews": 115,
+        "sponsored": false,
+        "lat": -9.6361158,
+        "lng": -35.7119802,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "BlueFit Maceió Farol",
+        "rating": 4.7,
+        "reviews": 143,
+        "sponsored": false,
+        "lat": -9.6357759,
+        "lng": -35.7338065,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Acquativ Academia",
+        "rating": 4.6,
+        "reviews": 312,
+        "sponsored": false,
+        "lat": -9.6527199,
+        "lng": -35.7077666,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Boxx Fit Academia",
+        "rating": 4.7,
+        "reviews": 209,
+        "sponsored": false,
+        "lat": -9.6290444,
+        "lng": -35.7164991,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia MFIT | Academia em Maceió",
+        "rating": 4.5,
+        "reviews": 103,
+        "sponsored": false,
+        "lat": -9.6446291,
+        "lng": -35.7057528,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Fit Arena",
+        "rating": 4.7,
+        "reviews": 330,
+        "sponsored": false,
+        "lat": -9.6164875,
+        "lng": -35.7368469,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Fisico 10",
+        "rating": 4.6,
+        "reviews": 58,
+        "sponsored": false,
+        "lat": -9.6479205,
+        "lng": -35.710417,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia HG Fitness",
+        "rating": 4.6,
+        "reviews": 221,
+        "sponsored": false,
+        "lat": -9.627726,
+        "lng": -35.740379,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Maceió",
+        "rating": 4.7,
+        "reviews": 60,
+        "sponsored": false,
+        "lat": -9.6475185,
+        "lng": -35.7000075,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Gold Fit Academia",
+        "rating": 4.7,
+        "reviews": 142,
+        "sponsored": false,
+        "lat": -9.672502,
+        "lng": -35.7473167,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "Panetutti Pães e Doceria Jatiúca",
+        "rating": 4.9,
+        "reviews": 1334,
+        "sponsored": false,
+        "lat": -9.6445272,
+        "lng": -35.7047534,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Via Pão",
+        "rating": 4.5,
+        "reviews": 3668,
+        "sponsored": false,
+        "lat": -9.5852482,
+        "lng": -35.7329159,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panaderia Ponta Verde",
+        "rating": 4.4,
+        "reviews": 3021,
+        "sponsored": false,
+        "lat": -9.6565572,
+        "lng": -35.7013526,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação Alteza",
+        "rating": 4.3,
+        "reviews": 1271,
+        "sponsored": false,
+        "lat": -9.6681432,
+        "lng": -35.7149048,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação Alteza",
+        "rating": 4.5,
+        "reviews": 1413,
+        "sponsored": false,
+        "lat": -9.6612177,
+        "lng": -35.6992898,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panetutti Pães e Doceria Ponta Verde",
+        "rating": 4.9,
+        "reviews": 979,
+        "sponsored": false,
+        "lat": -9.659442,
+        "lng": -35.707575,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Bello Pane Delicatesse",
+        "rating": 4.2,
+        "reviews": 415,
+        "sponsored": false,
+        "lat": -9.6535103,
+        "lng": -35.7036429,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Pão da Arte",
+        "rating": 4.5,
+        "reviews": 1228,
+        "sponsored": false,
+        "lat": -9.6120164,
+        "lng": -35.727165,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Ferreti Panificação e Restaurante",
+        "rating": 4.5,
+        "reviews": 1378,
+        "sponsored": false,
+        "lat": -9.6510572,
+        "lng": -35.711093,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "B.LEM Padaria Portuguesa - Maceió",
+        "rating": 4.8,
+        "reviews": 28,
+        "sponsored": false,
+        "lat": -9.6211851,
+        "lng": -35.7366146,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Grano Padaria",
+        "rating": 4.3,
+        "reviews": 361,
+        "sponsored": false,
+        "lat": -9.6625533,
+        "lng": -35.7018782,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "A Padaria",
+        "rating": 4.3,
+        "reviews": 461,
+        "sponsored": false,
+        "lat": -9.6596161,
+        "lng": -35.7060013,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Ruca Confeitaria",
+        "rating": 4.7,
+        "reviews": 2504,
+        "sponsored": false,
+        "lat": -9.6626155,
+        "lng": -35.7028875,
+        "withinBounds": true,
+        "primaryCategory": "Doces"
+      },
+      {
+        "name": "Panificação Jaraguá Prime - Ponta Verde",
+        "rating": 4.8,
+        "reviews": 218,
+        "sponsored": false,
+        "lat": -9.6623495,
+        "lng": -35.7064403,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação Marquesa",
+        "rating": 4.7,
+        "reviews": 1043,
+        "sponsored": false,
+        "lat": -9.6603579,
+        "lng": -35.7192516,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação Pão de Trigo",
+        "rating": 4.5,
+        "reviews": 344,
+        "sponsored": false,
+        "lat": -9.6075345,
+        "lng": -35.7233354,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação Brasília",
+        "rating": 4.6,
+        "reviews": 246,
+        "sponsored": false,
+        "lat": -9.6617249,
+        "lng": -35.7339126,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Lucca Padaria artesanal",
+        "rating": 4.9,
+        "reviews": 38,
+        "sponsored": false,
+        "lat": -9.6578787,
+        "lng": -35.7066511,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação & Conveniência Belo",
+        "rating": 4.7,
+        "reviews": 204,
+        "sponsored": false,
+        "lat": -9.5787272,
+        "lng": -35.7536679,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Panificação José de Alencar",
+        "rating": 4.3,
+        "reviews": 222,
+        "sponsored": false,
+        "lat": -9.6485346,
+        "lng": -35.7372732,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "pet": [
+      {
+        "name": "Scalare",
+        "rating": 4.4,
+        "reviews": 3300,
+        "sponsored": false,
+        "lat": -9.6487492,
+        "lng": -35.7154432,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Rei Dog Pet Shop",
+        "rating": 4.3,
+        "reviews": 688,
+        "sponsored": false,
+        "lat": -9.6531737,
+        "lng": -35.7129905,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Ponta Verde",
+        "rating": 4.6,
+        "reviews": 656,
+        "sponsored": false,
+        "lat": -9.6592205,
+        "lng": -35.7007713,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Mundo Alagoas Pet - Clínica Veterinária e Petshop.",
+        "rating": 4.6,
+        "reviews": 322,
+        "sponsored": false,
+        "lat": -9.6170178,
+        "lng": -35.703713,
+        "withinBounds": true,
+        "primaryCategory": "Veterinário"
+      },
+      {
+        "name": "Mondo Pet",
+        "rating": 4.5,
+        "reviews": 183,
+        "sponsored": false,
+        "lat": -9.6550277,
+        "lng": -35.7200037,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Milly PetShop | Veterinário, Banho e Tosa | Pet Shop em Maceio-AL",
+        "rating": 4.8,
+        "reviews": 50,
+        "sponsored": false,
+        "lat": -9.593531,
+        "lng": -35.724759,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Nosso Pet",
+        "rating": 4.9,
+        "reviews": 81,
+        "sponsored": false,
+        "lat": -9.6211529,
+        "lng": -35.732246,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Shop Animal",
+        "rating": 4.6,
+        "reviews": 65,
+        "sponsored": false,
+        "lat": -9.6620153,
+        "lng": -35.7516102,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Petz Parque Shopping Maceió",
+        "rating": 4.4,
+        "reviews": 256,
+        "sponsored": false,
+        "lat": -9.6276766,
+        "lng": -35.6992105,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "CF Pet Shop",
+        "rating": 4.9,
+        "reviews": 108,
+        "sponsored": false,
+        "lat": -9.5882927,
+        "lng": -35.7296764,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Rei Dog Pet Shop (Farol)",
+        "rating": 4.4,
+        "reviews": 83,
+        "sponsored": false,
+        "lat": -9.6378338,
+        "lng": -35.7356369,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Sweet Pet’s Maceió",
+        "rating": 5,
+        "reviews": 44,
+        "sponsored": false,
+        "lat": -9.6587026,
+        "lng": -35.7163698,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Mania Pet",
+        "rating": 4.5,
+        "reviews": 135,
+        "sponsored": false,
+        "lat": -9.6155322,
+        "lng": -35.7165866,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Shopping Pet Maceio",
+        "rating": 4.6,
+        "reviews": 180,
+        "sponsored": false,
+        "lat": -9.6350731,
+        "lng": -35.703097,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet's World - Clinica Veterinária em Mangabeiras, Maceió AL",
+        "rating": 4.6,
+        "reviews": 98,
+        "sponsored": false,
+        "lat": -9.6456442,
+        "lng": -35.7127393,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "PET SHOW PET SHOP",
+        "rating": 4.8,
+        "reviews": 86,
+        "sponsored": false,
+        "lat": -9.6499256,
+        "lng": -35.7116946,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Super Bacana Pet Center",
+        "rating": 4.7,
+        "reviews": 142,
+        "sponsored": false,
+        "lat": -9.6565636,
+        "lng": -35.7022934,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Cobasi Fernandes Lima AL - Maceió",
+        "rating": 4.4,
+        "reviews": 152,
+        "sponsored": false,
+        "lat": -9.6461618,
+        "lng": -35.7339724,
+        "withinBounds": true,
+        "primaryCategory": "Loja de suprimentos para animais de estimação"
+      },
+      {
+        "name": "Planeta Animal 24h - Clínica Veterinária e Petshop",
+        "rating": 4.5,
+        "reviews": 142,
+        "sponsored": false,
+        "lat": -9.6477079,
+        "lng": -35.7127645,
+        "withinBounds": true,
+        "primaryCategory": "Serviço veterinário de emergência"
+      },
+      {
+        "name": "Show de Bicho Estética Animal e Pet Shop",
+        "rating": 4.9,
+        "reviews": 16,
+        "sponsored": false,
+        "lat": -9.6525433,
+        "lng": -35.7008718,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Maria Antonieta",
+        "rating": 4.7,
+        "reviews": 2919,
+        "sponsored": false,
+        "lat": -9.6509228,
+        "lng": -35.700968,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vero Pasta & Vino",
+        "rating": 4.7,
+        "reviews": 1226,
+        "sponsored": false,
+        "lat": -9.6693684,
+        "lng": -35.715627,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vero Café, Pasta & Vino",
+        "rating": 4.7,
+        "reviews": 527,
+        "sponsored": false,
+        "lat": -9.6612678,
+        "lng": -35.7028471,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Don Capri",
+        "rating": 4.9,
+        "reviews": 3979,
+        "sponsored": false,
+        "lat": -9.6450212,
+        "lng": -35.7020662,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Basilico Ristorante Italiano",
+        "rating": 4.7,
+        "reviews": 771,
+        "sponsored": false,
+        "lat": -9.6508521,
+        "lng": -35.7027663,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Massarella",
+        "rating": 4.6,
+        "reviews": 2540,
+        "sponsored": false,
+        "lat": -9.6501839,
+        "lng": -35.7016241,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Micale",
+        "rating": 4.9,
+        "reviews": 2923,
+        "sponsored": false,
+        "lat": -9.6627516,
+        "lng": -35.6969145,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Piatto Cucina - Comida Italiana",
+        "rating": 4.7,
+        "reviews": 1081,
+        "sponsored": false,
+        "lat": -9.6513235,
+        "lng": -35.7071535,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Parmegianno Iate Pajuçara",
+        "rating": 4.4,
+        "reviews": 16098,
+        "sponsored": false,
+        "lat": -9.6645103,
+        "lng": -35.7094945,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Vero Parque",
+        "rating": 4.9,
+        "reviews": 142,
+        "sponsored": false,
+        "lat": -9.6276766,
+        "lng": -35.6992105,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Cantina Italiana Basilico Pizza ao Talho",
+        "rating": 4.8,
+        "reviews": 175,
+        "sponsored": false,
+        "lat": -9.6513602,
+        "lng": -35.7080219,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Ital'in House - Maceió",
+        "rating": 4.6,
+        "reviews": 21,
+        "sponsored": false,
+        "lat": -9.6708669,
+        "lng": -35.7174769,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Empório Millano - Vinhos, Massas, Risotos, Tábuas de Frios",
+        "rating": 4.6,
+        "reviews": 233,
+        "sponsored": false,
+        "lat": -9.6429012,
+        "lng": -35.7096513,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Restaurante Toscana",
+        "rating": 4.6,
+        "reviews": 508,
+        "sponsored": false,
+        "lat": -9.6253503,
+        "lng": -35.7309083,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Il Riso",
+        "rating": 4.6,
+        "reviews": 212,
+        "sponsored": false,
+        "lat": -9.6695801,
+        "lng": -35.7152543,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Peça Rara Brechó - Maceió",
+        "rating": 4.9,
+        "reviews": 314,
+        "sponsored": false,
+        "lat": -9.6532574,
+        "lng": -35.703052,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Arte Norma",
+        "rating": 4.9,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -9.6140161,
+        "lng": -35.7199122,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "MISSIMPATIA BRECHÓ",
+        "rating": 5,
+        "reviews": 12,
+        "sponsored": false,
+        "lat": -9.6499666,
+        "lng": -35.7142433,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Bergamota Brechó",
+        "rating": 4.9,
+        "reviews": 41,
+        "sponsored": false,
+        "lat": -9.6563897,
+        "lng": -35.7003918,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Chez Moi Brechó",
+        "rating": 5,
+        "reviews": 6,
+        "sponsored": false,
+        "lat": -9.5862911,
+        "lng": -35.6639431,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó Desapegue",
+        "rating": 4,
+        "reviews": 4,
+        "sponsored": false,
+        "lat": -9.6545373,
+        "lng": -35.7405069,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      },
+      {
+        "name": "Charme em Movimento - Brechó",
+        "rating": 5,
+        "reviews": 7,
+        "sponsored": false,
+        "lat": -9.6437573,
+        "lng": -35.7142407,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Peça Rara Brechó Serraria Maceió",
+        "rating": 3.6,
+        "reviews": 21,
+        "sponsored": false,
+        "lat": -9.6016553,
+        "lng": -35.7226693,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó De Luxo",
+        "rating": 4.7,
+        "reviews": 3,
+        "sponsored": false,
+        "lat": -9.5448139,
+        "lng": -35.7513436,
+        "withinBounds": true,
+        "primaryCategory": "Loja de descontos"
+      },
+      {
+        "name": "Segunda Chance Loja",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -9.6627764,
+        "lng": -35.6996871,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó dos Restaurantes",
+        "rating": 4.8,
+        "reviews": 33,
+        "sponsored": false,
+        "lat": -9.6541314,
+        "lng": -35.7091517,
+        "withinBounds": true,
+        "primaryCategory": "Loja de mobílias para lojas e mercados"
+      },
+      {
+        "name": "Renove Baby",
+        "rating": 4.6,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -9.6535272,
+        "lng": -35.7379869,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Bazar e Brechó da Gigi",
+        "rating": 5,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -9.5701734,
+        "lng": -35.7537317,
+        "withinBounds": true,
+        "primaryCategory": "Loja de Roupa"
+      },
+      {
+        "name": "Deus Provera Brechó",
+        "rating": 5,
+        "reviews": 2,
+        "sponsored": false,
+        "lat": -9.6542629,
+        "lng": -35.7101135,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brecho da Cil",
+        "rating": 5,
+        "reviews": 8,
+        "sponsored": false,
+        "lat": -9.6347524,
+        "lng": -35.7319149,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "RenoveLuxo",
+        "rating": 4.1,
+        "reviews": 7,
+        "sponsored": false,
+        "lat": -9.6536453,
+        "lng": -35.7380599,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "BRECHÓ DA SHEYSA L.G.M",
+        "rating": 5,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -9.5737043,
+        "lng": -35.8084398,
+        "withinBounds": true,
+        "primaryCategory": "Loja de roupas para jovens"
+      },
+      {
+        "name": "Brechó Pode’Rosas",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -9.5716096,
+        "lng": -35.7944116,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechozin",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -9.6677737,
+        "lng": -35.7168293,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó da Lara",
+        "rating": 5,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -9.6735726,
+        "lng": -35.7625209,
+        "withinBounds": true,
+        "primaryCategory": "Loja"
+      }
+    ],
+    "buffet": [
+      {
+        "name": "Restaurante Casa de Mainha | Self Service | Pajuçara",
+        "rating": 4.5,
+        "reviews": 8449,
+        "sponsored": false,
+        "lat": -9.6634979,
+        "lng": -35.7086601,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Bodega do Sertão",
+        "rating": 4.6,
+        "reviews": 20868,
+        "sponsored": false,
+        "lat": -9.6639925,
+        "lng": -35.7105865,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Casa de Mainha | Self Service | Jaraguá",
+        "rating": 4.5,
+        "reviews": 1274,
+        "sponsored": false,
+        "lat": -9.6721216,
+        "lng": -35.7234094,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Mariah Comedoria",
+        "rating": 4.7,
+        "reviews": 2302,
+        "sponsored": false,
+        "lat": -9.6226193,
+        "lng": -35.7374352,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Janga Maceió Shopping",
+        "rating": 4.9,
+        "reviews": 2528,
+        "sponsored": false,
+        "lat": -9.6479607,
+        "lng": -35.71432,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Mariah - Self Service & Tortaria",
+        "rating": 4.6,
+        "reviews": 942,
+        "sponsored": false,
+        "lat": -9.6633484,
+        "lng": -35.7406733,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Sal e Brasa – Maceió",
+        "rating": 4.5,
+        "reviews": 14525,
+        "sponsored": false,
+        "lat": -9.6380136,
+        "lng": -35.698671,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Cheiro da Terra",
+        "rating": 4.6,
+        "reviews": 7004,
+        "sponsored": false,
+        "lat": -9.6730022,
+        "lng": -35.7169766,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Sá Menina Restaurante",
+        "rating": 4.4,
+        "reviews": 1899,
+        "sponsored": false,
+        "lat": -9.6437327,
+        "lng": -35.7010026,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "ARAMÃ RESTAURANTE",
+        "rating": 5,
+        "reviews": 57,
+        "sponsored": false,
+        "lat": -9.6451593,
+        "lng": -35.7147343,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante por quilo"
+      },
+      {
+        "name": "Fogão Colonial",
+        "rating": 4.2,
+        "reviews": 460,
+        "sponsored": false,
+        "lat": -9.6647258,
+        "lng": -35.7383142,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Fogão Colonial",
+        "rating": 4.5,
+        "reviews": 423,
+        "sponsored": false,
+        "lat": -9.6659909,
+        "lng": -35.7116906,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante self Service Comida Caseira",
+        "rating": 4.6,
+        "reviews": 101,
+        "sponsored": false,
+        "lat": -9.6445465,
+        "lng": -35.7198791,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Marô Restaurante",
+        "rating": 4.8,
+        "reviews": 2910,
+        "sponsored": false,
+        "lat": -9.6685581,
+        "lng": -35.7142982,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Evenir Self-Service",
+        "rating": 4.7,
+        "reviews": 90,
+        "sponsored": false,
+        "lat": -9.6441692,
+        "lng": -35.7115976,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Kommo",
+        "rating": 4.4,
+        "reviews": 444,
+        "sponsored": false,
+        "lat": -9.6634681,
+        "lng": -35.7381217,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Mestre Cuca Restaurante",
+        "rating": 4.3,
+        "reviews": 1112,
+        "sponsored": false,
+        "lat": -9.6571675,
+        "lng": -35.7025739,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Janga Parque Shopping",
+        "rating": 4.8,
+        "reviews": 1651,
+        "sponsored": false,
+        "lat": -9.6273485,
+        "lng": -35.698853,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Terraço Restaurante e Cervejaria",
+        "rating": 4.2,
+        "reviews": 4862,
+        "sponsored": false,
+        "lat": -9.6708079,
+        "lng": -35.7159009,
+        "withinBounds": true,
+        "primaryCategory": "Brasileira"
+      },
+      {
+        "name": "Restaurante Janga Praia",
+        "rating": 4.9,
+        "reviews": 15759,
+        "sponsored": false,
+        "lat": -9.6631816,
+        "lng": -35.7055713,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      }
+    ],
+    "vegan": [
+      {
+        "name": "Ser-Afim",
+        "rating": 4.8,
+        "reviews": 1151,
+        "sponsored": false,
+        "lat": -9.6617212,
+        "lng": -35.7058547,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Veggo",
+        "rating": 4.7,
+        "reviews": 10,
+        "sponsored": false,
+        "lat": -9.6421457,
+        "lng": -35.7326901,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Vegana top & light",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -9.573608,
+        "lng": -35.7596631,
+        "withinBounds": true,
+        "primaryCategory": "Vegana"
+      },
+      {
+        "name": "Moa Cozinha Natural",
+        "rating": 5,
+        "reviews": 26,
+        "sponsored": false,
+        "lat": -9.653862,
+        "lng": -35.7081275,
+        "withinBounds": true,
+        "primaryCategory": "Confeitaria"
+      },
+      {
+        "name": "Empório da lela",
+        "rating": 5,
+        "reviews": 9,
+        "sponsored": false,
+        "lat": -9.6592859,
+        "lng": -35.7103552,
+        "withinBounds": true,
+        "primaryCategory": "Vegetariana"
+      },
+      {
+        "name": "Saudável Sabor",
+        "rating": 4.8,
+        "reviews": 45,
+        "sponsored": false,
+        "lat": -9.6510668,
+        "lng": -35.7041737,
+        "withinBounds": true,
+        "primaryCategory": "Alimentação saudável"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -9.75,
+      -9.45,
+      -35.85,
+      -35.62
+    ],
+    "outsideRemoved": 0,
+    "withoutCoordinates": 0
+  }
+}

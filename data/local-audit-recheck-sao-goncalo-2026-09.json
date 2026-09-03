@@ -1,0 +1,2237 @@
+{
+  "city": "São Gonçalo",
+  "state": "RJ",
+  "categories": {
+    "restaurants": [
+      {
+        "name": "Rodobier",
+        "rating": 4.5,
+        "reviews": 927,
+        "sponsored": false,
+        "lat": -22.8244194,
+        "lng": -43.0491154,
+        "withinBounds": true,
+        "primaryCategory": "Bar informal"
+      },
+      {
+        "name": "Churrascaria Estrela Gaúcha",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -22.8309717,
+        "lng": -43.0028329,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Boteco do Manolo São Gonçalo Shopping",
+        "rating": 4.6,
+        "reviews": 3584,
+        "sponsored": false,
+        "lat": -22.8126791,
+        "lng": -43.0700789,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "A Casa Do Peixe",
+        "rating": 4.6,
+        "reviews": 412,
+        "sponsored": false,
+        "lat": -22.8239522,
+        "lng": -43.0765072,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Ristorante Pasta di Colina",
+        "rating": 4.8,
+        "reviews": 3865,
+        "sponsored": false,
+        "lat": -22.8204483,
+        "lng": -43.0466719,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Campestre Gourmet | Restaurante em São Gonçalo",
+        "rating": 4.5,
+        "reviews": 1432,
+        "sponsored": false,
+        "lat": -22.836464,
+        "lng": -43.0338731,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Frontera São Gonçalo",
+        "rating": 3.7,
+        "reviews": 4038,
+        "sponsored": false,
+        "lat": -22.8216091,
+        "lng": -43.0461366,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "O Camarão Arte Bia | São Gonçalo",
+        "rating": 4.4,
+        "reviews": 1610,
+        "sponsored": false,
+        "lat": -22.8127138,
+        "lng": -43.0705707,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "(Em breve uma nova Franquia Full House)",
+        "rating": 4.1,
+        "reviews": 1831,
+        "sponsored": false,
+        "lat": -22.8217791,
+        "lng": -43.0460633,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Restaurante Gigante Nordestino São Gonçalo Shopping",
+        "rating": 4.2,
+        "reviews": 377,
+        "sponsored": false,
+        "lat": -22.8144625,
+        "lng": -43.0709335,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Rodo Grill",
+        "rating": 4.5,
+        "reviews": 4876,
+        "sponsored": false,
+        "lat": -22.8249814,
+        "lng": -43.04945,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Point Do Bacalhau",
+        "rating": 4.5,
+        "reviews": 1374,
+        "sponsored": false,
+        "lat": -22.8146443,
+        "lng": -43.0368496,
+        "withinBounds": true,
+        "primaryCategory": "Lanchonete"
+      },
+      {
+        "name": "GARAGE BURGER ORIGINAL",
+        "rating": 4.7,
+        "reviews": 1326,
+        "sponsored": false,
+        "lat": -22.8301149,
+        "lng": -43.065713,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Restaurante Delícias do Sabor",
+        "rating": 4.6,
+        "reviews": 353,
+        "sponsored": false,
+        "lat": -22.8234254,
+        "lng": -43.0448006,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Varandão do Churrasco",
+        "rating": 4.6,
+        "reviews": 1259,
+        "sponsored": false,
+        "lat": -22.7947222,
+        "lng": -43.0066667,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Peixe do Betão",
+        "rating": 4.5,
+        "reviews": 1228,
+        "sponsored": false,
+        "lat": -22.8288852,
+        "lng": -43.0654066,
+        "withinBounds": true,
+        "primaryCategory": "Frutos do mar"
+      },
+      {
+        "name": "Mané São Gonçalo",
+        "rating": 4,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.8205392,
+        "lng": -43.0461123,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Restaurante Casa do Sushi",
+        "rating": 4.5,
+        "reviews": 788,
+        "sponsored": false,
+        "lat": -22.7939947,
+        "lng": -42.9837013,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Oliver's Pizza São Gonçalo",
+        "rating": 4.8,
+        "reviews": 4495,
+        "sponsored": false,
+        "lat": -22.8218306,
+        "lng": -43.0428264,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "pizza": [
+      {
+        "name": "Mamma Mia Pizzaria & Gourmet.",
+        "rating": 4.2,
+        "reviews": 1438,
+        "sponsored": false,
+        "lat": -22.8185441,
+        "lng": -43.0166077,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Zambujeiro Forneria",
+        "rating": 4.7,
+        "reviews": 703,
+        "sponsored": false,
+        "lat": -22.83,
+        "lng": -43.0677778,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Oliver's Pizza São Gonçalo",
+        "rating": 4.8,
+        "reviews": 4495,
+        "sponsored": false,
+        "lat": -22.8218306,
+        "lng": -43.0428264,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Frontera São Gonçalo",
+        "rating": 3.7,
+        "reviews": 4038,
+        "sponsored": false,
+        "lat": -22.8216091,
+        "lng": -43.0461366,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Rodo Grill",
+        "rating": 4.5,
+        "reviews": 4876,
+        "sponsored": false,
+        "lat": -22.8249814,
+        "lng": -43.04945,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "(Em breve uma nova Franquia Full House)",
+        "rating": 4.1,
+        "reviews": 1831,
+        "sponsored": false,
+        "lat": -22.8217791,
+        "lng": -43.0460633,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Tuttopizza",
+        "rating": 4.1,
+        "reviews": 502,
+        "sponsored": false,
+        "lat": -22.8298902,
+        "lng": -43.0674507,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Donna Toscana - São Gonçalo",
+        "rating": 4.6,
+        "reviews": 1198,
+        "sponsored": false,
+        "lat": -22.8261784,
+        "lng": -43.0113704,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Point do Bandeirantes",
+        "rating": 4.5,
+        "reviews": 761,
+        "sponsored": false,
+        "lat": -22.8363598,
+        "lng": -43.0613305,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Point do Pacheco",
+        "rating": 4.2,
+        "reviews": 1354,
+        "sponsored": false,
+        "lat": -22.823227,
+        "lng": -42.9726244,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Parmê",
+        "rating": 4.5,
+        "reviews": 3352,
+        "sponsored": false,
+        "lat": -22.8205812,
+        "lng": -43.0466551,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Sprezzatura São Gonçalo",
+        "rating": 4.5,
+        "reviews": 310,
+        "sponsored": false,
+        "lat": -22.8287829,
+        "lng": -43.0640322,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Prediletta - São Gonçalo",
+        "rating": 4.4,
+        "reviews": 142,
+        "sponsored": false,
+        "lat": -22.8563339,
+        "lng": -43.0207112,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Cantin Dos Braz Pizzaria | Forneria",
+        "rating": 4.9,
+        "reviews": 1399,
+        "sponsored": false,
+        "lat": -22.8142705,
+        "lng": -43.0543665,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Papito - loja Trindade",
+        "rating": 4.5,
+        "reviews": 408,
+        "sponsored": false,
+        "lat": -22.8135658,
+        "lng": -43.013264,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Coelhitos pizzaria",
+        "rating": 4.9,
+        "reviews": 485,
+        "sponsored": false,
+        "lat": -22.8862798,
+        "lng": -42.9799023,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria GodLike",
+        "rating": 4.8,
+        "reviews": 81,
+        "sponsored": false,
+        "lat": -22.8023407,
+        "lng": -43.0263117,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Pizzaria Boa Pedida",
+        "rating": 4.4,
+        "reviews": 149,
+        "sponsored": false,
+        "lat": -22.7951402,
+        "lng": -43.0170781,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "burger": [
+      {
+        "name": "Onix Burguer Artesanal | São Gonçalo",
+        "rating": 5,
+        "reviews": 2034,
+        "sponsored": false,
+        "lat": -22.8357618,
+        "lng": -43.0138372,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "GARAGE BURGER ORIGINAL",
+        "rating": 4.7,
+        "reviews": 1326,
+        "sponsored": false,
+        "lat": -22.8301149,
+        "lng": -43.065713,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Oficina Artesanal Hamburgueria",
+        "rating": 4.9,
+        "reviews": 2126,
+        "sponsored": false,
+        "lat": -22.816351,
+        "lng": -43.026371,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Invictos Burger - Hamburgueria São Gonçalo Artesanal",
+        "rating": 4.6,
+        "reviews": 805,
+        "sponsored": false,
+        "lat": -22.8075063,
+        "lng": -43.0174241,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Top Burguer Sg",
+        "rating": 4.8,
+        "reviews": 26,
+        "sponsored": false,
+        "lat": -22.8434863,
+        "lng": -43.0916012,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Salvador Burger",
+        "rating": 4.8,
+        "reviews": 202,
+        "sponsored": false,
+        "lat": -22.8258831,
+        "lng": -43.0818592,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Dicarne hamburgueria",
+        "rating": 4.5,
+        "reviews": 264,
+        "sponsored": false,
+        "lat": -22.8267399,
+        "lng": -43.0813588,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria do Cadu",
+        "rating": 4.6,
+        "reviews": 1794,
+        "sponsored": false,
+        "lat": -22.8056265,
+        "lng": -42.9653147,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "GT Hamburgueria Artesanal",
+        "rating": 4.8,
+        "reviews": 331,
+        "sponsored": false,
+        "lat": -22.8216412,
+        "lng": -42.9756684,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria e Açaiteria do NAL",
+        "rating": 4.5,
+        "reviews": 122,
+        "sponsored": false,
+        "lat": -22.8059027,
+        "lng": -42.9651771,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Planet Burger",
+        "rating": 4.9,
+        "reviews": 16,
+        "sponsored": false,
+        "lat": -22.805806,
+        "lng": -42.9946247,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Big Hambúrgueria Sg",
+        "rating": 4.6,
+        "reviews": 276,
+        "sponsored": false,
+        "lat": -22.847197,
+        "lng": -43.0864696,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Restaurante Delivery Pai & Filho | São Gonçalo | Hamburguer | Lanche",
+        "rating": 5,
+        "reviews": 61,
+        "sponsored": false,
+        "lat": -22.8101696,
+        "lng": -43.0232148,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Rota Caduzão Hamburgueria",
+        "rating": 4.8,
+        "reviews": 287,
+        "sponsored": false,
+        "lat": -22.8280426,
+        "lng": -43.0198503,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Bot Burger",
+        "rating": 4.8,
+        "reviews": 23,
+        "sponsored": false,
+        "lat": -22.8251574,
+        "lng": -43.0108263,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Burguer",
+        "rating": 5,
+        "reviews": 1,
+        "sponsored": false,
+        "lat": -22.8603179,
+        "lng": -43.0176625,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Dogburgão Lanches",
+        "rating": 4.7,
+        "reviews": 39,
+        "sponsored": false,
+        "lat": -22.8308053,
+        "lng": -43.0849285,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Mil Grau Burger",
+        "rating": 3.5,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.8626287,
+        "lng": -43.0078903,
+        "withinBounds": true,
+        "primaryCategory": "Hambúrguer"
+      },
+      {
+        "name": "Hamburgueria",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -22.8364355,
+        "lng": -42.9876083,
+        "withinBounds": true,
+        "primaryCategory": "Açougue"
+      }
+    ],
+    "sushi": [
+      {
+        "name": "Akiro Sushi - São Gonçalo",
+        "rating": 4.9,
+        "reviews": 1412,
+        "sponsored": false,
+        "lat": -22.8279564,
+        "lng": -43.0194138,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Restaurante Casa do Sushi",
+        "rating": 4.5,
+        "reviews": 788,
+        "sponsored": false,
+        "lat": -22.7939947,
+        "lng": -42.9837013,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Oishi",
+        "rating": 4.1,
+        "reviews": 1553,
+        "sponsored": false,
+        "lat": -22.8260784,
+        "lng": -43.0511322,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Le Sushi",
+        "rating": 4.5,
+        "reviews": 1687,
+        "sponsored": false,
+        "lat": -22.8228227,
+        "lng": -42.9725792,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Japin Sushi",
+        "rating": 4.2,
+        "reviews": 206,
+        "sponsored": false,
+        "lat": -22.820397,
+        "lng": -43.0372612,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "AIJO SUSHI",
+        "rating": 5,
+        "reviews": 23,
+        "sponsored": false,
+        "lat": -22.8187725,
+        "lng": -43.0152532,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Johin - Culinária Oriental",
+        "rating": 5,
+        "reviews": 37,
+        "sponsored": false,
+        "lat": -22.8251849,
+        "lng": -43.0107734,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Rodo Grill",
+        "rating": 4.5,
+        "reviews": 4876,
+        "sponsored": false,
+        "lat": -22.8249814,
+        "lng": -43.04945,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "JAP 40 DELIVERY",
+        "rating": 3.5,
+        "reviews": 39,
+        "sponsored": false,
+        "lat": -22.8288493,
+        "lng": -43.0608172,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Restaurante Mizuki",
+        "rating": 4.5,
+        "reviews": 2152,
+        "sponsored": false,
+        "lat": -22.830021,
+        "lng": -43.0684863,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      },
+      {
+        "name": "Hojiro Sushi Rio",
+        "rating": 4.6,
+        "reviews": 1040,
+        "sponsored": false,
+        "lat": -22.8187725,
+        "lng": -43.0152532,
+        "withinBounds": true,
+        "primaryCategory": "Japonesa"
+      }
+    ],
+    "beauty": [
+      {
+        "name": "Salão Stillu's – Salão de Beleza em São Gonçalo",
+        "rating": 4.7,
+        "reviews": 227,
+        "sponsored": false,
+        "lat": -22.8196112,
+        "lng": -43.0050897,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Salão de Beleza Marise Castro",
+        "rating": 4.6,
+        "reviews": 86,
+        "sponsored": false,
+        "lat": -22.8575648,
+        "lng": -43.0996441,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Luxo e Cor",
+        "rating": 4.9,
+        "reviews": 126,
+        "sponsored": false,
+        "lat": -22.8229091,
+        "lng": -43.0444413,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Z de Beleza",
+        "rating": 4.9,
+        "reviews": 111,
+        "sponsored": false,
+        "lat": -22.82485,
+        "lng": -42.9946284,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Maza Hair Studio",
+        "rating": 4.8,
+        "reviews": 22,
+        "sponsored": false,
+        "lat": -22.823949,
+        "lng": -43.0457669,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "It’s Salon SG",
+        "rating": 4.8,
+        "reviews": 215,
+        "sponsored": false,
+        "lat": -22.8245672,
+        "lng": -43.0492058,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Turquesa - Shopping São Gonçalo",
+        "rating": 4.9,
+        "reviews": 162,
+        "sponsored": false,
+        "lat": -22.8137143,
+        "lng": -43.0705831,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "TJ Espaço da Beleza",
+        "rating": 4.9,
+        "reviews": 255,
+        "sponsored": false,
+        "lat": -22.8073082,
+        "lng": -43.0172363,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Sabina Louback",
+        "rating": 5,
+        "reviews": 138,
+        "sponsored": false,
+        "lat": -22.8233026,
+        "lng": -43.0477585,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Espaço Vivi | Salão de beleza em São Gonçalo",
+        "rating": 4.6,
+        "reviews": 79,
+        "sponsored": false,
+        "lat": -22.8086572,
+        "lng": -43.0164722,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Cabeleireira Kátia Silene | Salão de Beleza e Dia da Noiva em São Gonçalo",
+        "rating": 5,
+        "reviews": 23,
+        "sponsored": false,
+        "lat": -22.8193272,
+        "lng": -43.0666384,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Príncipe Conceito",
+        "rating": 4.9,
+        "reviews": 321,
+        "sponsored": false,
+        "lat": -22.8405159,
+        "lng": -43.0903685,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Mega Hair Maison Chic",
+        "rating": 4.8,
+        "reviews": 213,
+        "sponsored": false,
+        "lat": -22.8250874,
+        "lng": -43.0104443,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Beleza São Gonçalo",
+        "rating": 4.4,
+        "reviews": 92,
+        "sponsored": false,
+        "lat": -22.8227153,
+        "lng": -43.0464829,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "TJ Espaço Da Beleza",
+        "rating": 4.8,
+        "reviews": 106,
+        "sponsored": false,
+        "lat": -22.8235583,
+        "lng": -43.0486962,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Monique Barcellos Penteado e Maquiagem",
+        "rating": 4.8,
+        "reviews": 194,
+        "sponsored": false,
+        "lat": -22.8250024,
+        "lng": -43.0477606,
+        "withinBounds": true,
+        "primaryCategory": "Estúdio de maquiagem"
+      },
+      {
+        "name": "Salles Salon",
+        "rating": 4.7,
+        "reviews": 233,
+        "sponsored": false,
+        "lat": -22.8232322,
+        "lng": -42.997357,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio Luciana Valente",
+        "rating": 4.8,
+        "reviews": 84,
+        "sponsored": false,
+        "lat": -22.8353203,
+        "lng": -43.0123726,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Regis Salão de Beleza",
+        "rating": 4.5,
+        "reviews": 238,
+        "sponsored": false,
+        "lat": -22.8228763,
+        "lng": -42.9761468,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      },
+      {
+        "name": "Studio de beleza Jouse Marins",
+        "rating": 4.9,
+        "reviews": 38,
+        "sponsored": false,
+        "lat": -22.8629417,
+        "lng": -43.0089416,
+        "withinBounds": true,
+        "primaryCategory": "Salão de Beleza"
+      }
+    ],
+    "bar": [
+      {
+        "name": "Bar da Pitchulinha",
+        "rating": 4.7,
+        "reviews": 302,
+        "sponsored": false,
+        "lat": -22.8126498,
+        "lng": -43.0736452,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Obah! Bar & Ginkeria",
+        "rating": 4.5,
+        "reviews": 542,
+        "sponsored": false,
+        "lat": -22.8277412,
+        "lng": -43.0615551,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar Cajueiro",
+        "rating": 4.7,
+        "reviews": 570,
+        "sponsored": false,
+        "lat": -22.8185797,
+        "lng": -43.0145675,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Rock'n Beer Pub",
+        "rating": 4.7,
+        "reviews": 1906,
+        "sponsored": false,
+        "lat": -22.8287104,
+        "lng": -43.06392,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "SamBar Petiscaria",
+        "rating": 4.4,
+        "reviews": 558,
+        "sponsored": false,
+        "lat": -22.8328281,
+        "lng": -43.0444609,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar da Frente - Bar e Música",
+        "rating": 4.5,
+        "reviews": 479,
+        "sponsored": false,
+        "lat": -22.8316459,
+        "lng": -43.0726135,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Guima's Bar e Chopperia",
+        "rating": 4.5,
+        "reviews": 1652,
+        "sponsored": false,
+        "lat": -22.8185554,
+        "lng": -43.0156487,
+        "withinBounds": true,
+        "primaryCategory": "Bares"
+      },
+      {
+        "name": "Boteco Nosso Rio",
+        "rating": 4.4,
+        "reviews": 298,
+        "sponsored": false,
+        "lat": -22.8218592,
+        "lng": -43.0000817,
+        "withinBounds": true,
+        "primaryCategory": "Bar de cervejas"
+      },
+      {
+        "name": "Rodobier",
+        "rating": 4.5,
+        "reviews": 927,
+        "sponsored": false,
+        "lat": -22.8244194,
+        "lng": -43.0491154,
+        "withinBounds": true,
+        "primaryCategory": "Bar informal"
+      },
+      {
+        "name": "Varandão Bar do Henrique",
+        "rating": 4.9,
+        "reviews": 107,
+        "sponsored": false,
+        "lat": -22.8272092,
+        "lng": -43.0318045,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar da Soninha",
+        "rating": 4.6,
+        "reviews": 65,
+        "sponsored": false,
+        "lat": -22.8338908,
+        "lng": -43.0478248,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Rota 40 Moto Bar",
+        "rating": 4.7,
+        "reviews": 1312,
+        "sponsored": false,
+        "lat": -22.8288803,
+        "lng": -43.0641136,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Boteco do s",
+        "rating": 4.5,
+        "reviews": 161,
+        "sponsored": false,
+        "lat": -22.8844832,
+        "lng": -42.9834991,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Roxx Music Bar",
+        "rating": 4.1,
+        "reviews": 257,
+        "sponsored": false,
+        "lat": -22.8321036,
+        "lng": -43.0588415,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "La Casa do Chopp",
+        "rating": 4.6,
+        "reviews": 110,
+        "sponsored": false,
+        "lat": -22.8139728,
+        "lng": -43.024317,
+        "withinBounds": true,
+        "primaryCategory": "Bar com música ao vivo"
+      },
+      {
+        "name": "Boate Boas Intenções - São Gonçalo",
+        "rating": 4.6,
+        "reviews": 191,
+        "sponsored": false,
+        "lat": -22.8273908,
+        "lng": -43.0587202,
+        "withinBounds": true,
+        "primaryCategory": "Local para eventos"
+      },
+      {
+        "name": "Altas Horas Beer",
+        "rating": 4.5,
+        "reviews": 178,
+        "sponsored": false,
+        "lat": -22.8083711,
+        "lng": -43.0206915,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Bar Parada Zero Grau",
+        "rating": 4.4,
+        "reviews": 238,
+        "sponsored": false,
+        "lat": -22.8218933,
+        "lng": -42.9758934,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      },
+      {
+        "name": "Point Do Bacalhau",
+        "rating": 4.5,
+        "reviews": 1374,
+        "sponsored": false,
+        "lat": -22.8146443,
+        "lng": -43.0368496,
+        "withinBounds": true,
+        "primaryCategory": "Lanchonete"
+      },
+      {
+        "name": "Boêmia Gonçalense",
+        "rating": 4.7,
+        "reviews": 34,
+        "sponsored": false,
+        "lat": -22.8228931,
+        "lng": -43.0489212,
+        "withinBounds": true,
+        "primaryCategory": "Bar"
+      }
+    ],
+    "barber": [
+      {
+        "name": "Dom Pedro Barbershop",
+        "rating": 5,
+        "reviews": 776,
+        "sponsored": false,
+        "lat": -22.8225543,
+        "lng": -43.0493417,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Buffalo's Barber Premium",
+        "rating": 5,
+        "reviews": 206,
+        "sponsored": false,
+        "lat": -22.8220142,
+        "lng": -43.0427844,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Santori | São Gonçalo RJ",
+        "rating": 4.9,
+        "reviews": 70,
+        "sponsored": false,
+        "lat": -22.8409965,
+        "lng": -43.0903884,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Dom Marchon Barbershop - Centro",
+        "rating": 4.8,
+        "reviews": 163,
+        "sponsored": false,
+        "lat": -22.8235077,
+        "lng": -43.0467822,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Falcone's Barber Shop",
+        "rating": 4.8,
+        "reviews": 469,
+        "sponsored": false,
+        "lat": -22.8230771,
+        "lng": -43.0471131,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "barbearia jefersson alves",
+        "rating": 5,
+        "reviews": 85,
+        "sponsored": false,
+        "lat": -22.8229219,
+        "lng": -43.0490103,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Zero 21",
+        "rating": 5,
+        "reviews": 173,
+        "sponsored": false,
+        "lat": -22.8336257,
+        "lng": -43.0800252,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia | Seu Mané Barber Shop",
+        "rating": 4.9,
+        "reviews": 136,
+        "sponsored": false,
+        "lat": -22.8266699,
+        "lng": -43.0509815,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia do Yago",
+        "rating": 5,
+        "reviews": 566,
+        "sponsored": false,
+        "lat": -22.8206715,
+        "lng": -43.0050632,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "La Marra Barbearia",
+        "rating": 4.9,
+        "reviews": 187,
+        "sponsored": false,
+        "lat": -22.8234428,
+        "lng": -42.9975659,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Paiva's Barbershop",
+        "rating": 4.9,
+        "reviews": 76,
+        "sponsored": false,
+        "lat": -22.828304,
+        "lng": -43.0631008,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Gladiadores",
+        "rating": 4.8,
+        "reviews": 102,
+        "sponsored": false,
+        "lat": -22.8351008,
+        "lng": -43.0608677,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Do Bigode Barbershop",
+        "rating": 4.8,
+        "reviews": 159,
+        "sponsored": false,
+        "lat": -22.808249,
+        "lng": -43.019664,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Estação BarbaBeer || Barber Shop",
+        "rating": 4.9,
+        "reviews": 93,
+        "sponsored": false,
+        "lat": -22.8249953,
+        "lng": -43.0105896,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Drakkar Barber Club - A barbearia dos verdadeiros guerreiros!",
+        "rating": 5,
+        "reviews": 311,
+        "sponsored": false,
+        "lat": -22.8244667,
+        "lng": -42.9707129,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Reviac",
+        "rating": 5,
+        "reviews": 124,
+        "sponsored": false,
+        "lat": -22.8054714,
+        "lng": -43.0012708,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Domingues Barbearia",
+        "rating": 4.9,
+        "reviews": 98,
+        "sponsored": false,
+        "lat": -22.8082624,
+        "lng": -42.999766,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "BARBEARIA DO CABRAL",
+        "rating": 4.8,
+        "reviews": 107,
+        "sponsored": false,
+        "lat": -22.8228655,
+        "lng": -43.0622,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Barbearia Kadosh",
+        "rating": 5,
+        "reviews": 164,
+        "sponsored": false,
+        "lat": -22.8340123,
+        "lng": -43.0845907,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      },
+      {
+        "name": "Concísio`s Barbearia",
+        "rating": 5,
+        "reviews": 39,
+        "sponsored": false,
+        "lat": -22.8421687,
+        "lng": -43.0806634,
+        "withinBounds": true,
+        "primaryCategory": "Barbearia"
+      }
+    ],
+    "cafe": [
+      {
+        "name": "Justo Café Centro SG",
+        "rating": 4.6,
+        "reviews": 580,
+        "sponsored": false,
+        "lat": -22.8244631,
+        "lng": -43.0493131,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café Valentina - São Gonçalo | Cafeteria",
+        "rating": 4.8,
+        "reviews": 139,
+        "sponsored": false,
+        "lat": -22.8225229,
+        "lng": -43.0469372,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Le Café",
+        "rating": 4.7,
+        "reviews": 144,
+        "sponsored": false,
+        "lat": -22.808565,
+        "lng": -43.0176734,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Bellajoe Cafeteria",
+        "rating": 4.7,
+        "reviews": 270,
+        "sponsored": false,
+        "lat": -22.8254364,
+        "lng": -43.0480837,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cerino Café",
+        "rating": 4.5,
+        "reviews": 303,
+        "sponsored": false,
+        "lat": -22.8300587,
+        "lng": -43.0019893,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Prosa Café Bar",
+        "rating": 4.9,
+        "reviews": 350,
+        "sponsored": false,
+        "lat": -22.8077428,
+        "lng": -43.015446,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Café da Ceres",
+        "rating": 4.6,
+        "reviews": 998,
+        "sponsored": false,
+        "lat": -22.8206788,
+        "lng": -43.0465854,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Justo Café Alcântara",
+        "rating": 4.7,
+        "reviews": 1806,
+        "sponsored": false,
+        "lat": -22.8253155,
+        "lng": -43.0105318,
+        "withinBounds": true,
+        "primaryCategory": "Cafeteria"
+      },
+      {
+        "name": "Cheirin Bão - Pátio Alcântara",
+        "rating": 4.6,
+        "reviews": 337,
+        "sponsored": false,
+        "lat": -22.8202151,
+        "lng": -43.0034587,
+        "withinBounds": true,
+        "primaryCategory": "Café"
+      }
+    ],
+    "pet": [
+      {
+        "name": "Pés & Patas Ceasa",
+        "rating": 4.6,
+        "reviews": 475,
+        "sponsored": false,
+        "lat": -22.8399799,
+        "lng": -43.0140224,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pés & Patas Alcântara (Raul Veiga)",
+        "rating": 4.5,
+        "reviews": 382,
+        "sponsored": false,
+        "lat": -22.8225817,
+        "lng": -42.9982213,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Gladiador Pet Shop e Veterinária",
+        "rating": 4.7,
+        "reviews": 824,
+        "sponsored": false,
+        "lat": -22.8145592,
+        "lng": -43.0394882,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pés & Patas Centro São Gonçalo",
+        "rating": 4.5,
+        "reviews": 204,
+        "sponsored": false,
+        "lat": -22.8233457,
+        "lng": -43.0450384,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pés & Patas Trindade",
+        "rating": 4.6,
+        "reviews": 313,
+        "sponsored": false,
+        "lat": -22.809616,
+        "lng": -43.0161323,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pés & Patas Santa Catarina",
+        "rating": 4.4,
+        "reviews": 427,
+        "sponsored": false,
+        "lat": -22.8384837,
+        "lng": -43.0655142,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Boutique dos Pet's SG",
+        "rating": 5,
+        "reviews": 89,
+        "sponsored": false,
+        "lat": -22.8228771,
+        "lng": -43.0752301,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Shop Vovó Zuzu",
+        "rating": 4.5,
+        "reviews": 177,
+        "sponsored": false,
+        "lat": -22.8182847,
+        "lng": -43.069646,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Casa Tucano Pet Shop",
+        "rating": 4.5,
+        "reviews": 397,
+        "sponsored": false,
+        "lat": -22.8193777,
+        "lng": -43.0028964,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pet Fun",
+        "rating": 3,
+        "reviews": 2,
+        "sponsored": false,
+        "lat": -22.8145089,
+        "lng": -43.0706109,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Beagle Rações",
+        "rating": 4.8,
+        "reviews": 162,
+        "sponsored": false,
+        "lat": -22.8125819,
+        "lng": -43.0387774,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pés & Patas Rocha",
+        "rating": 4.4,
+        "reviews": 325,
+        "sponsored": false,
+        "lat": -22.832801,
+        "lng": -43.0420082,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "🐶🛁Zoe Pet | Banho e tosa para cachorro em São Gonçalo - RJ",
+        "rating": 5,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.8369129,
+        "lng": -43.0149486,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Pet Atacado Vovó Zuzu",
+        "rating": 4.7,
+        "reviews": 77,
+        "sponsored": false,
+        "lat": -22.8127387,
+        "lng": -43.0138178,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Muau Pet",
+        "rating": 5,
+        "reviews": 44,
+        "sponsored": false,
+        "lat": -22.824574,
+        "lng": -43.0539603,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Pet Topp Estética Animal",
+        "rating": 4.8,
+        "reviews": 74,
+        "sponsored": false,
+        "lat": -22.8184405,
+        "lng": -43.0141093,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Gpet Pet Shop",
+        "rating": 5,
+        "reviews": 304,
+        "sponsored": false,
+        "lat": -22.8178763,
+        "lng": -43.0189793,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "4 Patas",
+        "rating": 4.5,
+        "reviews": 671,
+        "sponsored": false,
+        "lat": -22.8790344,
+        "lng": -42.9877439,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      },
+      {
+        "name": "Pepper’s Pet – Banho e Tosa em São Gonçalo",
+        "rating": 5,
+        "reviews": 129,
+        "sponsored": false,
+        "lat": -22.8298114,
+        "lng": -42.9860269,
+        "withinBounds": true,
+        "primaryCategory": "Banho e tosa"
+      },
+      {
+        "name": "Pés & Patas Guanabara São Gonçalo",
+        "rating": 2.6,
+        "reviews": 62,
+        "sponsored": false,
+        "lat": -22.8261288,
+        "lng": -43.0154829,
+        "withinBounds": true,
+        "primaryCategory": "Pet Shop"
+      }
+    ],
+    "gym": [
+      {
+        "name": "Inove Academia",
+        "rating": 4.9,
+        "reviews": 1546,
+        "sponsored": false,
+        "lat": -22.8287831,
+        "lng": -43.0649703,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia BORA!",
+        "rating": 4.6,
+        "reviews": 772,
+        "sponsored": false,
+        "lat": -22.8381979,
+        "lng": -43.06598,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Halternativa São Gonçalo",
+        "rating": 4.2,
+        "reviews": 641,
+        "sponsored": false,
+        "lat": -22.8234254,
+        "lng": -43.0448006,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Inove Academia",
+        "rating": 4.6,
+        "reviews": 205,
+        "sponsored": false,
+        "lat": -22.8307701,
+        "lng": -43.0707335,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia ABfitness - São Gonçalo",
+        "rating": 4.7,
+        "reviews": 199,
+        "sponsored": false,
+        "lat": -22.8421211,
+        "lng": -43.0734193,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia BORA! - Guanabara Center Mutondo",
+        "rating": 4.6,
+        "reviews": 611,
+        "sponsored": false,
+        "lat": -22.8261288,
+        "lng": -43.0154829,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Perfect Body São Gonçalo",
+        "rating": 4.3,
+        "reviews": 85,
+        "sponsored": false,
+        "lat": -22.8142844,
+        "lng": -43.0701726,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Best Club Fitness",
+        "rating": 4.6,
+        "reviews": 159,
+        "sponsored": false,
+        "lat": -22.8321717,
+        "lng": -43.0365355,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Tupã São Gonçalo",
+        "rating": 4.8,
+        "reviews": 199,
+        "sponsored": false,
+        "lat": -22.828115,
+        "lng": -43.063441,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Panobianco Academia - São Gonçalo",
+        "rating": 4.4,
+        "reviews": 145,
+        "sponsored": false,
+        "lat": -22.835744,
+        "lng": -43.0138556,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Barra Fit Funcional Studio",
+        "rating": 4.8,
+        "reviews": 172,
+        "sponsored": false,
+        "lat": -22.8244466,
+        "lng": -43.0494688,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Selfit Academias São Gonçalo",
+        "rating": 3.4,
+        "reviews": 32,
+        "sponsored": false,
+        "lat": -22.8222257,
+        "lng": -43.0460898,
+        "withinBounds": true,
+        "primaryCategory": "Academia de Muay Thai"
+      },
+      {
+        "name": "Ultra Academia São Gonçalo - Centro",
+        "rating": 3.3,
+        "reviews": 19,
+        "sponsored": false,
+        "lat": -22.8235633,
+        "lng": -43.0475452,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Máximo Fitness",
+        "rating": 4.5,
+        "reviews": 136,
+        "sponsored": false,
+        "lat": -22.8135873,
+        "lng": -43.0239714,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia Smart Fit - São Gonçalo Centro",
+        "rating": 4.5,
+        "reviews": 602,
+        "sponsored": false,
+        "lat": -22.823141,
+        "lng": -43.0489044,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Art do Corpo",
+        "rating": 4.7,
+        "reviews": 226,
+        "sponsored": false,
+        "lat": -22.8411099,
+        "lng": -43.0780924,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Stronger Paraíso",
+        "rating": 4.4,
+        "reviews": 445,
+        "sponsored": false,
+        "lat": -22.8332886,
+        "lng": -43.0790232,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "Academia Grego Fit",
+        "rating": 4.8,
+        "reviews": 114,
+        "sponsored": false,
+        "lat": -22.8254892,
+        "lng": -43.0838513,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      },
+      {
+        "name": "ACADEMIA SHAPE FIT Studio",
+        "rating": 4.8,
+        "reviews": 128,
+        "sponsored": false,
+        "lat": -22.8568038,
+        "lng": -43.0198959,
+        "withinBounds": true,
+        "primaryCategory": "Sala de fitness"
+      },
+      {
+        "name": "Academia Sabala fitness",
+        "rating": 4.7,
+        "reviews": 147,
+        "sponsored": false,
+        "lat": -22.8040016,
+        "lng": -42.9909787,
+        "withinBounds": true,
+        "primaryCategory": "Academia"
+      }
+    ],
+    "bakery": [
+      {
+        "name": "Padaria Deu la deu",
+        "rating": 4.7,
+        "reviews": 176,
+        "sponsored": false,
+        "lat": -22.818681,
+        "lng": -43.0154393,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria estação dos Sabores",
+        "rating": 4.3,
+        "reviews": 1151,
+        "sponsored": false,
+        "lat": -22.8254316,
+        "lng": -43.0513368,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Confeitaria Santo Antônio",
+        "rating": 4.6,
+        "reviews": 293,
+        "sponsored": false,
+        "lat": -22.8142454,
+        "lng": -43.0240688,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Nova Brasília",
+        "rating": 4.5,
+        "reviews": 136,
+        "sponsored": false,
+        "lat": -22.8292408,
+        "lng": -43.0665186,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Café Valentina - São Gonçalo | Cafeteria",
+        "rating": 4.8,
+        "reviews": 139,
+        "sponsored": false,
+        "lat": -22.8225229,
+        "lng": -43.0469372,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Nossa Senhora da Conceição",
+        "rating": 4.7,
+        "reviews": 340,
+        "sponsored": false,
+        "lat": -22.8357216,
+        "lng": -43.0609371,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Ideal",
+        "rating": 4.5,
+        "reviews": 452,
+        "sponsored": false,
+        "lat": -22.8133781,
+        "lng": -43.0136141,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria e Confeitaria Miranda",
+        "rating": 4.5,
+        "reviews": 389,
+        "sponsored": false,
+        "lat": -22.8193203,
+        "lng": -43.0673343,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria e Confeitaria Gonçalense",
+        "rating": 4.5,
+        "reviews": 557,
+        "sponsored": false,
+        "lat": -22.8075846,
+        "lng": -43.0157789,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Estação dos Sabores",
+        "rating": 4.2,
+        "reviews": 695,
+        "sponsored": false,
+        "lat": -22.8304763,
+        "lng": -43.0697218,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Vitoriosa",
+        "rating": 4.3,
+        "reviews": 3045,
+        "sponsored": false,
+        "lat": -22.80494,
+        "lng": -42.9665717,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Pão da Casa | Pães Artesanais, Bolos e Doces",
+        "rating": 5,
+        "reviews": 55,
+        "sponsored": false,
+        "lat": -22.8317803,
+        "lng": -43.0748314,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Arcanjo Miguel",
+        "rating": 4.6,
+        "reviews": 127,
+        "sponsored": false,
+        "lat": -22.8317897,
+        "lng": -43.0156751,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Forte Mineiro",
+        "rating": 4.5,
+        "reviews": 112,
+        "sponsored": false,
+        "lat": -22.8212002,
+        "lng": -43.0439875,
+        "withinBounds": true,
+        "primaryCategory": "Loja de queijos"
+      },
+      {
+        "name": "Padaria E Confeitaria Ferreira's",
+        "rating": 4.5,
+        "reviews": 331,
+        "sponsored": false,
+        "lat": -22.8344056,
+        "lng": -43.0146715,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Madalena’s Coffee Shop",
+        "rating": 4.6,
+        "reviews": 130,
+        "sponsored": false,
+        "lat": -22.817721,
+        "lng": -43.0710352,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Sabor do Pão",
+        "rating": 4.7,
+        "reviews": 48,
+        "sponsored": false,
+        "lat": -22.8169922,
+        "lng": -42.9806066,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Nova Califórnia",
+        "rating": 4.6,
+        "reviews": 203,
+        "sponsored": false,
+        "lat": -22.8183947,
+        "lng": -43.0507399,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Trigo D'ouro",
+        "rating": 4.3,
+        "reviews": 418,
+        "sponsored": false,
+        "lat": -22.887032,
+        "lng": -42.9881584,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      },
+      {
+        "name": "Padaria Vitória do Alcântara",
+        "rating": 4.4,
+        "reviews": 336,
+        "sponsored": false,
+        "lat": -22.820594,
+        "lng": -43.004972,
+        "withinBounds": true,
+        "primaryCategory": "Padaria"
+      }
+    ],
+    "italian": [
+      {
+        "name": "Ristorante Pasta di Colina",
+        "rating": 4.8,
+        "reviews": 3865,
+        "sponsored": false,
+        "lat": -22.8204483,
+        "lng": -43.0466719,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Rodo Grill",
+        "rating": 4.5,
+        "reviews": 4876,
+        "sponsored": false,
+        "lat": -22.8249814,
+        "lng": -43.04945,
+        "withinBounds": true,
+        "primaryCategory": "Italiana"
+      },
+      {
+        "name": "Boteco do Manolo São Gonçalo Shopping",
+        "rating": 4.6,
+        "reviews": 3584,
+        "sponsored": false,
+        "lat": -22.8126791,
+        "lng": -43.0700789,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Frontera São Gonçalo",
+        "rating": 3.7,
+        "reviews": 4038,
+        "sponsored": false,
+        "lat": -22.8216091,
+        "lng": -43.0461366,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Mamma Mia Pizzaria & Gourmet.",
+        "rating": 4.2,
+        "reviews": 1438,
+        "sponsored": false,
+        "lat": -22.8185441,
+        "lng": -43.0166077,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Oliver's Pizza São Gonçalo",
+        "rating": 4.8,
+        "reviews": 4495,
+        "sponsored": false,
+        "lat": -22.8218306,
+        "lng": -43.0428264,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      }
+    ],
+    "vegan": [],
+    "buffet": [
+      {
+        "name": "Restaurante Self- Service e Delivery Garfo & Faca | Churrasco",
+        "rating": 4.5,
+        "reviews": 425,
+        "sponsored": false,
+        "lat": -22.8282492,
+        "lng": -43.0553926,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Churrascaria Estrela Gaúcha",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -22.8309717,
+        "lng": -43.0028329,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Oliveira's Grill - Restaurante Self-Service",
+        "rating": 4.4,
+        "reviews": 1277,
+        "sponsored": false,
+        "lat": -22.8859372,
+        "lng": -42.9873366,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Self-Service N° S° da Conceição",
+        "rating": 4.4,
+        "reviews": 497,
+        "sponsored": false,
+        "lat": -22.8144551,
+        "lng": -43.0240454,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Rodo Grill",
+        "rating": 4.5,
+        "reviews": 4876,
+        "sponsored": false,
+        "lat": -22.8249814,
+        "lng": -43.04945,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Restaurante Toca do Coelho",
+        "rating": 4.8,
+        "reviews": 400,
+        "sponsored": false,
+        "lat": -22.8306368,
+        "lng": -43.0026438,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      },
+      {
+        "name": "Frontera São Gonçalo",
+        "rating": 3.7,
+        "reviews": 4038,
+        "sponsored": false,
+        "lat": -22.8216091,
+        "lng": -43.0461366,
+        "withinBounds": true,
+        "primaryCategory": "Pizza"
+      },
+      {
+        "name": "Varandão do Churrasco",
+        "rating": 4.6,
+        "reviews": 1259,
+        "sponsored": false,
+        "lat": -22.7947222,
+        "lng": -43.0066667,
+        "withinBounds": true,
+        "primaryCategory": "Churrasco"
+      },
+      {
+        "name": "Campestre Gourmet | Restaurante em São Gonçalo",
+        "rating": 4.5,
+        "reviews": 1432,
+        "sponsored": false,
+        "lat": -22.836464,
+        "lng": -43.0338731,
+        "withinBounds": true,
+        "primaryCategory": "Restaurante"
+      },
+      {
+        "name": "Paula's self service",
+        "rating": 4.5,
+        "reviews": 276,
+        "sponsored": false,
+        "lat": -22.813425,
+        "lng": -43.013337,
+        "withinBounds": true,
+        "primaryCategory": "Bufê"
+      }
+    ],
+    "thrift": [
+      {
+        "name": "Bazar Da Pastora - O Seu Brechó Em São Gonçalo Favorito!",
+        "rating": 4.9,
+        "reviews": 72,
+        "sponsored": false,
+        "lat": -22.8148272,
+        "lng": -43.0014388,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Bazar Da Pastora - O Melhor Brechó Em Sâo Gonçalo!",
+        "rating": 4.9,
+        "reviews": 53,
+        "sponsored": false,
+        "lat": -22.8149275,
+        "lng": -43.0014525,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "A Mô Breshop Brechó",
+        "rating": 5,
+        "reviews": 11,
+        "sponsored": false,
+        "lat": -22.8204865,
+        "lng": -43.0438037,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Makebas Brechó",
+        "rating": 5,
+        "reviews": 15,
+        "sponsored": false,
+        "lat": -22.8478631,
+        "lng": -43.0919623,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      },
+      {
+        "name": "Brechó VV Closet",
+        "rating": 5,
+        "reviews": 2,
+        "sponsored": false,
+        "lat": -22.82127,
+        "lng": -42.999147,
+        "withinBounds": true,
+        "primaryCategory": "Loja de moda feminina"
+      },
+      {
+        "name": "Margaridas Brechó (Lojas Margaridas)",
+        "rating": 4.6,
+        "reviews": 14,
+        "sponsored": false,
+        "lat": -22.833184,
+        "lng": -43.0420491,
+        "withinBounds": true,
+        "primaryCategory": "Cabeleireiro"
+      },
+      {
+        "name": "Brechó do Celso",
+        "rating": null,
+        "reviews": null,
+        "sponsored": false,
+        "lat": -22.8117669,
+        "lng": -43.058168,
+        "withinBounds": true,
+        "primaryCategory": "Brechó"
+      }
+    ]
+  },
+  "reviewedAt": "2026-09-02",
+  "source": "Google Maps",
+  "geographicFilter": {
+    "bounds": [
+      -22.93,
+      -22.72,
+      -43.15,
+      -42.95
+    ],
+    "outsideRemoved": 23,
+    "withoutCoordinates": 0
+  }
+}

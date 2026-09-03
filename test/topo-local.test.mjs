@@ -30,8 +30,8 @@ const categoryExamples = [
   ['quilo-brasilia', 'Qual é o melhor restaurante por quilo em Brasília?', 'Restaurante por quilo'],
   [
     'restaurantes-veganos-brasilia',
-    'Qual é o melhor restaurante vegano em Brasília?',
-    'Restaurante vegano',
+    'Qual é o melhor restaurante/lanchonete vegano ou vegetariano em Brasília?',
+    'Restaurante/lanchonete vegano/vegetariano',
   ],
   ['brechos-brasilia', 'Qual é o melhor brechó em Brasília?', 'Brechó'],
 ];
