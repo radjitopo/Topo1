@@ -1738,6 +1738,39 @@ function nativeShareHTML(r, compact = false) {
 function shareActionsHTML(r, compact = false) {
   return `<span class="shareActions ${compact ? 'compact' : ''}" role="group" aria-label="Opções para compartilhar">${whatsAppShareHTML(r, compact)}${nativeShareHTML(r, compact)}</span>`;
 }
+function localCityShareLabel(city) {
+  return city === 'Florianópolis' ? 'Floripa' : city;
+}
+function localCityShareHTML() {
+  const city = topoLocal.normalizeCity(selectedCity);
+  if (!city) return '';
+  return `<button class="localCityShareButton" type="button" data-share-local-city aria-label="Compartilhar rankings de ${escapeHTML(city)}">${nativeShareIconHTML()}<span>Compartilhar ${escapeHTML(localCityShareLabel(city))}</span></button>`;
+}
+async function shareLocalCity() {
+  const city = topoLocal.normalizeCity(selectedCity);
+  if (!city) return;
+  const url = new URL(topoLocal.collectionPath(city), location.origin).toString(),
+    data = {
+      title: `TOPO LOCAL — ${city}`,
+      text: `Veja e vote nos melhores lugares de ${city} no TOPO.`,
+      url,
+    };
+  if (navigator.share) {
+    try {
+      await navigator.share(data);
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(url);
+    toast(`Link do TOPO LOCAL ${city} copiado.`);
+  } catch {
+    toast('Não consegui abrir o compartilhamento neste navegador.');
+  }
+}
 function favoriteIconHTML() {
   return '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 5.9l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.3 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>';
 }
@@ -2282,6 +2315,9 @@ function bindCategoryControls() {
     renderHome();
     document.getElementById('loadMoreRankings')?.focus();
   });
+  document
+    .querySelector('[data-share-local-city]')
+    ?.addEventListener('click', () => void shareLocalCity());
   bindLocalCityExplorer();
 }
 function footballCategoryTabsHTML() {
@@ -2318,7 +2354,7 @@ function renderCategoryHome(visible) {
     : teamsSection
       ? 'Times — rankings de futebol no TOPO'
       : `${activeGroup} — rankings no TOPO`;
-  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p></div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section>${footballCategoryTabsHTML()}<section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
+  feed.innerHTML = `<section class="categoryLandingHead ${local ? 'localCatalogHead' : ''}"><div><span class="portalKicker">${kicker}</span><h1>${escapeHTML(heading)}</h1><p>${description}</p>${local && isAll ? localCityShareHTML() : ''}</div><div class="categoryLandingCount"><strong>${fmt(preferredCount)}</strong><span>${local ? 'na cidade' : `ranking${visible.length === 1 ? '' : 's'}`}</span></div></section>${footballCategoryTabsHTML()}<section class="categoryRankGrid">${categoryRankCardsHTML(shown)}</section>${remaining ? `<div class="categoryLoadMore"><button id="loadMoreRankings" type="button">${local ? `Ver mais rankings de ${escapeHTML(selectedCity)}` : `Mostrar mais ${fmt(Math.min(CATEGORY_PAGE_SIZE, remaining))} rankings`}</button><span>${fmt(shown.length)} de ${fmt(sorted.length)}</span></div>` : ''}${localCityExplorerHTML()}<div class="end">${local ? 'TOPO LOCAL' : 'TOPO'} · tudo vira ranking</div>`;
   bindCategoryControls();
   bindVotes();
 }
