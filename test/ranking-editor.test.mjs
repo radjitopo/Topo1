@@ -64,11 +64,29 @@ test('moderators can edit title, photo and every option in place', async () => {
   assert.match(app, /function rankingEditorHTML\(r, categoryPath\)/);
   assert.match(app, /Escolher foto do aparelho/);
   assert.match(app, /data-ranking-editor-option/);
-  assert.match(app, /A posição, os votos e o histórico das opções serão preservados/);
+  assert.match(app, /A ordem, os votos e o histórico continuam iguais/);
   assert.match(app, /fetch\('\/api\?action=ranking-content'/);
   assert.match(compactApp, /if\(viewer\.isModerator\).*moderatorRankingBarHTML/);
   assert.match(compactStyle, /\.rankingModeratorBar\{/);
   assert.match(compactStyle, /\.rankingEditorSaveBar\{[^}]*position:sticky/);
+});
+
+test('the ranking editor is touch-friendly and opens the mobile keyboard on demand', async () => {
+  const [app, style, html] = await Promise.all([
+    readFile(new URL('app.js', root), 'utf8'),
+    readFile(new URL('editorial-clean.css', root), 'utf8'),
+    readFile(new URL('index.html', root), 'utf8'),
+  ]);
+
+  assert.match(app, /<textarea id="rankingEditorTitle"/);
+  assert.match(app, /inputmode="text"/);
+  assert.match(app, /autocapitalize="words"/);
+  assert.match(app, /enterkeyhint=/);
+  assert.match(app, /function bindRankingEditorTextControls\(form\)/);
+  assert.doesNotMatch(app, /getElementById\('rankingEditorTitle'\)\?\.focus\(\)/);
+  assert.match(style, /\.rankingEditorOption input \{[\s\S]*?touch-action: manipulation/);
+  assert.match(style, /\.rankingEditor:focus-within \.rankingEditorSaveBar \{\s*position: static/);
+  assert.match(html, /ranking-editor-mobile-fix/);
 });
 
 test('SEO modification dates include moderator content updates', async () => {

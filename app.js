@@ -3258,10 +3258,10 @@ function rankingEditorHTML(r, categoryPath) {
     options = r.opts
       .map(
         (option, index) =>
-          `<label class="rankingEditorOption"><span>${index + 1}</span><input data-ranking-editor-option data-id="${option.id}" type="text" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" required></label>`,
+          `<label class="rankingEditorOption"><span aria-hidden="true">${index + 1}</span><input data-ranking-editor-option data-id="${option.id}" name="ranking-option-${option.id}" type="text" inputmode="text" autocomplete="off" autocapitalize="words" enterkeyhint="${index === r.opts.length - 1 ? 'done' : 'next'}" spellcheck="true" minlength="2" maxlength="80" value="${escapeHTML(option.label)}" aria-label="Nome da opção ${index + 1}" required></label>`,
       )
       .join('');
-  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="category"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Altere somente o que precisa. A posição, os votos e o histórico das opções serão preservados.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><input id="rankingEditorTitle" type="text" minlength="8" maxlength="120" value="${escapeHTML(r.q)}" required></label><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><button class="rankingEditorSuggestButton" id="rankingEditorSuggestPhotos" type="button">Buscar fotos que combinam</button><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><div class="rankingEditorSuggestions" id="rankingEditorSuggestions" aria-live="polite"></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Meu Topo</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking no Meu Topo</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
+  return `<form class="rankingEditor" id="rankingEditorForm"><header class="rankingEditorHead"><div><span class="rankingEditorCategory"><a href="${categoryPath}">${escapeHTML(categoryLabel(r))}</a></span><h1>Editar ranking</h1><p>Corrija o título ou os nomes. A ordem, os votos e o histórico continuam iguais.</p></div></header><label class="rankingEditorField rankingEditorTitleField"><span>Título do ranking</span><textarea id="rankingEditorTitle" name="ranking-title" rows="2" inputmode="text" autocomplete="off" autocapitalize="sentences" enterkeyhint="next" spellcheck="true" minlength="8" maxlength="120" required>${escapeHTML(r.q)}</textarea></label><section class="rankingEditorOptions"><div class="rankingEditorSectionHead"><div><span>OPÇÕES</span><strong>Corrigir os nomes</strong></div><small>${r.opts.length} opções · votos preservados</small></div><div class="rankingEditorOptionList">${options}</div></section><section class="rankingEditorPhoto"><div class="rankingEditorSectionHead"><div><span>FOTO</span><strong>Imagem de capa</strong></div><small>A prévia muda antes de publicar.</small></div><div class="rankingEditorPhotoPreview">${photo}</div><div class="rankingEditorPhotoActions"><button class="rankingEditorSuggestButton" id="rankingEditorSuggestPhotos" type="button">Buscar fotos que combinam</button><label class="rankingEditorFileButton">Escolher foto do aparelho<input id="rankingEditorFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="rankingEditorKeepPhoto" type="button">Manter atual</button><button id="rankingEditorRemovePhoto" type="button">Remover foto</button></div><div class="rankingEditorSuggestions" id="rankingEditorSuggestions" aria-live="polite"></div><label class="rankingEditorField rankingEditorUrlField"><span>Ou cole o link de uma imagem</span><input id="rankingEditorImageUrl" type="url" inputmode="url" placeholder="https://..." value="${escapeHTML(state.imageUrl)}"><small>Se escolher um arquivo, ele terá prioridade sobre o link.</small></label></section><section class="rankingEditorVip"><div class="rankingEditorSectionHead"><div><span>ACESSO</span><strong>Meu Topo</strong></div><small>Uma senha exclusiva para este ranking</small></div><label class="rankingEditorVipToggle"><input id="rankingEditorVip" type="checkbox" ${r.vip ? 'checked' : ''}><span><strong>Colocar este ranking no Meu Topo</strong><small>Ele deixa de aparecer na Home, nas categorias, na busca e no Google.</small></span></label><label class="rankingEditorField rankingEditorVipPassword"><span>${r.vipHasPassword ? 'Trocar a senha' : 'Criar a senha'}</span><input id="rankingEditorVipPassword" type="password" minlength="4" maxlength="80" autocomplete="new-password" placeholder="${r.vipHasPassword ? 'Deixe vazio para manter a senha atual' : 'No mínimo 4 caracteres'}"><small>${r.vipHasPassword ? 'A senha atual nunca é exibida. Digite outra somente se quiser trocá-la.' : 'A senha não será salva em texto e não poderá ser recuperada, apenas trocada.'}</small></label></section><div class="rankingEditorSaveBar"><span id="rankingEditorStatus" role="status" aria-live="polite"></span><div><button class="rankingEditorCancel" id="rankingEditorCancel" type="button">Cancelar</button><button class="rankingEditorSave" type="submit">Salvar alterações</button></div></div></form>`;
 }
 
 function renderRankingEditorScreen(r, homePath, homeLabel, categoryPath) {
@@ -3395,6 +3395,22 @@ function rankingEditorErrorText(error) {
   );
 }
 
+function bindRankingEditorTextControls(form) {
+  const title = document.getElementById('rankingEditorTitle'),
+    optionInputs = [...form.querySelectorAll('[data-ranking-editor-option]')],
+    fields = [title, ...optionInputs].filter(Boolean);
+
+  fields.forEach((field, index) => {
+    field.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' || event.shiftKey) return;
+      event.preventDefault();
+      const next = fields[index + 1];
+      if (next) next.focus();
+      else field.blur();
+    });
+  });
+}
+
 function bindRankingEditor(r) {
   const form = document.getElementById('rankingEditorForm'),
     status = document.getElementById('rankingEditorStatus'),
@@ -3413,7 +3429,7 @@ function bindRankingEditor(r) {
   vipToggle.addEventListener('change', syncVipEditor);
   syncVipEditor();
 
-  document.getElementById('rankingEditorTitle')?.focus();
+  bindRankingEditorTextControls(form);
   document.getElementById('rankingEditorCancel').onclick = () => {
     rankingEditorState = null;
     visibleOptionCount = 10;
@@ -3480,7 +3496,10 @@ function bindRankingEditor(r) {
 
   form.onsubmit = async (event) => {
     event.preventDefault();
-    const title = document.getElementById('rankingEditorTitle').value.trim(),
+    const title = document
+        .getElementById('rankingEditorTitle')
+        .value.trim()
+        .replaceAll(/\s+/g, ' '),
       optionInputs = [...form.querySelectorAll('[data-ranking-editor-option]')],
       options = optionInputs.map((input) => ({
         id: Number(input.dataset.id),

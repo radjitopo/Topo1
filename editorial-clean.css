@@ -5640,18 +5640,40 @@ body.popElectric.rankingPage .rankingEditor {
 }
 
 body.popElectric.rankingPage .rankingEditorHead {
-  border-top: 5px solid var(--clean-ink);
-  padding: 16px 0 23px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--clean-ink);
+  padding: 0 0 22px;
+}
+
+body.popElectric.rankingPage .rankingEditorHead > div {
+  min-width: 0;
+}
+
+body.popElectric.rankingPage .rankingEditorCategory {
+  display: block;
+  color: var(--clean-sage);
+  font:
+    800 11px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.popElectric.rankingPage .rankingEditorCategory a {
+  color: inherit;
+  text-decoration: none;
 }
 
 body.popElectric.rankingPage .rankingEditorHead h1 {
-  margin: 12px 0 7px;
+  margin: 9px 0 8px;
   color: var(--clean-ink);
   font:
-    800 clamp(40px, 7vw, 68px)/0.94 Arial,
+    800 clamp(38px, 6vw, 58px)/1 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
 }
 
 body.popElectric.rankingPage .rankingEditorHead p {
@@ -5659,7 +5681,7 @@ body.popElectric.rankingPage .rankingEditorHead p {
   margin: 0;
   color: var(--clean-muted);
   font:
-    500 15px/1.45 Arial,
+    500 16px/1.45 Arial,
     Helvetica,
     sans-serif;
 }
@@ -5679,7 +5701,7 @@ body.popElectric.rankingPage .rankingEditorSectionHead span {
   letter-spacing: 0.11em;
 }
 
-body.popElectric.rankingPage .rankingEditorField input,
+body.popElectric.rankingPage .rankingEditorField :is(input, textarea),
 body.popElectric.rankingPage .rankingEditorOption input {
   width: 100%;
   box-sizing: border-box;
@@ -5687,10 +5709,16 @@ body.popElectric.rankingPage .rankingEditorOption input {
   border-radius: 0;
   background: var(--clean-paper);
   color: var(--clean-ink);
+  caret-color: var(--clean-sage);
   outline: 0;
+  touch-action: manipulation;
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-body.popElectric.rankingPage .rankingEditorField input:focus,
+body.popElectric.rankingPage .rankingEditorField :is(input, textarea):focus,
 body.popElectric.rankingPage .rankingEditorOption input:focus {
   border-color: var(--clean-sage);
   box-shadow: inset 4px 0 0 var(--clean-sage);
@@ -5700,14 +5728,15 @@ body.popElectric.rankingPage .rankingEditorTitleField {
   margin: 0 0 32px;
 }
 
-body.popElectric.rankingPage .rankingEditorTitleField input {
-  min-height: 78px;
-  padding: 12px 15px;
+body.popElectric.rankingPage .rankingEditorTitleField textarea {
+  min-height: 96px;
+  resize: vertical;
+  padding: 14px 15px;
   font:
-    800 clamp(26px, 4vw, 40px)/1.05 Arial,
+    800 clamp(23px, 3.2vw, 32px)/1.12 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.025em;
 }
 
 body.popElectric.rankingPage .rankingEditorPhoto,
@@ -5715,6 +5744,10 @@ body.popElectric.rankingPage .rankingEditorOptions {
   margin: 0 0 35px;
   border-top: 1px solid var(--clean-ink);
   padding-top: 15px;
+}
+
+body.popElectric.rankingPage .rankingEditorVip {
+  margin: 0 0 35px;
 }
 
 body.popElectric.rankingPage .rankingEditorSectionHead {
@@ -5975,9 +6008,10 @@ body.popElectric.rankingPage .rankingEditorOption input {
   min-height: 42px;
   padding: 9px 11px;
   font:
-    700 15px/1.2 Arial,
+    700 16px/1.25 Arial,
     Helvetica,
     sans-serif;
+  scroll-margin-block: 90px 160px;
 }
 
 body.popElectric.rankingPage .rankingEditorSaveBar {
@@ -6037,8 +6071,11 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
 
 @media (max-width: 700px) {
   body.popElectric.rankingPage .rankingModeratorBar {
-    align-items: stretch;
-    margin-bottom: 22px;
+    display: grid;
+    align-items: start;
+    gap: 8px;
+    margin: -2px 0 20px;
+    padding: 12px;
   }
 
   body.popElectric.rankingPage .rankingModeratorBar button {
@@ -6046,20 +6083,96 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
   }
 
   body.popElectric.rankingPage .rankingModeratorEditing {
-    max-width: 120px;
+    max-width: none;
+    text-align: left;
   }
 
-  body.popElectric.rankingPage .rankingEditorTitleField input {
-    min-height: 68px;
-    font-size: 26px;
+  body.popElectric.rankingPage .rankingEditorHead {
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorHead h1 {
+    margin: 7px 0 8px;
+    font-size: clamp(34px, 10vw, 42px);
+    line-height: 1;
+  }
+
+  body.popElectric.rankingPage .rankingEditorHead p {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  body.popElectric.rankingPage .rankingEditorField > span,
+  body.popElectric.rankingPage .rankingEditorSectionHead span {
+    font-size: 13px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorTitleField {
+    margin-bottom: 26px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorTitleField textarea {
+    min-height: 100px;
+    padding: 13px;
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  body.popElectric.rankingPage .rankingEditorPhoto,
+  body.popElectric.rankingPage .rankingEditorOptions {
+    margin-bottom: 30px;
+    padding-top: 13px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSectionHead {
+    align-items: start;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSectionHead strong {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSectionHead small,
+  body.popElectric.rankingPage .rankingEditorField small {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  body.popElectric.rankingPage .rankingEditorOption {
+    min-height: 62px;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
+    padding: 7px 0;
+  }
+
+  body.popElectric.rankingPage .rankingEditorOption input {
+    min-height: 48px;
+    padding: 11px 12px;
+    font-size: 16px;
   }
 
   body.popElectric.rankingPage .rankingEditorPhotoPreview {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
+  }
+
+  body.popElectric.rankingPage .rankingEditorPhotoActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   body.popElectric.rankingPage .rankingEditorPhotoActions > * {
-    flex: 1 1 calc(50% - 8px);
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.popElectric.rankingPage .rankingEditorPhotoActions .rankingEditorSuggestButton,
+  body.popElectric.rankingPage .rankingEditorPhotoActions .rankingEditorFileButton {
+    grid-column: 1 / -1;
   }
 
   body.popElectric.rankingPage .rankingEditorSuggestionGrid {
@@ -6076,15 +6189,21 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
     align-items: stretch;
     flex-direction: column;
     gap: 8px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 
-  body.popElectric.rankingPage .rankingEditorSaveBar > div,
+  body.popElectric.rankingPage .rankingEditor:focus-within .rankingEditorSaveBar {
+    position: static;
+  }
+
+  body.popElectric.rankingPage .rankingEditorSaveBar > div {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+
   body.popElectric.rankingPage .rankingEditorSaveBar button {
     width: 100%;
-  }
-
-  body.popElectric.rankingPage .rankingEditorSaveBar button {
-    flex: 1;
   }
 }
 
