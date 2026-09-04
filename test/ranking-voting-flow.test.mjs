@@ -272,7 +272,7 @@ assert.match(
 );
 assert.match(
   compactApp,
-  /image\.src='\/logo-topo-v4\.svg'/,
+  /image\.src='\/logo-topo-v5\.svg'/,
   'the campaign artwork must load the official TOPO logo asset',
 );
 assert.match(

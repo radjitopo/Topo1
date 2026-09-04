@@ -1868,7 +1868,7 @@ function loadRankingPromotionLogo() {
         rankingPromotionLogoPromise = null;
         reject(new Error('topo_logo_unavailable'));
       };
-      image.src = '/logo-topo-v4.svg';
+      image.src = '/logo-topo-v5.svg';
     });
   }
   return rankingPromotionLogoPromise;
@@ -1906,7 +1906,7 @@ async function rankingOptionPromotionCanvas(r, option) {
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = paper;
   context.fillRect(0, 0, canvas.width, 252);
-  context.drawImage(logo, contentX, 49, 370, (370 * 230) / 884);
+  context.drawImage(logo, contentX, 49, 370, (370 * 230) / 790);
   context.fillStyle = ink;
   context.textBaseline = 'top';
   context.font = '800 24px Arial, Helvetica, sans-serif';

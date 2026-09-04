@@ -486,7 +486,7 @@ function escapeHtml(value) {
 function footerHtml() {
   return `<footer class="siteFooter">
     <div class="wrap siteFooterGrid">
-      <div class="siteFooterIntro"><a class="siteFooterBrand" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo-footer-v4.svg" alt="TOPO" width="184" height="48"></a><p>Tudo vira ranking. Vote, descubra e mude a ordem.</p></div>
+      <div class="siteFooterIntro"><a class="siteFooterBrand" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo-footer-v5.svg" alt="TOPO" width="184" height="54"></a><p>Tudo vira ranking. Vote, descubra e mude a ordem.</p></div>
       <nav class="siteFooterColumn" aria-label="Sobre o TOPO"><strong>Sobre o TOPO</strong><a href="/sobre">Sobre nós</a><a href="/como-funciona">Como funciona</a><a href="/imprensa">Imprensa</a><a href="/anuncie">Anuncie no TOPO</a></nav>
       <nav class="siteFooterColumn" aria-label="Ajuda e segurança"><strong>Ajuda e segurança</strong><a href="/contato">Fale conosco</a><a href="/denuncie">Denuncie um conteúdo</a><a href="/regras">Regras da comunidade</a><a href="/seguranca">Segurança e privacidade</a></nav>
       <nav class="siteFooterColumn" aria-label="Informações legais"><strong>Legal</strong><a href="/termos">Termos de uso</a><a href="/privacidade">Política de privacidade</a><a href="/cookies">Política de cookies</a><a href="/direitos-autorais">Direitos autorais</a></nav>
@@ -532,17 +532,17 @@ function renderPage(slug, page) {
 <link rel="alternate" hreflang="x-default" href="${escapeHtml(canonical)}">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:locale" content="pt_BR"><meta property="og:type" content="website"><meta property="og:site_name" content="TOPO">
-<meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo-v2.png">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo-v2.png">
+<meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${escapeHtml(canonical)}"><meta property="og:image" content="${BASE_URL}/og-topo-v3.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${BASE_URL}/og-topo-v3.png">
 <script type="application/ld+json">${structuredData}</script>
 <meta name="theme-color" content="#fffdf8">
-<link rel="icon" href="/topo-mark-v4.svg" type="image/svg+xml">
+<link rel="icon" href="/topo-mark-v5.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css?v=20260825-9-seo">
 <link rel="stylesheet" href="/pop-electric.css?v=20260826-13-compact-categories">
 <link rel="stylesheet" href="/editorial-clean.css?v=20260826-21-login-cta">
 </head>
 <body class="legalShell popElectric">
-<header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo-v4.svg" alt="TOPO" width="184" height="48"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
+<header class="legalTop"><div class="wrap"><a class="logo" href="/" aria-label="TOPO — ir para a home"><img src="/logo-topo-v5.svg" alt="TOPO" width="184" height="54"></a><a class="legalBack" href="/">← Voltar aos rankings</a></div></header>
 <main class="wrap legalPage">
   <div class="legalKicker">${escapeHtml(page.kicker)}</div>
   <h1>${escapeHtml(page.headline)}</h1>

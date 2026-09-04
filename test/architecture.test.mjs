@@ -51,7 +51,7 @@ test('catalog sends compact previews and keeps the opened ranking complete', asy
 
 test('dead public copies are gone and the Open Graph image is static', async () => {
   const vercel = JSON.parse(await readFile(new URL('vercel.json', root), 'utf8'));
-  const ogBuild = vercel.builds.find((build) => build.src === 'og-topo-v2.png');
+  const ogBuild = vercel.builds.find((build) => build.src === 'og-topo-v3.png');
   assert.equal(ogBuild?.use, '@vercel/static');
   assert.ok(!vercel.routes.some((route) => route.dest === '/og-topo.js'));
 

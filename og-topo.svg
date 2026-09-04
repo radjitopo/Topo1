@@ -1,22 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">TOPO — Tudo vira ranking</title>
-  <desc id="desc">Cartão editorial branco e preto do TOPO, com o ponto-seta da marca.</desc>
-  <rect width="1200" height="630" fill="#fff"/>
-  <g transform="translate(78 58) scale(.72)">
-    <g fill="#0a0a0a">
-      <path d="M16 20h110v28H85v96H57V48H16z"/>
-      <path fill-rule="evenodd" d="M202 18c-37.6 0-68 29.1-68 64s30.4 64 68 64 68-29.1 68-64-30.4-64-68-64Zm0 28c21.3 0 38.5 16.1 38.5 36S223.3 118 202 118s-38.5-16.1-38.5-36S180.7 46 202 46Z"/>
-      <path fill-rule="evenodd" d="M286 20h59c35 0 55 19 55 50s-21 50-56 50h-30v24h-28V20Zm28 28v44h27c18 0 28-7 28-22s-10-22-28-22h-27Z"/>
-      <path fill-rule="evenodd" d="M476 18c-37.6 0-68 29.1-68 64s30.4 64 68 64 68-29.1 68-64-30.4-64-68-64Zm0 28c21.3 0 38.5 16.1 38.5 36S497.3 118 476 118s-38.5-16.1-38.5-36S454.7 46 476 46Z"/>
-      <circle cx="584" cy="123" r="18"/>
-    </g>
-    <path d="M584 132v-18m0 0-7 7m7-7 7 7" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <desc id="desc">Cartão editorial do TOPO com o logo O-pico e o slogan Tudo vira ranking.</desc>
+  <rect width="1200" height="630" fill="#fffdf8"/>
+  <rect width="1200" height="14" fill="#0a0a0a"/>
+  <g transform="translate(78 64) scale(.715)">
+    <path fill="#0a0a0a" d="M111.688 41.243H175.812V3.613H0V41.243H66.531V223.076H111.688ZM275.057 0C244.35 0 219.062 10.236 200.397 30.406C180.829 51.479 169.69 82.186 169.69 115C169.69 147.814 180.829 178.822 200.397 199.594C219.363 220.065 244.049 230 275.358 230C306.667 230 331.353 220.065 350.318 199.594C369.284 179.424 381.025 147.513 381.025 116.505C381.025 82.186 369.887 51.178 350.318 30.406C331.051 9.634 306.968 0 275.057 0ZM275.358 38.534C312.387 38.534 335.868 68.639 335.868 116.204C335.868 161.361 311.483 191.466 275.358 191.466C238.63 191.466 214.847 161.361 214.847 115C214.847 68.639 238.63 38.534 275.358 38.534ZM437.823 144.804H494.119C534.459 144.804 560.349 116.204 560.349 71.649C560.349 27.696 535.362 3.613 489.603 3.613H392.666V223.076H437.823ZM437.823 107.173V41.243H479.969C504.053 41.243 515.192 51.78 515.192 74.058C515.192 96.636 504.053 107.173 479.969 107.173Z"/>
+    <path fill="#0a0a0a" fill-rule="evenodd" transform="translate(18)" d="M665.916 0C635.209 0 609.921 10.236 591.257 30.406C571.688 51.479 560.55 82.186 560.55 115C560.55 147.814 571.688 178.822 591.257 199.594C610.223 220.065 634.908 230 666.217 230C697.526 230 722.212 220.065 741.178 199.594C760.144 179.424 771.885 147.513 771.885 116.505C771.885 82.186 760.746 51.178 741.178 30.406C721.911 9.634 697.827 0 665.916 0ZM666.217 47 720 175H612Z"/>
   </g>
-  <rect x="82" y="207" width="650" height="3" fill="#0a0a0a"/>
-  <text x="78" y="345" fill="#0a0a0a" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="92" font-weight="900" letter-spacing="-4">TUDO VIRA</text>
-  <text x="78" y="445" fill="#0a0a0a" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="108" font-weight="900" letter-spacing="-5">RANKING.</text>
-  <text x="83" y="523" fill="#0a0a0a" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="5">VOTE  ·  COMPARE  ·  DESCUBRA</text>
-  <text x="82" y="586" fill="#666" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="2">somostopo.com.br</text>
-  <circle cx="1018" cy="315" r="132" fill="#0a0a0a"/>
-  <path d="M1018 382V242m0 0-54 54m54-54 54 54" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="78" y="261" width="650" height="4" fill="#0a0a0a"/>
+  <text x="74" y="390" fill="#0a0a0a" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="100" font-weight="900" letter-spacing="-5">TUDO VIRA</text>
+  <text x="74" y="493" fill="#ff513f" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="112" font-weight="900" letter-spacing="-6">RANKING.</text>
+  <text x="80" y="558" fill="#0a0a0a" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" letter-spacing="4">VOTE  ·  DESCUBRA  ·  MUDE A ORDEM</text>
+  <text x="80" y="595" fill="#6d6d6d" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="2">somostopo.com.br</text>
+  <circle cx="1010" cy="315" r="135" fill="#0a0a0a"/>
+  <path d="M1010 233 1082 397H938Z" fill="#fffdf8"/>
 </svg>

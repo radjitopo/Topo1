@@ -5,9 +5,9 @@ import { compactSource } from './source-helpers.mjs';
 const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page, app] =
   await Promise.all(
     [
-      '../logo-topo-v4.svg',
-      '../logo-topo-footer-v4.svg',
-      '../topo-mark-v4.svg',
+      '../logo-topo-v5.svg',
+      '../logo-topo-footer-v5.svg',
+      '../topo-mark-v5.svg',
       '../pop-electric.css',
       '../editorial-clean.css',
       '../index.html',
@@ -20,40 +20,42 @@ const compactPopCss = compactSource(popCss);
 const compactEditorialCss = compactSource(editorialCss);
 const compactApp = compactSource(app);
 
-assert.match(logo, /id="wordmark" fill="#0a0a0a"/, 'the master wordmark must be black');
+assert.match(logo, /id="letters" fill="#0a0a0a"/, 'the master wordmark must be black');
 assert.match(
   logo,
-  /id="mountain" fill="#0a0a0a" d="M832\.5 115 781 230h103Z"\/\>/,
-  'a black half-height mountain triangle must follow the final O',
+  /id="o-pico" fill="#0a0a0a" fill-rule="evenodd"/,
+  'the final O must carry the integrated peak',
 );
+assert.match(logo, /M666\.217 47 720 175H612Z/, 'the peak must be cut out inside the final O');
 assert.doesNotMatch(
   logo,
-  /(?:circle|ellipse|stroke=)/,
-  'the logo must not bring back the old dot or arrow',
+  /(?:circle|ellipse|stroke=|id="mountain")/,
+  'the logo must not bring back the detached dot, arrow or mountain',
 );
-assert.match(footerLogo, /id="wordmark" fill="#fff"/, 'the dark footer needs a white wordmark');
+assert.match(footerLogo, /id="letters" fill="#fff"/, 'the dark footer needs a white wordmark');
 assert.match(
   footerLogo,
-  /id="mountain" fill="#fff"/,
-  'the footer needs the reversed mountain triangle',
+  /id="o-pico" fill="#fff" fill-rule="evenodd"/,
+  'the footer needs the reversed integrated O-pico',
 );
-assert.match(mark, /<path fill="#0a0a0a" d="M50 9 5 91h90Z"\/\>/);
-assert.doesNotMatch(mark, /(?:circle|stroke=)/);
+assert.match(mark, /id="o-pico" fill="#0a0a0a" fill-rule="evenodd"/);
+assert.match(mark, /M50 3a47 47 0 1 1 0 94 47 47 0 0 1 0-94/);
+assert.doesNotMatch(mark, /(?:circle|ellipse|stroke=)/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo-v4\.svg"/g) || []).length,
+  (index.match(/src="\/logo-topo-v5\.svg"/g) || []).length,
   1,
-  'the header must use the black triangle wordmark',
+  'the header must use the black O-pico wordmark',
 );
-assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v4\.svg"/);
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v4\.svg"/);
-assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v4\.svg"/);
-assert.match(index, /href="\/topo-mark-v4\.svg"/);
-assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v2\.png/);
-assert.match(institutional, /\/og-topo-v2\.png/);
-assert.match(page, /\/topo-mark-v4\.svg/);
-assert.match(page, /\/og-topo-v2\.png/);
+assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v5\.svg"/);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v5\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v5\.svg"/);
+assert.match(index, /href="\/topo-mark-v5\.svg"/);
+assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v3\.png/);
+assert.match(institutional, /\/og-topo-v3\.png/);
+assert.match(page, /\/topo-mark-v5\.svg/);
+assert.match(page, /\/og-topo-v3\.png/);
 for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
@@ -311,4 +313,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the black mountain triangle follows the TOPO wordmark.');
+console.log('Branding test passed: the O-pico is integrated into the TOPO wordmark.');
