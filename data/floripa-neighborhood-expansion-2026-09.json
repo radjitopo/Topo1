@@ -1,0 +1,456 @@
+{
+  "reviewKey": "20260904_floripa_neighborhood_expansion",
+  "reviewedAt": "2026-09-04",
+  "city": "Florianópolis",
+  "rules": {
+    "appendOnly": true,
+    "preserveExistingOptions": true,
+    "preserveVotes": true
+  },
+  "regions": ["Central", "Continental", "Norte", "Sul", "Leste"],
+  "rankings": [
+    {
+      "rankingId": "academias-floripa",
+      "sources": [
+        "https://myside.com.br/guia-florianopolis/academias-florianopolis-sc",
+        "https://crossfitoverking.com.br/",
+        "https://avvahouse.com.br/",
+        "https://topshape.com.br/",
+        "https://incorporeacademia.com/"
+      ],
+      "additions": [
+        { "label": "Overking CrossFit", "neighborhood": "Balneário", "region": "Continental" },
+        { "label": "Posh Physical Center", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "AVVA Wellness House", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Top Shape Academia", "neighborhood": "Morro das Pedras", "region": "Sul" },
+        { "label": "Beiramar Box", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Incorpore Academia", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "COQ Academia", "neighborhood": "Coqueiros", "region": "Continental" }
+      ]
+    },
+    {
+      "rankingId": "bairros-floripa",
+      "sources": [
+        "https://redeplanejamento.pmf.sc.gov.br/pt-BR/planos/bairros",
+        "https://pt.wikipedia.org/wiki/Lista_de_distritos_e_bairros_de_Florian%C3%B3polis"
+      ],
+      "additions": [
+        { "label": "Abraão", "neighborhood": "Abraão", "region": "Continental" },
+        { "label": "Alto Ribeirão", "neighborhood": "Alto Ribeirão", "region": "Sul" },
+        { "label": "Armação", "neighborhood": "Armação", "region": "Sul" },
+        { "label": "Balneário", "neighborhood": "Balneário", "region": "Continental" },
+        { "label": "Barra da Lagoa", "neighborhood": "Barra da Lagoa", "region": "Leste" },
+        { "label": "Bom Abrigo", "neighborhood": "Bom Abrigo", "region": "Continental" },
+        { "label": "Cachoeira do Bom Jesus", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Canasvieiras", "neighborhood": "Canasvieiras", "region": "Norte" },
+        { "label": "Canto", "neighborhood": "Canto", "region": "Continental" },
+        { "label": "Carianos", "neighborhood": "Carianos", "region": "Sul" },
+        { "label": "Capoeiras", "neighborhood": "Capoeiras", "region": "Continental" },
+        { "label": "Coloninha", "neighborhood": "Coloninha", "region": "Continental" },
+        { "label": "Costa da Lagoa", "neighborhood": "Costa da Lagoa", "region": "Leste" },
+        { "label": "Costeira do Pirajubaé", "neighborhood": "Costeira do Pirajubaé", "region": "Central" },
+        { "label": "Daniela", "neighborhood": "Daniela", "region": "Norte" },
+        { "label": "Itaguaçu", "neighborhood": "Itaguaçu", "region": "Continental" },
+        { "label": "Jardim Atlântico", "neighborhood": "Jardim Atlântico", "region": "Continental" },
+        { "label": "Jardim Capoeiras", "neighborhood": "Jardim Capoeiras", "region": "Continental" },
+        { "label": "José Mendes", "neighborhood": "José Mendes", "region": "Central" },
+        { "label": "Moçambique", "neighborhood": "Moçambique", "region": "Leste" },
+        { "label": "Monte Cristo", "neighborhood": "Monte Cristo", "region": "Continental" },
+        { "label": "Monte Verde", "neighborhood": "Monte Verde", "region": "Central" },
+        { "label": "Morro das Pedras", "neighborhood": "Morro das Pedras", "region": "Sul" },
+        { "label": "Pantanal", "neighborhood": "Pantanal", "region": "Central" },
+        { "label": "Pântano do Sul", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Ponta das Canas", "neighborhood": "Ponta das Canas", "region": "Norte" },
+        { "label": "Praia Brava", "neighborhood": "Praia Brava", "region": "Norte" },
+        { "label": "Praia do Forte", "neighborhood": "Praia do Forte", "region": "Norte" },
+        { "label": "Ratones", "neighborhood": "Ratones", "region": "Norte" },
+        { "label": "Rio Vermelho", "neighborhood": "Rio Vermelho", "region": "Leste" },
+        { "label": "Saco dos Limões", "neighborhood": "Saco dos Limões", "region": "Central" },
+        { "label": "Saco Grande", "neighborhood": "Saco Grande", "region": "Central" },
+        { "label": "Sambaqui", "neighborhood": "Sambaqui", "region": "Norte" },
+        { "label": "Santinho", "neighborhood": "Santinho", "region": "Norte" },
+        { "label": "Tapera da Base", "neighborhood": "Tapera da Base", "region": "Sul" },
+        { "label": "Vargem do Bom Jesus", "neighborhood": "Vargem do Bom Jesus", "region": "Norte" },
+        { "label": "Vargem Grande", "neighborhood": "Vargem Grande", "region": "Norte" },
+        { "label": "Vargem Pequena", "neighborhood": "Vargem Pequena", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "barbearias-floripa",
+      "sources": [
+        "https://barbeariavip.com.br/",
+        "https://sites.appbarber.com.br/plazabarbershop-aaky",
+        "https://sites.appbarber.com.br/BarbeariaIngleses",
+        "https://www.neonbarbeariaingleses.com.br/"
+      ],
+      "additions": [
+        { "label": "CÔRTE Barbearia e Visagismo", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Barbearia VIP Coqueiros", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Barbearia VIP Jurerê", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Barbearia VIP Rio Tavares", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Plaza Barber Shop", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Barbearia Ingleses", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Capitão Navalha", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Neon Barbearia", "neighborhood": "Ingleses", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "bares-floripa",
+      "sources": [
+        "https://cervejariabugio.com.br/en",
+        "https://www.woodenbeer.com/",
+        "https://rufusbar.com.br/",
+        "https://scunabar.com.br/",
+        "https://ibagy.com.br/blog/bem-estar/vida-noturna-na-ilha-conheca-os-bares-de-florianopolis/"
+      ],
+      "additions": [
+        { "label": "Balbúrdia Cervejaria", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Bugio Centro", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Bugio Trindade", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Rufus Bar", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Bar DeRaiz", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Wooden Tap Beer — Centro", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Wooden Tap Beer — Aeroporto", "neighborhood": "Carianos", "region": "Sul" },
+        { "label": "Scuna Bar", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Boteco Zé Mané", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Liffey Brew Pub", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Beer and Pork", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Bar do Boni", "neighborhood": "Lagoa da Conceição", "region": "Leste" }
+      ]
+    },
+    {
+      "rankingId": "botecos-floripa",
+      "sources": [
+        "https://comidadibuteco.com.br/butecos/florianopolis/",
+        "https://floripa.com/gastronomia/comida-di-buteco-2026-em-florianopolis-conheca-os-participantes-do-concurso/"
+      ],
+      "additions": [
+        { "label": "Boteco da Ilha", "neighborhood": "Santa Mônica", "region": "Central" },
+        { "label": "El Gato Gastro Pub", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "La Previa", "neighborhood": "Santa Mônica", "region": "Central" },
+        { "label": "Okinka — Gastrobar Africano", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Parador 714", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Quiosque do Mozo", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Quiosque Fênix", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Rufus Bar", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Santo di Casa", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Trapiche Bar", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Zeca Bar e Restaurante", "neighborhood": "Campeche", "region": "Sul" }
+      ]
+    },
+    {
+      "rankingId": "brechos-floripa",
+      "sources": [
+        "https://meubrecho.app/cidade/florianopolis/",
+        "https://seove.org.br/bazar/",
+        "https://suldefloripa.com.br/parceiros/to-na-arara-brecho/"
+      ],
+      "additions": [
+        { "label": "Brechó da SEOVE", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Tô na Arara Brechó", "neighborhood": "Morro das Pedras", "region": "Sul" },
+        { "label": "Brechó MM", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Achei no Armário — Outlet e Brechó", "neighborhood": "Centro", "region": "Central" }
+      ]
+    },
+    {
+      "rankingId": "cafes-floripa",
+      "sources": [
+        "https://www.quintoandar.com.br/guias/cidades/cafeterias-em-florianopolis/",
+        "https://viveremsc.com.br/blog/cafeterias-de-especialidade-florianopolis/",
+        "https://graocafes.com.br/lugares-para-tomar-cafe-florianopolis/"
+      ],
+      "additions": [
+        { "label": "Fazendinha Floripa", "neighborhood": "Santo Antônio de Lisboa", "region": "Norte" },
+        { "label": "FairyLand Café & Cupcakeria", "neighborhood": "Santo Antônio de Lisboa", "region": "Norte" },
+        { "label": "Lighthouse Cafés Especiais", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Rocambole Café", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Tens Tempo Café", "neighborhood": "Ribeirão da Ilha", "region": "Sul" },
+        { "label": "Caffè 54", "neighborhood": "Ingleses", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "eventos-esportivos-floripa",
+      "sources": [
+        "https://www.ironman.com/races/im703-florianopolis",
+        "https://challengefamily.com/races/challenge-florianopolis-april/",
+        "https://ecorunning.com.br/voltaailha",
+        "https://www.atptour.com/en/tournaments/florianopolis/9651/overview"
+      ],
+      "additions": [
+        { "label": "Engie Open — ATP Challenger Florianópolis", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Volta à Lagoa da Conceição", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Travessia da Ilha do Campeche", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Travessia Internacional da Lagoa da Conceição", "neighborhood": "Lagoa da Conceição", "region": "Leste" }
+      ]
+    },
+    {
+      "rankingId": "hamburguer-floripa",
+      "sources": [
+        "https://grillburger.com.br/",
+        "https://willsonsburger.com.br/",
+        "https://www.tripadvisor.com.br/Restaurants-g303576-zfd10907-Florianopolis_State_of_Santa_Catarina-Hamburger.html"
+      ],
+      "additions": [
+        { "label": "Grill Burger", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Willson's Burger — Coqueiros", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Willson's Burger — Monte Verde", "neighborhood": "Monte Verde", "region": "Central" },
+        { "label": "Duka's Burger", "neighborhood": "Estreito", "region": "Continental" },
+        { "label": "May Hamburgueria", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "BBQ Burger", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "El Padre Pizzas e Burgers", "neighborhood": "Barra da Lagoa", "region": "Leste" }
+      ]
+    },
+    {
+      "rankingId": "hoteis-floripa",
+      "sources": [
+        "https://guiafloripa.com.br/servicos/hospedagem",
+        "https://www.expedia.com/All-Florianopolis-Hotels.d6053360.Travel-Guide-City-All-Hotels",
+        "https://www.booking.com/landmark/br/praia-dos-ingleses.html"
+      ],
+      "additions": [
+        { "label": "Morro das Pedras Clube Hotel", "neighborhood": "Morro das Pedras", "region": "Sul" },
+        { "label": "São Sebastião da Praia Hotel", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Pousada Old Beach", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Pousada do Museu", "neighborhood": "Ribeirão da Ilha", "region": "Sul" },
+        { "label": "Cris Hotel", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Selina Floripa", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Samuka Hotel", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Pousada Colinas da Lagoa", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Cambirela Hotel", "neighborhood": "Jardim Atlântico", "region": "Continental" },
+        { "label": "Brisamar Suite Hotel", "neighborhood": "Jardim Atlântico", "region": "Continental" },
+        { "label": "Hotel Bruggemann", "neighborhood": "Estreito", "region": "Continental" },
+        { "label": "Intercity Portofino Florianópolis", "neighborhood": "Saco Grande", "region": "Central" },
+        { "label": "Hotel Porto Sol Beach", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Village Paraíso", "neighborhood": "Canasvieiras", "region": "Norte" },
+        { "label": "Ingleses Park Hotel", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Hotel & Pousada Favareto", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Hotel Porto Sol Ingleses", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Pousada Ecomar", "neighborhood": "Ribeirão da Ilha", "region": "Sul" }
+      ]
+    },
+    {
+      "rankingId": "padarias-floripa",
+      "sources": [
+        "https://www.tripadvisor.com.br/Restaurants-g303576-zfg9901-Florianopolis_State_of_Santa_Catarina.html",
+        "https://foodbizbrasil.com/locais-e-indicacoes/padarias-florianopolis-onde-comer-pao-cafe/",
+        "https://franchis.com.br/",
+        "https://www.alemaocafeepaes.com.br/"
+      ],
+      "additions": [
+        { "label": "Pão da Madre", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "IMUA Padaria Artesanal", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Dupão Padaria & Café", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Pães & Papos", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Franchis Padaria Artesanal", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Alemão Café e Pães", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Panificadora Lívia", "neighborhood": "Vargem Grande", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "pet-shops-floripa",
+      "sources": [
+        "https://petshopingleses.com.br/",
+        "https://dogshowagropet.com.br/",
+        "https://www.doglife.com.br/petshop/florianopolis-sc"
+      ],
+      "additions": [
+        { "label": "Cannis Pet Shop", "neighborhood": "Jardim Atlântico", "region": "Continental" },
+        { "label": "Pet Shop Ingleses", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Dog Show Agropet", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "É o Bicho Pet Shop", "neighborhood": "Jardim Atlântico", "region": "Continental" },
+        { "label": "Cão de Casa Pet Shop", "neighborhood": "Tapera da Base", "region": "Sul" },
+        { "label": "Bouticão", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Mi-Au Pet Center", "neighborhood": "Ingleses", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "pizzarias-floripa",
+      "sources": [
+        "https://www.tripadvisor.com.br/Restaurants-g303576-c31-Florianopolis_State_of_Santa_Catarina.html",
+        "https://www.feitopizza.com.br/",
+        "https://www.pizzariaestreladailha.com.br/",
+        "https://suldefloripa.com.br/pizza-napoletana-chega-com-exclusividade-ao-rio-tavares-em-florianopolis/"
+      ],
+      "additions": [
+        { "label": "Pizzaria Bel Mangio", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Pizzaria 4 Queijos", "neighborhood": "Córrego Grande", "region": "Central" },
+        { "label": "El Padre Pizzas e Burgers", "neighborhood": "Barra da Lagoa", "region": "Leste" },
+        { "label": "Paixão Restaurante & Pizzeria", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Feito Pizza — Coqueiros", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Feito Pizza — Trindade", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Pepe Pizzeria Napoletana", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Pizzaria Estrela da Ilha", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Di Pietre Pizzaria", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Sabrosa Pizza Bar e Café", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Pizzaria Popular", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Pizzarium", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Di Roma Pizza", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Allegro Pizzas", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Heróis da Pizza QG Florianópolis", "neighborhood": "Centro", "region": "Central" }
+      ]
+    },
+    {
+      "rankingId": "praias",
+      "sources": [
+        "https://guiafloripa.com.br/turismo/praias",
+        "https://www.pmf.sc.gov.br/entidades/continente/index.php?noti=11491&pagina=notpagina",
+        "https://fr.wikipedia.org/wiki/Liste_des_plages_de_Florian%C3%B3polis"
+      ],
+      "additions": [
+        { "label": "Caieira da Barra do Sul", "neighborhood": "Alto Ribeirão", "region": "Sul" },
+        { "label": "Praia da Tapera", "neighborhood": "Tapera da Base", "region": "Sul" },
+        { "label": "Praia do Ribeirão da Ilha", "neighborhood": "Ribeirão da Ilha", "region": "Sul" },
+        { "label": "Prainha", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Praia do Cacupé", "neighborhood": "Cacupé", "region": "Norte" },
+        { "label": "Praia Comprida", "neighborhood": "Cacupé", "region": "Norte" },
+        { "label": "Praia de Santo Antônio de Lisboa", "neighborhood": "Santo Antônio de Lisboa", "region": "Norte" },
+        { "label": "Praia de Sambaqui", "neighborhood": "Sambaqui", "region": "Norte" },
+        { "label": "Praia da Barra do Sambaqui", "neighborhood": "Sambaqui", "region": "Norte" },
+        { "label": "Praia do Pontal", "neighborhood": "Sambaqui", "region": "Norte" },
+        { "label": "Praia de Canajurê", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Praia de Canasvieiras", "neighborhood": "Canasvieiras", "region": "Norte" },
+        { "label": "Praia da Cachoeira do Bom Jesus", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Praia de Ponta das Canas", "neighborhood": "Ponta das Canas", "region": "Norte" },
+        { "label": "Praia dos Ingleses", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Praia do Gravatá", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Praia dos Açores", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Praia do Saquinho", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Praia do Bom Abrigo", "neighborhood": "Bom Abrigo", "region": "Continental" },
+        { "label": "Praia das Palmeiras", "neighborhood": "Bom Abrigo", "region": "Continental" },
+        { "label": "Praia do Itaguaçu", "neighborhood": "Itaguaçu", "region": "Continental" },
+        { "label": "Praia do Meio", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Praia de Coqueiros", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Praia do Matadouro", "neighborhood": "Coqueiros", "region": "Continental" }
+      ]
+    },
+    {
+      "rankingId": "quilo-floripa",
+      "sources": [
+        "https://www.tripadvisor.com.br/Restaurants-g303576-zfp49-Florianopolis_State_of_Santa_Catarina.html",
+        "https://www.sobrallia.com.br/"
+      ],
+      "additions": [
+        { "label": "Boulevard Gourmet", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Sobrallia Restaurante", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Art Gourmet", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Restaurante Kamala", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Favo", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Feijão de Corda Floripa", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Siqueira Grill", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Dom EKO Orgânicos", "neighborhood": "Campeche", "region": "Sul" }
+      ]
+    },
+    {
+      "rankingId": "restaurantes-floripa",
+      "sources": [
+        "https://www.quintoandar.com.br/guias/cidades/restaurantes-em-florianopolis/",
+        "https://www.deolhonailha.com.br/florianopolis/noticias/ranking-dos-melhores-restaurantes-de-alto-padrao-em-florianopolis/",
+        "https://guiafloripa.com.br/servicos/comer-e-beber/restaurantes",
+        "https://diariodefloripa.com.br/onde-comer-na-lagoa-da-conceicao/"
+      ],
+      "additions": [
+        { "label": "Osli Restaurante", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Le Tuá", "neighborhood": "Centro", "region": "Central" },
+        { "label": "La Cave Gastronomia e Vinhos", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Blackpot", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Taberna Ibérica", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Delícias Portuguesas", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Empório Capella", "neighborhood": "Itacorubi", "region": "Central" },
+        { "label": "Lindacap", "neighborhood": "Coqueiros", "region": "Continental" },
+        { "label": "Fogo e Mar", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Jay Bistrô", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "May", "neighborhood": "Santo Antônio de Lisboa", "region": "Norte" },
+        { "label": "Kuay Kitchen", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Restinga Restaurante", "neighborhood": "Sambaqui", "region": "Norte" },
+        { "label": "Zé do Cacupé", "neighborhood": "Cacupé", "region": "Norte" },
+        { "label": "Jardín del Mar", "neighborhood": "Cacupé", "region": "Norte" },
+        { "label": "Porto dos Guarás", "neighborhood": "Cacupé", "region": "Norte" },
+        { "label": "O Barba Negra", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Restaurante Cabral", "neighborhood": "Costa da Lagoa", "region": "Leste" },
+        { "label": "Porto do Contrato", "neighborhood": "Ribeirão da Ilha", "region": "Sul" },
+        { "label": "Açor", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Pedacinho do Céu", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Mandala", "neighborhood": "Pântano do Sul", "region": "Sul" },
+        { "label": "Deca", "neighborhood": "Barra da Lagoa", "region": "Leste" },
+        { "label": "Boka's", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" }
+      ]
+    },
+    {
+      "rankingId": "restaurantes-italianos-floripa",
+      "sources": [
+        "https://www.tripadvisor.com.br/Restaurants-g303576-c26-Florianopolis_State_of_Santa_Catarina.html",
+        "https://guiafloripa.com.br/servicos/comer-e-beber/restaurantes/italianos"
+      ],
+      "additions": [
+        { "label": "Amalfi Restaurante", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Bibi Pizza", "neighborhood": "Santa Mônica", "region": "Central" },
+        { "label": "Bere Birra Forneria", "neighborhood": "Santa Mônica", "region": "Central" },
+        { "label": "Pizzeria Il Cantuccio", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Leone's Forneria", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Basilico", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Nave Mãe Pizzaria", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Pizzeria Elba D'Italia", "neighborhood": "Trindade", "region": "Central" },
+        { "label": "Lenha & Oliva", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "La Botte Pizzeria Italiana", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "DeVito Cucina Italiana", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Tereza's", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Galeto da Mamma", "neighborhood": "Centro", "region": "Central" }
+      ]
+    },
+    {
+      "rankingId": "restaurantes-veganos-floripa",
+      "sources": [
+        "https://www.happycow.net/best-vegan-restaurants/florianopolis-brazil",
+        "https://diariodefloripa.com.br/restaurantes-veganos-florianopolis/"
+      ],
+      "additions": [
+        { "label": "Vega Açaí", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Dom EKO Orgânicos", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Cumbuca — Cozinha Afetiva", "neighborhood": "Rio Tavares", "region": "Sul" },
+        { "label": "Sehat Floripa", "neighborhood": "Campeche", "region": "Sul" }
+      ]
+    },
+    {
+      "rankingId": "saloes-beleza-floripa",
+      "sources": [
+        "https://www.bressancabeleireiros.com.br/",
+        "https://studiodoscachos.com.br/",
+        "https://www.tripadvisor.com.br/Attractions-g303576-Activities-c40-Florianopolis_State_of_Santa_Catarina.html"
+      ],
+      "additions": [
+        { "label": "Bressan Cabeleireiros", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Studio dos Cachos", "neighborhood": "Campeche", "region": "Sul" },
+        { "label": "Espaço Márcio Magro", "neighborhood": "Saco dos Limões", "region": "Central" },
+        { "label": "NU Salão", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Joy Beauty", "neighborhood": "Saco Grande", "region": "Central" },
+        { "label": "Loira Hair", "neighborhood": "Carianos", "region": "Sul" },
+        { "label": "Jurerê Beauté", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Cris Moreira Hair", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Orisa", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Katia Miyazaki", "neighborhood": "Trindade", "region": "Central" }
+      ]
+    },
+    {
+      "rankingId": "sushi-floripa",
+      "sources": [
+        "https://www.tripadvisor.com.br/Restaurants-g303576-c27-Florianopolis_State_of_Santa_Catarina.html",
+        "https://konikosushi.com.br/",
+        "https://deepsushi.com.br/",
+        "https://www.naturesushibar.com.br/",
+        "https://www.kuay.com.br/"
+      ],
+      "additions": [
+        { "label": "Koniko Sushi", "neighborhood": "Ingleses", "region": "Norte" },
+        { "label": "Tatsuki Sushi House", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Noir Sushi Bewiki", "neighborhood": "Centro", "region": "Central" },
+        { "label": "Deep Sushi — Cachoeira", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Deep Sushi — Lagoa", "neighborhood": "Lagoa da Conceição", "region": "Leste" },
+        { "label": "Pokemaki Jurerê", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Take Sushi", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" },
+        { "label": "Nature Sushi Bar", "neighborhood": "Armação", "region": "Sul" },
+        { "label": "Kuay Sushi", "neighborhood": "Jurerê", "region": "Norte" },
+        { "label": "Sushi do Cheff", "neighborhood": "Cachoeira do Bom Jesus", "region": "Norte" }
+      ]
+    }
+  ]
+}

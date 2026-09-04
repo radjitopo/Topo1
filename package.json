@@ -38,6 +38,7 @@
     "db:option-relevance-review": "node scripts/apply-option-relevance-review.mjs",
     "db:cafes-floripa-refresh": "node scripts/apply-cafes-floripa-refresh.mjs",
     "db:vegan-floripa-refresh": "node scripts/apply-vegan-floripa-refresh.mjs",
+    "db:floripa-neighborhood-expansion": "node scripts/apply-floripa-neighborhood-expansion.mjs",
     "db:ranking-cover-review": "node scripts/apply-ranking-cover-review.mjs",
     "db:local-content-quality": "node scripts/apply-local-content-quality.mjs",
     "db:local-launch-curation": "node scripts/apply-local-launch-curation.mjs",
