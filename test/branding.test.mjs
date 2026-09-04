@@ -5,9 +5,9 @@ import { compactSource } from './source-helpers.mjs';
 const [logo, footerLogo, mark, popCss, editorialCss, index, institutional, page, app] =
   await Promise.all(
     [
-      '../logo-topo-v5.svg',
-      '../logo-topo-footer-v5.svg',
-      '../topo-mark-v5.svg',
+      '../logo-topo-v6.svg',
+      '../logo-topo-footer-v6.svg',
+      '../topo-mark-v6.svg',
       '../pop-electric.css',
       '../editorial-clean.css',
       '../index.html',
@@ -26,7 +26,11 @@ assert.match(
   /id="o-pico" fill="#0a0a0a" fill-rule="evenodd"/,
   'the final O must carry the integrated peak',
 );
-assert.match(logo, /M666\.217 47 720 175H612Z/, 'the peak must be cut out inside the final O');
+assert.match(
+  logo,
+  /M666\.217 43\.408567 728\.217 150\.795717H604\.217Z/,
+  'the equilateral peak must be centered by its three vertices inside the final O',
+);
 assert.doesNotMatch(
   logo,
   /(?:circle|ellipse|stroke=|id="mountain")/,
@@ -40,22 +44,23 @@ assert.match(
 );
 assert.match(mark, /id="o-pico" fill="#0a0a0a" fill-rule="evenodd"/);
 assert.match(mark, /M50 3a47 47 0 1 1 0 94 47 47 0 0 1 0-94/);
+assert.match(mark, /Zm0 17\.555136 25\.5 44\.167296H24\.5Z/);
 assert.doesNotMatch(mark, /(?:circle|ellipse|stroke=)/);
 
 assert.doesNotMatch(index, /class="logo"[^>]*>TOPO</, 'the header logo must never be typed text');
 assert.equal(
-  (index.match(/src="\/logo-topo-v5\.svg"/g) || []).length,
+  (index.match(/src="\/logo-topo-v6\.svg"/g) || []).length,
   1,
   'the header must use the black O-pico wordmark',
 );
-assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v5\.svg"/);
-assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v5\.svg"/);
-assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v5\.svg"/);
-assert.match(index, /href="\/topo-mark-v5\.svg"/);
-assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v3\.png/);
-assert.match(institutional, /\/og-topo-v3\.png/);
-assert.match(page, /\/topo-mark-v5\.svg/);
-assert.match(page, /\/og-topo-v3\.png/);
+assert.match(index, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v6\.svg"/);
+assert.match(institutional, /class="logo"[^>]*><img src="\/logo-topo-v6\.svg"/);
+assert.match(institutional, /class="siteFooterBrand"[^>]*><img src="\/logo-topo-footer-v6\.svg"/);
+assert.match(index, /href="\/topo-mark-v6\.svg"/);
+assert.match(index, /https:\/\/somostopo\.com\.br\/og-topo-v4\.png/);
+assert.match(institutional, /\/og-topo-v4\.png/);
+assert.match(page, /\/topo-mark-v6\.svg/);
+assert.match(page, /\/og-topo-v4\.png/);
 for (const shell of [index, institutional, page]) {
   assert.doesNotMatch(shell, /(?:logo-topo|topo-mark)\.svg|og-topo\.png/);
 }
@@ -313,4 +318,4 @@ assert.match(
   'moderation counts and cards must use the compact mobile composition',
 );
 
-console.log('Branding test passed: the O-pico is integrated into the TOPO wordmark.');
+console.log('Branding test passed: the equilateral O-pico is optically centered.');

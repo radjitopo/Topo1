@@ -1868,7 +1868,7 @@ function loadRankingPromotionLogo() {
         rankingPromotionLogoPromise = null;
         reject(new Error('topo_logo_unavailable'));
       };
-      image.src = '/logo-topo-v5.svg';
+      image.src = '/logo-topo-v6.svg';
     });
   }
   return rankingPromotionLogoPromise;

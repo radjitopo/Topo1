@@ -97,7 +97,7 @@ export function sharedDuelForRanking(value, ranking) {
 }
 
 function safeImageUrl(value) {
-  if (!value) return `${BASE_URL}/og-topo-v3.png`;
+  if (!value) return `${BASE_URL}/og-topo-v4.png`;
   try {
     const url = new URL(String(value), BASE_URL);
     if (!['http:', 'https:'].includes(url.protocol)) throw new Error('unsupported_image_protocol');
@@ -110,7 +110,7 @@ function safeImageUrl(value) {
     }
     return url.toString();
   } catch {
-    return `${BASE_URL}/og-topo-v3.png`;
+    return `${BASE_URL}/og-topo-v4.png`;
   }
 }
 
@@ -336,7 +336,7 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
       '@id': `${BASE_URL}/#organization`,
       name: 'TOPO',
       url: BASE_URL,
-      logo: `${BASE_URL}/topo-mark-v5.svg`,
+      logo: `${BASE_URL}/topo-mark-v6.svg`,
     },
     {
       '@type': 'WebSite',
@@ -368,7 +368,7 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
       description,
       canonical,
       index: !search,
-      image: `${BASE_URL}/og-topo-v3.png`,
+      image: `${BASE_URL}/og-topo-v4.png`,
       structuredData,
     },
     content,
@@ -448,7 +448,7 @@ export function renderGeneralCategoryPage(template, category, rankings, search =
         canonical,
         index: !search && selected.length > 0,
         image:
-          selected.find((ranking) => ranking.imageUrl)?.imageUrl || `${BASE_URL}/og-topo-v3.png`,
+          selected.find((ranking) => ranking.imageUrl)?.imageUrl || `${BASE_URL}/og-topo-v4.png`,
         structuredData,
       },
       content,
@@ -527,7 +527,7 @@ export function renderLocalPage(template, rankings, city = null, group = null, s
         canonical,
         index: !search && selected.length > 0,
         image:
-          selected.find((ranking) => ranking.imageUrl)?.imageUrl || `${BASE_URL}/og-topo-v3.png`,
+          selected.find((ranking) => ranking.imageUrl)?.imageUrl || `${BASE_URL}/og-topo-v4.png`,
         structuredData,
       },
       content,
@@ -644,7 +644,7 @@ export function renderVipRankingPage(template, ranking) {
       title: `Ranking do Meu Topo — TOPO`,
       description: 'Ranking protegido por senha no Meu Topo.',
       canonical,
-      image: `${BASE_URL}/og-topo-v3.png`,
+      image: `${BASE_URL}/og-topo-v4.png`,
       index: false,
     },
     content,
@@ -929,7 +929,7 @@ function renderPrivatePage(template, kind) {
       title,
       description,
       canonical: `${BASE_URL}/${encodeURIComponent(kind)}`,
-      image: `${BASE_URL}/og-topo-v3.png`,
+      image: `${BASE_URL}/og-topo-v4.png`,
       index: false,
     },
     content: '<div class="loading">carregando…</div>',
@@ -952,7 +952,7 @@ export function renderMissingPage(template, title = 'Página não encontrada —
       title,
       description: 'Esta página não está disponível. Descubra outros rankings no TOPO.',
       canonical: BASE_URL,
-      image: `${BASE_URL}/og-topo-v3.png`,
+      image: `${BASE_URL}/og-topo-v4.png`,
       index: false,
     },
     content:
@@ -1052,7 +1052,7 @@ export default async function handler(req, res) {
         title: 'TOPO temporariamente indisponível',
         description: 'O TOPO está sendo atualizado. Tente novamente em alguns instantes.',
         canonical: BASE_URL,
-        image: `${BASE_URL}/og-topo-v3.png`,
+        image: `${BASE_URL}/og-topo-v4.png`,
         index: false,
       },
       content:
