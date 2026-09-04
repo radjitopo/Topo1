@@ -11,6 +11,7 @@ const categoryExamples = [
   ['hamburguer-brasilia', 'Quem faz o melhor hambúrguer em Brasília?', 'Hambúrguer'],
   ['sushi-brasilia', 'Qual é o melhor sushi em Brasília?', 'Sushi/Japonês'],
   ['cafes-brasilia', 'Qual é o melhor café em Brasília?', 'Café/Cafeteria'],
+  ['sorveterias-brasilia', 'Qual é a melhor sorveteria em Brasília?', 'Sorveteria'],
   ['bares-brasilia', 'Qual é o melhor bar em Brasília?', 'Bares'],
   ['botecos-brasilia', 'Qual é o melhor boteco em Brasília?', 'Botecos'],
   ['saloes-beleza-brasilia', 'Qual é o melhor salão de beleza em Brasília?', 'Salão de beleza'],
@@ -26,6 +27,11 @@ const categoryExamples = [
     'restaurantes-italianos-brasilia',
     'Qual é o melhor restaurante italiano em Brasília?',
     'Restaurante italiano',
+  ],
+  [
+    'frutos-do-mar-brasilia',
+    'Qual é o melhor restaurante de frutos do mar em Brasília?',
+    'Restaurante de frutos do mar',
   ],
   ['padarias-brasilia', 'Qual é a melhor padaria em Brasília?', 'Padaria'],
   ['quilo-brasilia', 'Qual é o melhor restaurante por quilo em Brasília?', 'Restaurante por quilo'],
@@ -72,7 +78,7 @@ const rankings = [
   },
 ];
 
-test('the exact 17 Topo Local categories classify independently', () => {
+test('the exact 19 Topo Local categories classify independently', () => {
   assert.deepEqual(local.groupOrder, ['Todos', ...categoryExamples.map(([, , group]) => group)]);
   for (const [id, , expected] of categoryExamples) {
     const ranking = rankings.find((item) => item.id === id);
@@ -82,6 +88,10 @@ test('the exact 17 Topo Local categories classify independently', () => {
   assert.equal(
     local.collectionPath('Manaus', 'Restaurante/lanchonete vegano/vegetariano'),
     '/local/manaus/restaurante-lanchonete-vegano-vegetariano',
+  );
+  assert.equal(
+    local.collectionPath('Florianópolis', 'Restaurante de frutos do mar'),
+    '/local/florianopolis/restaurante-de-frutos-do-mar',
   );
 });
 
