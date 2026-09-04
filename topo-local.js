@@ -30,6 +30,7 @@
     'Hambúrguer',
     'Sushi/Japonês',
     'Café/Cafeteria',
+    'Sorveteria',
     'Bares',
     'Botecos',
     'Salão de beleza',
@@ -38,6 +39,7 @@
     'Eventos esportivos',
     'Pet shop',
     'Restaurante italiano',
+    'Restaurante de frutos do mar',
     'Padaria',
     'Restaurante por quilo',
     'Restaurante/lanchonete vegano/vegetariano',
@@ -91,6 +93,11 @@
       question: /\b(?:restaurante\s+por\s+quilo|quilo|self\s+service)\b/,
     },
     {
+      name: 'Restaurante de frutos do mar',
+      id: /^(?:frutos\s+do\s+mar|restaurantes?\s+(?:de\s+)?frutos\s+do\s+mar)(?:\s|$)/,
+      question: /\brestaurante\s+de\s+frutos\s+do\s+mar\b|\bfrutos\s+do\s+mar\b/,
+    },
+    {
       name: 'Restaurante italiano',
       id: /^restaurantes?\s+italianos?(?:\s|$)/,
       question: /\brestaurante\s+italiano\b/,
@@ -114,6 +121,11 @@
       name: 'Café/Cafeteria',
       id: /^(?:cafe|cafes|cafeterias?)(?:\s|$)/,
       question: /\b(?:cafe|cafeteria)\b/,
+    },
+    {
+      name: 'Sorveteria',
+      id: /^(?:sorveterias?|gelaterias?)(?:\s|$)/,
+      question: /\b(?:sorveteria|gelateria)\b/,
     },
     {
       name: 'Botecos',
