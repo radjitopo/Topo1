@@ -61,6 +61,27 @@ Object.assign(editorial,{"pequenas-tragedias-domesticas":{"about":"Dentro de cas
     );
   }
 
+  function removeOptionFromClient(rankingId, optionId) {
+    try {
+      if (typeof rankings === 'undefined' || !Array.isArray(rankings)) return;
+      const ranking = rankings.find((item) => item.id === rankingId);
+      if (!ranking || !Array.isArray(ranking.opts)) return;
+      ranking.opts = ranking.opts.filter((option) => Number(option.id) !== optionId);
+    } catch {
+      // A exclusão já foi concluída no servidor; a interface pode continuar normalmente.
+    }
+  }
+
+  function refreshEditorRows(form) {
+    const rows = [...form.querySelectorAll('.rankingEditorOption')];
+    rows.forEach((currentRow, index) => {
+      const position = currentRow.querySelector(':scope > span');
+      if (position) position.textContent = String(index + 1);
+    });
+    const count = form.querySelector('.rankingEditorOptions .rankingEditorSectionHead small');
+    if (count) count.textContent = `${rows.length} opções · votos preservados`;
+  }
+
   function decorateEditor() {
     const form = document.getElementById('rankingEditorForm');
     if (!form) return;
@@ -116,8 +137,13 @@ Object.assign(editorial,{"pequenas-tragedias-domesticas":{"about":"Dentro de cas
           });
           const result = await response.json().catch(() => ({}));
           if (!response.ok) throw result;
-          if (status) status.textContent = `${label} foi excluído.`;
-          location.reload();
+
+          const nextRow = row.nextElementSibling || row.previousElementSibling;
+          removeOptionFromClient(rankingId, optionId);
+          row.remove();
+          refreshEditorRows(form);
+          if (status) status.textContent = `${label} foi excluído. Você pode continuar editando.`;
+          nextRow?.querySelector('input[data-ranking-editor-option]')?.focus({ preventScroll: true });
         } catch (error) {
           button.disabled = false;
           const message = errorText(error?.error);
