@@ -24,23 +24,86 @@ if (typeof document !== 'undefined') {
   const duelPhotoPolish = document.createElement('style');
   duelPhotoPolish.id = 'duelPhotoPolish';
   duelPhotoPolish.textContent = `
+    body.popElectric.rankingPage .duelChoices{
+      position:relative;
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:16px !important;
+      align-items:stretch !important;
+    }
+    body.popElectric.rankingPage .duelVersus{
+      position:absolute !important;
+      left:50% !important;
+      top:50% !important;
+      z-index:4;
+      width:30px;
+      height:30px;
+      display:grid !important;
+      place-items:center;
+      transform:translate(-50%,-50%);
+      background:var(--clean-soft,#f3f3f0);
+      pointer-events:none;
+    }
     body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
-      grid-template-rows:154px auto;
-      gap:7px;
+      box-sizing:border-box;
+      width:100% !important;
+      height:100% !important;
+      min-height:270px !important;
+      grid-template-rows:154px minmax(78px,1fr) !important;
+      align-content:stretch !important;
+      gap:7px !important;
     }
     body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
-      height:154px;
+      width:100% !important;
+      height:154px !important;
+      min-height:154px !important;
+      max-height:154px !important;
+      box-sizing:border-box;
+    }
+    body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+      width:100%;
+      min-height:78px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 !important;
+      padding:4px 6px !important;
+      box-sizing:border-box;
+      text-align:center;
     }
     body.popElectric.rankingPage.duelPortraitContext .duelChoiceVerifiedPhoto img{
-      object-position:center 20%;
+      object-position:center 20% !important;
     }
     @media(max-width:900px){
+      body.popElectric.rankingPage .duelChoices{
+        gap:12px !important;
+      }
+      body.popElectric.rankingPage .duelVersus{
+        width:24px;
+        height:24px;
+        font-size:8px;
+      }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
-        grid-template-rows:88px auto;
-        gap:4px;
+        height:168px !important;
+        min-height:168px !important;
+        max-height:168px !important;
+        grid-template-rows:88px 64px !important;
+        gap:4px !important;
+        padding:6px !important;
       }
       body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
-        height:88px;
+        height:88px !important;
+        min-height:88px !important;
+        max-height:88px !important;
+      }
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+        height:64px;
+        min-height:64px;
+        max-height:64px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        padding:3px 4px !important;
       }
     }
   `;
