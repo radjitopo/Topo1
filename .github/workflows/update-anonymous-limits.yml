@@ -1,0 +1,55 @@
+name: Update anonymous limits
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-anonymous-limits.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-limits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply anonymous limits
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              'api.js': [
+                  ('const ANONYMOUS_LIMIT = 10;', 'const ANONYMOUS_LIMIT = 30;'),
+                  ('const ANONYMOUS_DUEL_LIMIT = 2;', 'const ANONYMOUS_DUEL_LIMIT = 5;'),
+              ],
+              'app.js': [
+                  ('const DEFAULT_ANONYMOUS_LIMIT = 10;', 'const DEFAULT_ANONYMOUS_LIMIT = 30;'),
+                  ('const DEFAULT_ANONYMOUS_DUEL_LIMIT = 2;', 'const DEFAULT_ANONYMOUS_DUEL_LIMIT = 5;'),
+              ],
+          }
+
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs:
+                  if old not in text and new not in text:
+                      raise SystemExit(f'Expected limit declaration not found in {filename}: {old}')
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit updated limits
+        run: |
+          if git diff --quiet -- api.js app.js; then
+            echo 'Limits already updated.'
+            exit 0
+          fi
+          git config user.name 'topo-automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add api.js app.js
+          git commit -m 'Raise anonymous voting limits to 30 votes and 5 duels'
+          git push
