@@ -137,20 +137,25 @@ if (typeof document !== 'undefined') {
         overflow:hidden;
         padding:3px 4px !important;
       }
+      body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) > .duelChoice,
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto{
-        min-height:168px !important;
-        height:168px !important;
-        max-height:168px !important;
+        min-height:142px !important;
+        height:142px !important;
+        max-height:142px !important;
         grid-template-rows:minmax(0,1fr) !important;
         gap:0 !important;
-        padding:10px !important;
+        padding:8px 6px !important;
       }
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+        width:auto !important;
         height:auto !important;
         min-height:0 !important;
         max-height:none !important;
+        display:block !important;
         overflow:visible !important;
         padding:0 !important;
+        font-size:clamp(18px,5.1vw,23px) !important;
+        line-height:1 !important;
       }
     }
   `;
