@@ -35,8 +35,8 @@ const clerkClient = CLERK_SECRET_KEY
       publishableKey: CLERK_PUBLISHABLE_KEY,
     })
   : null;
-const ANONYMOUS_LIMIT = 10;
-const ANONYMOUS_DUEL_LIMIT = 2;
+const ANONYMOUS_LIMIT = 30;
+const ANONYMOUS_DUEL_LIMIT = 5;
 const RANKING_LIMIT = 20;
 const DOUBLE_VOTE_THRESHOLDS = [20, 75, 200];
 const RANKING_SHARE_CHANNELS = new Set(['native', 'whatsapp', 'duel', 'promotion']);

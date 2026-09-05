@@ -41,8 +41,8 @@ function rankingTitleSizeClass(value) {
 }
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
-const DEFAULT_ANONYMOUS_LIMIT = 10;
-const DEFAULT_ANONYMOUS_DUEL_LIMIT = 2;
+const DEFAULT_ANONYMOUS_LIMIT = 30;
+const DEFAULT_ANONYMOUS_DUEL_LIMIT = 5;
 const CLERK_PT_BR_URL = 'https://unpkg.com/@clerk/localizations@3.37.8/dist/pt-BR.mjs';
 const googlePlaceProfiles = Object.freeze({});
 const generalGroupSlugs = Object.freeze({
