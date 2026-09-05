@@ -113,34 +113,41 @@ if (typeof document !== 'undefined') {
         flex:1 1 0 !important;
         width:0 !important;
         min-width:0 !important;
+        height:142px !important;
+        min-height:142px !important;
+        max-height:142px !important;
+        box-sizing:border-box !important;
       }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
-        min-height:168px !important;
-        height:168px !important;
-        max-height:168px !important;
-        grid-template-rows:88px 64px !important;
+        height:142px !important;
+        min-height:142px !important;
+        max-height:142px !important;
+        grid-template-rows:68px 58px !important;
         gap:4px !important;
-        padding:6px !important;
+        padding:5px !important;
+        box-sizing:border-box !important;
       }
       body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
-        height:88px !important;
-        min-height:88px !important;
-        max-height:88px !important;
+        height:68px !important;
+        min-height:68px !important;
+        max-height:68px !important;
       }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto>strong{
-        height:64px;
-        min-height:64px;
-        max-height:64px;
+        height:58px !important;
+        min-height:58px !important;
+        max-height:58px !important;
         display:flex;
         align-items:center;
         justify-content:center;
         overflow:hidden;
-        padding:3px 4px !important;
+        padding:2px 3px !important;
+        font-size:clamp(16px,4.6vw,20px) !important;
+        line-height:.96 !important;
       }
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) > .duelChoice,
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto{
-        min-height:142px !important;
         height:142px !important;
+        min-height:142px !important;
         max-height:142px !important;
         grid-template-rows:minmax(0,1fr) !important;
         gap:0 !important;
