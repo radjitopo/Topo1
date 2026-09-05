@@ -16,6 +16,11 @@ if (typeof document !== 'undefined') {
   duelPhotoScript.async = true;
   document.head.appendChild(duelPhotoScript);
 
+  const duelCreditScript = document.createElement('script');
+  duelCreditScript.src = '/editorial-duel-credit.js?v=20260904-1-info-credit';
+  duelCreditScript.async = true;
+  document.head.appendChild(duelCreditScript);
+
   const duelPhotoPolish = document.createElement('style');
   duelPhotoPolish.id = 'duelPhotoPolish';
   duelPhotoPolish.textContent = `
@@ -29,23 +34,6 @@ if (typeof document !== 'undefined') {
     body.popElectric.rankingPage.duelPortraitContext .duelChoiceVerifiedPhoto img{
       object-position:center 20%;
     }
-    body.popElectric.rankingPage .duelChoiceVerifiedPhoto small{
-      left:4px;
-      right:auto;
-      bottom:4px;
-      width:auto;
-      max-width:calc(100% - 8px);
-      max-height:14px;
-      padding:2px 4px;
-      border-radius:3px;
-      background:rgba(0,0,0,.55);
-      opacity:.8;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      font-size:5px;
-      line-height:1.15;
-    }
     @media(max-width:900px){
       body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
         grid-template-rows:88px auto;
@@ -53,14 +41,6 @@ if (typeof document !== 'undefined') {
       }
       body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
         height:88px;
-      }
-      body.popElectric.rankingPage .duelChoiceVerifiedPhoto small{
-        left:3px;
-        bottom:3px;
-        max-width:calc(100% - 6px);
-        max-height:11px;
-        padding:1px 3px;
-        font-size:4px;
       }
     }
   `;
