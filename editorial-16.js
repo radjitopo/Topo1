@@ -47,7 +47,11 @@ if (typeof document !== 'undefined') {
       display:grid !important;
       place-items:center;
       transform:translate(-50%,-50%);
-      background:var(--clean-soft,#f3f3f0);
+      border:1px solid var(--clean-ink,#0a0a0a);
+      background:var(--clean-coral,#ff513f) !important;
+      color:#fff !important;
+      font:900 12px/1 Arial,Helvetica,sans-serif !important;
+      letter-spacing:0 !important;
       pointer-events:none;
     }
     body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
@@ -107,7 +111,7 @@ if (typeof document !== 'undefined') {
       body.popElectric.rankingPage .duelVersus{
         width:24px;
         height:24px;
-        font-size:8px;
+        font-size:11px !important;
       }
       body.popElectric.rankingPage .duelChoices > .duelChoice{
         flex:1 1 0 !important;
@@ -175,6 +179,27 @@ if (typeof document !== 'undefined') {
         line-height:1 !important;
       }
     }
+
+    /* Mantém o logo na mesma escala ao entrar e sair de um ranking. */
+    @media(max-width:700px){
+      body.popElectric.rankingPage .top header{
+        grid-template-columns:116px minmax(0,1fr) auto !important;
+      }
+      body.popElectric.rankingPage .brandBlock,
+      body.popElectric.rankingPage .logo{
+        width:116px !important;
+      }
+    }
+    @media(max-width:480px){
+      body.popElectric.rankingPage .top header{
+        grid-template-columns:112px minmax(0,1fr) auto !important;
+        padding:11px 0 0 !important;
+      }
+      body.popElectric.rankingPage .brandBlock,
+      body.popElectric.rankingPage .logo{
+        width:112px !important;
+      }
+    }
   `;
   document.head.appendChild(duelPhotoPolish);
 
@@ -236,6 +261,12 @@ if (typeof document !== 'undefined') {
     });
   };
 
+  const syncDuelMarker = () => {
+    document.querySelectorAll('.duelVersus').forEach((marker) => {
+      if (marker.textContent !== 'X') marker.textContent = 'X';
+    });
+  };
+
   let pairSyncQueued = false;
   const queueDuelPairSync = () => {
     if (pairSyncQueued) return;
@@ -243,11 +274,13 @@ if (typeof document !== 'undefined') {
     requestAnimationFrame(() => {
       pairSyncQueued = false;
       syncDuelPairPhotos();
+      syncDuelMarker();
     });
   };
 
   syncDuelPortraitContext();
   syncDuelPairPhotos();
+  syncDuelMarker();
   new MutationObserver(() => {
     syncDuelPortraitContext();
     queueDuelPairSync();
