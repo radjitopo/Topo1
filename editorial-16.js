@@ -77,6 +77,29 @@ if (typeof document !== 'undefined') {
     body.popElectric.rankingPage.duelPortraitContext .duelChoiceVerifiedPhoto img{
       object-position:center 20% !important;
     }
+
+    /* Só mostra fotos quando as DUAS opções do duelo têm imagem válida. */
+    body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoiceVerifiedPhoto{
+      display:none !important;
+    }
+    body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto{
+      min-height:220px !important;
+      height:auto !important;
+      max-height:none !important;
+      display:grid !important;
+      grid-template-rows:minmax(0,1fr) !important;
+      place-items:center !important;
+      gap:0 !important;
+      padding:16px !important;
+    }
+    body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+      width:auto !important;
+      height:auto !important;
+      min-height:0 !important;
+      max-height:none !important;
+      padding:0 !important;
+    }
+
     @media(max-width:900px){
       body.popElectric.rankingPage .duelChoices{
         gap:12px !important;
@@ -113,6 +136,21 @@ if (typeof document !== 'undefined') {
         justify-content:center;
         overflow:hidden;
         padding:3px 4px !important;
+      }
+      body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto{
+        min-height:168px !important;
+        height:168px !important;
+        max-height:168px !important;
+        grid-template-rows:minmax(0,1fr) !important;
+        gap:0 !important;
+        padding:10px !important;
+      }
+      body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+        height:auto !important;
+        min-height:0 !important;
+        max-height:none !important;
+        overflow:visible !important;
+        padding:0 !important;
       }
     }
   `;
@@ -162,8 +200,36 @@ if (typeof document !== 'undefined') {
     );
   };
 
+  const syncDuelPairPhotos = () => {
+    document.querySelectorAll('.duelChoices').forEach((pair) => {
+      const choices = [...pair.querySelectorAll(':scope > .duelChoice')];
+      if (choices.length !== 2) {
+        pair.classList.remove('duelPairHasTwoPhotos');
+        return;
+      }
+      const bothHavePhotos = choices.every((choice) =>
+        Boolean(choice.querySelector(':scope > .duelChoiceVerifiedPhoto')),
+      );
+      pair.classList.toggle('duelPairHasTwoPhotos', bothHavePhotos);
+    });
+  };
+
+  let pairSyncQueued = false;
+  const queueDuelPairSync = () => {
+    if (pairSyncQueued) return;
+    pairSyncQueued = true;
+    requestAnimationFrame(() => {
+      pairSyncQueued = false;
+      syncDuelPairPhotos();
+    });
+  };
+
   syncDuelPortraitContext();
-  new MutationObserver(syncDuelPortraitContext).observe(document.documentElement, {
+  syncDuelPairPhotos();
+  new MutationObserver(() => {
+    syncDuelPortraitContext();
+    queueDuelPairSync();
+  }).observe(document.documentElement, {
     childList: true,
     subtree: true,
   });
