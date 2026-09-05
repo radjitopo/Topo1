@@ -109,7 +109,6 @@ export default async function handler(req, res) {
   const queries = [
     sql.query('DELETE FROM ranking_comments WHERE option_id = $1', [optionId]),
     sql.query('DELETE FROM ranking_duel_entries WHERE option_id = $1', [optionId]),
-    sql.query('DELETE FROM ranking_duel_option_bonuses WHERE option_id = $1', [optionId]),
     sql.query('DELETE FROM ranking_top3_selections WHERE option_id = $1', [optionId]),
     sql.query(
       `
