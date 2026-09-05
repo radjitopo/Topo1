@@ -1,3 +1,4 @@
+# Triggered after creation so the workflow already exists on the default branch.
 name: Update anonymous limits
 
 on:
