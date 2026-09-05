@@ -9,3 +9,10 @@ Object.assign(editorial, {
     related: ['famosos-melhor-amigo', 'celebridades-fofas', 'celebridades-dividem-opinioes'],
   },
 });
+
+if (typeof document !== 'undefined') {
+  const duelPhotoScript = document.createElement('script');
+  duelPhotoScript.src = '/duel-option-photos.js?v=20260904-1-verified-entities';
+  duelPhotoScript.async = true;
+  document.head.appendChild(duelPhotoScript);
+}
