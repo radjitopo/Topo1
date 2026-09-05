@@ -26,9 +26,16 @@ if (typeof document !== 'undefined') {
   duelPhotoPolish.textContent = `
     body.popElectric.rankingPage .duelChoices{
       position:relative;
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-      gap:16px !important;
+      display:flex !important;
       align-items:stretch !important;
+      gap:16px !important;
+    }
+    body.popElectric.rankingPage .duelChoices > .duelChoice{
+      flex:1 1 0 !important;
+      width:0 !important;
+      min-width:0 !important;
+      max-width:none !important;
+      box-sizing:border-box;
     }
     body.popElectric.rankingPage .duelVersus{
       position:absolute !important;
@@ -44,9 +51,6 @@ if (typeof document !== 'undefined') {
       pointer-events:none;
     }
     body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
-      box-sizing:border-box;
-      width:100% !important;
-      height:100% !important;
       min-height:270px !important;
       grid-template-rows:154px minmax(78px,1fr) !important;
       align-content:stretch !important;
@@ -82,9 +86,14 @@ if (typeof document !== 'undefined') {
         height:24px;
         font-size:8px;
       }
+      body.popElectric.rankingPage .duelChoices > .duelChoice{
+        flex:1 1 0 !important;
+        width:0 !important;
+        min-width:0 !important;
+      }
       body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
-        height:168px !important;
         min-height:168px !important;
+        height:168px !important;
         max-height:168px !important;
         grid-template-rows:88px 64px !important;
         gap:4px !important;
