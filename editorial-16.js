@@ -15,4 +15,104 @@ if (typeof document !== 'undefined') {
   duelPhotoScript.src = '/duel-option-photos.js?v=20260904-1-verified-entities';
   duelPhotoScript.async = true;
   document.head.appendChild(duelPhotoScript);
+
+  const duelPhotoPolish = document.createElement('style');
+  duelPhotoPolish.id = 'duelPhotoPolish';
+  duelPhotoPolish.textContent = `
+    body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
+      grid-template-rows:154px auto;
+      gap:7px;
+    }
+    body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
+      height:154px;
+    }
+    body.popElectric.rankingPage.duelPortraitContext .duelChoiceVerifiedPhoto img{
+      object-position:center 20%;
+    }
+    body.popElectric.rankingPage .duelChoiceVerifiedPhoto small{
+      left:4px;
+      right:auto;
+      bottom:4px;
+      width:auto;
+      max-width:calc(100% - 8px);
+      max-height:14px;
+      padding:2px 4px;
+      border-radius:3px;
+      background:rgba(0,0,0,.55);
+      opacity:.8;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:5px;
+      line-height:1.15;
+    }
+    @media(max-width:900px){
+      body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
+        grid-template-rows:88px auto;
+        gap:4px;
+      }
+      body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
+        height:88px;
+      }
+      body.popElectric.rankingPage .duelChoiceVerifiedPhoto small{
+        left:3px;
+        bottom:3px;
+        max-width:calc(100% - 6px);
+        max-height:11px;
+        padding:1px 3px;
+        font-size:4px;
+      }
+    }
+  `;
+  document.head.appendChild(duelPhotoPolish);
+
+  const foldDuelTitle = (value) =>
+    String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+  const syncDuelPortraitContext = () => {
+    const title = foldDuelTitle(
+      document.querySelector('.rankingHero h1, .rankingHead h1, .rankingMain h1, h1')?.textContent,
+    );
+    const portraitWords = [
+      'jogador',
+      'jogadora',
+      'goleiro',
+      'zagueiro',
+      'atacante',
+      'meio campista',
+      'lateral',
+      'volante',
+      'camisa 10',
+      'futebolista',
+      'ator',
+      'atriz',
+      'cantor',
+      'cantora',
+      'musico',
+      'guitarrista',
+      'baixista',
+      'baterista',
+      'rapper',
+      'vocalista',
+      'piloto',
+      'pintor',
+      'pintora',
+      'fotografo',
+      'fotografa',
+      'celebridade',
+    ];
+    document.body?.classList.toggle(
+      'duelPortraitContext',
+      portraitWords.some((word) => title.includes(word)),
+    );
+  };
+
+  syncDuelPortraitContext();
+  new MutationObserver(syncDuelPortraitContext).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
 }
