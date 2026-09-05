@@ -35,6 +35,7 @@
     { "src": "og-topo-v4.png", "use": "@vercel/static" },
     { "src": "topo-local.js", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
+    { "src": "duel-option-photos.js", "use": "@vercel/static" },
     { "src": "editorial-*.js", "use": "@vercel/static" },
     { "src": "covers/**/*.svg", "use": "@vercel/static" },
     { "src": "social/*.jpg", "use": "@vercel/static" }
