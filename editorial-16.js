@@ -118,32 +118,42 @@ if (typeof document !== 'undefined') {
         max-height:142px !important;
         box-sizing:border-box !important;
       }
-      body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto{
+
+      /* Foto em retângulo fixo no topo + nome em faixa fixa embaixo.
+         Tudo continua dentro do mesmo card externo de 142px. */
+      body.popElectric.rankingPage .duelPairHasTwoPhotos .duelChoice.duelChoiceWithVerifiedPhoto{
         height:142px !important;
         min-height:142px !important;
         max-height:142px !important;
-        grid-template-rows:68px 58px !important;
-        gap:4px !important;
+        grid-template-rows:74px 56px !important;
+        gap:2px !important;
         padding:5px !important;
         box-sizing:border-box !important;
       }
-      body.popElectric.rankingPage .duelChoiceVerifiedPhoto{
-        height:68px !important;
-        min-height:68px !important;
-        max-height:68px !important;
+      body.popElectric.rankingPage .duelPairHasTwoPhotos .duelChoiceVerifiedPhoto{
+        width:100% !important;
+        height:74px !important;
+        min-height:74px !important;
+        max-height:74px !important;
+        box-sizing:border-box !important;
       }
-      body.popElectric.rankingPage .duelChoice.duelChoiceWithVerifiedPhoto>strong{
-        height:58px !important;
-        min-height:58px !important;
-        max-height:58px !important;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        overflow:hidden;
-        padding:2px 3px !important;
+      body.popElectric.rankingPage .duelPairHasTwoPhotos .duelChoice.duelChoiceWithVerifiedPhoto>strong{
+        width:100% !important;
+        height:56px !important;
+        min-height:56px !important;
+        max-height:56px !important;
+        display:flex !important;
+        align-items:flex-end !important;
+        justify-content:center !important;
+        overflow:hidden !important;
+        margin:0 !important;
+        padding:0 3px 6px !important;
+        box-sizing:border-box !important;
+        text-align:center !important;
         font-size:clamp(16px,4.6vw,20px) !important;
         line-height:.96 !important;
       }
+
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) > .duelChoice,
       body.popElectric.rankingPage .duelChoices:not(.duelPairHasTwoPhotos) .duelChoice.duelChoiceWithVerifiedPhoto{
         height:142px !important;
