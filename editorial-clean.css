@@ -9519,3 +9519,667 @@ body.popElectric .rankingPromotionActions button:focus-visible {
     order: 5;
   }
 }
+
+/* Afinidades ------------------------------------------------------------- */
+
+body.popElectric.affinityPage .groupsWrap {
+  display: none;
+}
+
+body.popElectric.vipPage .affinityPanel {
+  margin: 30px 0 10px;
+}
+
+body.popElectric .affinityPanelBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 1px;
+  margin-top: 14px;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-ink);
+}
+
+body.popElectric .affinityLead {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: stretch;
+  background: #fff;
+}
+
+body.popElectric .affinitySymbol {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--clean-ink);
+  color: var(--clean-gold);
+  font:
+    950 clamp(62px, 7vw, 92px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.09em;
+}
+
+body.popElectric .affinityLead > div {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  padding: 24px;
+}
+
+body.popElectric .affinityLead h2 {
+  margin: 0 0 7px;
+  color: var(--clean-ink);
+  font:
+    900 clamp(28px, 3vw, 39px) / 0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .affinityLead p {
+  max-width: 470px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 13px/1.42 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityShareButton {
+  min-height: 42px;
+  margin-top: 17px;
+  border: 1px solid var(--clean-ink);
+  border-radius: 0;
+  background: var(--clean-coral);
+  color: var(--clean-ink);
+  padding: 0 15px;
+  cursor: pointer;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+}
+
+body.popElectric .affinityShareButton:hover,
+body.popElectric .affinityShareButton:focus-visible {
+  background: var(--clean-gold);
+}
+
+body.popElectric .affinityShareButton:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+body.popElectric .affinityEmpty,
+body.popElectric .affinityHistory {
+  min-width: 0;
+  margin: 0;
+  background: #fff;
+}
+
+body.popElectric .affinityEmpty {
+  display: grid;
+  align-content: center;
+  color: var(--clean-muted);
+  padding: 24px;
+  font:
+    700 12px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityHistoryHead,
+body.popElectric .affinityHistoryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+body.popElectric .affinityHistoryHead {
+  min-height: 42px;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 0 13px;
+}
+
+body.popElectric .affinityHistoryHead strong {
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityHistoryHead span {
+  color: var(--clean-muted);
+  font:
+    800 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityHistoryList {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+body.popElectric .affinityHistoryRow {
+  min-height: 58px;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 9px 13px;
+}
+
+body.popElectric .affinityHistoryRow:last-child {
+  border-bottom: 0;
+}
+
+body.popElectric .affinityHistoryRow > span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+body.popElectric .affinityHistoryRow strong,
+body.popElectric .affinityHistoryRow small {
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .affinityHistoryRow strong {
+  font:
+    900 13px/1.1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityHistoryRow small {
+  color: var(--clean-muted);
+  font:
+    700 10px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityHistoryRow > b {
+  flex: 0 0 auto;
+  color: var(--clean-coral);
+  font:
+    950 25px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric.affinityPage .feed {
+  width: min(920px, calc(100% - 48px));
+  padding-top: 34px;
+  padding-bottom: 86px;
+}
+
+body.popElectric .affinityPublicShell {
+  color: var(--clean-ink);
+}
+
+body.popElectric .affinityPublicShell > .backLink {
+  display: inline-flex;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--clean-ink);
+  color: var(--clean-ink);
+  font:
+    900 10px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityPublicHero {
+  max-width: 780px;
+  padding: 0 0 26px;
+}
+
+body.popElectric .affinityPublicHero h1,
+body.popElectric .affinitySelfCard h1,
+body.popElectric .affinityPublicEmpty h1 {
+  margin: 8px 0 0;
+  color: var(--clean-ink);
+  font:
+    950 clamp(40px, 6.5vw, 68px) / 0.91 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.072em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .affinityScoreCard {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.72fr) minmax(0, 1.28fr);
+  border: 2px solid var(--clean-ink);
+  background: var(--clean-ink);
+}
+
+body.popElectric .affinityScore {
+  min-height: 210px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  background: var(--clean-ink);
+  color: #fff;
+  padding: 24px;
+  text-align: center;
+}
+
+body.popElectric .affinityScore strong {
+  color: var(--clean-gold);
+  font:
+    950 clamp(66px, 10vw, 112px) / 0.83 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.09em;
+}
+
+body.popElectric .affinityScore span {
+  margin-top: 14px;
+  color: #fff;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityScore.empty strong {
+  color: var(--clean-coral);
+}
+
+body.popElectric .affinityScoreCopy {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  background: #fff;
+  padding: clamp(26px, 5vw, 52px);
+}
+
+body.popElectric .affinityScoreCopy h2 {
+  margin: 0 0 10px;
+  font:
+    950 clamp(28px, 4vw, 43px) / 0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .affinityScoreCopy p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 14px/1.48 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityAccountLink {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 19px;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-coral);
+  color: var(--clean-ink);
+  padding: 0 14px;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+}
+
+body.popElectric .affinityAccountLink:hover,
+body.popElectric .affinityAccountLink:focus-visible {
+  background: var(--clean-gold);
+}
+
+body.popElectric .affinityDetails,
+body.popElectric .affinitySuggestions {
+  margin-top: 42px;
+  border-top: 5px solid var(--clean-ink);
+}
+
+body.popElectric .affinitySectionHead {
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--clean-ink);
+}
+
+body.popElectric .affinitySectionHead span {
+  font:
+    950 clamp(19px, 2.5vw, 26px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+}
+
+body.popElectric .affinitySectionHead strong {
+  color: var(--clean-muted);
+  font:
+    900 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityRankingList,
+body.popElectric .affinitySuggestionList {
+  display: grid;
+}
+
+body.popElectric .affinityRankingList > a,
+body.popElectric .affinitySuggestionList > a {
+  min-width: 0;
+  min-height: 78px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.42fr);
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--clean-ink);
+  color: var(--clean-ink);
+  padding: 13px 0;
+  text-decoration: none;
+}
+
+body.popElectric .affinityRankingList > a > span:first-child,
+body.popElectric .affinitySuggestionList > a > span {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+body.popElectric .affinityRankingList > a > span:first-child strong,
+body.popElectric .affinitySuggestionList > a strong {
+  overflow-wrap: anywhere;
+  font:
+    900 16px/1.08 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.025em;
+}
+
+body.popElectric .affinityRankingList > a > span:first-child small,
+body.popElectric .affinitySuggestionList > a small {
+  color: var(--clean-muted);
+  font:
+    800 9px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+body.popElectric .affinityAgreement,
+body.popElectric .affinityDisagreement {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  border-left: 4px solid var(--clean-sage);
+  padding: 8px 10px;
+}
+
+body.popElectric .affinityDisagreement {
+  border-left-color: var(--clean-coral);
+}
+
+body.popElectric .affinityAgreement b,
+body.popElectric .affinityDisagreement b,
+body.popElectric .affinitySuggestionList > a > b {
+  font:
+    950 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.055em;
+}
+
+body.popElectric .affinityAgreement small,
+body.popElectric .affinityDisagreement small {
+  color: var(--clean-muted);
+  font:
+    700 11px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .affinitySuggestionList > a {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+body.popElectric .affinitySuggestionList > a > b {
+  color: var(--clean-coral);
+}
+
+body.popElectric .affinityRankingList > a:hover > span:first-child strong,
+body.popElectric .affinityRankingList > a:focus-visible > span:first-child strong,
+body.popElectric .affinitySuggestionList > a:hover strong,
+body.popElectric .affinitySuggestionList > a:focus-visible strong {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+body.popElectric .affinitySelfCard {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.42fr) minmax(0, 1fr);
+  border: 2px solid var(--clean-ink);
+  background: #fff;
+}
+
+body.popElectric .affinitySelfCard > div {
+  padding: clamp(28px, 6vw, 58px);
+}
+
+body.popElectric .affinitySelfCard h1 {
+  font-size: clamp(38px, 5.5vw, 60px);
+}
+
+body.popElectric .affinitySelfCard p {
+  max-width: 520px;
+  margin: 15px 0 0;
+  color: var(--clean-muted);
+  font:
+    650 14px/1.48 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .affinityPublicEmpty {
+  max-width: 720px;
+  border-top: 6px solid var(--clean-ink);
+  padding: 28px 0 70px;
+}
+
+body.popElectric .affinityPublicEmpty a {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24px;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-ink);
+  color: #fff;
+  padding: 0 15px;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+body.popElectric.rankingPage .duelEndActions .affinityReturnAction {
+  min-height: 48px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-coral);
+  color: var(--clean-ink);
+  padding: 0 22px;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+}
+
+@media (max-width: 700px) {
+  body.popElectric.affinityPage .feed {
+    width: calc(100% - 30px);
+    padding-top: 20px;
+    padding-bottom: 62px;
+  }
+
+  body.popElectric.vipPage .affinityPanel {
+    margin-top: 23px;
+  }
+
+  body.popElectric .affinityPanelBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .affinityLead {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  body.popElectric .affinitySymbol {
+    font-size: 54px;
+  }
+
+  body.popElectric .affinityLead > div {
+    padding: 18px 14px;
+  }
+
+  body.popElectric .affinityLead h2 {
+    font-size: 28px;
+  }
+
+  body.popElectric .affinityLead p,
+  body.popElectric .affinityScoreCopy p,
+  body.popElectric .affinitySelfCard p {
+    font-size: 14px;
+  }
+
+  body.popElectric .affinityShareButton,
+  body.popElectric .affinityAccountLink {
+    width: 100%;
+    min-height: 46px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  body.popElectric .affinityEmpty {
+    min-height: 86px;
+    padding: 18px 14px;
+    font-size: 13px;
+  }
+
+  body.popElectric .affinityHistoryList {
+    max-height: 242px;
+  }
+
+  body.popElectric .affinityHistoryRow {
+    min-height: 62px;
+  }
+
+  body.popElectric .affinityPublicHero {
+    padding-bottom: 19px;
+  }
+
+  body.popElectric .affinityPublicHero h1,
+  body.popElectric .affinityPublicEmpty h1 {
+    font-size: clamp(38px, 12vw, 50px);
+  }
+
+  body.popElectric .affinityScoreCard,
+  body.popElectric .affinitySelfCard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .affinityScore {
+    min-height: 148px;
+    padding: 20px;
+  }
+
+  body.popElectric .affinityScore strong {
+    font-size: clamp(70px, 25vw, 96px);
+  }
+
+  body.popElectric .affinityScoreCopy,
+  body.popElectric .affinitySelfCard > div {
+    padding: 24px 18px;
+  }
+
+  body.popElectric .affinityScoreCopy h2 {
+    font-size: 31px;
+  }
+
+  body.popElectric .affinitySelfCard > .affinitySymbol {
+    min-height: 120px;
+  }
+
+  body.popElectric .affinitySelfCard h1 {
+    font-size: 39px;
+  }
+
+  body.popElectric .affinityDetails,
+  body.popElectric .affinitySuggestions {
+    margin-top: 34px;
+  }
+
+  body.popElectric .affinitySectionHead {
+    min-height: 62px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 0;
+  }
+
+  body.popElectric .affinitySectionHead span {
+    font-size: 21px;
+  }
+
+  body.popElectric .affinityRankingList > a {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  body.popElectric .affinitySuggestionList > a {
+    min-height: 68px;
+    gap: 12px;
+  }
+
+  body.popElectric .affinityRankingList > a > span:first-child strong,
+  body.popElectric .affinitySuggestionList > a strong {
+    font-size: 15px;
+  }
+
+  body.popElectric .affinityAgreement,
+  body.popElectric .affinityDisagreement {
+    padding: 7px 9px;
+  }
+}

@@ -8,6 +8,7 @@ import {
 } from 'node:crypto';
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { neon } from '@neondatabase/serverless';
+import { affinityPercent } from './affinity.js';
 import { possibleOptionDuplicate } from './option-similarity.js';
 import {
   defaultDisplayName,
@@ -74,6 +75,7 @@ const USER_VIP_RANKING_LIMIT = 20;
 const VIP_DESCRIPTION_LIMIT = 280;
 const VIP_COOKIE_PREFIX = 'topo_vip_';
 const FAVORITE_SHARE_TOKEN_PATTERN = /^[a-zA-Z0-9_-]{24,64}$/;
+const AFFINITY_SHARE_TOKEN_PATTERN = /^[a-zA-Z0-9_-]{24,64}$/;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
 ]);
@@ -547,6 +549,11 @@ function isValidRankingId(value) {
 function favoriteShareToken(value) {
   const token = String(value || '').trim();
   return FAVORITE_SHARE_TOKEN_PATTERN.test(token) ? token : '';
+}
+
+function affinityShareToken(value) {
+  const token = String(value || '').trim();
+  return AFFINITY_SHARE_TOKEN_PATTERN.test(token) ? token : '';
 }
 
 function publishedRankingSlug(value) {
@@ -2612,6 +2619,284 @@ async function favoriteCollection(req, res) {
     owner: { name: collection.name || 'Pessoa no TOPO' },
     favorites: rows.map(favoriteRankingPayload),
     updatedAt: collection.updatedAt || null,
+  });
+}
+
+async function affinityComparison(ownerUserId, viewerUserId, deviceId) {
+  const rows = await sql.query(
+    `
+      WITH mine AS (
+        SELECT
+          session.ranking_id,
+          session.champion_option_id,
+          session.completed
+        FROM ranking_duel_sessions session
+        WHERE session.user_id = $1::uuid
+      ),
+      theirs AS (
+        SELECT
+          session.ranking_id,
+          session.champion_option_id,
+          session.completed
+        FROM ranking_duel_sessions session
+        WHERE (
+            $2::uuid IS NOT NULL
+            AND session.user_id = $2::uuid
+          )
+          OR (
+            $2::uuid IS NULL
+            AND session.user_id IS NULL
+            AND session.device_id = $3
+          )
+      )
+      SELECT
+        ranking.id AS "rankingId",
+        ranking.question,
+        ranking.category,
+        mine.champion_option_id AS "mineWinnerOptionId",
+        mine_winner.label AS "mineWinner",
+        theirs.champion_option_id AS "theirWinnerOptionId",
+        their_winner.label AS "theirWinner",
+        (mine.champion_option_id = theirs.champion_option_id) AS "sameWinner"
+      FROM mine
+      JOIN theirs ON theirs.ranking_id = mine.ranking_id
+      JOIN rankings ranking ON ranking.id = mine.ranking_id
+      JOIN ranking_options mine_winner
+        ON mine_winner.ranking_id = mine.ranking_id
+       AND mine_winner.id = mine.champion_option_id
+      JOIN ranking_options their_winner
+        ON their_winner.ranking_id = theirs.ranking_id
+       AND their_winner.id = theirs.champion_option_id
+      WHERE mine.completed = true
+        AND theirs.completed = true
+        AND mine.champion_option_id IS NOT NULL
+        AND theirs.champion_option_id IS NOT NULL
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+      ORDER BY ranking.question, ranking.id
+    `,
+    [ownerUserId, viewerUserId || null, isValidDevice(deviceId) ? deviceId : ''],
+  );
+
+  const sameWinners = rows.filter((row) => row.sameWinner === true).length;
+  return {
+    commonRankings: rows.length,
+    sameWinners,
+    percent: affinityPercent(rows.length, sameWinners),
+    rankings: rows.map((row) => ({
+      rankingId: row.rankingId,
+      question: rankingQuestion(row.rankingId, row.question),
+      category: row.category,
+      mineWinnerOptionId: Number(row.mineWinnerOptionId),
+      mineWinner: row.mineWinner,
+      theirWinnerOptionId: Number(row.theirWinnerOptionId),
+      theirWinner: row.theirWinner,
+      sameWinner: row.sameWinner === true,
+    })),
+  };
+}
+
+async function affinityHistory(userId) {
+  const rows = await sql.query(
+    `
+      SELECT
+        connection.compared_user_id AS "comparedUserId",
+        compared.display_name AS name,
+        connection.updated_at AS "updatedAt",
+        COALESCE(stats.common_rankings, 0)::int AS "commonRankings",
+        COALESCE(stats.same_winners, 0)::int AS "sameWinners"
+      FROM user_affinity_connections connection
+      JOIN users compared ON compared.id = connection.compared_user_id
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*)::int AS common_rankings,
+          COUNT(*) FILTER (
+            WHERE mine.champion_option_id = theirs.champion_option_id
+          )::int AS same_winners
+        FROM ranking_duel_sessions mine
+        JOIN ranking_duel_sessions theirs
+          ON theirs.user_id = connection.compared_user_id
+         AND theirs.ranking_id = mine.ranking_id
+         AND theirs.completed = true
+         AND theirs.champion_option_id IS NOT NULL
+        JOIN rankings ranking ON ranking.id = mine.ranking_id
+        WHERE mine.user_id = $1::uuid
+          AND mine.completed = true
+          AND mine.champion_option_id IS NOT NULL
+          AND ranking.is_active = true
+          AND ranking.is_vip = false
+      ) stats ON true
+      WHERE connection.user_id = $1::uuid
+      ORDER BY connection.updated_at DESC, compared.display_name
+      LIMIT 30
+    `,
+    [userId],
+  );
+
+  return rows.map((row) => ({
+    name: row.name || 'Pessoa no TOPO',
+    commonRankings: Number(row.commonRankings || 0),
+    sameWinners: Number(row.sameWinners || 0),
+    percent: affinityPercent(row.commonRankings, row.sameWinners),
+    updatedAt: row.updatedAt || null,
+  }));
+}
+
+async function affinities(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const [linkRows, comparisons] = await Promise.all([
+    sql.query(
+      `
+        SELECT share_token AS "shareToken"
+        FROM user_affinity_links
+        WHERE user_id = $1::uuid
+        LIMIT 1
+      `,
+      [user.id],
+    ),
+    affinityHistory(user.id),
+  ]);
+  const shareToken = affinityShareToken(linkRows[0]?.shareToken);
+
+  return json(res, 200, {
+    sharePath: shareToken ? `/afinidade/${shareToken}` : null,
+    comparisons,
+  });
+}
+
+async function shareAffinity(req, res) {
+  const user = await sessionUser(req);
+  if (!user) return json(res, 401, { error: 'authentication_required' });
+
+  const generatedToken = randomBytes(24).toString('base64url');
+  const rows = await sql.query(
+    `
+      INSERT INTO user_affinity_links (user_id, share_token)
+      VALUES ($1::uuid, $2)
+      ON CONFLICT (user_id) DO UPDATE
+      SET updated_at = now()
+      RETURNING share_token AS "shareToken"
+    `,
+    [user.id, generatedToken],
+  );
+  const shareToken = affinityShareToken(rows[0]?.shareToken);
+  if (!shareToken) return json(res, 500, { error: 'affinity_share_failed' });
+
+  return json(res, 200, {
+    ok: true,
+    sharePath: `/afinidade/${shareToken}`,
+  });
+}
+
+async function affinitySuggestions(ownerUserId, viewerUserId, deviceId) {
+  return sql.query(
+    `
+      WITH mine AS (
+        SELECT session.ranking_id, session.updated_at
+        FROM ranking_duel_sessions session
+        WHERE session.user_id = $1::uuid
+          AND session.completed = true
+          AND session.champion_option_id IS NOT NULL
+      ),
+      theirs AS (
+        SELECT session.ranking_id
+        FROM ranking_duel_sessions session
+        WHERE session.completed = true
+          AND session.champion_option_id IS NOT NULL
+          AND (
+            (
+              $2::uuid IS NOT NULL
+              AND session.user_id = $2::uuid
+            )
+            OR (
+              $2::uuid IS NULL
+              AND session.user_id IS NULL
+              AND session.device_id = $3
+            )
+          )
+      )
+      SELECT
+        ranking.id AS "rankingId",
+        ranking.question,
+        ranking.category
+      FROM mine
+      JOIN rankings ranking ON ranking.id = mine.ranking_id
+      LEFT JOIN theirs ON theirs.ranking_id = mine.ranking_id
+      WHERE theirs.ranking_id IS NULL
+        AND ranking.is_active = true
+        AND ranking.is_vip = false
+      ORDER BY mine.updated_at DESC, ranking.id
+      LIMIT 6
+    `,
+    [ownerUserId, viewerUserId || null, isValidDevice(deviceId) ? deviceId : ''],
+  );
+}
+
+async function affinity(req, res) {
+  const shareToken = affinityShareToken(queryValue(req, 'token'));
+  if (!shareToken) return json(res, 400, { error: 'invalid_affinity_link' });
+
+  const [owner] = await sql.query(
+    `
+      SELECT
+        link.user_id AS "userId",
+        users.display_name AS name
+      FROM user_affinity_links link
+      JOIN users ON users.id = link.user_id
+      WHERE link.share_token = $1
+      LIMIT 1
+    `,
+    [shareToken],
+  );
+  if (!owner) return json(res, 404, { error: 'affinity_link_not_found' });
+
+  const user = await sessionUser(req);
+  const deviceId = queryValue(req, 'device_id').slice(0, 100);
+  if (user && isValidDevice(deviceId) && !(await ensureSessionDevice(user, deviceId))) {
+    return json(res, 409, { error: 'device_rekey_required' });
+  }
+
+  const isSelf = Boolean(user?.id && String(user.id) === String(owner.userId));
+  if (user && !isSelf) {
+    await sql.query(
+      `
+        INSERT INTO user_affinity_connections (
+          user_id, compared_user_id, created_at, updated_at
+        )
+        VALUES
+          ($1::uuid, $2::uuid, now(), now()),
+          ($2::uuid, $1::uuid, now(), now())
+        ON CONFLICT (user_id, compared_user_id) DO UPDATE
+        SET updated_at = now()
+      `,
+      [owner.userId, user.id],
+    );
+  }
+
+  const [comparison, suggestionRows] = isSelf
+    ? [{ commonRankings: 0, sameWinners: 0, percent: null, rankings: [] }, []]
+    : await Promise.all([
+        affinityComparison(owner.userId, user?.id || null, deviceId),
+        affinitySuggestions(owner.userId, user?.id || null, deviceId),
+      ]);
+
+  return json(res, 200, {
+    owner: { name: owner.name || 'Pessoa no TOPO' },
+    viewer: { registered: Boolean(user) },
+    isSelf,
+    summary: {
+      commonRankings: comparison.commonRankings,
+      sameWinners: comparison.sameWinners,
+      percent: comparison.percent,
+    },
+    rankings: comparison.rankings,
+    suggestions: suggestionRows.map((row) => ({
+      rankingId: row.rankingId,
+      question: rankingQuestion(row.rankingId, row.question),
+      category: row.category,
+    })),
   });
 }
 
@@ -6176,6 +6461,8 @@ export default async function handler(req, res) {
       if (action === 'vip-ranking') return vipRanking(req, res);
       if (action === 'favorites') return favorites(req, res);
       if (action === 'favorite-collection') return favoriteCollection(req, res);
+      if (action === 'affinities') return affinities(req, res);
+      if (action === 'affinity') return affinity(req, res);
       if (action === 'ranking-vote-modes') return rankingVotingModes(req, res);
       if (action === 'auth-config') return clerkConfig(req, res);
       if (action === 'notifications') return notifications(req, res);
@@ -6207,6 +6494,7 @@ export default async function handler(req, res) {
         if (action === 'vip-rankings') return createUserVipRanking(req, res, body);
         if (action === 'favorites') return addFavorite(req, res, body);
         if (action === 'favorite-share') return shareFavorites(req, res);
+        if (action === 'affinity-share') return shareAffinity(req, res);
         if (action === 'ranking-share') return createRankingShare(req, res, body);
         if (action === 'ranking-duel') return saveDuel(req, res, body);
         if (action === 'ranking-duel-reset') return resetDuel(req, res, body);

@@ -375,6 +375,10 @@ function sharedDuelStartOptionIds() {
     ? optionIds
     : [];
 }
+function affinityReturnToken() {
+  const token = new URLSearchParams(location.search).get('afinidade') || '';
+  return /^[a-zA-Z0-9_-]{24,64}$/.test(token) ? token : '';
+}
 function randomDuelRanking(excludeRankingId = '') {
   const available = homeEligibleRankings(rankings).filter(
       (ranking) =>
@@ -434,6 +438,7 @@ function pageKind() {
   if (location.pathname === '/moderacao') return 'moderation';
   if (location.pathname === '/vip') return 'vip';
   if (location.pathname.startsWith('/favoritos/')) return 'favorites';
+  if (location.pathname.startsWith('/afinidade/')) return 'affinity';
   return 'home';
 }
 function isLocalRoute() {
@@ -468,6 +473,7 @@ document.body.classList.toggle('authPage', pageKind() === 'auth');
 document.body.classList.toggle('profilePage', pageKind() === 'profile');
 document.body.classList.toggle('moderationPage', pageKind() === 'moderation');
 document.body.classList.toggle('favoritesPage', pageKind() === 'favorites');
+document.body.classList.toggle('affinityPage', pageKind() === 'affinity');
 document.body.classList.toggle('localMode', isLocalRoute());
 document.body.classList.toggle('vipPage', isVipRoute());
 if (searchInput && homeSearch) searchInput.value = homeSearch;
@@ -1302,6 +1308,89 @@ function personalScorecardHTML(data = null) {
   return `<section class="profileScorecard" aria-label="Sua pontuação e atividade no TOPO"><div class="profileMetrics"><span class="profileScoreMetric profileScoreMetricPrimary"><small>Pontuação</small><strong>${value(stats.points ?? stats.votes)}</strong><em>pontos no TOPO</em></span><span class="profileScoreMetric" aria-label="${loaded ? `${fmt(stats.votes || 0)} votos: ${fmt(stats.directVotes || 0)} livres e ${fmt(stats.duelPoints || 0)} no duelo` : 'Votos livres e no duelo'}"><small>Votos</small><strong>${value(stats.votes)}</strong><em>${loaded ? `${fmt(stats.directVotes || 0)} livres + ${fmt(stats.duelPoints || 0)} duelo` : 'livres + duelo'}</em></span><span class="profileScoreMetric"><small>Rankings</small><strong>${value(stats.rankings)}</strong><em>participados</em></span><span class="profileScoreMetric"><small>Sequência</small><strong>${value(streak)}</strong><em>${loaded ? `dia${streak === 1 ? '' : 's'}` : 'dias'}</em></span><span class="profileScoreMetric profileScorePosition"><small>Posição</small><strong id="profileScorecardPosition" aria-live="polite">—</strong><em>entre as pessoas</em></span></div><a class="profileScorecardLink" href="#profileLeaderboardSection">VER RANKING DE PESSOAS <span aria-hidden="true">↓</span></a></section>`;
 }
 
+function affinityComparisonLine(comparison) {
+  const common = Math.max(0, Number(comparison?.commonRankings || 0)),
+    same = Math.max(0, Number(comparison?.sameWinners || 0));
+  if (!common) return 'Nenhum ranking em comum ainda';
+  return `${fmt(same)} de ${fmt(common)} com o mesmo vencedor`;
+}
+
+function affinityPanelHTML(data = {}) {
+  const comparisons = Array.isArray(data.comparisons) ? data.comparisons : [],
+    sharePath = String(data.sharePath || ''),
+    history = comparisons.length
+      ? `<div class="affinityHistory"><div class="affinityHistoryHead"><strong>Suas afinidades</strong><span>${fmt(comparisons.length)} comparação${comparisons.length === 1 ? '' : 'ões'}</span></div><div class="affinityHistoryList">${comparisons
+          .map((comparison) => {
+            const percent =
+              comparison.percent !== null &&
+              comparison.percent !== undefined &&
+              Number.isFinite(Number(comparison.percent))
+                ? `${Math.max(0, Math.min(100, Number(comparison.percent)))}%`
+                : '—';
+            return `<div class="affinityHistoryRow"><span><strong>${escapeHTML(comparison.name || 'Pessoa no TOPO')}</strong><small>${escapeHTML(affinityComparisonLine(comparison))}</small></span><b>${percent}</b></div>`;
+          })
+          .join('')}</div></div>`
+      : '<p class="affinityEmpty">Suas comparações aparecerão aqui quando alguém abrir seu convite.</p>';
+  return `<section class="profileSection affinityPanel" id="afinidades"><div class="profileSectionHead"><div class="sectionLabel">Afinidades</div><span>seus vencedores em comum</span></div><div class="affinityPanelBody"><div class="affinityLead"><span class="affinitySymbol" aria-hidden="true">%</span><div><h2>Compare seu Topo</h2><p>Descubra em quantos rankings vocês escolheram o mesmo vencedor.</p><button class="affinityShareButton" id="affinityShareButton" type="button" data-affinity-share-path="${escapeHTML(sharePath)}">COMPARAR COM ALGUÉM</button></div></div>${history}</div></section>`;
+}
+
+async function shareAffinityURL(url) {
+  const data = {
+    title: 'Compare nossos Topos',
+    text: 'Quanto o seu Topo combina com o meu? Compare nossos vencedores:',
+    url,
+  };
+  if (navigator.share) {
+    try {
+      await navigator.share(data);
+      return true;
+    } catch (error) {
+      if (error?.name === 'AbortError') return false;
+    }
+  }
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(url);
+    toast('Link de afinidade copiado');
+    return true;
+  } catch {
+    toast('Não consegui abrir o compartilhamento neste navegador');
+    return false;
+  }
+}
+
+async function shareMyAffinity(button) {
+  button.disabled = true;
+  try {
+    let sharePath = String(button.dataset.affinitySharePath || '');
+    if (!sharePath) {
+      const response = await fetch('/api?action=affinity-share', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: '{}',
+        }),
+        result = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        location.assign(`/entrar?voltar=${encodeURIComponent('/vip#afinidades')}`);
+        return;
+      }
+      if (!response.ok || !result.sharePath) throw result;
+      sharePath = result.sharePath;
+      button.dataset.affinitySharePath = sharePath;
+    }
+    await shareAffinityURL(location.origin + sharePath);
+  } catch {
+    toast('Não consegui criar seu convite agora');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function bindAffinityPanel(root = document) {
+  const button = root.querySelector('#affinityShareButton');
+  if (button) button.onclick = () => shareMyAffinity(button);
+}
+
 function personalActivityHTML(data = null) {
   if (!data)
     return '<section class="profileSection profileRecentSection personalActivityUnavailable"><div class="profileSectionHead"><div class="sectionLabel">Sua participação</div><span>atividade no TOPO</span></div><p class="profileHint">Não consegui carregar seu histórico agora. Seus favoritos e rankings continuam disponíveis acima.</p></section>';
@@ -1323,7 +1412,7 @@ async function loadVipArea() {
   syncExperienceNavigation();
   groupsEl.innerHTML = '';
   document.title = 'Meu Topo — TOPO';
-  const [response, favoriteResponse, profileResponse] = await Promise.all([
+  const [response, favoriteResponse, profileResponse, affinityResponse] = await Promise.all([
       fetch('/api?action=vip-catalog', { cache: 'no-store' }),
       viewer.registered
         ? fetch('/api?action=favorites', { cache: 'no-store' })
@@ -1333,12 +1422,18 @@ async function loadVipArea() {
             cache: 'no-store',
           })
         : Promise.resolve(null),
+      viewer.registered
+        ? fetch('/api?action=affinities', { cache: 'no-store' })
+        : Promise.resolve(null),
     ]),
     data = await response.json().catch(() => ({})),
     favoriteData = favoriteResponse?.ok
       ? await favoriteResponse.json().catch(() => ({}))
       : { favorites: [] },
-    profileData = profileResponse?.ok ? await profileResponse.json().catch(() => null) : null;
+    profileData = profileResponse?.ok ? await profileResponse.json().catch(() => null) : null,
+    affinityData = affinityResponse?.ok
+      ? await affinityResponse.json().catch(() => ({ comparisons: [] }))
+      : { comparisons: [] };
   if (!response.ok) throw new Error('vip_catalog');
   vipRankings = Array.isArray(data.rankings) ? data.rankings : [];
   favoriteRankings = Array.isArray(favoriteData.favorites) ? favoriteData.favorites : [];
@@ -1364,13 +1459,14 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
+  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}${viewer.registered ? affinityPanelHTML(affinityData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
   bindWhatsAppShares();
   bindNativeShares();
   bindProfileRankingActivityMore(feed);
+  bindAffinityPanel(feed);
   document
     .getElementById('favoriteShareButton')
     ?.addEventListener('click', (event) => shareMyFavorites(event.currentTarget));
@@ -1388,6 +1484,91 @@ function favoriteCollectionToken() {
   } catch {
     return '';
   }
+}
+
+function affinityToken() {
+  const match = location.pathname.match(/^\/afinidade\/([^/]+)\/?$/);
+  if (!match) return '';
+  try {
+    const token = decodeURIComponent(match[1]);
+    return /^[a-zA-Z0-9_-]{24,64}$/.test(token) ? token : '';
+  } catch {
+    return '';
+  }
+}
+
+function affinityDetailsHTML(data) {
+  const rankings = Array.isArray(data.rankings) ? data.rankings : [];
+  if (!rankings.length) return '';
+  const ownerName = data.owner?.name || 'A outra pessoa';
+  return `<section class="affinityDetails"><div class="affinitySectionHead"><span>Onde vocês concordam e discordam</span><strong>${fmt(rankings.length)} em comum</strong></div><div class="affinityRankingList">${rankings
+    .map((ranking) => {
+      const result = ranking.sameWinner
+        ? `<span class="affinityAgreement"><b>MESMO VENCEDOR</b><small>${escapeHTML(ranking.mineWinner || '')}</small></span>`
+        : `<span class="affinityDisagreement"><b>DIFERENTES</b><small>${escapeHTML(ownerName)}: ${escapeHTML(ranking.mineWinner || '')}<br>Você: ${escapeHTML(ranking.theirWinner || '')}</small></span>`;
+      return `<a href="${escapeHTML(rankingPath(ranking.rankingId))}"><span><strong>${escapeHTML(ranking.question)}</strong><small>${escapeHTML(ranking.category || '')}</small></span>${result}</a>`;
+    })
+    .join('')}</div></section>`;
+}
+
+function affinitySuggestionsHTML(data, token) {
+  const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+  if (!suggestions.length) return '';
+  return `<section class="affinitySuggestions"><div class="affinitySectionHead"><span>Continue comparando</span><strong>jogue os mesmos rankings</strong></div><div class="affinitySuggestionList">${suggestions
+    .map(
+      (ranking) =>
+        `<a href="${escapeHTML(`${rankingPath(ranking.rankingId)}?afinidade=${encodeURIComponent(token)}`)}"><span><strong>${escapeHTML(ranking.question)}</strong><small>${escapeHTML(ranking.category || '')}</small></span><b>JOGAR →</b></a>`,
+    )
+    .join('')}</div></section>`;
+}
+
+function affinityResultHTML(data, token) {
+  const ownerName = data.owner?.name || 'Pessoa no TOPO';
+  if (data.isSelf) {
+    return `<section class="affinityPublicShell"><a class="backLink" href="/vip">← Meu Topo</a><div class="affinitySelfCard"><span class="affinitySymbol" aria-hidden="true">%</span><div><span class="portalKicker">Seu convite</span><h1>Este é o seu link de afinidade.</h1><p>Envie para alguém descobrir quantos vencedores vocês têm em comum.</p><button class="affinityShareButton" id="affinityShareButton" type="button" data-affinity-share-path="/afinidade/${escapeHTML(token)}">ENVIAR PARA ALGUÉM</button></div></div></section>`;
+  }
+
+  const summary = data.summary || {},
+    common = Math.max(0, Number(summary.commonRankings || 0)),
+    same = Math.max(0, Number(summary.sameWinners || 0)),
+    hasScore =
+      summary.percent !== null &&
+      summary.percent !== undefined &&
+      Number.isFinite(Number(summary.percent)),
+    percent = hasScore ? Math.max(0, Math.min(100, Number(summary.percent))) : null,
+    scoreCopy = common
+      ? `Vocês votaram em ${fmt(common)} ranking${common === 1 ? '' : 's'} em comum. Em ${fmt(same)}, escolheram o mesmo vencedor.`
+      : `Vocês ainda não concluíram o mesmo ranking. Jogue alguns dos rankings de ${ownerName} para a afinidade aparecer.`,
+    accountAction = data.viewer?.registered
+      ? '<a class="affinityAccountLink" href="/vip#afinidades">VER NO MEU TOPO →</a>'
+      : `<a class="affinityAccountLink" href="/entrar?voltar=${encodeURIComponent(location.pathname)}">ENTRAR PARA GUARDAR →</a>`;
+  return `<section class="affinityPublicShell"><a class="backLink" href="${data.viewer?.registered ? '/vip' : '/'}">← ${data.viewer?.registered ? 'Meu Topo' : 'TOPO'}</a><header class="affinityPublicHero"><span class="portalKicker">Afinidade no TOPO</span><h1>Quanto o seu Topo combina com o de ${escapeHTML(ownerName)}?</h1></header><section class="affinityScoreCard"><div class="affinityScore ${hasScore ? '' : 'empty'}"><strong>${hasScore ? `${percent}%` : '—'}</strong><span>${hasScore ? 'de afinidade' : 'ainda sem resultado'}</span></div><div class="affinityScoreCopy"><h2>${hasScore ? `${fmt(same)} vencedores iguais` : 'A comparação começa agora'}</h2><p>${escapeHTML(scoreCopy)}</p>${accountAction}</div></section>${affinityDetailsHTML(data)}${affinitySuggestionsHTML(data, token)}</section>`;
+}
+
+async function loadAffinityPage() {
+  syncExperienceNavigation();
+  groupsEl.innerHTML = '';
+  const token = affinityToken();
+  if (!token) {
+    feed.innerHTML =
+      '<section class="affinityPublicEmpty"><span class="portalKicker">Afinidade</span><h1>Este convite não está completo.</h1><a href="/">Descobrir rankings →</a></section>';
+    return;
+  }
+  const response = await fetch(
+      `/api?action=affinity&token=${encodeURIComponent(token)}&device_id=${encodeURIComponent(deviceId)}`,
+      { cache: 'no-store' },
+    ),
+    data = await response.json().catch(() => ({}));
+  if (response.status === 404) {
+    document.title = 'Afinidade não encontrada — TOPO';
+    feed.innerHTML =
+      '<section class="affinityPublicEmpty"><span class="portalKicker">Afinidade</span><h1>Este convite não está mais disponível.</h1><a href="/">Descobrir rankings →</a></section>';
+    return;
+  }
+  if (!response.ok) throw data;
+  document.title = `Afinidade com ${data.owner?.name || 'alguém'} — TOPO`;
+  feed.innerHTML = affinityResultHTML(data, token);
+  bindAffinityPanel(feed);
 }
 
 async function loadFavoriteCollection() {
@@ -1520,6 +1701,8 @@ function pageLoadingHTML(kind) {
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo o Meu Topo…</strong></div>';
   if (kind === 'favorites')
     return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Abrindo os favoritos…</strong></div>';
+  if (kind === 'affinity')
+    return '<div class="authPreload"><span class="loadingSpinner" aria-hidden="true"></span><strong>Calculando a afinidade…</strong></div>';
   return '<div class="loading">carregando…</div>';
 }
 function revealClientPage() {
@@ -1551,6 +1734,7 @@ async function load() {
       else if (kind === 'moderation') await renderModeration();
       else if (kind === 'vip') await loadVipArea();
       else if (kind === 'favorites') await loadFavoriteCollection();
+      else if (kind === 'affinity') await loadAffinityPage();
     }
     revealClientPage();
   } catch (e) {
@@ -2829,12 +3013,16 @@ function rankingDuelHTML(r) {
     champion = state.duel.champion,
     progress = `${fmt(state.duel.seenOptions)} de ${fmt(state.duel.totalOptions)} opções vistas`,
     nextActions = rankingFlowActionsHTML(r, 'duelNextActions'),
+    affinityTokenValue = affinityReturnToken(),
+    affinityReturnAction = affinityTokenValue
+      ? `<a class="affinityReturnAction" href="/afinidade/${encodeURIComponent(affinityTokenValue)}">VER AFINIDADE</a>`
+      : '',
     duelCard =
       pair.length === 2
         ? `<section class="rankingDuel" data-duel-pair><div class="duelChoices">${duelChoiceHTML(pair[0])}<span class="duelVersus" aria-hidden="true">OU</span>${duelChoiceHTML(pair[1])}</div><div class="duelFooter"><button type="button" data-duel-skip>${champion ? 'TROCAR DESAFIANTE' : 'PULAR'} · NÃO CONHEÇO</button><span>${progress}</span></div>${duelShareButtonHTML(pair)}${nextActions}</section>`
         : champion
-          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button></div>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
-          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button></div>${nextActions}</section>`;
+          ? `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Seu vencedor: ${escapeHTML(champion.label)}</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button>${affinityReturnAction}</div>${nextActions}<div class="duelResultMeta"><span>O resultado foi guardado no Meu Topo.</span><a href="${viewer.registered ? '/vip' : `/entrar?voltar=${encodeURIComponent('/vip')}`}">${viewer.registered ? 'Ver no Meu Topo →' : 'Entrar para guardar →'}</a></div></section>`
+          : `<section class="rankingDuel rankingDuelComplete"><span class="duelEyebrow">Partida concluída</span><h2>Nenhuma opção foi escolhida.</h2><div class="duelEndActions"><button type="button" data-duel-restart>REFAZER DUELO</button>${affinityReturnAction}</div>${nextActions}</section>`;
   return duelCard;
 }
 

@@ -61,6 +61,10 @@
       "dest": "/page.js?view=private&kind=favoritos"
     },
     {
+      "src": "/afinidade/([^/]+)/?",
+      "dest": "/page.js?view=private&kind=afinidade"
+    },
+    {
       "src": "/(entrar|perfil|moderacao|vip|recuperar-senha|redefinir-senha|sso-callback)/?",
       "dest": "/page.js?view=private&kind=$1"
     },

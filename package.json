@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check api.js && node --check duel-bottom-api.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
+    "check": "node --check api.js && node --check affinity.js && node --check duel-bottom-api.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
     "test": "node --test test/*.test.mjs",
     "validate": "npm run check && npm test && npm run format:check",
     "format": "prettier --write .",
@@ -28,6 +28,7 @@
     "db:user-vip-rankings": "node scripts/apply-user-vip-rankings.mjs",
     "db:user-vip-custom-rankings": "node scripts/apply-user-vip-custom-rankings.mjs",
     "db:ranking-favorites": "node scripts/apply-ranking-favorites.mjs",
+    "db:user-affinities": "node scripts/apply-user-affinities.mjs",
     "db:vote-identity": "node scripts/apply-vote-identity.mjs",
     "db:voting-modes": "node scripts/apply-voting-modes.mjs",
     "db:winner-stays": "node scripts/apply-voting-modes.mjs",
