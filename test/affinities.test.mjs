@@ -66,6 +66,10 @@ test('Meu Topo and the public invite route expose the affinity flow', async () =
   assert.match(app, /function loadAffinityPage/);
   assert.match(style, /\.affinityPanel/);
   assert.match(style, /\.affinityScore/);
+  assert.match(
+    style,
+    /body\.popElectric \.affinityPublicHero \{[\s\S]*?height: auto;[\s\S]*?display: block;/,
+  );
   assert.match(page, /afinidade: \['Afinidade — TOPO'/);
   assert.match(vercel, /afinidade\/\(\[\^\/\]\+\)/);
 });

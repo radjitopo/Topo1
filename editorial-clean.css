@@ -9790,6 +9790,9 @@ body.popElectric .affinityPublicShell > .backLink {
 }
 
 body.popElectric .affinityPublicHero {
+  height: auto;
+  min-height: 0;
+  display: block;
   max-width: 780px;
   padding: 0 0 26px;
 }
