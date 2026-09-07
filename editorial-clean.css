@@ -283,19 +283,23 @@ body.popElectric .discoverBack:focus-visible {
 body.popElectric .discoverArticleHero {
   position: relative;
   overflow: hidden;
-  min-height: 440px;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  background: var(--clean-ink);
-  color: var(--clean-paper);
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(150px, 19vw, 210px);
+  grid-template-rows: auto 1fr auto;
+  align-items: end;
+  gap: 18px clamp(28px, 5vw, 62px);
+  background: var(--clean-paper);
+  color: var(--clean-ink);
   border-top: 6px solid var(--clean-coral);
-  padding: clamp(30px, 5vw, 64px);
+  border-bottom: 1px solid var(--clean-ink);
+  padding: clamp(26px, 4vw, 46px);
 }
 
 body.popElectric .discoverArticleMeta {
-  position: absolute;
-  inset: 26px 30px auto;
+  position: static;
+  grid-column: 1 / -1;
+  align-self: start;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -309,10 +313,12 @@ body.popElectric .discoverArticleMeta {
 }
 
 body.popElectric .discoverArticleHero h1 {
+  grid-column: 1;
+  grid-row: 2;
   max-width: 980px;
-  margin: 0 0 14px;
+  margin: 0;
   font:
-    950 clamp(54px, 7.4vw, 96px) / 0.84 Arial,
+    950 clamp(52px, 6.5vw, 86px) / 0.88 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: -0.075em;
@@ -320,12 +326,74 @@ body.popElectric .discoverArticleHero h1 {
 }
 
 body.popElectric .discoverArticleHero > p {
-  margin: 0 0 28px;
-  color: #c8c8c8;
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0;
+  color: var(--clean-muted);
   font:
     650 14px/1.4 Arial,
     Helvetica,
     sans-serif;
+}
+
+body.popElectric .discoverArticleVisual {
+  position: relative;
+  isolation: isolate;
+  grid-column: 2;
+  grid-row: 2 / 4;
+  align-self: end;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: var(--clean-coral);
+  color: var(--clean-ink);
+  border: 2px solid var(--clean-ink);
+  padding: 16px;
+}
+
+body.popElectric .discoverArticleVisual::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -23%;
+  right: -23%;
+  width: 78%;
+  aspect-ratio: 1;
+  border: 2px solid rgba(10, 10, 10, 0.22);
+  border-radius: 50%;
+}
+
+body.popElectric .discoverArticleVisual::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -18%;
+  bottom: 14%;
+  width: 92%;
+  border-top: 2px solid rgba(10, 10, 10, 0.22);
+  transform: rotate(-34deg);
+  transform-origin: center;
+}
+
+body.popElectric .discoverArticleVisual > span {
+  margin: auto 0;
+  font:
+    950 clamp(48px, 7vw, 84px) / 0.85 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.08em;
+}
+
+body.popElectric .discoverArticleVisual > small {
+  font:
+    950 9px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.09em;
 }
 
 body.popElectric .discoverLeader {
@@ -616,16 +684,41 @@ body.popElectric .discoverCard.compact > a > p {
   }
 
   body.popElectric .discoverArticleHero {
-    min-height: 400px;
-    padding: 72px 18px 18px;
+    min-height: 310px;
+    grid-template-columns: minmax(0, 1fr) 98px;
+    grid-template-rows: auto auto auto;
+    gap: 16px 14px;
+    padding: 18px;
   }
 
   body.popElectric .discoverArticleMeta {
-    inset: 20px 18px auto;
+    grid-column: 1 / -1;
   }
 
   body.popElectric .discoverArticleHero h1 {
+    grid-column: 1 / -1;
+    grid-row: 2;
     font-size: clamp(43px, 13vw, 62px);
+  }
+
+  body.popElectric .discoverArticleHero > p {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: end;
+  }
+
+  body.popElectric .discoverArticleVisual {
+    grid-column: 2;
+    grid-row: 3;
+    padding: 10px;
+  }
+
+  body.popElectric .discoverArticleVisual > span {
+    font-size: 35px;
+  }
+
+  body.popElectric .discoverArticleVisual > small {
+    font-size: 7px;
   }
 
   body.popElectric .discoverLeader {
@@ -11471,24 +11564,12 @@ body.popElectric .discoverCard.featured li.medal-bronze {
 }
 
 body.popElectric .discoverArticleHero {
-  min-height: 370px;
+  min-height: 340px;
   isolation: isolate;
 }
 
 body.popElectric .discoverArticleHero::before {
-  content: 'TOP 10';
-  position: absolute;
-  z-index: 0;
-  top: 74px;
-  right: 20px;
-  color: rgba(255, 255, 255, 0.045);
-  font:
-    950 clamp(80px, 14vw, 190px) / 0.8 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: -0.08em;
-  white-space: nowrap;
-  pointer-events: none;
+  content: none;
 }
 
 body.popElectric .discoverArticleHero > h1,
@@ -11498,7 +11579,7 @@ body.popElectric .discoverArticleHero > p {
 }
 
 body.popElectric .discoverArticleMeta {
-  position: absolute;
+  position: static;
   z-index: 1;
 }
 
@@ -11696,13 +11777,11 @@ body.popElectric .discoverRankingItem.medal-gold > b {
 
   body.popElectric .discoverArticleHero {
     min-height: 0;
-    padding-bottom: 28px;
+    padding-bottom: 18px;
   }
 
   body.popElectric .discoverArticleHero::before {
-    top: 104px;
-    right: 8px;
-    font-size: 86px;
+    content: none;
   }
 
   body.popElectric .discoverPodium {

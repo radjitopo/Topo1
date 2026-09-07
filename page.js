@@ -388,8 +388,29 @@ const DISCOVER_MEDALS = {
   3: { className: 'medal-bronze', label: 'BRONZE' },
 };
 
+const DISCOVER_COVER_MARKS = {
+  Brasil: 'BR',
+  Cinema: '▶',
+  Dinheiro: 'R$',
+  Economia: '↑',
+  Educação: 'A+',
+  Esporte: '01',
+  Futebol: 'FC',
+  Gastronomia: '✦',
+  Internet: '@',
+  Mundo: '◎',
+  Música: '♪',
+  Streaming: '▶',
+  Tecnologia: '</>',
+  Viagem: '↗',
+};
+
 function discoverMedal(rank) {
   return DISCOVER_MEDALS[Number(rank)] || null;
+}
+
+function discoverCoverMark(ranking) {
+  return DISCOVER_COVER_MARKS[ranking.category] || ranking.category.slice(0, 2).toUpperCase();
 }
 
 function discoverCard(ranking, index, compact = false) {
@@ -455,13 +476,15 @@ function discoverDetailHTML(ranking) {
       })
       .join(''),
     sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
-    related = discoverRelated(ranking);
+    related = discoverRelated(ranking),
+    rankingNumber = String(DISCOVER_RANKINGS.indexOf(ranking) + 1).padStart(2, '0');
   return `<article class="discoverArticle">
     <a class="discoverBack" href="/rankings">← TODOS OS RANKINGS</a>
     <header class="discoverArticleHero">
       <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
       <h1>${escapeHtml(ranking.title)}</h1>
       <p>${escapeHtml(ranking.metric)} · ${escapeHtml(ranking.period)}</p>
+      <div class="discoverArticleVisual" aria-hidden="true"><span>${escapeHtml(discoverCoverMark(ranking))}</span><small>RANKING ${rankingNumber}</small></div>
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
       <header><div><span class="discoverEyebrow">RANKING COMPLETO</span><h2 id="discover-ranking-title">Top 10</h2></div><p>${escapeHtml(ranking.metric)}</p></header>

@@ -84,6 +84,10 @@ test('each editorial detail has a top 10, values, period and source', () => {
   const html = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
   assert.match(html, /<body class="popElectric homePage discoverPage discoverDetailPage">/);
   assert.match(html, /<h1>Pessoas mais ricas do mundo<\/h1>/);
+  assert.match(
+    html,
+    /class="discoverArticleVisual" aria-hidden="true"><span>R\$<\/span><small>RANKING 01<\/small>/,
+  );
   assert.equal((html.match(/class="discoverRankPosition"/g) || []).length, 10);
   assert.match(html, /Elon Musk/);
   assert.match(html, /US\$ 892 bi/);
@@ -115,6 +119,11 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverPageHero/);
   assert.match(cssSource, /\.discoverGrid/);
   assert.match(cssSource, /\.discoverRankingSheet/);
+  assert.match(cssSource, /\.discoverArticleVisual/);
+  assert.match(
+    cssSource,
+    /\.discoverArticleHero \{[\s\S]*background: var\(--clean-paper\);[\s\S]*color: var\(--clean-ink\);/,
+  );
   assert.match(cssSource, /\.medal-gold/);
   assert.match(cssSource, /\.medal-silver/);
   assert.match(cssSource, /\.medal-bronze/);
