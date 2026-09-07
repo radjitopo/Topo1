@@ -402,6 +402,7 @@ function newBadgeHTML(r) {
 function pageKind() {
   if (document.body.classList.contains('notFoundPage')) return 'not-found';
   if (location.pathname.startsWith('/ranking/')) return 'ranking';
+  if (/^\/descobrir\/?$/.test(location.pathname)) return 'discover';
   if (
     ['/entrar', '/recuperar-senha', '/redefinir-senha', '/sso-callback'].includes(location.pathname)
   )
@@ -440,7 +441,8 @@ function groupPath(group) {
   if (isLocalExperience()) return topoLocal.collectionPath(selectedCity, group);
   return group === 'Todos' ? '/' : `/categoria/${generalGroupSlugs[group] || ''}`;
 }
-document.body.classList.toggle('homePage', pageKind() === 'home');
+document.body.classList.toggle('homePage', ['home', 'discover'].includes(pageKind()));
+document.body.classList.toggle('discoverPage', pageKind() === 'discover');
 document.body.classList.toggle('rankingPage', pageKind() === 'ranking');
 document.body.classList.toggle('authPage', pageKind() === 'auth');
 document.body.classList.toggle('profilePage', pageKind() === 'profile');
@@ -768,9 +770,10 @@ function renderCityPicker() {
   citySelectEl.title = `Cidade do TOPO LOCAL: ${selectedCity}`;
 }
 function syncExperienceNavigation() {
-  const vip = isVipExperience(),
+  const discover = pageKind() === 'discover',
+    vip = isVipExperience(),
     local = !vip && isLocalExperience(),
-    experience = vip ? 'vip' : local ? 'local' : 'topo';
+    experience = discover ? 'discover' : vip ? 'vip' : local ? 'local' : 'topo';
   document.body.classList.toggle('localMode', local);
   document.body.classList.toggle('vipPage', vip);
   experienceLinks.forEach((link) => {
@@ -1699,7 +1702,8 @@ async function load() {
       renderHome();
     } else {
       groupsEl.innerHTML = '';
-      if (kind === 'ranking') {
+      if (kind === 'discover') renderDiscoverPage();
+      else if (kind === 'ranking') {
         if (rankings.some((ranking) => ranking.id === internalId())) renderInternal();
         else await loadVipRanking(internalId());
       } else if (kind === 'auth') await renderAuth();
@@ -1711,6 +1715,11 @@ async function load() {
     }
     revealClientPage();
   } catch (e) {
+    if (kind === 'discover') {
+      renderDiscoverPage();
+      revealClientPage();
+      return;
+    }
     feed.innerHTML =
       '<div class="loading">Não consegui carregar.<br><button class="retry" onclick="load()">Tentar de novo</button></div>';
     revealClientPage();
@@ -2364,13 +2373,23 @@ function bindFavoriteButtons() {
 }
 function portalHeroHTML(r, secondary = false) {
   const heading = secondary ? `<h2>${escapeHTML(r.q)}</h2>` : `<h1>${escapeHTML(r.q)}</h1>`;
-  return `<article class="portalHero ${secondary ? 'portalHeroSecondary' : 'portalHeroPrimary'}"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, !secondary)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">${secondary ? 'PARA DESCOBRIR' : 'RANKING DO MOMENTO'}</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span>${heading}<span class="portalHeroAction">abrir ranking →</span></span></a>${shareActionsHTML(r, true)}</article>`;
+  return `<article class="portalHero ${secondary ? 'portalHeroSecondary' : 'portalHeroPrimary'}"><a class="portalHeroLink" href="${rankingPath(r.id)}"><span class="portalHeroMedia">${portalImageHTML(r, !secondary)}</span><span class="portalHeroCopy"><span class="portalHeroEyebrow">${secondary ? 'EM DESTAQUE' : 'RANKING DO MOMENTO'}</span><span class="portalKicker"><span class="portalHeroCategory">${escapeHTML(categoryLabel(r))}</span>${newBadgeHTML(r)}</span>${heading}<span class="portalHeroAction">abrir ranking →</span></span></a>${shareActionsHTML(r, true)}</article>`;
 }
 function popHomeLeadHTML(hero, secondary = null) {
   return `<div class="popHomeStats" aria-label="Números da comunidade"><span class="popHomeTagline">Tudo vira ranking.</span><span><strong>${fmt(community.rankings)}</strong> rankings</span><i></i><span><strong>${fmt(community.votes)}</strong> votos</span><button type="button" onclick="reshuffle()">trocar destaque ↻</button></div><section class="portalLeadGrid popHomeLead editorialHomeLead" aria-label="Rankings em destaque">${portalHeroHTML(hero)}${secondary ? portalHeroHTML(secondary, true) : ''}</section>`;
 }
 function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
+}
+function discoverHomeCalloutHTML() {
+  return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS PARA LER</span><h2 id="discover-home-title">Descobrir</h2><p>Histórias, contexto e informação — sem votação.</p></div><a href="/descobrir">CONHECER A SEÇÃO →</a></header><div class="discoverHomePreview"><span class="discoverStatus">EM PREPARAÇÃO</span><div><h3>Rankings editoriais, com cada posição explicada.</h3><p>Os primeiros temas entram aqui em breve.</p></div><a href="/descobrir" aria-label="Abrir Descobrir">↗</a></div></section>`;
+}
+function discoverPageHTML() {
+  return `<section class="discoverPageHero" aria-labelledby="discover-page-title"><div><span class="discoverEyebrow">RANKINGS PARA LER</span><h1 id="discover-page-title">Descobrir</h1><p>Histórias, contexto e informação — sem votação.</p></div><span class="discoverMode">EDITORIAL</span></section><section class="discoverEmpty" aria-labelledby="discover-coming-title"><span class="discoverEmptyMark" aria-hidden="true">→</span><div><span class="discoverEyebrow">EM PREPARAÇÃO</span><h2 id="discover-coming-title">Os primeiros rankings editoriais chegam em breve.</h2><p>Aqui, cada posição vai ganhar explicação, contexto e fontes. Enquanto preparamos os primeiros temas, os rankings votados pela comunidade continuam abertos.</p><a href="/">Votar nos rankings →</a></div></section><section class="discoverPrinciples" aria-label="Como serão os rankings editoriais"><article><span>01</span><h2>Contexto</h2><p>Mais do que uma lista: o motivo de cada posição.</p></article><article><span>02</span><h2>Critério</h2><p>O recorte e a lógica do ranking apresentados com clareza.</p></article><article><span>03</span><h2>Fontes</h2><p>Informações verificadas e data de atualização.</p></article></section><div class="end">TOPO · tudo vira ranking</div>`;
+}
+function renderDiscoverPage() {
+  document.title = 'Descobrir — rankings editoriais do TOPO';
+  feed.innerHTML = discoverPageHTML();
 }
 function portalSideStoryHTML(r) {
   return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;
@@ -2594,7 +2613,7 @@ renderHome = function () {
       : portalVisible.filter((r) => r.id !== hero.id),
     stories = storySource.slice(0, 8),
     more = storySource.slice(8, 14);
-  feed.innerHTML = `${popHomeLeadHTML(hero, secondaryHero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>MAIS PARA DESCOBRIR</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${duelHomeCalloutHTML()}${popLocalCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
+  feed.innerHTML = `${popHomeLeadHTML(hero, secondaryHero)}${portalTrendingHTML(portalVisible, 'Em alta')}<section class="popHomeSection" id="para-voce"><div class="portalSectionHead"><div><span>OUTROS RANKINGS</span><h2>Mais rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ mudar seleção</button></div><section class="categoryRankGrid popHomeGrid">${forYou.map(categoryRankCardHTML).join('')}</section></section>${duelHomeCalloutHTML()}${popLocalCalloutHTML()}${discoverHomeCalloutHTML()}<div class="portalSectionHead"><div><span>ACABARAM DE CHEGAR</span><h2>Novos rankings</h2></div><button class="shuffleBtn portalShuffle" onclick="reshuffle()">↻ embaralhar</button></div><section class="portalNewsLayout"><div class="portalStoryFeed">${stories.map(portalStoryHTML).join('')}</div><aside>${portalListHTML('Mais polêmicos', disputed, 'disputed')}</aside></section>${more.length ? `<section class="portalMore"><div class="portalPanelTitle">Mais para explorar</div><div class="portalMoreGrid">${more.map(portalSideStoryHTML).join('')}</div></section>` : ''}<div class="end">TOPO · tudo vira ranking</div>`;
   feed.querySelector('.end')?.insertAdjacentHTML('beforebegin', portalIdeaCalloutHTML());
   bindVotes();
 };

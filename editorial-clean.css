@@ -10279,3 +10279,420 @@ body.popElectric.rankingPage .duelEndActions .affinityReturnAction {
     padding: 7px 9px;
   }
 }
+
+/* Descobrir — rankings editoriais sem votação ---------------------------- */
+
+body.popElectric .experienceLink.discover.active {
+  border-color: var(--clean-coral);
+}
+
+body.popElectric.discoverPage .groupsWrap {
+  display: none;
+}
+
+body.popElectric .discoverEyebrow {
+  display: block;
+  color: var(--clean-ink);
+  font:
+    900 11px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+body.popElectric .discoverHomeCallout {
+  margin: -20px 0 72px;
+  border-top: 4px solid var(--clean-ink);
+  color: var(--clean-ink);
+  padding-top: 24px;
+}
+
+body.popElectric .discoverHomeCallout > header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  padding-bottom: 22px;
+}
+
+body.popElectric .discoverHomeCallout h2 {
+  margin: 7px 0 5px;
+  font:
+    900 clamp(42px, 4.5vw, 62px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .discoverHomeCallout header p {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 13px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverHomeCallout header > a,
+body.popElectric .discoverEmpty a {
+  width: max-content;
+  color: inherit;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding: 7px 0;
+}
+
+body.popElectric .discoverHomeCallout header > a:hover,
+body.popElectric .discoverHomeCallout header > a:focus-visible,
+body.popElectric .discoverEmpty a:hover,
+body.popElectric .discoverEmpty a:focus-visible {
+  color: var(--clean-coral);
+}
+
+body.popElectric .discoverHomePreview {
+  min-height: 126px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 26px;
+  border-top: 1px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  background: var(--clean-soft);
+  padding: 22px 24px;
+}
+
+body.popElectric .discoverStatus {
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  padding: 8px 10px 7px;
+  font:
+    900 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric .discoverHomePreview h3 {
+  margin: 0 0 5px;
+  font:
+    900 clamp(24px, 2.6vw, 36px) / 0.96 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric .discoverHomePreview p {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 12px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverHomePreview > a {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  font:
+    900 28px/1 Arial,
+    Helvetica,
+    sans-serif;
+  text-decoration: none;
+}
+
+body.popElectric .discoverHomePreview > a:hover,
+body.popElectric .discoverHomePreview > a:focus-visible {
+  background: var(--clean-ink);
+}
+
+body.popElectric.discoverPage .feed {
+  padding-top: 34px;
+}
+
+body.popElectric .discoverPageHero {
+  min-height: 280px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px;
+  border-top: 6px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 32px 0 30px;
+}
+
+body.popElectric .discoverPageHero h1 {
+  margin: 10px 0 12px;
+  color: var(--clean-ink);
+  font:
+    950 clamp(68px, 10vw, 124px) / 0.78 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.085em;
+}
+
+body.popElectric .discoverPageHero p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 16px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverMode {
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  padding: 12px 14px 11px;
+  font:
+    950 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric .discoverEmpty {
+  min-height: 310px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.34fr) minmax(0, 1fr);
+  margin: 48px 0;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+}
+
+body.popElectric .discoverEmptyMark {
+  display: grid;
+  place-items: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.32);
+  color: var(--clean-coral);
+  font:
+    900 clamp(90px, 12vw, 148px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverEmpty > div {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  padding: clamp(30px, 5vw, 62px);
+}
+
+body.popElectric .discoverEmpty .discoverEyebrow {
+  color: var(--clean-coral);
+}
+
+body.popElectric .discoverEmpty h2 {
+  max-width: 760px;
+  margin: 10px 0 13px;
+  font:
+    900 clamp(34px, 4.8vw, 62px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .discoverEmpty p {
+  max-width: 680px;
+  margin: 0 0 21px;
+  color: #c8c8c8;
+  font:
+    600 14px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverPrinciples {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 4px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+}
+
+body.popElectric .discoverPrinciples article {
+  min-width: 0;
+  min-height: 190px;
+  border-right: 1px solid var(--clean-line);
+  padding: 24px 24px 26px 0;
+}
+
+body.popElectric .discoverPrinciples article + article {
+  padding-left: 24px;
+}
+
+body.popElectric .discoverPrinciples article:last-child {
+  border-right: 0;
+}
+
+body.popElectric .discoverPrinciples span {
+  color: var(--clean-coral);
+  font:
+    950 13px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverPrinciples h2 {
+  margin: 30px 0 8px;
+  color: var(--clean-ink);
+  font:
+    900 29px/0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric .discoverPrinciples p {
+  max-width: 290px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    600 13px/1.45 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+@media (max-width: 700px) {
+  body.popElectric .experienceSwitch {
+    gap: 18px;
+  }
+
+  body.popElectric .experienceLink {
+    flex: 0 0 auto;
+  }
+
+  body.popElectric.localMode .experienceInner {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 8px 0;
+  }
+
+  body.popElectric.localMode .experienceSwitch {
+    width: 100%;
+  }
+
+  body.popElectric.localMode .cityPicker {
+    margin-left: 0;
+  }
+
+  body.popElectric .discoverHomeCallout {
+    margin-top: -4px;
+    margin-bottom: 50px;
+    padding-top: 18px;
+  }
+
+  body.popElectric .discoverHomeCallout > header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding-bottom: 18px;
+  }
+
+  body.popElectric .discoverHomeCallout h2 {
+    font-size: 44px;
+  }
+
+  body.popElectric .discoverHomeCallout header p {
+    font-size: 12px;
+  }
+
+  body.popElectric .discoverHomePreview {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 14px;
+    padding: 17px 14px;
+  }
+
+  body.popElectric .discoverStatus {
+    width: max-content;
+    grid-column: 1 / -1;
+  }
+
+  body.popElectric .discoverHomePreview h3 {
+    font-size: 25px;
+  }
+
+  body.popElectric .discoverHomePreview > a {
+    width: 44px;
+    height: 44px;
+  }
+
+  body.popElectric.discoverPage .feed {
+    padding-top: 18px;
+  }
+
+  body.popElectric .discoverPageHero {
+    min-height: 230px;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+    padding: 24px 0 22px;
+  }
+
+  body.popElectric .discoverPageHero h1 {
+    font-size: clamp(58px, 20vw, 78px);
+  }
+
+  body.popElectric .discoverPageHero p {
+    font-size: 14px;
+  }
+
+  body.popElectric .discoverMode {
+    width: max-content;
+  }
+
+  body.popElectric .discoverEmpty {
+    grid-template-columns: minmax(0, 1fr);
+    margin: 30px 0;
+  }
+
+  body.popElectric .discoverEmptyMark {
+    min-height: 112px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.32);
+    font-size: 82px;
+  }
+
+  body.popElectric .discoverEmpty > div {
+    padding: 26px 18px 30px;
+  }
+
+  body.popElectric .discoverEmpty h2 {
+    font-size: 36px;
+  }
+
+  body.popElectric .discoverEmpty p {
+    font-size: 14px;
+  }
+
+  body.popElectric .discoverPrinciples {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .discoverPrinciples article,
+  body.popElectric .discoverPrinciples article + article {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--clean-line);
+    padding: 20px 0 22px;
+  }
+
+  body.popElectric .discoverPrinciples article:last-child {
+    border-bottom: 0;
+  }
+
+  body.popElectric .discoverPrinciples h2 {
+    margin-top: 17px;
+  }
+}

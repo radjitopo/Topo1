@@ -56,6 +56,7 @@
     { "src": "/duel-bottom-api", "dest": "/duel-bottom-api.js" },
     { "src": "/sitemap.xml", "dest": "/sitemap.js" },
     { "src": "/", "dest": "/page.js?view=home" },
+    { "src": "/descobrir/?", "dest": "/page.js?view=discover" },
     {
       "src": "/favoritos/([^/]+)/?",
       "dest": "/page.js?view=private&kind=favoritos"
