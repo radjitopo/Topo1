@@ -379,7 +379,7 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
 }
 
 function discoverPath(ranking) {
-  return `/descobrir/${encodeURIComponent(ranking.slug)}`;
+  return `/rankings/${encodeURIComponent(ranking.slug)}`;
 }
 
 const DISCOVER_MEDALS = {
@@ -414,8 +414,8 @@ function discoverCard(ranking, index, compact = false) {
 function discoverHero() {
   return `<section class="discoverPageHero" aria-labelledby="discover-page-title">
     <div>
-      <span class="discoverEyebrow">RANKINGS PARA LER</span>
-      <h1 id="discover-page-title">Descobrir</h1>
+      <span class="discoverEyebrow">RANKINGS EDITORIAIS</span>
+      <h1 id="discover-page-title">Rankings</h1>
       <p>Informação clara, números reais, data e fonte — sem votação.</p>
     </div>
     <span class="discoverMode"><strong>${DISCOVER_RANKINGS.length}</strong><span>RANKINGS<br>PUBLICADOS</span></span>
@@ -473,7 +473,7 @@ function discoverDetailHTML(ranking) {
     sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
     related = discoverRelated(ranking);
   return `<article class="discoverArticle">
-    <a class="discoverBack" href="/descobrir">← TODOS OS RANKINGS</a>
+    <a class="discoverBack" href="/rankings">← TODOS OS RANKINGS</a>
     <header class="discoverArticleHero">
       <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
       <h1>${escapeHtml(ranking.title)}</h1>
@@ -498,7 +498,7 @@ function discoverDetailHTML(ranking) {
 
 export function renderDiscoverPage(template, slug = '') {
   const ranking = slug ? discoverRankingBySlug(slug) : null,
-    canonical = ranking ? `${BASE_URL}${discoverPath(ranking)}` : `${BASE_URL}/descobrir`,
+    canonical = ranking ? `${BASE_URL}${discoverPath(ranking)}` : `${BASE_URL}/rankings`,
     structuredData = ranking
       ? schemaGraph([
           {
@@ -524,7 +524,7 @@ export function renderDiscoverPage(template, slug = '') {
       : schemaGraph([
           {
             '@type': 'CollectionPage',
-            name: 'Descobrir — rankings editoriais do TOPO',
+            name: 'Rankings editoriais do TOPO',
             url: canonical,
             inLanguage: 'pt-BR',
           },
@@ -542,7 +542,7 @@ export function renderDiscoverPage(template, slug = '') {
         ]);
   return withPage(template, {
     metadata: {
-      title: ranking ? `${ranking.title} — TOPO` : 'Descobrir — rankings editoriais do TOPO',
+      title: ranking ? `${ranking.title} — TOPO` : 'Rankings editoriais — TOPO',
       description: ranking
         ? `${ranking.title}: Top 10 com ${ranking.metric.toLowerCase()}, data, critério e fonte.`
         : '30 rankings editoriais com Top 10, números, datas, critérios e fontes.',
@@ -1173,6 +1173,14 @@ export default async function handler(req, res) {
 
   if (view === 'not-found') {
     return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
+  }
+
+  if (view === 'discover-legacy') {
+    const slug = queryValue(req, 'slug');
+    const destination = slug ? `/rankings/${encodeURIComponent(slug)}` : '/rankings';
+    res.setHeader('Location', destination);
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=86400');
+    return res.status(308).end();
   }
 
   if (view === 'discover') {

@@ -67,9 +67,9 @@ export function buildSitemap(rankings) {
     '/direitos-autorais',
   ];
   for (const path of staticUrls) addUrl(urls, path);
-  addUrl(urls, '/descobrir', DISCOVER_UPDATED_AT);
+  addUrl(urls, '/rankings', DISCOVER_UPDATED_AT);
   for (const ranking of DISCOVER_RANKINGS) {
-    addUrl(urls, `/descobrir/${encodeURIComponent(ranking.slug)}`, DISCOVER_UPDATED_AT);
+    addUrl(urls, `/rankings/${encodeURIComponent(ranking.slug)}`, DISCOVER_UPDATED_AT);
   }
 
   let homeLastModified = '';

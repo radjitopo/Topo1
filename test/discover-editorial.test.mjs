@@ -2,29 +2,32 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { DISCOVER_RANKINGS } from '../discover-rankings.js';
-import { renderDiscoverPage } from '../page.js';
+import pageHandler, { renderDiscoverPage } from '../page.js';
 
 const root = new URL('../', import.meta.url);
-const [template, appSource, cssSource, vercelConfig] = await Promise.all([
+const [template, appSource, cssSource, vercelConfig, sitemapSource] = await Promise.all([
   readFile(new URL('index.html', root), 'utf8'),
   readFile(new URL('app.js', root), 'utf8'),
   readFile(new URL('editorial-clean.css', root), 'utf8'),
   readFile(new URL('vercel.json', root), 'utf8'),
+  readFile(new URL('sitemap.js', root), 'utf8'),
 ]);
 
-test('Descobrir is a distinct primary experience after TOPO LOCAL', () => {
+test('the primary navigation clearly separates Rankings, TOPO and TOPO LOCAL', () => {
   assert.match(
     template,
-    /data-experience="local"[\s\S]*data-experience="discover" href="\/descobrir">DESCOBRIR<\/a>/,
+    /data-experience="discover" href="\/rankings">RANKINGS<\/a>[\s\S]*data-experience="topo" href="\/"[\s\S]*data-experience="local" href="\/local"/,
   );
-  assert.match(vercelConfig, /"src": "\/descobrir\/\?"/);
-  assert.match(vercelConfig, /"src": "\/descobrir\/\(\[\^\/\]\+\)\/\?"/);
+  assert.match(vercelConfig, /"src": "\/rankings\/\?"/);
+  assert.match(vercelConfig, /"src": "\/rankings\/\(\[\^\/\]\+\)\/\?"/);
+  assert.match(vercelConfig, /view=discover-legacy/);
   assert.match(appSource, /experience = discover \? 'discover'/);
 });
 
 test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /\$\{popLocalCalloutHTML\(\)\}\$\{discoverHomeCalloutHTML\(\)\}/);
-  assert.match(appSource, /RANKINGS PARA LER/);
+  assert.match(appSource, /RANKINGS EDITORIAIS/);
+  assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
   assert.match(appSource, /30 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
@@ -34,12 +37,47 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
 test('the editorial collection publishes all 30 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
-  assert.match(html, /<h1 id="discover-page-title">Descobrir<\/h1>/);
+  assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
+  assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /name="robots" content="index,follow/);
   assert.equal((html.match(/class="discoverCard/g) || []).length, 30);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
+});
+
+test('editorial URLs use Rankings and keep Descobrir only as a legacy redirect', () => {
+  const detail = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
+  assert.match(detail, /href="\/rankings">← TODOS OS RANKINGS<\/a>/);
+  assert.match(
+    detail,
+    /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\/pessoas-mais-ricas-do-mundo"/,
+  );
+  assert.match(sitemapSource, /addUrl\(urls, '\/rankings'/);
+  assert.doesNotMatch(sitemapSource, /addUrl\(urls, '\/descobrir'/);
+});
+
+test('old Descobrir links redirect permanently to Rankings', async () => {
+  const headers = new Map();
+  let statusCode = 0;
+  const response = {
+    setHeader(name, value) {
+      headers.set(name.toLowerCase(), value);
+    },
+    status(code) {
+      statusCode = code;
+      return this;
+    },
+    end() {
+      return this;
+    },
+  };
+  await pageHandler(
+    { query: { view: 'discover-legacy', slug: 'pessoas-mais-ricas-do-mundo' } },
+    response,
+  );
+  assert.equal(statusCode, 308);
+  assert.equal(headers.get('location'), '/rankings/pessoas-mais-ricas-do-mundo');
 });
 
 test('each editorial detail has a top 10, values, period and source', () => {
@@ -72,7 +110,7 @@ test('the editorial catalog keeps 30 complete and sourced rankings', () => {
   }
 });
 
-test('Descobrir has responsive desktop and mobile styling', () => {
+test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverHomeCallout/);
   assert.match(cssSource, /\.discoverPageHero/);
   assert.match(cssSource, /\.discoverGrid/);

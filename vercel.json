@@ -56,8 +56,13 @@
     { "src": "/duel-bottom-api", "dest": "/duel-bottom-api.js" },
     { "src": "/sitemap.xml", "dest": "/sitemap.js" },
     { "src": "/", "dest": "/page.js?view=home" },
-    { "src": "/descobrir/([^/]+)/?", "dest": "/page.js?view=discover&slug=$1" },
-    { "src": "/descobrir/?", "dest": "/page.js?view=discover" },
+    { "src": "/rankings/([^/]+)/?", "dest": "/page.js?view=discover&slug=$1" },
+    { "src": "/rankings/?", "dest": "/page.js?view=discover" },
+    {
+      "src": "/descobrir/([^/]+)/?",
+      "dest": "/page.js?view=discover-legacy&slug=$1"
+    },
+    { "src": "/descobrir/?", "dest": "/page.js?view=discover-legacy" },
     {
       "src": "/favoritos/([^/]+)/?",
       "dest": "/page.js?view=private&kind=favoritos"
