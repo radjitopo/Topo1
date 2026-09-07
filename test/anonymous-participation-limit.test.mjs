@@ -5,14 +5,14 @@ import { compactSource, extractTopLevelDeclaration } from './source-helpers.mjs'
 
 const root = new URL('../', import.meta.url);
 
-test('the first anonymous limit reached blocks new participation', async () => {
+test('the current anonymous limits block new participation when the first one is reached', async () => {
   const api = await readFile(new URL('api.js', root), 'utf8');
   const reason = extractTopLevelDeclaration(api, 'anonymousRegistrationReason');
   const vote = extractTopLevelDeclaration(api, 'vote');
   const reset = extractTopLevelDeclaration(api, 'resetDuel');
 
-  assert.match(api, /const ANONYMOUS_LIMIT = 10;/);
-  assert.match(api, /const ANONYMOUS_DUEL_LIMIT = 2;/);
+  assert.match(api, /const ANONYMOUS_LIMIT = 30;/);
+  assert.match(api, /const ANONYMOUS_DUEL_LIMIT = 5;/);
   assert.match(reason, /votesUsed >= ANONYMOUS_LIMIT/);
   assert.match(reason, /duelsCompleted >= ANONYMOUS_DUEL_LIMIT/);
   assert.match(vote, /anonymousRegistrationReason\(participation\)/);

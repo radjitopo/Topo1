@@ -225,6 +225,13 @@ const localGroupDefinitions = [
     question: /\b(?:restaurante\s+por\s+quilo|quilo|self\s+service)\b/,
   },
   {
+    label: 'Restaurante de frutos do mar',
+    description:
+      'Restaurantes de frutos do mar para comparar peixes, mariscos e a experiência de cada cidade.',
+    id: /^(?:frutos\s+do\s+mar|restaurantes?\s+(?:de\s+)?frutos\s+do\s+mar)(?:\s|$)/,
+    question: /\brestaurante\s+de\s+frutos\s+do\s+mar\b|\bfrutos\s+do\s+mar\b/,
+  },
+  {
     label: 'Restaurante italiano',
     description: 'Cantinas e restaurantes italianos da cidade reunidos em rankings da comunidade.',
     id: /^restaurantes?\s+italianos?(?:\s|$)/,
@@ -253,6 +260,12 @@ const localGroupDefinitions = [
     description: 'Cafés e cafeterias para encontrar bons grãos, doces, ambientes e encontros.',
     id: /^(?:cafe|cafes|cafeterias?)(?:\s|$)/,
     question: /\b(?:cafe|cafeteria)\b/,
+  },
+  {
+    label: 'Sorveteria',
+    description: 'Sorveterias e gelaterias para descobrir e votar nos melhores sabores da cidade.',
+    id: /^(?:sorveterias?|gelaterias?)(?:\s|$)/,
+    question: /\b(?:sorveteria|gelateria)\b/,
   },
   {
     label: 'Botecos',

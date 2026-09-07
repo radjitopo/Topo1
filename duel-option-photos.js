@@ -27,7 +27,12 @@
     {
       id: 'basketball-player',
       title: ['basquete', 'basketball', 'nba', 'wnba'],
-      description: ['basketball player', 'jogador de basquete', 'jogadora de basquete', 'basquetebolista'],
+      description: [
+        'basketball player',
+        'jogador de basquete',
+        'jogadora de basquete',
+        'basquetebolista',
+      ],
       reject: ['footballer', 'futebolista', 'association football'],
     },
     {
@@ -38,8 +43,27 @@
     },
     {
       id: 'football-player',
-      title: ['jogador', 'jogadora', 'goleiro', 'zagueiro', 'atacante', 'meio campista', 'lateral', 'volante', 'camisa 10', 'futebolista'],
-      description: ['footballer', 'football player', 'association football player', 'soccer player', 'futebolista', 'jogador de futebol', 'jogadora de futebol'],
+      title: [
+        'jogador',
+        'jogadora',
+        'goleiro',
+        'zagueiro',
+        'atacante',
+        'meio campista',
+        'lateral',
+        'volante',
+        'camisa 10',
+        'futebolista',
+      ],
+      description: [
+        'footballer',
+        'football player',
+        'association football player',
+        'soccer player',
+        'futebolista',
+        'jogador de futebol',
+        'jogadora de futebol',
+      ],
       reject: ['city', 'cidade', 'municipality', 'municipio', 'commune', 'comuna'],
     },
     {
@@ -50,8 +74,29 @@
     },
     {
       id: 'musician',
-      title: ['cantor', 'cantora', 'musico', 'guitarrista', 'baixista', 'baterista', 'rapper', 'vocalista'],
-      description: ['singer', 'musician', 'singer songwriter', 'rapper', 'guitarist', 'bassist', 'drummer', 'cantor', 'cantora', 'musico', 'guitarrista'],
+      title: [
+        'cantor',
+        'cantora',
+        'musico',
+        'guitarrista',
+        'baixista',
+        'baterista',
+        'rapper',
+        'vocalista',
+      ],
+      description: [
+        'singer',
+        'musician',
+        'singer songwriter',
+        'rapper',
+        'guitarist',
+        'bassist',
+        'drummer',
+        'cantor',
+        'cantora',
+        'musico',
+        'guitarrista',
+      ],
       reject: ['album', 'song', 'cancao'],
     },
     {
@@ -63,7 +108,13 @@
     {
       id: 'director',
       title: ['diretor', 'diretora', 'cineasta'],
-      description: ['film director', 'director', 'cineasta', 'diretor de cinema', 'diretora de cinema'],
+      description: [
+        'film director',
+        'director',
+        'cineasta',
+        'diretor de cinema',
+        'diretora de cinema',
+      ],
       reject: ['film', 'filme'],
     },
     {
@@ -81,43 +132,169 @@
     {
       id: 'artist',
       title: ['artista', 'pintor', 'pintora', 'fotografo', 'fotografa', 'escultor', 'escultora'],
-      description: ['artist', 'painter', 'photographer', 'sculptor', 'artista', 'pintor', 'pintora', 'fotografo', 'fotografa', 'escultor', 'escultora'],
+      description: [
+        'artist',
+        'painter',
+        'photographer',
+        'sculptor',
+        'artista',
+        'pintor',
+        'pintora',
+        'fotografo',
+        'fotografa',
+        'escultor',
+        'escultora',
+      ],
       reject: ['city', 'cidade'],
     },
     {
       id: 'racing-driver',
       title: ['piloto', 'formula 1', 'f1', 'automobilismo'],
-      description: ['racing driver', 'racecar driver', 'piloto automobilistico', 'piloto de automobilismo', 'formula one driver'],
+      description: [
+        'racing driver',
+        'racecar driver',
+        'piloto automobilistico',
+        'piloto de automobilismo',
+        'formula one driver',
+      ],
       reject: ['airline pilot', 'aviator', 'aviador'],
     },
     {
       id: 'sports-club',
       title: ['clube', 'clubes', 'time', 'times', 'torcida', 'torcidas'],
-      description: ['football club', 'association football club', 'soccer club', 'sports club', 'sports team', 'clube de futebol', 'clube esportivo', 'equipe esportiva'],
+      description: [
+        'football club',
+        'association football club',
+        'soccer club',
+        'sports club',
+        'sports team',
+        'clube de futebol',
+        'clube esportivo',
+        'equipe esportiva',
+      ],
       reject: ['city', 'cidade', 'municipality', 'municipio'],
     },
     {
       id: 'place',
-      title: ['cidade', 'cidades', 'pais', 'paises', 'capital', 'capitais', 'bairro', 'bairros', 'praia', 'praias', 'ilha', 'ilhas', 'lugar', 'lugares', 'viagem', 'viagens'],
-      description: ['city', 'municipality', 'country', 'capital', 'neighborhood', 'district', 'beach', 'island', 'cidade', 'municipio', 'pais', 'capital', 'bairro', 'praia', 'ilha'],
+      title: [
+        'cidade',
+        'cidades',
+        'pais',
+        'paises',
+        'capital',
+        'capitais',
+        'bairro',
+        'bairros',
+        'praia',
+        'praias',
+        'ilha',
+        'ilhas',
+        'lugar',
+        'lugares',
+        'viagem',
+        'viagens',
+      ],
+      description: [
+        'city',
+        'municipality',
+        'country',
+        'capital',
+        'neighborhood',
+        'district',
+        'beach',
+        'island',
+        'cidade',
+        'municipio',
+        'pais',
+        'capital',
+        'bairro',
+        'praia',
+        'ilha',
+      ],
       reject: ['footballer', 'futebolista', 'actor', 'atriz', 'ator', 'singer', 'cantor'],
     },
     {
       id: 'restaurant',
-      title: ['restaurante', 'restaurantes', 'pizzaria', 'pizzarias', 'hamburgueria', 'hamburguerias', 'sushi', 'cafe', 'cafes', 'padaria', 'padarias', 'bar', 'bares', 'boteco', 'botecos'],
-      description: ['restaurant', 'cafe', 'coffeehouse', 'bakery', 'bar', 'pizzeria', 'restaurante', 'cafeteria', 'padaria', 'pizzaria'],
+      title: [
+        'restaurante',
+        'restaurantes',
+        'pizzaria',
+        'pizzarias',
+        'hamburgueria',
+        'hamburguerias',
+        'sushi',
+        'cafe',
+        'cafes',
+        'padaria',
+        'padarias',
+        'bar',
+        'bares',
+        'boteco',
+        'botecos',
+      ],
+      description: [
+        'restaurant',
+        'cafe',
+        'coffeehouse',
+        'bakery',
+        'bar',
+        'pizzeria',
+        'restaurante',
+        'cafeteria',
+        'padaria',
+        'pizzaria',
+      ],
       reject: ['city', 'cidade', 'album', 'song'],
     },
     {
       id: 'animal',
-      title: ['animal', 'animais', 'cachorro', 'cachorros', 'cao', 'caes', 'gato', 'gatos', 'raca', 'racas'],
-      description: ['animal', 'species', 'breed', 'dog breed', 'cat breed', 'especie', 'raca de cao', 'raca de cachorro', 'raca de gato'],
+      title: [
+        'animal',
+        'animais',
+        'cachorro',
+        'cachorros',
+        'cao',
+        'caes',
+        'gato',
+        'gatos',
+        'raca',
+        'racas',
+      ],
+      description: [
+        'animal',
+        'species',
+        'breed',
+        'dog breed',
+        'cat breed',
+        'especie',
+        'raca de cao',
+        'raca de cachorro',
+        'raca de gato',
+      ],
       reject: ['person', 'pessoa'],
     },
     {
       id: 'vehicle',
-      title: ['carro', 'carros', 'automovel', 'automoveis', 'moto', 'motos', 'motocicleta', 'motocicletas'],
-      description: ['automobile', 'car model', 'vehicle', 'motorcycle', 'automovel', 'modelo de automovel', 'veiculo', 'motocicleta'],
+      title: [
+        'carro',
+        'carros',
+        'automovel',
+        'automoveis',
+        'moto',
+        'motos',
+        'motocicleta',
+        'motocicletas',
+      ],
+      description: [
+        'automobile',
+        'car model',
+        'vehicle',
+        'motorcycle',
+        'automovel',
+        'modelo de automovel',
+        'veiculo',
+        'motocicleta',
+      ],
       reject: ['person', 'pessoa'],
     },
     {
@@ -140,14 +317,47 @@
     },
     {
       id: 'food',
-      title: ['comida', 'comidas', 'prato', 'pratos', 'sobremesa', 'sobremesas', 'queijo', 'queijos', 'pao', 'paes', 'tempero', 'temperos', 'acompanhamento', 'acompanhamentos', 'culinaria'],
-      description: ['food', 'dish', 'dessert', 'cheese', 'bread', 'spice', 'culinary', 'comida', 'prato', 'sobremesa', 'queijo', 'pao', 'tempero', 'culinaria'],
+      title: [
+        'comida',
+        'comidas',
+        'prato',
+        'pratos',
+        'sobremesa',
+        'sobremesas',
+        'queijo',
+        'queijos',
+        'pao',
+        'paes',
+        'tempero',
+        'temperos',
+        'acompanhamento',
+        'acompanhamentos',
+        'culinaria',
+      ],
+      description: [
+        'food',
+        'dish',
+        'dessert',
+        'cheese',
+        'bread',
+        'spice',
+        'culinary',
+        'comida',
+        'prato',
+        'sobremesa',
+        'queijo',
+        'pao',
+        'tempero',
+        'culinaria',
+      ],
       reject: ['person', 'pessoa'],
     },
   ];
 
   function currentTitle() {
-    return fold(document.querySelector('.rankingHero h1, .rankingHead h1, .rankingMain h1, h1')?.textContent);
+    return fold(
+      document.querySelector('.rankingHero h1, .rankingHead h1, .rankingMain h1, h1')?.textContent,
+    );
   }
 
   function currentRankingKey() {
@@ -196,7 +406,9 @@
     if (!description || !hasAny(description, profile.description)) return -Infinity;
     if (profile.reject?.length && hasAny(description, profile.reject)) return -Infinity;
 
-    return (exactLabel ? 8 : 6) + profile.description.filter((word) => description.includes(word)).length;
+    return (
+      (exactLabel ? 8 : 6) + profile.description.filter((word) => description.includes(word)).length
+    );
   }
 
   async function resolveEntity(label, profile) {
@@ -249,8 +461,7 @@
     ).trim();
   }
 
-  const safeLicense = (value) =>
-    /^(?:cc0|public domain|cc by(?:-sa)?(?:\s|$))/i.test(plain(value));
+  const safeLicense = (value) => /^(?:cc0|public domain|cc by(?:-sa)?(?:\s|$))/i.test(plain(value));
 
   async function commonsImage(fileName) {
     if (!fileName) return null;
@@ -376,7 +587,8 @@
   }
 
   function appendPhoto(button, photo, label) {
-    if (!photo?.src || !button.isConnected || button.querySelector('.duelChoiceVerifiedPhoto')) return;
+    if (!photo?.src || !button.isConnected || button.querySelector('.duelChoiceVerifiedPhoto'))
+      return;
 
     const image = new Image();
     image.alt = '';
@@ -416,9 +628,7 @@
   }
 
   const scan = (root = document) =>
-    root
-      .querySelectorAll?.('.duelChoice:not([data-duel-verified-photo-checked])')
-      .forEach(enhance);
+    root.querySelectorAll?.('.duelChoice:not([data-duel-verified-photo-checked])').forEach(enhance);
 
   installStyles();
   scan();

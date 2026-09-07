@@ -8433,8 +8433,29 @@ body.popElectric.rankingPage .rankingCompactHero h1 {
     sans-serif;
   letter-spacing: -0.055em;
   text-wrap: balance;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
+}
+
+body.popElectric.rankingPage .rankingCompactHero.rankingTitleMedium h1,
+body.popElectric.rankingPage .seoRankingMain.rankingTitleMedium > h1 {
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 0.98;
+}
+
+body.popElectric.rankingPage .rankingCompactHero.rankingTitleLong h1,
+body.popElectric.rankingPage .seoRankingMain.rankingTitleLong > h1 {
+  font-size: clamp(30px, 3.5vw, 42px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+body.popElectric.rankingPage .rankingCompactHero.rankingTitleExtraLong h1,
+body.popElectric.rankingPage .seoRankingMain.rankingTitleExtraLong > h1 {
+  font-size: clamp(27px, 3vw, 36px);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
 }
 
 body.popElectric.rankingPage .rankingCompactHero .imageStrip,

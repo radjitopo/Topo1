@@ -11,9 +11,14 @@ const exclusions = JSON.parse(
   await readFile(new URL('../data/local-option-exclusions.json', import.meta.url), 'utf8'),
 );
 
-const expectedCategories = local.groupOrder.slice(1);
+const categoriesAddedAfterTheBaseSeed = new Set(['Sorveteria', 'Restaurante de frutos do mar']);
+const expectedCategories = local.groupOrder
+  .slice(1)
+  .filter((category) => !categoriesAddedAfterTheBaseSeed.has(category));
 
-test('the local seed is a complete 21 by 17 matrix', () => {
+test('the base local seed remains a complete 21 by 17 matrix', () => {
+  assert.equal(local.groupOrder.length - 1, 19);
+  assert.equal(expectedCategories.length, 17);
   assert.equal(catalog.length, 357);
   assert.equal(new Set(catalog.map((ranking) => ranking.id)).size, 357);
   assert.deepEqual([...new Set(catalog.map((ranking) => ranking.city))], local.cityOrder);

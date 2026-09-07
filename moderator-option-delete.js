@@ -130,7 +130,10 @@ export default async function handler(req, res) {
       `,
       [optionId],
     ),
-    sql.query('DELETE FROM ranking_options WHERE id = $1 AND ranking_id = $2', [optionId, rankingId]),
+    sql.query('DELETE FROM ranking_options WHERE id = $1 AND ranking_id = $2', [
+      optionId,
+      rankingId,
+    ]),
     sql.query(
       `
         WITH ordered AS (

@@ -98,6 +98,14 @@ for (const renderer of ['portalHeroHTML', 'portalStoryHTML', 'portalSideStoryHTM
     `${renderer} must keep compact WhatsApp and native share actions on the home`,
   );
 }
+for (const renderer of ['portalStoryHTML', 'portalSideStoryHTML']) {
+  const rendererSource = extractTopLevelDeclaration(source, renderer);
+  assert.match(
+    rendererSource,
+    /aria-label="Abrir \$\{escapeHTML\(r\.q\)\}"/,
+    `${renderer} must name its image-only ranking link for assistive technology`,
+  );
+}
 
 assert.match(source, /navigator\.share\(data\)/, 'native sharing must use the device share sheet');
 assert.match(

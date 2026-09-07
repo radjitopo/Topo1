@@ -43,7 +43,6 @@ const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 30;
 const DEFAULT_ANONYMOUS_DUEL_LIMIT = 5;
-const CLERK_PT_BR_URL = 'https://unpkg.com/@clerk/localizations@3.37.8/dist/pt-BR.mjs';
 const googlePlaceProfiles = Object.freeze({});
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
@@ -122,7 +121,6 @@ let rankings = [],
   rankingVotingRequest = 0,
   rankingPromotionFocusKey = '',
   clerkLoadPromise = null,
-  clerkUiLocalizationReady = false,
   clerkAuthFlow = { email: '', kind: 'signin' },
   notificationState = {
     items: [],
@@ -225,24 +223,7 @@ function loadExternalScript(src, attributes = {}) {
     document.head.appendChild(script);
   });
 }
-async function loadClerkPtBR() {
-  let timeout;
-  try {
-    const localizationModule = await Promise.race([
-      import(CLERK_PT_BR_URL),
-      new Promise((_, reject) => {
-        timeout = setTimeout(() => reject(new Error('clerk_localization_timeout')), 3500);
-      }),
-    ]);
-    return localizationModule.ptBR || null;
-  } catch (error) {
-    console.warn('Não foi possível carregar a tradução completa do acesso.', error);
-    return null;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-async function initClerk(withUi = false) {
+async function initClerk() {
   if (clerkLoadPromise) return clerkLoadPromise;
   clerkLoadPromise = (async () => {
     const response = await fetch('/api?action=auth-config', { cache: 'no-store' });
@@ -254,22 +235,11 @@ async function initClerk(withUi = false) {
       !String(config.publishableKey || '').startsWith('pk_')
     )
       throw new Error('invalid_clerk_config');
-    let ptBR = null;
-    if (withUi) {
-      [, ptBR] = await Promise.all([
-        loadExternalScript(`${base}/npm/@clerk/ui@1/dist/ui.browser.js`),
-        loadClerkPtBR(),
-      ]);
-      clerkUiLocalizationReady = Boolean(ptBR);
-    }
     await loadExternalScript(`${base}/npm/@clerk/clerk-js@6.29.3/dist/clerk.browser.js`, {
       'data-clerk-publishable-key': config.publishableKey,
     });
     if (!window.Clerk) throw new Error('clerk_unavailable');
-    if (withUi && !window.__internal_ClerkUICtor) throw new Error('clerk_ui_unavailable');
     await window.Clerk.load({
-      ...(withUi ? { ui: { ClerkUI: window.__internal_ClerkUICtor } } : {}),
-      ...(ptBR ? { localization: ptBR } : {}),
       signInUrl: '/entrar',
       signUpUrl: '/entrar',
       signInForceRedirectUrl: authReturn(),
@@ -2400,14 +2370,14 @@ function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
 }
 function portalSideStoryHTML(r) {
-  return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;
+  return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;
 }
 function portalListHTML(title, list, tone = '') {
   return `<section class="portalRankPanel ${tone}"><div class="portalPanelTitle">${title}</div><ol>${list.map((r, i) => `<li><span class="portalListNum">${String(i + 1).padStart(2, '0')}</span><a href="${rankingPath(r.id)}"><strong>${escapeHTML(r.q)}</strong><small>${tone === 'disputed' ? escapeHTML(gapText(r)) : voteCountText(r.votes)}</small></a></li>`).join('')}</ol></section>`;
 }
 function portalStoryHTML(r, i) {
   const variant = !r.img || i % 4 === 2 ? 'compact' : i % 4 === 0 ? 'feature' : 'row';
-  return `<article class="portalStory ${variant}">${variant !== 'compact' ? `<a class="portalStoryMedia" href="${rankingPath(r.id)}">${portalImageHTML(r)}</a>` : ''}<div class="portalStoryCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalStoryFoot"><span>${voteCountText(r.votes)}</span><div class="portalStoryActions">${shareActionsHTML(r, true)}<a href="${rankingPath(r.id)}">abrir ranking →</a></div></div></div></article>`;
+  return `<article class="portalStory ${variant}">${variant !== 'compact' ? `<a class="portalStoryMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a>` : ''}<div class="portalStoryCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalStoryFoot"><span>${voteCountText(r.votes)}</span><div class="portalStoryActions">${shareActionsHTML(r, true)}<a href="${rankingPath(r.id)}">abrir ranking →</a></div></div></div></article>`;
 }
 function cityPriorityDelta(a, b) {
   if (!isLocalExperience() || !selectedCity) return 0;
@@ -4329,7 +4299,7 @@ async function renderAuth() {
   }
   document.title = 'Entrar — TOPO';
   feed.innerHTML = `<div class="authShell clerkAuthShell"><div class="authCard clerkAuthCard"><div class="authEyebrow">Sua conta no TOPO</div><div class="authTitle">Entre em segundos.</div><p class="authIntro">Continue com Google ou use seu e-mail. Na primeira vez, sua conta é criada automaticamente.</p><div class="clerkAuthMount" id="clerkAuthMount"><span class="commentsLoading">preparando acesso seguro…</span></div><div class="authNote">Seus votos deste aparelho serão ligados à sua conta quando você entrar.</div></div></div>`;
-  const clerk = await initClerk(true),
+  const clerk = await initClerk(),
     mount = document.getElementById('clerkAuthMount');
   if (!mount) return;
   if (!clerk) {
@@ -4397,31 +4367,7 @@ async function renderAuth() {
     }
     return;
   }
-  if (!clerkUiLocalizationReady) {
-    renderClerkStart(mount, clerk);
-    return;
-  }
-  mount.innerHTML = '';
-  try {
-    await clerk.mountSignIn(mount, {
-      routing: 'hash',
-      withSignUp: true,
-      forceRedirectUrl: authReturn(),
-      fallbackRedirectUrl: authReturn(),
-      signUpForceRedirectUrl: authReturn(),
-      signUpFallbackRedirectUrl: authReturn(),
-      appearance: {
-        elements: {
-          rootBox: { width: '100%' },
-          cardBox: { width: '100%', boxShadow: 'none' },
-          card: { width: '100%', boxShadow: 'none' },
-        },
-      },
-    });
-  } catch (problem) {
-    console.error('Não foi possível abrir o componente de acesso do Clerk.', problem);
-    renderClerkStart(mount, clerk);
-  }
+  renderClerkStart(mount, clerk);
 }
 const doubleVoteThresholds = [20, 75, 200];
 function profileProgressInfo(votes) {
@@ -5586,7 +5532,7 @@ async function boot() {
     revealClientPage();
     return;
   }
-  if (kind === 'auth') await initClerk(true);
+  if (kind === 'auth') await initClerk();
   else if (kind === 'profile' || kind === 'moderation' || hasClerkSession) await initClerk();
   await load();
 }

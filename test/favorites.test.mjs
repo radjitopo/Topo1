@@ -131,7 +131,7 @@ test('ranking actions stay in one mobile row without the removed stats strip', a
   );
   assert.match(
     compactStyle,
-    /body\.popElectric\.rankingPage\.rankingCompactHeroh1\{[^}]*overflow-wrap:anywhere[^}]*hyphens:auto/,
+    /body\.popElectric\.rankingPage\.rankingCompactHeroh1\{[^}]*overflow-wrap:break-word[^}]*word-break:normal[^}]*hyphens:none/,
   );
   assert.match(
     compactStyle,

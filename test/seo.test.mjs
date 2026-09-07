@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   renderGeneralCategoryPage,
   renderHomePage,
+  renderLocalPage,
   renderMissingPage,
   renderRankingPage,
   renderVipRankingPage,
@@ -47,6 +48,28 @@ const local = {
   updatedAt: '2026-08-24T12:00:00.000Z',
   voteCount: 80,
 };
+const localSpecialties = [
+  {
+    id: 'sorveterias-floripa',
+    category: 'Florianópolis',
+    question: 'Qual é a melhor sorveteria em Florianópolis?',
+    imageUrl: null,
+    createdAt: '2026-09-03T12:00:00.000Z',
+    updatedAt: '2026-09-06T12:00:00.000Z',
+    voteCount: 0,
+    options: [{ id: 20, label: 'Sorveteria exemplo', score: 0 }],
+  },
+  {
+    id: 'frutos-do-mar-floripa',
+    category: 'Florianópolis',
+    question: 'Qual é o melhor restaurante de frutos do mar em Florianópolis?',
+    imageUrl: null,
+    createdAt: '2026-09-03T12:00:00.000Z',
+    updatedAt: '2026-09-06T12:00:00.000Z',
+    voteCount: 0,
+    options: [{ id: 21, label: 'Restaurante exemplo', score: 0 }],
+  },
+];
 const fluminensePlayers = {
   id: 'melhores-jogadores-fluminense',
   category: 'Futebol',
@@ -132,6 +155,22 @@ test('SEO taxonomy creates stable category, city and local collection URLs', () 
     localCollectionPath('manaus', veganGroup),
     '/local/manaus/restaurante-lanchonete-vegano-vegetariano',
   );
+  const iceCreamGroup = localGroupForRanking({
+    id: 'sorveterias-brasilia',
+    category: 'Brasília',
+    question: 'Qual é a melhor sorveteria em Brasília?',
+  });
+  const seafoodGroup = localGroupForRanking({
+    id: 'frutos-do-mar-floripa',
+    category: 'Florianópolis',
+    question: 'Qual é o melhor restaurante de frutos do mar em Florianópolis?',
+  });
+  assert.equal(iceCreamGroup?.slug, 'sorveteria');
+  assert.equal(seafoodGroup?.slug, 'restaurante-de-frutos-do-mar');
+  assert.equal(
+    localCollectionPath('florianopolis', seafoodGroup),
+    '/local/florianopolis/restaurante-de-frutos-do-mar',
+  );
 });
 
 test('ranking HTML contains its content, canonical URL, H1 and structured result before JavaScript', () => {
@@ -151,6 +190,25 @@ test('ranking HTML contains its content, canonical URL, H1 and structured result
   const data = structuredData(html);
   assert.ok(data['@graph'].some((entry) => entry['@type'] === 'BreadcrumbList'));
   assert.ok(data['@graph'].some((entry) => entry['@type'] === 'ItemList'));
+});
+
+test('the two newer local collection routes render indexable pages with their rankings', () => {
+  const city = localCityBySlug('florianopolis');
+  for (const [slug, ranking] of [
+    ['sorveteria', localSpecialties[0]],
+    ['restaurante-de-frutos-do-mar', localSpecialties[1]],
+  ]) {
+    const group = localGroupBySlug(slug);
+    const page = renderLocalPage(template, localSpecialties, city, group);
+    assert.equal(page.count, 1, slug);
+    assert.match(page.html, new RegExp(`href="/ranking/${ranking.id}"`), slug);
+    assert.match(
+      page.html,
+      new RegExp(`rel="canonical" href="https://somostopo\\.com\\.br/local/florianopolis/${slug}"`),
+      slug,
+    );
+    assert.doesNotMatch(page.html, /name="robots" content="noindex,follow"/, slug);
+  }
 });
 
 test('home and category pages expose crawlable ranking and category links', () => {
@@ -251,6 +309,13 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
       created_at: local.createdAt,
       updated_at: local.updatedAt,
     },
+    ...localSpecialties.map((ranking) => ({
+      id: ranking.id,
+      category: ranking.category,
+      question: ranking.question,
+      created_at: ranking.createdAt,
+      updated_at: ranking.updatedAt,
+    })),
     {
       id: 'amigos-vip',
       category: 'Vida',
@@ -270,6 +335,11 @@ test('sitemap includes canonical category, city, local topic and ranking URLs', 
   assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis\/sushi-japones/);
+  assert.match(xml, /https:\/\/somostopo\.com\.br\/local\/florianopolis\/sorveteria/);
+  assert.match(
+    xml,
+    /https:\/\/somostopo\.com\.br\/local\/florianopolis\/restaurante-de-frutos-do-mar/,
+  );
   assert.match(xml, /https:\/\/somostopo\.com\.br\/ranking\/filmes/);
   assert.match(xml, /https:\/\/somostopo\.com\.br\/categoria\/futebol\/times/);
   assert.doesNotMatch(xml, /amigos-vip/);
@@ -297,6 +367,7 @@ test('Vercel routes every public collection and private account shell through SE
   );
   assert.ok(vercel.routes.some((route) => route.src.includes('/local/([^/]+)/([^/]+)')));
   assert.ok(vercel.routes.some((route) => route.dest === '/page.js?view=private&kind=$1'));
+  assert.deepEqual(vercel.alias, ['somostopo.com.br', 'www.somostopo.com.br']);
   assert.equal(vercel.routes.at(-1).dest, '/page.js?view=not-found');
   assert.match(robots, /Disallow: \/api/);
   assert.match(robots, /Sitemap: https:\/\/somostopo\.com\.br\/sitemap\.xml/);

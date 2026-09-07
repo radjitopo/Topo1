@@ -75,23 +75,23 @@ assert.match(
 );
 assert.match(
   compactApp,
-  /DEFAULT_ANONYMOUS_LIMIT=10/,
-  'signed-out visitors must receive ten free votes in the client',
+  /DEFAULT_ANONYMOUS_LIMIT=30/,
+  'signed-out visitors must receive thirty free votes in the client',
 );
 assert.match(
   compactApi,
-  /ANONYMOUS_LIMIT=10/,
-  'the API must enforce the same ten-vote registration threshold',
+  /ANONYMOUS_LIMIT=30/,
+  'the API must enforce the same thirty-vote registration threshold',
 );
 assert.match(
   compactApp,
-  /DEFAULT_ANONYMOUS_DUEL_LIMIT=2/,
-  'signed-out visitors must receive two complete duels in the client',
+  /DEFAULT_ANONYMOUS_DUEL_LIMIT=5/,
+  'signed-out visitors must receive five complete duels in the client',
 );
 assert.match(
   compactApi,
-  /ANONYMOUS_DUEL_LIMIT=2/,
-  'the API must enforce the same two-duel registration threshold',
+  /ANONYMOUS_DUEL_LIMIT=5/,
+  'the API must enforce the same five-duel registration threshold',
 );
 assert.match(
   compactApp,
