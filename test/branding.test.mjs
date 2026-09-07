@@ -82,6 +82,16 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
+  /body\.popElectric\.experienceLink\.local\{[^}]*color:var\(--clean-coral\)[^}]*font-size:13px[^}]*font-weight:900/,
+  'TOPO LOCAL must have a stronger coral treatment in the primary navigation',
+);
+assert.match(
+  compactEditorialCss,
+  /body\.popElectric\.localMark\{[^}]*width:18px[^}]*height:18px[^}]*background:var\(--clean-coral\)[^}]*box-shadow:2px2px0var\(--clean-ink\)/,
+  'the local navigation marker must remain a prominent geometric coral callout',
+);
+assert.match(
+  compactEditorialCss,
   /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:none/,
   'the dedicated footer logo must keep its white reversed artwork unchanged',
 );

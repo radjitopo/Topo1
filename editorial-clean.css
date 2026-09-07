@@ -1477,12 +1477,42 @@ body.popElectric .experienceLink.local.active {
   color: var(--clean-ink);
 }
 
+body.popElectric .experienceLink.local {
+  gap: 8px;
+  color: var(--clean-coral);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+}
+
+body.popElectric .experienceLink.local:hover,
+body.popElectric .experienceLink.local:focus-visible,
+body.popElectric .experienceLink.local.active {
+  border-color: var(--clean-coral);
+  color: var(--clean-coral);
+}
+
 body.popElectric .localMark {
-  width: 8px;
-  height: 8px;
+  display: inline-grid;
+  flex: 0 0 18px;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--clean-ink);
   border-radius: 0;
-  background: var(--clean-lime);
-  transform: rotate(45deg);
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  box-shadow: 2px 2px 0 var(--clean-ink);
+  transform: none;
+}
+
+body.popElectric .localMark::before {
+  content: '↓';
+  font:
+    900 12px/1 Arial,
+    Helvetica,
+    sans-serif;
+  transform: translateY(-1px);
 }
 
 body.popElectric .groupsWrap,
@@ -4200,6 +4230,22 @@ body.popElectric .moderationRankingOpen {
   }
 
   body.popElectric .experienceLink {
+    font-size: 10px;
+  }
+
+  body.popElectric .experienceLink.local {
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  body.popElectric .localMark {
+    flex-basis: 16px;
+    width: 16px;
+    height: 16px;
+    box-shadow: 1px 1px 0 var(--clean-ink);
+  }
+
+  body.popElectric .localMark::before {
     font-size: 10px;
   }
 
