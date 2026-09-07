@@ -71,6 +71,15 @@ test('moderators can edit title, photo and every option in place', async () => {
   assert.match(compactStyle, /\.rankingEditorSaveBar\{[^}]*position:sticky/);
 });
 
+test('removing the current duel champion preserves the recorded round counter', async () => {
+  const optionDelete = await readFile(new URL('moderator-option-delete.js', root), 'utf8');
+
+  assert.match(optionDelete, /SET champion_option_id = NULL/);
+  assert.match(optionDelete, /MAX\(round\.pot_after\)/);
+  assert.match(optionDelete, /GREATEST\([\s\S]*ranking_duel_sessions\.pot/);
+  assert.doesNotMatch(optionDelete, /pot\s*=\s*0/);
+});
+
 test('the ranking editor is touch-friendly and opens the mobile keyboard on demand', async () => {
   const [app, style, html] = await Promise.all([
     readFile(new URL('app.js', root), 'utf8'),

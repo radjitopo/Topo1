@@ -123,7 +123,15 @@ export default async function handler(req, res) {
       `
         UPDATE ranking_duel_sessions
         SET champion_option_id = NULL,
-            pot = 0,
+            pot = GREATEST(
+              ranking_duel_sessions.pot,
+              COALESCE((
+                SELECT MAX(round.pot_after)
+                FROM ranking_duel_rounds round
+                WHERE round.session_id = ranking_duel_sessions.id
+                  AND round.skipped = false
+              ), 0)
+            ),
             completed = false,
             updated_at = now()
         WHERE champion_option_id = $1
