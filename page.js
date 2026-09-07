@@ -2,7 +2,13 @@ import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
 import { resolveRankingCover } from './ranking-image-policy.js';
 import { rankingQuestion } from './ranking-titles.js';
-import { DISCOVER_RANKINGS, discoverRankingBySlug } from './discover-rankings.js';
+import {
+  DISCOVER_CATEGORIES,
+  DISCOVER_RANKINGS,
+  discoverCategoryBySlug,
+  discoverRankingBySlug,
+  discoverRankingsForCategory,
+} from './discover-rankings.js';
 import {
   FOOTBALL_TEAMS_CATEGORY_PATH,
   GENERAL_CATEGORIES,
@@ -443,14 +449,40 @@ function discoverHero() {
   </section>`;
 }
 
-function discoverCollectionHTML() {
+function discoverCategoryPath(category) {
+  const query = category.slug === 'todos' ? '' : `?categoria=${encodeURIComponent(category.slug)}`;
+  return `/rankings${query}#categorias`;
+}
+
+function discoverCategoryNavigation(activeCategory) {
+  const categories = DISCOVER_CATEGORIES.filter(
+    (category) => discoverRankingsForCategory(category.slug).length,
+  );
+  return `<nav class="discoverCategoryNav" id="categorias" aria-label="Categorias dos rankings">
+    <div class="discoverCategoryRail">${categories
+      .map(
+        (category) =>
+          `<a class="discoverCategoryButton${category.slug === activeCategory.slug ? ' active' : ''}" href="${discoverCategoryPath(category)}"${category.slug === activeCategory.slug ? ' aria-current="page"' : ''}>${escapeHtml(category.label)}</a>`,
+      )
+      .join('')}</div>
+  </nav>`;
+}
+
+function discoverCollectionHTML(categorySlug = '') {
+  const activeCategory = discoverCategoryBySlug(categorySlug) || DISCOVER_CATEGORIES[0],
+    visibleRankings = discoverRankingsForCategory(activeCategory.slug),
+    collectionTitle =
+      activeCategory.slug === 'todos'
+        ? `${visibleRankings.length} jeitos de enxergar o mundo`
+        : `${visibleRankings.length} ${visibleRankings.length === 1 ? 'ranking' : 'rankings'} de ${activeCategory.label}`;
   return `${discoverHero()}
+  ${discoverCategoryNavigation(activeCategory)}
   <section class="discoverCollection" aria-labelledby="discover-list-title">
     <header class="discoverCollectionHead">
-      <div><span class="discoverEyebrow">ESCOLHA UM TEMA</span><h2 id="discover-list-title">30 jeitos de enxergar o mundo</h2></div>
+      <div><span class="discoverEyebrow">${activeCategory.slug === 'todos' ? 'ESCOLHA UM TEMA' : escapeHtml(activeCategory.label)}</span><h2 id="discover-list-title">${escapeHtml(collectionTitle)}</h2></div>
       <p>Cada ranking traz o Top 10, o valor de cada posição, o recorte usado e a fonte original.</p>
     </header>
-    <div class="discoverGrid">${DISCOVER_RANKINGS.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
+    <div class="discoverGrid">${visibleRankings.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
   </section>
   <div class="end">TOPO · tudo vira ranking</div>`;
 }
@@ -502,9 +534,14 @@ function discoverDetailHTML(ranking) {
   <div class="end">TOPO · tudo vira ranking</div>`;
 }
 
-export function renderDiscoverPage(template, slug = '') {
+export function renderDiscoverPage(template, slug = '', categorySlug = '') {
   const ranking = slug ? discoverRankingBySlug(slug) : null,
-    canonical = ranking ? `${BASE_URL}${discoverPath(ranking)}` : `${BASE_URL}/rankings`,
+    activeCategory = discoverCategoryBySlug(categorySlug) || DISCOVER_CATEGORIES[0],
+    collectionRankings = discoverRankingsForCategory(activeCategory.slug),
+    categoryQuery = activeCategory.slug === 'todos' ? '' : `?categoria=${activeCategory.slug}`,
+    canonical = ranking
+      ? `${BASE_URL}${discoverPath(ranking)}`
+      : `${BASE_URL}/rankings${categoryQuery}`,
     structuredData = ranking
       ? schemaGraph([
           {
@@ -530,15 +567,21 @@ export function renderDiscoverPage(template, slug = '') {
       : schemaGraph([
           {
             '@type': 'CollectionPage',
-            name: 'Rankings editoriais do TOPO',
+            name:
+              activeCategory.slug === 'todos'
+                ? 'Rankings editoriais do TOPO'
+                : `Rankings de ${activeCategory.label} no TOPO`,
             url: canonical,
             inLanguage: 'pt-BR',
           },
           {
             '@type': 'ItemList',
-            name: 'Rankings para ler no TOPO',
-            numberOfItems: DISCOVER_RANKINGS.length,
-            itemListElement: DISCOVER_RANKINGS.map((item, index) => ({
+            name:
+              activeCategory.slug === 'todos'
+                ? 'Rankings para ler no TOPO'
+                : `Rankings de ${activeCategory.label}`,
+            numberOfItems: collectionRankings.length,
+            itemListElement: collectionRankings.map((item, index) => ({
               '@type': 'ListItem',
               position: index + 1,
               name: item.title,
@@ -548,16 +591,22 @@ export function renderDiscoverPage(template, slug = '') {
         ]);
   return withPage(template, {
     metadata: {
-      title: ranking ? `${ranking.title} — TOPO` : 'Rankings editoriais — TOPO',
+      title: ranking
+        ? `${ranking.title} — TOPO`
+        : activeCategory.slug === 'todos'
+          ? 'Rankings editoriais — TOPO'
+          : `${activeCategory.label}: rankings editoriais — TOPO`,
       description: ranking
         ? `${ranking.title}: Top 10 com ${ranking.metric.toLowerCase()}, data, critério e fonte.`
-        : '30 rankings editoriais com Top 10, números, datas, critérios e fontes.',
+        : activeCategory.slug === 'todos'
+          ? '30 rankings editoriais com Top 10, números, datas, critérios e fontes.'
+          : `${collectionRankings.length} rankings de ${activeCategory.label} com Top 10, números, datas, critérios e fontes.`,
       canonical,
       image: `${BASE_URL}/og-topo-v4.png`,
       index: true,
       structuredData,
     },
-    content: ranking ? discoverDetailHTML(ranking) : discoverCollectionHTML(),
+    content: ranking ? discoverDetailHTML(ranking) : discoverCollectionHTML(activeCategory.slug),
     bodyClass: `homePage discoverPage${ranking ? ' discoverDetailPage' : ''}`,
   });
 }
@@ -1191,10 +1240,11 @@ export default async function handler(req, res) {
 
   if (view === 'discover') {
     const slug = queryValue(req, 'slug');
+    const categorySlug = queryValue(req, 'categoria');
     if (slug && !discoverRankingBySlug(slug)) {
       return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
     }
-    return sendHtml(res, 200, renderDiscoverPage(template, slug), { index: true });
+    return sendHtml(res, 200, renderDiscoverPage(template, slug, categorySlug), { index: true });
   }
 
   try {

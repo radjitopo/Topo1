@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { DISCOVER_RANKINGS } from '../discover-rankings.js';
+import {
+  DISCOVER_CATEGORIES,
+  DISCOVER_RANKINGS,
+  discoverRankingsForCategory,
+} from '../discover-rankings.js';
 import pageHandler, { renderDiscoverPage } from '../page.js';
 
 const root = new URL('../', import.meta.url);
@@ -44,6 +48,50 @@ test('the editorial collection publishes all 30 rankings without voting controls
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
+});
+
+test('Rankings offers useful categories and filters the collection on the server', () => {
+  const allHtml = renderDiscoverPage(template);
+  assert.match(allHtml, /aria-label="Categorias dos rankings"/);
+  assert.match(allHtml, /href="\/rankings#categorias"[^>]*aria-current="page">Todos<\/a>/);
+  assert.match(allHtml, /href="\/rankings\?categoria=cinema-tv#categorias">Cinema e TV<\/a>/);
+
+  const sportsHtml = renderDiscoverPage(template, '', 'esportes');
+  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 5);
+  assert.match(sportsHtml, /Maiores torcidas de futebol do Brasil/);
+  assert.match(sportsHtml, /Atletas mais bem pagos do mundo/);
+  assert.doesNotMatch(sportsHtml, /Pessoas mais ricas do mundo/);
+  assert.match(sportsHtml, /class="discoverCategoryButton active"[^>]*>Esportes<\/a>/);
+  assert.match(sportsHtml, /<h2 id="discover-list-title">5 rankings de Esportes<\/h2>/);
+  assert.match(
+    sportsHtml,
+    /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\?categoria=esportes"/,
+  );
+});
+
+test('every published ranking belongs to exactly one visible editorial category', () => {
+  assert.deepEqual(
+    DISCOVER_CATEGORIES.map((category) => category.label),
+    [
+      'Todos',
+      'Brasil',
+      'Mundo',
+      'Dinheiro',
+      'Esportes',
+      'Cinema e TV',
+      'Música',
+      'Tecnologia',
+      'Viagens',
+      'Gastronomia',
+    ],
+  );
+  const appearances = new Map(DISCOVER_RANKINGS.map((ranking) => [ranking.slug, 0]));
+  for (const category of DISCOVER_CATEGORIES.filter(({ slug }) => slug !== 'todos')) {
+    for (const ranking of discoverRankingsForCategory(category.slug)) {
+      appearances.set(ranking.slug, appearances.get(ranking.slug) + 1);
+    }
+  }
+  assert.ok([...appearances.values()].every((count) => count === 1));
 });
 
 test('editorial URLs use Rankings and keep Descobrir only as a legacy redirect', () => {
@@ -118,6 +166,8 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverHomeCallout/);
   assert.match(cssSource, /\.discoverPageHero/);
   assert.match(cssSource, /\.discoverGrid/);
+  assert.match(cssSource, /\.discoverCategoryRail/);
+  assert.match(cssSource, /\.discoverCategoryButton\.active/);
   assert.match(cssSource, /\.discoverRankingSheet/);
   assert.match(cssSource, /\.discoverArticleVisual/);
   assert.match(

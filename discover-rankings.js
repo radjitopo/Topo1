@@ -10,6 +10,31 @@ function rankingItems(block) {
 
 export const DISCOVER_UPDATED_AT = '2026-09-07';
 
+export const DISCOVER_CATEGORIES = Object.freeze([
+  { slug: 'todos', label: 'Todos', sourceCategories: [] },
+  { slug: 'brasil', label: 'Brasil', sourceCategories: ['Brasil'] },
+  { slug: 'mundo', label: 'Mundo', sourceCategories: ['Mundo', 'Educação'] },
+  {
+    slug: 'dinheiro',
+    label: 'Dinheiro',
+    sourceCategories: ['Dinheiro', 'Economia'],
+  },
+  { slug: 'esportes', label: 'Esportes', sourceCategories: ['Futebol', 'Esporte'] },
+  {
+    slug: 'cinema-tv',
+    label: 'Cinema e TV',
+    sourceCategories: ['Cinema', 'Streaming'],
+  },
+  { slug: 'musica', label: 'Música', sourceCategories: ['Música'] },
+  {
+    slug: 'tecnologia',
+    label: 'Tecnologia',
+    sourceCategories: ['Tecnologia', 'Internet'],
+  },
+  { slug: 'viagens', label: 'Viagens', sourceCategories: ['Viagem'] },
+  { slug: 'gastronomia', label: 'Gastronomia', sourceCategories: ['Gastronomia'] },
+]);
+
 export const DISCOVER_RANKINGS = Object.freeze([
   {
     slug: 'pessoas-mais-ricas-do-mundo',
@@ -657,4 +682,16 @@ export const DISCOVER_RANKINGS = Object.freeze([
 
 export function discoverRankingBySlug(slug) {
   return DISCOVER_RANKINGS.find((ranking) => ranking.slug === String(slug || '')) || null;
+}
+
+export function discoverCategoryBySlug(slug) {
+  return DISCOVER_CATEGORIES.find((category) => category.slug === String(slug || '')) || null;
+}
+
+export function discoverRankingsForCategory(slug) {
+  const category = discoverCategoryBySlug(slug);
+  if (!category || category.slug === 'todos') return DISCOVER_RANKINGS;
+  return DISCOVER_RANKINGS.filter((ranking) =>
+    category.sourceCategories.includes(ranking.category),
+  );
 }
