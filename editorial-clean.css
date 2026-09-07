@@ -363,7 +363,7 @@ body.popElectric .discoverLeader b {
 }
 
 body.popElectric .discoverRankingSheet {
-  margin-top: 46px;
+  margin-top: 18px;
   border-top: 5px solid var(--clean-ink);
 }
 
@@ -644,7 +644,7 @@ body.popElectric .discoverCard.compact > a > p {
   }
 
   body.popElectric .discoverRankingSheet {
-    margin-top: 32px;
+    margin-top: 14px;
   }
 
   body.popElectric .discoverRankingSheet > header {
@@ -11471,12 +11471,12 @@ body.popElectric .discoverCard.featured li.medal-bronze {
 }
 
 body.popElectric .discoverArticleHero {
-  min-height: 570px;
+  min-height: 370px;
   isolation: isolate;
 }
 
 body.popElectric .discoverArticleHero::before {
-  content: 'TOP 3';
+  content: 'TOP 10';
   position: absolute;
   z-index: 0;
   top: 74px;
@@ -11492,8 +11492,7 @@ body.popElectric .discoverArticleHero::before {
 }
 
 body.popElectric .discoverArticleHero > h1,
-body.popElectric .discoverArticleHero > p,
-body.popElectric .discoverArticleHero > .discoverPodium {
+body.popElectric .discoverArticleHero > p {
   position: relative;
   z-index: 1;
 }
@@ -11697,7 +11696,7 @@ body.popElectric .discoverRankingItem.medal-gold > b {
 
   body.popElectric .discoverArticleHero {
     min-height: 0;
-    padding-bottom: 20px;
+    padding-bottom: 28px;
   }
 
   body.popElectric .discoverArticleHero::before {

@@ -447,22 +447,6 @@ function discoverRelated(ranking) {
     .slice(0, 3);
 }
 
-function discoverPodium(ranking) {
-  return `<section class="discoverPodium" aria-label="Pódio: três primeiros colocados">
-    ${ranking.items
-      .slice(0, 3)
-      .map((item) => {
-        const medal = discoverMedal(item.rank);
-        return `<div class="discoverPodiumPlace ${medal.className}">
-          <span class="discoverPodiumMedal"><b>${escapeHtml(item.rank)}<small>º</small></b><em>${medal.label}</em></span>
-          <strong>${escapeHtml(item.name)}</strong>
-          <span class="discoverPodiumValue">${escapeHtml(item.value)}</span>
-        </div>`;
-      })
-      .join('')}
-  </section>`;
-}
-
 function discoverDetailHTML(ranking) {
   const list = ranking.items
       .map((item) => {
@@ -478,7 +462,6 @@ function discoverDetailHTML(ranking) {
       <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
       <h1>${escapeHtml(ranking.title)}</h1>
       <p>${escapeHtml(ranking.metric)} · ${escapeHtml(ranking.period)}</p>
-      ${discoverPodium(ranking)}
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
       <header><div><span class="discoverEyebrow">RANKING COMPLETO</span><h2 id="discover-ranking-title">Top 10</h2></div><p>${escapeHtml(ranking.metric)}</p></header>
