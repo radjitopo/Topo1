@@ -55,6 +55,7 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(html, /medal-gold[\s\S]*OURO/);
   assert.match(html, /medal-silver[\s\S]*PRATA/);
   assert.match(html, /medal-bronze[\s\S]*BRONZE/);
+  assert.equal((html.match(/class="discoverMedalRank"/g) || []).length, 9);
   assert.doesNotMatch(html, /class="react|data-duel/);
 });
 
@@ -80,6 +81,10 @@ test('Descobrir has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.medal-gold/);
   assert.match(cssSource, /\.medal-silver/);
   assert.match(cssSource, /\.medal-bronze/);
+  assert.match(
+    cssSource,
+    /\.discoverArticleHero,[\s\S]*\.discoverRankingSheet > header[\s\S]*height: auto/,
+  );
   assert.match(
     cssSource,
     /@media \(max-width: 700px\)[\s\S]*\.discoverRankingSheet[\s\S]*grid-template-columns: 56px minmax\(0, 1fr\)/,

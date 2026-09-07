@@ -532,7 +532,7 @@ body.popElectric .discoverRelated > div {
 }
 
 body.popElectric .discoverCard.compact > a {
-  min-height: 270px;
+  min-height: 360px;
 }
 
 body.popElectric .discoverCard.compact h2 {
@@ -11491,9 +11491,25 @@ body.popElectric .discoverArticleHero::before {
   pointer-events: none;
 }
 
-body.popElectric .discoverArticleHero > * {
+body.popElectric .discoverArticleHero > h1,
+body.popElectric .discoverArticleHero > p,
+body.popElectric .discoverArticleHero > .discoverPodium {
   position: relative;
   z-index: 1;
+}
+
+body.popElectric .discoverArticleMeta {
+  position: absolute;
+  z-index: 1;
+}
+
+body.popElectric .discoverHomeCallout > header,
+body.popElectric .discoverCollectionHead,
+body.popElectric .discoverCard header,
+body.popElectric .discoverArticleHero,
+body.popElectric .discoverRankingSheet > header,
+body.popElectric .discoverRelated > header {
+  height: auto;
 }
 
 body.popElectric .discoverPodium {

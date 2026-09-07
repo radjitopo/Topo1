@@ -394,7 +394,7 @@ function discoverMedal(rank) {
 
 function discoverCard(ranking, index, compact = false) {
   const preview = ranking.items
-    .slice(0, compact ? 1 : 3)
+    .slice(0, 3)
     .map((item) => {
       const medal = discoverMedal(item.rank);
       return `<li${medal ? ` class="${medal.className}"` : ''}><span class="discoverMedalRank"><b>${escapeHtml(item.rank)}<small>º</small></b>${medal ? `<em>${medal.label}</em>` : ''}</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
