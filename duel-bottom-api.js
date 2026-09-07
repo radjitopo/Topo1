@@ -339,7 +339,7 @@ async function saveBottomUpDuel(req, res) {
         WITH updated_session AS (
           UPDATE ranking_duel_sessions session
           SET champion_option_id = $2::bigint,
-              pot = $3,
+              pot = GREATEST(session.pot, $3),
               completed = (
                 SELECT CASE WHEN $2::bigint IS NULL THEN COUNT(*) < 2 ELSE COUNT(*) < 1 END
                 FROM ranking_options option

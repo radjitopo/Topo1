@@ -119,7 +119,13 @@ test('each person keeps one active stable run and previous winners keep their hi
   assert.match(state, /md5\(/);
   assert.doesNotMatch(state, /appearances|exposure/);
   assert.match(state, /NOT EXISTS \(SELECT 1 FROM seen/);
+  assert.match(state, /MAX\(round\.pot_after\)/);
+  assert.match(
+    state,
+    /pot:\s*Math\.max\(Number\(session\.pot \|\| 0\), Number\(session\.maxRecordedPot \|\| 0\)\)/,
+  );
   assert.match(duel, /potAfter = skipped \? potBefore : potBefore \+ 1/);
+  assert.match(duel, /pot = GREATEST\(session\.pot, \$3\)/);
   assert.match(duel, /championAfterOptionId = skipped \? championBeforeOptionId : winnerOptionId/);
   assert.match(duel, /order_seed/);
   assert.match(duel, /completed =/);
@@ -128,6 +134,19 @@ test('each person keeps one active stable run and previous winners keep their hi
   assert.match(singlePlayMigration, /ADD COLUMN IF NOT EXISTS order_seed/);
   assert.match(winnerMigration, /ranking_duel_session_user_ranking_unique_idx/);
   assert.match(winnerMigration, /ranking_duel_session_device_ranking_unique_idx/);
+});
+
+test('Ganha, Fica repairs a stale session counter instead of looping on a conflict', async () => {
+  const [api, bottomApi] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
+    readFile(new URL('duel-bottom-api.js', root), 'utf8'),
+  ]);
+  const state = extractTopLevelDeclaration(api, 'rankingVotingModeState');
+  const bottomDuel = extractTopLevelDeclaration(bottomApi, 'saveBottomUpDuel');
+
+  assert.match(state, /MAX\(round\.pot_after\)/);
+  assert.match(state, /Math\.max\(Number\(session\.pot/);
+  assert.match(bottomDuel, /pot = GREATEST\(session\.pot, \$3\)/);
 });
 
 test('a completed duel can be restarted by replacing only its previous duel points', async () => {
