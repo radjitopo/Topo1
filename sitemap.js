@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless';
+import { DISCOVER_RANKINGS, DISCOVER_UPDATED_AT } from './discover-rankings.js';
 import {
   FOOTBALL_TEAMS_CATEGORY_PATH,
   GENERAL_CATEGORIES,
@@ -66,6 +67,10 @@ export function buildSitemap(rankings) {
     '/direitos-autorais',
   ];
   for (const path of staticUrls) addUrl(urls, path);
+  addUrl(urls, '/descobrir', DISCOVER_UPDATED_AT);
+  for (const ranking of DISCOVER_RANKINGS) {
+    addUrl(urls, `/descobrir/${encodeURIComponent(ranking.slug)}`, DISCOVER_UPDATED_AT);
+  }
 
   let homeLastModified = '';
   let localLastModified = '';

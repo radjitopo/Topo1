@@ -22,6 +22,673 @@
   --clean-whatsapp-hover: #195d41;
 }
 
+/* Descobrir publicado — coleção e páginas de dados ----------------------- */
+
+body.popElectric .discoverMode {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.popElectric .discoverMode strong {
+  font-size: 30px;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .discoverMode span {
+  font-size: 9px;
+  line-height: 1.05;
+}
+
+body.popElectric .discoverCollection {
+  margin-top: 44px;
+}
+
+body.popElectric .discoverCollectionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+  align-items: end;
+  gap: 42px;
+  border-bottom: 4px solid var(--clean-ink);
+  padding-bottom: 22px;
+}
+
+body.popElectric .discoverCollectionHead h2,
+body.popElectric .discoverRelated > header h2 {
+  margin: 7px 0 0;
+  color: var(--clean-ink);
+  font:
+    950 clamp(34px, 4.3vw, 60px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .discoverCollectionHead > p {
+  max-width: 430px;
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    650 14px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-left: 1px solid var(--clean-ink);
+}
+
+body.popElectric .discoverCard {
+  min-width: 0;
+  border-right: 1px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  background: var(--clean-paper);
+}
+
+body.popElectric .discoverCard > a {
+  min-height: 390px;
+  display: flex;
+  flex-direction: column;
+  color: var(--clean-ink);
+  padding: 22px;
+  text-decoration: none;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+body.popElectric .discoverCard > a:hover,
+body.popElectric .discoverCard > a:focus-visible {
+  background: var(--clean-soft);
+  outline: 0;
+}
+
+body.popElectric .discoverCard header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--clean-line);
+  font:
+    900 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric .discoverCard header > span {
+  color: var(--clean-coral);
+}
+
+body.popElectric .discoverCard header em {
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+body.popElectric .discoverCard h2 {
+  min-height: 76px;
+  margin: 20px 0 7px;
+  color: inherit;
+  font:
+    950 clamp(25px, 2.35vw, 34px) / 0.95 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverCard > a > p {
+  min-height: 34px;
+  margin: 0 0 18px;
+  color: var(--clean-muted);
+  font:
+    650 12px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverCard ol {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--clean-line);
+}
+
+body.popElectric .discoverCard li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  border-bottom: 1px solid var(--clean-line);
+  font:
+    750 12px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverCard li > span {
+  color: var(--clean-coral);
+  font-weight: 950;
+}
+
+body.popElectric .discoverCard li > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverCard li > b {
+  text-align: right;
+  white-space: nowrap;
+}
+
+body.popElectric .discoverCard footer {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+body.popElectric .discoverCard footer small {
+  max-width: 62%;
+  color: var(--clean-muted);
+  font:
+    650 10px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverCard footer strong {
+  color: var(--clean-coral);
+  font:
+    950 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+body.popElectric .discoverCard.featured {
+  grid-column: span 2;
+  background: var(--clean-ink);
+}
+
+body.popElectric .discoverCard.featured > a {
+  color: var(--clean-paper);
+  padding: 28px;
+}
+
+body.popElectric .discoverCard.featured > a:hover,
+body.popElectric .discoverCard.featured > a:focus-visible {
+  background: #181818;
+}
+
+body.popElectric .discoverCard.featured header,
+body.popElectric .discoverCard.featured ol,
+body.popElectric .discoverCard.featured li {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+body.popElectric .discoverCard.featured h2 {
+  max-width: 720px;
+  min-height: 0;
+  font-size: clamp(38px, 5vw, 66px);
+}
+
+body.popElectric .discoverCard.featured > a > p,
+body.popElectric .discoverCard.featured footer small {
+  color: #c8c8c8;
+}
+
+body.popElectric .discoverCard.featured ol {
+  margin-top: 10px;
+}
+
+body.popElectric .discoverCard.featured li {
+  min-height: 46px;
+  font-size: 14px;
+}
+
+body.popElectric.discoverDetailPage .feed {
+  padding-top: 24px;
+}
+
+body.popElectric .discoverBack {
+  display: inline-block;
+  margin: 0 0 18px;
+  color: var(--clean-ink);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 5px;
+  font:
+    950 10px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+body.popElectric .discoverBack:hover,
+body.popElectric .discoverBack:focus-visible {
+  color: var(--clean-coral);
+}
+
+body.popElectric .discoverArticleHero {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  border-top: 6px solid var(--clean-coral);
+  padding: clamp(30px, 5vw, 64px);
+}
+
+body.popElectric .discoverArticleMeta {
+  position: absolute;
+  inset: 26px 30px auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--clean-coral);
+  font:
+    950 11px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.popElectric .discoverArticleHero h1 {
+  max-width: 980px;
+  margin: 0 0 14px;
+  font:
+    950 clamp(54px, 7.4vw, 96px) / 0.84 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.075em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverArticleHero > p {
+  margin: 0 0 28px;
+  color: #c8c8c8;
+  font:
+    650 14px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverLeader {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  padding: 18px 20px;
+}
+
+body.popElectric .discoverLeader span {
+  font:
+    950 18px/1 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverLeader strong {
+  font:
+    900 clamp(19px, 2.4vw, 30px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+}
+
+body.popElectric .discoverLeader b {
+  font:
+    950 clamp(18px, 2.2vw, 28px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+  white-space: nowrap;
+}
+
+body.popElectric .discoverRankingSheet {
+  margin-top: 46px;
+  border-top: 5px solid var(--clean-ink);
+}
+
+body.popElectric .discoverRankingSheet > header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.6fr);
+  align-items: end;
+  gap: 28px;
+  min-height: 126px;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 18px 0 20px;
+}
+
+body.popElectric .discoverRankingSheet > header h2 {
+  margin: 8px 0 0;
+  font:
+    950 52px/0.9 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.065em;
+}
+
+body.popElectric .discoverRankingSheet > header p {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    700 13px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverRankingSheet ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.popElectric .discoverRankingSheet li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 92px;
+  border-bottom: 1px solid var(--clean-line);
+}
+
+body.popElectric .discoverRankPosition {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clean-coral);
+  color: var(--clean-paper);
+  font:
+    950 34px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric .discoverRankPosition small {
+  margin: 3px 0 0 2px;
+  font-size: 12px;
+}
+
+body.popElectric .discoverRankingSheet li > strong {
+  min-width: 0;
+  padding: 16px 0;
+  color: var(--clean-ink);
+  font:
+    900 clamp(20px, 2.4vw, 31px) / 1.05 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverRankingSheet li > b {
+  color: var(--clean-ink);
+  padding-right: 18px;
+  font:
+    950 clamp(18px, 2.1vw, 28px) / 1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.035em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+body.popElectric .discoverSourceBox {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1fr);
+  gap: clamp(30px, 7vw, 90px);
+  margin-top: 52px;
+  background: var(--clean-soft);
+  border-top: 4px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+  padding: clamp(26px, 4vw, 46px);
+}
+
+body.popElectric .discoverSourceBox h2 {
+  max-width: 360px;
+  margin: 10px 0 0;
+  font:
+    950 clamp(30px, 3.8vw, 50px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .discoverSourceBox p {
+  max-width: 680px;
+  margin: 0 0 14px;
+  font:
+    700 15px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverSourceBox small {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--clean-muted);
+  font:
+    650 12px/1.4 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .discoverSourceBox a {
+  display: inline-block;
+  color: var(--clean-ink);
+  border-bottom: 2px solid var(--clean-coral);
+  padding: 7px 0;
+  font:
+    950 12px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverSourceBox a:hover,
+body.popElectric .discoverSourceBox a:focus-visible {
+  color: var(--clean-coral);
+}
+
+body.popElectric .discoverRelated {
+  margin-top: 68px;
+}
+
+body.popElectric .discoverRelated > header {
+  border-bottom: 4px solid var(--clean-ink);
+  padding-bottom: 20px;
+}
+
+body.popElectric .discoverRelated > header h2 {
+  font-size: clamp(34px, 4vw, 52px);
+}
+
+body.popElectric .discoverRelated > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-left: 1px solid var(--clean-ink);
+}
+
+body.popElectric .discoverCard.compact > a {
+  min-height: 270px;
+}
+
+body.popElectric .discoverCard.compact h2 {
+  min-height: 76px;
+}
+
+body.popElectric .discoverCard.compact > a > p {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  body.popElectric .discoverGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.popElectric .discoverCard.featured {
+    grid-column: 1 / -1;
+  }
+
+  body.popElectric .discoverRelated > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  body.popElectric .discoverPageHero {
+    min-height: 208px;
+  }
+
+  body.popElectric .discoverMode strong {
+    font-size: 25px;
+  }
+
+  body.popElectric .discoverCollection {
+    margin-top: 30px;
+  }
+
+  body.popElectric .discoverCollectionHead,
+  body.popElectric .discoverRankingSheet > header,
+  body.popElectric .discoverSourceBox {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .discoverCollectionHead {
+    gap: 12px;
+  }
+
+  body.popElectric .discoverCollectionHead h2 {
+    font-size: 37px;
+  }
+
+  body.popElectric .discoverGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .discoverCard.featured {
+    grid-column: auto;
+  }
+
+  body.popElectric .discoverCard > a,
+  body.popElectric .discoverCard.featured > a {
+    min-height: 340px;
+    padding: 18px 16px;
+  }
+
+  body.popElectric .discoverCard h2,
+  body.popElectric .discoverCard.featured h2 {
+    min-height: 0;
+    font-size: 30px;
+  }
+
+  body.popElectric .discoverCard li {
+    grid-template-columns: 25px minmax(0, 1fr);
+    gap: 7px;
+    padding: 8px 0;
+  }
+
+  body.popElectric .discoverCard li > b {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  body.popElectric .discoverArticleHero {
+    min-height: 400px;
+    padding: 72px 18px 18px;
+  }
+
+  body.popElectric .discoverArticleMeta {
+    inset: 20px 18px auto;
+  }
+
+  body.popElectric .discoverArticleHero h1 {
+    font-size: clamp(43px, 13vw, 62px);
+  }
+
+  body.popElectric .discoverLeader {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 9px;
+    padding: 14px;
+  }
+
+  body.popElectric .discoverLeader strong {
+    font-size: 19px;
+  }
+
+  body.popElectric .discoverLeader b {
+    grid-column: 2;
+    font-size: 18px;
+  }
+
+  body.popElectric .discoverRankingSheet {
+    margin-top: 32px;
+  }
+
+  body.popElectric .discoverRankingSheet > header {
+    min-height: 0;
+    gap: 8px;
+  }
+
+  body.popElectric .discoverRankingSheet > header h2 {
+    font-size: 42px;
+  }
+
+  body.popElectric .discoverRankingSheet li {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 13px;
+    min-height: 84px;
+  }
+
+  body.popElectric .discoverRankPosition {
+    font-size: 25px;
+  }
+
+  body.popElectric .discoverRankingSheet li > strong {
+    padding: 14px 12px 4px 0;
+    font-size: 20px;
+  }
+
+  body.popElectric .discoverRankingSheet li > b {
+    grid-column: 2;
+    padding: 0 12px 14px 0;
+    font-size: 18px;
+    text-align: left;
+  }
+
+  body.popElectric .discoverSourceBox {
+    gap: 22px;
+    margin-top: 36px;
+    padding: 24px 18px;
+  }
+
+  body.popElectric .discoverRelated {
+    margin-top: 48px;
+  }
+}
+
 /* Modo Ganha, Fica ------------------------------------------------------- */
 
 body.popElectric .duelHomeCallout {

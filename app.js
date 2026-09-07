@@ -402,7 +402,7 @@ function newBadgeHTML(r) {
 function pageKind() {
   if (document.body.classList.contains('notFoundPage')) return 'not-found';
   if (location.pathname.startsWith('/ranking/')) return 'ranking';
-  if (/^\/descobrir\/?$/.test(location.pathname)) return 'discover';
+  if (/^\/descobrir(?:\/[^/]+)?\/?$/.test(location.pathname)) return 'discover';
   if (
     ['/entrar', '/recuperar-senha', '/redefinir-senha', '/sso-callback'].includes(location.pathname)
   )
@@ -2382,14 +2382,12 @@ function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
 }
 function discoverHomeCalloutHTML() {
-  return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS PARA LER</span><h2 id="discover-home-title">Descobrir</h2><p>Histórias, contexto e informação — sem votação.</p></div><a href="/descobrir">CONHECER A SEÇÃO →</a></header><div class="discoverHomePreview"><span class="discoverStatus">EM PREPARAÇÃO</span><div><h3>Rankings editoriais, com cada posição explicada.</h3><p>Os primeiros temas entram aqui em breve.</p></div><a href="/descobrir" aria-label="Abrir Descobrir">↗</a></div></section>`;
-}
-function discoverPageHTML() {
-  return `<section class="discoverPageHero" aria-labelledby="discover-page-title"><div><span class="discoverEyebrow">RANKINGS PARA LER</span><h1 id="discover-page-title">Descobrir</h1><p>Histórias, contexto e informação — sem votação.</p></div><span class="discoverMode">EDITORIAL</span></section><section class="discoverEmpty" aria-labelledby="discover-coming-title"><span class="discoverEmptyMark" aria-hidden="true">→</span><div><span class="discoverEyebrow">EM PREPARAÇÃO</span><h2 id="discover-coming-title">Os primeiros rankings editoriais chegam em breve.</h2><p>Aqui, cada posição vai ganhar explicação, contexto e fontes. Enquanto preparamos os primeiros temas, os rankings votados pela comunidade continuam abertos.</p><a href="/">Votar nos rankings →</a></div></section><section class="discoverPrinciples" aria-label="Como serão os rankings editoriais"><article><span>01</span><h2>Contexto</h2><p>Mais do que uma lista: o motivo de cada posição.</p></article><article><span>02</span><h2>Critério</h2><p>O recorte e a lógica do ranking apresentados com clareza.</p></article><article><span>03</span><h2>Fontes</h2><p>Informações verificadas e data de atualização.</p></article></section><div class="end">TOPO · tudo vira ranking</div>`;
+  return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS PARA LER</span><h2 id="discover-home-title">Descobrir</h2><p>Informação clara, números reais, data e fonte — sem votação.</p></div><a href="/descobrir">VER OS 30 RANKINGS →</a></header><div class="discoverHomePreview"><span class="discoverStatus">30 PUBLICADOS</span><div><h3>Das maiores fortunas aos filmes mais bem avaliados.</h3><p>Top 10 completo, com o valor de cada posição.</p></div><a href="/descobrir" aria-label="Abrir Descobrir">↗</a></div></section>`;
 }
 function renderDiscoverPage() {
+  if (feed.dataset.serverRendered === 'true') return;
   document.title = 'Descobrir — rankings editoriais do TOPO';
-  feed.innerHTML = discoverPageHTML();
+  feed.innerHTML = `<section class="portalEmpty"><h1>Descobrir</h1><p>Abra novamente a seção para carregar os rankings editoriais.</p><a class="categoryVoteCta" href="/descobrir">Ver os 30 rankings →</a></section>`;
 }
 function portalSideStoryHTML(r) {
   return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;

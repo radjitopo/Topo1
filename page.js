@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
 import { resolveRankingCover } from './ranking-image-policy.js';
 import { rankingQuestion } from './ranking-titles.js';
+import { DISCOVER_RANKINGS, discoverRankingBySlug } from './discover-rankings.js';
 import {
   FOOTBALL_TEAMS_CATEGORY_PATH,
   GENERAL_CATEGORIES,
@@ -377,41 +378,155 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
   });
 }
 
-export function renderDiscoverPage(template) {
-  const content = `<section class="discoverPageHero" aria-labelledby="discover-page-title">
+function discoverPath(ranking) {
+  return `/descobrir/${encodeURIComponent(ranking.slug)}`;
+}
+
+function discoverCard(ranking, index, compact = false) {
+  const preview = ranking.items
+    .slice(0, compact ? 1 : 3)
+    .map(
+      (item) =>
+        `<li><span>${escapeHtml(item.rank)}º</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`,
+    )
+    .join('');
+  return `<article class="discoverCard${index === 0 && !compact ? ' featured' : ''}${compact ? ' compact' : ''}">
+    <a href="${discoverPath(ranking)}">
+      <header><span>${String(index + 1).padStart(2, '0')}</span><em>${escapeHtml(ranking.category)}</em></header>
+      <h2>${escapeHtml(ranking.title)}</h2>
+      <p>${escapeHtml(ranking.metric)}</p>
+      <ol>${preview}</ol>
+      <footer><small>${escapeHtml(ranking.period)}</small><strong>VER TOP 10 →</strong></footer>
+    </a>
+  </article>`;
+}
+
+function discoverHero() {
+  return `<section class="discoverPageHero" aria-labelledby="discover-page-title">
     <div>
       <span class="discoverEyebrow">RANKINGS PARA LER</span>
       <h1 id="discover-page-title">Descobrir</h1>
-      <p>Histórias, contexto e informação — sem votação.</p>
+      <p>Informação clara, números reais, data e fonte — sem votação.</p>
     </div>
-    <span class="discoverMode">EDITORIAL</span>
-  </section>
-  <section class="discoverEmpty" aria-labelledby="discover-coming-title">
-    <span class="discoverEmptyMark" aria-hidden="true">→</span>
-    <div>
-      <span class="discoverEyebrow">EM PREPARAÇÃO</span>
-      <h2 id="discover-coming-title">Os primeiros rankings editoriais chegam em breve.</h2>
-      <p>Aqui, cada posição vai ganhar explicação, contexto e fontes. Enquanto preparamos os primeiros temas, os rankings votados pela comunidade continuam abertos.</p>
-      <a href="/">Votar nos rankings →</a>
-    </div>
-  </section>
-  <section class="discoverPrinciples" aria-label="Como serão os rankings editoriais">
-    <article><span>01</span><h2>Contexto</h2><p>Mais do que uma lista: o motivo de cada posição.</p></article>
-    <article><span>02</span><h2>Critério</h2><p>O recorte e a lógica do ranking apresentados com clareza.</p></article>
-    <article><span>03</span><h2>Fontes</h2><p>Informações verificadas e data de atualização.</p></article>
+    <span class="discoverMode"><strong>${DISCOVER_RANKINGS.length}</strong><span>RANKINGS<br>PUBLICADOS</span></span>
+  </section>`;
+}
+
+function discoverCollectionHTML() {
+  return `${discoverHero()}
+  <section class="discoverCollection" aria-labelledby="discover-list-title">
+    <header class="discoverCollectionHead">
+      <div><span class="discoverEyebrow">ESCOLHA UM TEMA</span><h2 id="discover-list-title">30 jeitos de enxergar o mundo</h2></div>
+      <p>Cada ranking traz o Top 10, o valor de cada posição, o recorte usado e a fonte original.</p>
+    </header>
+    <div class="discoverGrid">${DISCOVER_RANKINGS.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
   </section>
   <div class="end">TOPO · tudo vira ranking</div>`;
+}
+
+function discoverRelated(ranking) {
+  const currentIndex = DISCOVER_RANKINGS.indexOf(ranking);
+  return [...DISCOVER_RANKINGS.slice(currentIndex + 1), ...DISCOVER_RANKINGS]
+    .filter(
+      (candidate, index, list) =>
+        candidate !== ranking && list.findIndex((item) => item.slug === candidate.slug) === index,
+    )
+    .sort(
+      (a, b) => Number(b.category === ranking.category) - Number(a.category === ranking.category),
+    )
+    .slice(0, 3);
+}
+
+function discoverDetailHTML(ranking) {
+  const list = ranking.items
+      .map(
+        (item) =>
+          `<li><span class="discoverRankPosition">${escapeHtml(item.rank)}<small>º</small></span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`,
+      )
+      .join(''),
+    sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
+    related = discoverRelated(ranking);
+  return `<article class="discoverArticle">
+    <a class="discoverBack" href="/descobrir">← TODOS OS RANKINGS</a>
+    <header class="discoverArticleHero">
+      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
+      <h1>${escapeHtml(ranking.title)}</h1>
+      <p>${escapeHtml(ranking.metric)} · ${escapeHtml(ranking.period)}</p>
+      <div class="discoverLeader"><span>1º</span><strong>${escapeHtml(ranking.items[0].name)}</strong><b>${escapeHtml(ranking.items[0].value)}</b></div>
+    </header>
+    <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
+      <header><div><span class="discoverEyebrow">RANKING COMPLETO</span><h2 id="discover-ranking-title">Top 10</h2></div><p>${escapeHtml(ranking.metric)}</p></header>
+      <ol>${list}</ol>
+    </section>
+    <aside class="discoverSourceBox">
+      <div><span class="discoverEyebrow">CRITÉRIO E FONTE</span><h2>De onde vêm os números</h2></div>
+      <div><p>${escapeHtml(ranking.note)}</p><small>Referência: ${escapeHtml(ranking.period)}</small><a href="${escapeHtml(ranking.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(ranking.source)} · ${escapeHtml(sourceHost)} ↗</a></div>
+    </aside>
+    <section class="discoverRelated" aria-labelledby="discover-related-title">
+      <header><span class="discoverEyebrow">CONTINUE DESCOBRINDO</span><h2 id="discover-related-title">Outros rankings</h2></header>
+      <div>${related.map((item) => discoverCard(item, DISCOVER_RANKINGS.indexOf(item), true)).join('')}</div>
+    </section>
+  </article>
+  <div class="end">TOPO · tudo vira ranking</div>`;
+}
+
+export function renderDiscoverPage(template, slug = '') {
+  const ranking = slug ? discoverRankingBySlug(slug) : null,
+    canonical = ranking ? `${BASE_URL}${discoverPath(ranking)}` : `${BASE_URL}/descobrir`,
+    structuredData = ranking
+      ? schemaGraph([
+          {
+            '@type': 'Article',
+            headline: ranking.title,
+            description: `${ranking.metric}. ${ranking.period}.`,
+            url: canonical,
+            inLanguage: 'pt-BR',
+            publisher: { '@id': `${BASE_URL}/#organization` },
+          },
+          {
+            '@type': 'ItemList',
+            name: ranking.title,
+            numberOfItems: ranking.items.length,
+            itemListElement: ranking.items.map((item) => ({
+              '@type': 'ListItem',
+              position: Number(item.rank),
+              name: item.name,
+              description: item.value,
+            })),
+          },
+        ])
+      : schemaGraph([
+          {
+            '@type': 'CollectionPage',
+            name: 'Descobrir — rankings editoriais do TOPO',
+            url: canonical,
+            inLanguage: 'pt-BR',
+          },
+          {
+            '@type': 'ItemList',
+            name: 'Rankings para ler no TOPO',
+            numberOfItems: DISCOVER_RANKINGS.length,
+            itemListElement: DISCOVER_RANKINGS.map((item, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              name: item.title,
+              url: `${BASE_URL}${discoverPath(item)}`,
+            })),
+          },
+        ]);
   return withPage(template, {
     metadata: {
-      title: 'Descobrir — rankings editoriais do TOPO',
-      description:
-        'Rankings editoriais para ler, conhecer e explorar, com contexto, critérios e fontes.',
-      canonical: `${BASE_URL}/descobrir`,
+      title: ranking ? `${ranking.title} — TOPO` : 'Descobrir — rankings editoriais do TOPO',
+      description: ranking
+        ? `${ranking.title}: Top 10 com ${ranking.metric.toLowerCase()}, data, critério e fonte.`
+        : '30 rankings editoriais com Top 10, números, datas, critérios e fontes.',
+      canonical,
       image: `${BASE_URL}/og-topo-v4.png`,
-      index: false,
+      index: true,
+      structuredData,
     },
-    content,
-    bodyClass: 'homePage discoverPage',
+    content: ranking ? discoverDetailHTML(ranking) : discoverCollectionHTML(),
+    bodyClass: `homePage discoverPage${ranking ? ' discoverDetailPage' : ''}`,
   });
 }
 
@@ -1035,7 +1150,11 @@ export default async function handler(req, res) {
   }
 
   if (view === 'discover') {
-    return sendHtml(res, 200, renderDiscoverPage(template), { index: false });
+    const slug = queryValue(req, 'slug');
+    if (slug && !discoverRankingBySlug(slug)) {
+      return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
+    }
+    return sendHtml(res, 200, renderDiscoverPage(template, slug), { index: true });
   }
 
   try {
