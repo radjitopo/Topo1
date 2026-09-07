@@ -382,13 +382,23 @@ function discoverPath(ranking) {
   return `/descobrir/${encodeURIComponent(ranking.slug)}`;
 }
 
+const DISCOVER_MEDALS = {
+  1: { className: 'medal-gold', label: 'OURO' },
+  2: { className: 'medal-silver', label: 'PRATA' },
+  3: { className: 'medal-bronze', label: 'BRONZE' },
+};
+
+function discoverMedal(rank) {
+  return DISCOVER_MEDALS[Number(rank)] || null;
+}
+
 function discoverCard(ranking, index, compact = false) {
   const preview = ranking.items
     .slice(0, compact ? 1 : 3)
-    .map(
-      (item) =>
-        `<li><span>${escapeHtml(item.rank)}º</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`,
-    )
+    .map((item) => {
+      const medal = discoverMedal(item.rank);
+      return `<li${medal ? ` class="${medal.className}"` : ''}><span class="discoverMedalRank"><b>${escapeHtml(item.rank)}<small>º</small></b>${medal ? `<em>${medal.label}</em>` : ''}</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
+    })
     .join('');
   return `<article class="discoverCard${index === 0 && !compact ? ' featured' : ''}${compact ? ' compact' : ''}">
     <a href="${discoverPath(ranking)}">
@@ -437,12 +447,28 @@ function discoverRelated(ranking) {
     .slice(0, 3);
 }
 
+function discoverPodium(ranking) {
+  return `<section class="discoverPodium" aria-label="Pódio: três primeiros colocados">
+    ${ranking.items
+      .slice(0, 3)
+      .map((item) => {
+        const medal = discoverMedal(item.rank);
+        return `<div class="discoverPodiumPlace ${medal.className}">
+          <span class="discoverPodiumMedal"><b>${escapeHtml(item.rank)}<small>º</small></b><em>${medal.label}</em></span>
+          <strong>${escapeHtml(item.name)}</strong>
+          <span class="discoverPodiumValue">${escapeHtml(item.value)}</span>
+        </div>`;
+      })
+      .join('')}
+  </section>`;
+}
+
 function discoverDetailHTML(ranking) {
   const list = ranking.items
-      .map(
-        (item) =>
-          `<li><span class="discoverRankPosition">${escapeHtml(item.rank)}<small>º</small></span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`,
-      )
+      .map((item) => {
+        const medal = discoverMedal(item.rank);
+        return `<li class="discoverRankingItem${medal ? ` ${medal.className}` : ''}"><span class="discoverRankPosition"><b>${escapeHtml(item.rank)}<small>º</small></b>${medal ? `<em>${medal.label}</em>` : ''}</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
+      })
       .join(''),
     sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
     related = discoverRelated(ranking);
@@ -452,7 +478,7 @@ function discoverDetailHTML(ranking) {
       <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
       <h1>${escapeHtml(ranking.title)}</h1>
       <p>${escapeHtml(ranking.metric)} · ${escapeHtml(ranking.period)}</p>
-      <div class="discoverLeader"><span>1º</span><strong>${escapeHtml(ranking.items[0].name)}</strong><b>${escapeHtml(ranking.items[0].value)}</b></div>
+      ${discoverPodium(ranking)}
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
       <header><div><span class="discoverEyebrow">RANKING COMPLETO</span><h2 id="discover-ranking-title">Top 10</h2></div><p>${escapeHtml(ranking.metric)}</p></header>

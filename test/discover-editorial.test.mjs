@@ -51,6 +51,10 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(html, /US\$ 892 bi/);
   assert.match(html, /1º de setembro de 2026/);
   assert.match(html, /Forbes · forbes\.com/);
+  assert.match(html, /class="discoverPodium"/);
+  assert.match(html, /medal-gold[\s\S]*OURO/);
+  assert.match(html, /medal-silver[\s\S]*PRATA/);
+  assert.match(html, /medal-bronze[\s\S]*BRONZE/);
   assert.doesNotMatch(html, /class="react|data-duel/);
 });
 
@@ -72,6 +76,10 @@ test('Descobrir has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverPageHero/);
   assert.match(cssSource, /\.discoverGrid/);
   assert.match(cssSource, /\.discoverRankingSheet/);
+  assert.match(cssSource, /\.discoverPodium/);
+  assert.match(cssSource, /\.medal-gold/);
+  assert.match(cssSource, /\.medal-silver/);
+  assert.match(cssSource, /\.medal-bronze/);
   assert.match(
     cssSource,
     /@media \(max-width: 700px\)[\s\S]*\.discoverRankingSheet[\s\S]*grid-template-columns: 56px minmax\(0, 1fr\)/,

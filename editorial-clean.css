@@ -11363,3 +11363,391 @@ body.popElectric .discoverPrinciples p {
     margin-top: 17px;
   }
 }
+
+/* Descobrir — pódio editorial ------------------------------------------- */
+
+:root {
+  --discover-gold: #f2c94c;
+  --discover-gold-soft: #fff8dc;
+  --discover-silver: #d5d8dd;
+  --discover-silver-soft: #f2f3f5;
+  --discover-bronze: #c67a4b;
+  --discover-bronze-soft: #f8ece4;
+  --discover-medal-ink: #17130c;
+}
+
+body.popElectric .discoverCard > a {
+  position: relative;
+  overflow: hidden;
+}
+
+body.popElectric .discoverCard.featured > a::after {
+  content: '01';
+  position: absolute;
+  z-index: 0;
+  top: 34px;
+  right: -12px;
+  color: rgba(255, 255, 255, 0.055);
+  font:
+    950 clamp(150px, 20vw, 250px) / 0.75 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.11em;
+  pointer-events: none;
+}
+
+body.popElectric .discoverCard.featured > a > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.popElectric .discoverCard li {
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 50px;
+}
+
+body.popElectric .discoverCard li.medal-gold {
+  background: var(--discover-gold-soft);
+}
+
+body.popElectric .discoverCard li.medal-silver {
+  background: var(--discover-silver-soft);
+}
+
+body.popElectric .discoverCard li.medal-bronze {
+  background: var(--discover-bronze-soft);
+}
+
+body.popElectric .discoverCard .discoverMedalRank {
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 3px;
+  color: var(--discover-medal-ink);
+  font-weight: 950;
+}
+
+body.popElectric .discoverCard .discoverMedalRank b {
+  display: flex;
+  align-items: start;
+  font:
+    950 18px/0.85 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+
+body.popElectric .discoverCard .discoverMedalRank b small {
+  margin: 1px 0 0 1px;
+  font-size: 8px;
+}
+
+body.popElectric .discoverCard .discoverMedalRank em {
+  font:
+    950 7px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+}
+
+body.popElectric .discoverCard li.medal-gold .discoverMedalRank {
+  background: var(--discover-gold);
+}
+
+body.popElectric .discoverCard li.medal-silver .discoverMedalRank {
+  background: var(--discover-silver);
+}
+
+body.popElectric .discoverCard li.medal-bronze .discoverMedalRank {
+  background: var(--discover-bronze);
+}
+
+body.popElectric .discoverCard.featured li.medal-gold,
+body.popElectric .discoverCard.featured li.medal-silver,
+body.popElectric .discoverCard.featured li.medal-bronze {
+  background: transparent;
+}
+
+body.popElectric .discoverArticleHero {
+  min-height: 570px;
+  isolation: isolate;
+}
+
+body.popElectric .discoverArticleHero::before {
+  content: 'TOP 3';
+  position: absolute;
+  z-index: 0;
+  top: 74px;
+  right: 20px;
+  color: rgba(255, 255, 255, 0.045);
+  font:
+    950 clamp(80px, 14vw, 190px) / 0.8 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+body.popElectric .discoverArticleHero > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.popElectric .discoverPodium {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr) minmax(0, 0.9fr);
+  grid-template-areas: 'silver gold bronze';
+  align-items: end;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+body.popElectric .discoverPodiumPlace {
+  min-width: 0;
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  color: var(--discover-medal-ink);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 15px 17px 17px;
+}
+
+body.popElectric .discoverPodiumPlace.medal-gold {
+  grid-area: gold;
+  min-height: 148px;
+  background: var(--discover-gold);
+}
+
+body.popElectric .discoverPodiumPlace.medal-silver {
+  grid-area: silver;
+  min-height: 124px;
+  background: var(--discover-silver);
+}
+
+body.popElectric .discoverPodiumPlace.medal-bronze {
+  grid-area: bronze;
+  min-height: 108px;
+  background: var(--discover-bronze);
+}
+
+body.popElectric .discoverPodiumMedal {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.popElectric .discoverPodiumMedal b {
+  display: flex;
+  align-items: start;
+  font:
+    950 25px/0.85 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.065em;
+}
+
+body.popElectric .discoverPodiumMedal b small {
+  margin: 2px 0 0 2px;
+  font-size: 9px;
+}
+
+body.popElectric .discoverPodiumMedal em {
+  border: 1px solid currentColor;
+  padding: 4px 6px 3px;
+  font:
+    950 8px/1 Arial,
+    Helvetica,
+    sans-serif;
+  font-style: normal;
+  letter-spacing: 0.12em;
+}
+
+body.popElectric .discoverPodiumPlace > strong {
+  min-width: 0;
+  font:
+    950 clamp(18px, 2vw, 25px) / 0.94 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverPodiumValue {
+  font:
+    900 13px/1.1 Arial,
+    Helvetica,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric .discoverRankingSheet li {
+  transition: background 140ms ease;
+}
+
+body.popElectric .discoverRankingItem.medal-gold {
+  min-height: 108px;
+  background: var(--discover-gold-soft);
+}
+
+body.popElectric .discoverRankingItem.medal-silver {
+  min-height: 102px;
+  background: var(--discover-silver-soft);
+}
+
+body.popElectric .discoverRankingItem.medal-bronze {
+  min-height: 98px;
+  background: var(--discover-bronze-soft);
+}
+
+body.popElectric .discoverRankPosition {
+  flex-direction: column;
+  gap: 7px;
+  background: var(--clean-ink);
+}
+
+body.popElectric .discoverRankPosition b {
+  display: flex;
+  align-items: start;
+  font:
+    950 34px/0.85 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+
+body.popElectric .discoverRankPosition b small {
+  margin: 3px 0 0 2px;
+  font-size: 12px;
+}
+
+body.popElectric .discoverRankPosition em {
+  font:
+    950 8px/1 Arial,
+    Helvetica,
+    sans-serif;
+  font-style: normal;
+  letter-spacing: 0.12em;
+}
+
+body.popElectric .discoverRankingItem.medal-gold .discoverRankPosition {
+  background: var(--discover-gold);
+  color: var(--discover-medal-ink);
+}
+
+body.popElectric .discoverRankingItem.medal-silver .discoverRankPosition {
+  background: var(--discover-silver);
+  color: var(--discover-medal-ink);
+}
+
+body.popElectric .discoverRankingItem.medal-bronze .discoverRankPosition {
+  background: var(--discover-bronze);
+  color: var(--discover-medal-ink);
+}
+
+body.popElectric .discoverRankingItem.medal-gold > strong,
+body.popElectric .discoverRankingItem.medal-gold > b {
+  font-size: clamp(22px, 2.6vw, 34px);
+}
+
+@media (max-width: 900px) {
+  body.popElectric .discoverPodium {
+    gap: 6px;
+  }
+
+  body.popElectric .discoverPodiumPlace {
+    padding: 13px;
+  }
+}
+
+@media (max-width: 700px) {
+  body.popElectric .discoverCard.featured > a::after {
+    top: 70px;
+    font-size: 160px;
+  }
+
+  body.popElectric .discoverCard li {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  body.popElectric .discoverCard li > b {
+    grid-column: 2;
+  }
+
+  body.popElectric .discoverArticleHero {
+    min-height: 0;
+    padding-bottom: 20px;
+  }
+
+  body.popElectric .discoverArticleHero::before {
+    top: 104px;
+    right: 8px;
+    font-size: 86px;
+  }
+
+  body.popElectric .discoverPodium {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'gold'
+      'silver'
+      'bronze';
+    gap: 6px;
+  }
+
+  body.popElectric .discoverPodiumPlace,
+  body.popElectric .discoverPodiumPlace.medal-gold,
+  body.popElectric .discoverPodiumPlace.medal-silver,
+  body.popElectric .discoverPodiumPlace.medal-bronze {
+    min-height: 82px;
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+  }
+
+  body.popElectric .discoverPodiumMedal {
+    display: grid;
+    justify-content: start;
+    gap: 6px;
+  }
+
+  body.popElectric .discoverPodiumMedal em {
+    width: max-content;
+    border: 0;
+    padding: 0;
+    font-size: 7px;
+  }
+
+  body.popElectric .discoverPodiumPlace > strong {
+    font-size: 18px;
+  }
+
+  body.popElectric .discoverPodiumValue {
+    max-width: 112px;
+    text-align: right;
+  }
+
+  body.popElectric .discoverRankingItem.medal-gold,
+  body.popElectric .discoverRankingItem.medal-silver,
+  body.popElectric .discoverRankingItem.medal-bronze {
+    min-height: 92px;
+  }
+
+  body.popElectric .discoverRankPosition {
+    gap: 5px;
+  }
+
+  body.popElectric .discoverRankPosition b {
+    font-size: 25px;
+  }
+
+  body.popElectric .discoverRankPosition em {
+    font-size: 6px;
+    letter-spacing: 0.08em;
+  }
+}
