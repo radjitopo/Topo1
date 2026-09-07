@@ -259,23 +259,23 @@ body.popElectric .discoverCard footer strong {
 
 body.popElectric .discoverCard.featured {
   grid-column: span 2;
-  background: var(--clean-ink);
+  background: var(--clean-paper);
 }
 
 body.popElectric .discoverCard.featured > a {
-  color: var(--clean-paper);
+  color: var(--clean-ink);
   padding: 28px;
 }
 
 body.popElectric .discoverCard.featured > a:hover,
 body.popElectric .discoverCard.featured > a:focus-visible {
-  background: #181818;
+  background: var(--clean-soft);
 }
 
 body.popElectric .discoverCard.featured header,
 body.popElectric .discoverCard.featured ol,
 body.popElectric .discoverCard.featured li {
-  border-color: rgba(255, 255, 255, 0.24);
+  border-color: var(--clean-line);
 }
 
 body.popElectric .discoverCard.featured h2 {
@@ -286,7 +286,7 @@ body.popElectric .discoverCard.featured h2 {
 
 body.popElectric .discoverCard.featured > a > p,
 body.popElectric .discoverCard.featured footer small {
-  color: #c8c8c8;
+  color: var(--clean-muted);
 }
 
 body.popElectric .discoverCard.featured ol {
@@ -11531,7 +11531,7 @@ body.popElectric .discoverCard.featured > a::after {
   z-index: 0;
   top: 34px;
   right: -12px;
-  color: rgba(255, 255, 255, 0.055);
+  color: rgba(10, 10, 10, 0.035);
   font:
     950 clamp(150px, 20vw, 250px) / 0.75 Arial,
     Helvetica,
@@ -11608,10 +11608,16 @@ body.popElectric .discoverCard li.medal-bronze .discoverMedalRank {
   background: var(--discover-bronze);
 }
 
-body.popElectric .discoverCard.featured li.medal-gold,
-body.popElectric .discoverCard.featured li.medal-silver,
+body.popElectric .discoverCard.featured li.medal-gold {
+  background: var(--discover-gold-soft);
+}
+
+body.popElectric .discoverCard.featured li.medal-silver {
+  background: var(--discover-silver-soft);
+}
+
 body.popElectric .discoverCard.featured li.medal-bronze {
-  background: transparent;
+  background: var(--discover-bronze-soft);
 }
 
 body.popElectric .discoverArticleHero {

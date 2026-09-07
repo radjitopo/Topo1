@@ -170,6 +170,8 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverCategoryButton\.active/);
   assert.match(cssSource, /\.discoverRankingSheet/);
   assert.match(cssSource, /\.discoverArticleVisual/);
+  assert.match(cssSource, /\.discoverCard\.featured \{[\s\S]*?background: var\(--clean-paper\);/);
+  assert.match(cssSource, /\.discoverCard\.featured > a \{[\s\S]*?color: var\(--clean-ink\);/);
   assert.match(
     cssSource,
     /\.discoverArticleHero \{[\s\S]*background: var\(--clean-paper\);[\s\S]*color: var\(--clean-ink\);/,
