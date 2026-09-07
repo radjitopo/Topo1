@@ -1478,7 +1478,7 @@ body.popElectric .experienceLink.local.active {
 }
 
 body.popElectric .experienceLink.local {
-  gap: 8px;
+  gap: 7px;
   color: var(--clean-coral);
   font-size: 13px;
   font-weight: 900;
@@ -1502,8 +1502,8 @@ body.popElectric .localMark {
   border-radius: 0;
   background: var(--clean-coral);
   color: var(--clean-paper);
-  box-shadow: 2px 2px 0 var(--clean-ink);
-  transform: none;
+  box-shadow: 1px 1px 0 var(--clean-ink);
+  transform: translateY(-2px);
 }
 
 body.popElectric .localMark::before {

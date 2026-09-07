@@ -87,8 +87,8 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
-  /body\.popElectric\.localMark\{[^}]*width:18px[^}]*height:18px[^}]*background:var\(--clean-coral\)[^}]*box-shadow:2px2px0var\(--clean-ink\)/,
-  'the local navigation marker must remain a prominent geometric coral callout',
+  /body\.popElectric\.localMark\{[^}]*width:18px[^}]*height:18px[^}]*background:var\(--clean-coral\)[^}]*box-shadow:1px1px0var\(--clean-ink\)[^}]*transform:translateY\(-2px\)/,
+  'the local navigation marker must remain a prominent, optically aligned coral callout',
 );
 assert.match(
   compactEditorialCss,
