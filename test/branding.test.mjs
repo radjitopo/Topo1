@@ -92,6 +92,12 @@ assert.match(
 );
 assert.match(
   compactEditorialCss,
+  /body\.popElectric\.localMark::before\{[^}]*border-bottom:7pxsolidvar\(--clean-paper\)/,
+  'the local marker must use an upward white peak',
+);
+assert.doesNotMatch(editorialCss, /content:\s*['"]↓['"]/, 'the local marker must never point down');
+assert.match(
+  compactEditorialCss,
   /body\.popElectric\.siteFooterBrandimg,body\.legalShell\.siteFooterBrandimg\{filter:none/,
   'the dedicated footer logo must keep its white reversed artwork unchanged',
 );

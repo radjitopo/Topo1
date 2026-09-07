@@ -1507,11 +1507,12 @@ body.popElectric .localMark {
 }
 
 body.popElectric .localMark::before {
-  content: '↓';
-  font:
-    900 12px/1 Arial,
-    Helvetica,
-    sans-serif;
+  width: 0;
+  height: 0;
+  border-right: 4px solid transparent;
+  border-bottom: 7px solid var(--clean-paper);
+  border-left: 4px solid transparent;
+  content: '';
   transform: translateY(-1px);
 }
 
@@ -4243,10 +4244,6 @@ body.popElectric .moderationRankingOpen {
     width: 16px;
     height: 16px;
     box-shadow: 1px 1px 0 var(--clean-ink);
-  }
-
-  body.popElectric .localMark::before {
-    font-size: 10px;
   }
 
   body.popElectric .groups,
