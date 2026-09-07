@@ -21,6 +21,7 @@ import {
 
 const templatePromise = readFile(new URL('./index.html', import.meta.url), 'utf8');
 const BASE_URL = 'https://somostopo.com.br';
+const AFFINITY_FEATURE_ENABLED = false;
 const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
 let sqlClient;
 
@@ -981,7 +982,11 @@ export default async function handler(req, res) {
   const search = queryValue(req, 'busca').trim().slice(0, 100);
 
   if (view === 'private') {
-    return sendHtml(res, 200, renderPrivatePage(template, queryValue(req, 'kind')), {
+    const kind = queryValue(req, 'kind');
+    if (!AFFINITY_FEATURE_ENABLED && kind === 'afinidade') {
+      return sendHtml(res, 404, renderMissingPage(template), { cache: false, index: false });
+    }
+    return sendHtml(res, 200, renderPrivatePage(template, kind), {
       cache: false,
       index: false,
     });

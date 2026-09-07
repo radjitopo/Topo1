@@ -51,14 +51,23 @@ test('API compares only completed public duels and never exposes e-mail', async 
   assert.match(compact, /action==='affinity-share'\)returnshareAffinity/);
 });
 
-test('Meu Topo and the public invite route expose the affinity flow', async () => {
-  const [app, style, page, vercel] = await Promise.all([
+test('affinity flow stays preserved but is paused everywhere public', async () => {
+  const [api, app, style, page, vercel, index] = await Promise.all([
+    readFile(new URL('api.js', root), 'utf8'),
     readFile(new URL('app.js', root), 'utf8'),
     readFile(new URL('editorial-clean.css', root), 'utf8'),
     readFile(new URL('page.js', root), 'utf8'),
     readFile(new URL('vercel.json', root), 'utf8'),
+    readFile(new URL('index.html', root), 'utf8'),
   ]);
 
+  assert.match(api, /const AFFINITY_FEATURE_ENABLED = false;/);
+  assert.match(api, /\['affinities', 'affinity', 'affinity-share'\]\.includes\(action\)/);
+  assert.match(app, /const AFFINITY_FEATURE_ENABLED = false;/);
+  assert.match(app, /viewer\.registered && AFFINITY_FEATURE_ENABLED/);
+  assert.match(page, /const AFFINITY_FEATURE_ENABLED = false;/);
+  assert.match(page, /!AFFINITY_FEATURE_ENABLED && kind === 'afinidade'/);
+  assert.match(index, /user-affinities-affinity-paused/);
   assert.match(app, /function affinityPanelHTML/);
   assert.match(app, /COMPARAR COM ALGUÉM/);
   assert.match(app, /em comum/);

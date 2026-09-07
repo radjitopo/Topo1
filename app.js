@@ -43,6 +43,7 @@ const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
 const DEFAULT_ANONYMOUS_LIMIT = 30;
 const DEFAULT_ANONYMOUS_DUEL_LIMIT = 5;
+const AFFINITY_FEATURE_ENABLED = false;
 const googlePlaceProfiles = Object.freeze({});
 const generalGroupSlugs = Object.freeze({
   Cinema: 'cinema',
@@ -346,6 +347,7 @@ function sharedDuelStartOptionIds() {
     : [];
 }
 function affinityReturnToken() {
+  if (!AFFINITY_FEATURE_ENABLED) return '';
   const token = new URLSearchParams(location.search).get('afinidade') || '';
   return /^[a-zA-Z0-9_-]{24,64}$/.test(token) ? token : '';
 }
@@ -408,7 +410,8 @@ function pageKind() {
   if (location.pathname === '/moderacao') return 'moderation';
   if (location.pathname === '/vip') return 'vip';
   if (location.pathname.startsWith('/favoritos/')) return 'favorites';
-  if (location.pathname.startsWith('/afinidade/')) return 'affinity';
+  if (location.pathname.startsWith('/afinidade/'))
+    return AFFINITY_FEATURE_ENABLED ? 'affinity' : 'not-found';
   return 'home';
 }
 function isLocalRoute() {
@@ -1392,7 +1395,7 @@ async function loadVipArea() {
             cache: 'no-store',
           })
         : Promise.resolve(null),
-      viewer.registered
+      viewer.registered && AFFINITY_FEATURE_ENABLED
         ? fetch('/api?action=affinities', { cache: 'no-store' })
         : Promise.resolve(null),
     ]),
@@ -1429,14 +1432,14 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}${viewer.registered ? affinityPanelHTML(affinityData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
+  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}${viewer.registered && AFFINITY_FEATURE_ENABLED ? affinityPanelHTML(affinityData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
   bindWhatsAppShares();
   bindNativeShares();
   bindProfileRankingActivityMore(feed);
-  bindAffinityPanel(feed);
+  if (AFFINITY_FEATURE_ENABLED) bindAffinityPanel(feed);
   document
     .getElementById('favoriteShareButton')
     ?.addEventListener('click', (event) => shareMyFavorites(event.currentTarget));

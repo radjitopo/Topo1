@@ -76,6 +76,7 @@ const VIP_DESCRIPTION_LIMIT = 280;
 const VIP_COOKIE_PREFIX = 'topo_vip_';
 const FAVORITE_SHARE_TOKEN_PATTERN = /^[a-zA-Z0-9_-]{24,64}$/;
 const AFFINITY_SHARE_TOKEN_PATTERN = /^[a-zA-Z0-9_-]{24,64}$/;
+const AFFINITY_FEATURE_ENABLED = false;
 const BUILT_IN_MODERATOR_EMAIL_HASHES = new Set([
   '225c33c5e9c8aff600ac4f1576d55f0ddbd9e9934b58270a51d1d7887c7b1794',
 ]);
@@ -6452,6 +6453,13 @@ export default async function handler(req, res) {
   try {
     const method = String(req.method || 'GET').toUpperCase();
     const action = queryValue(req, 'action');
+
+    if (
+      !AFFINITY_FEATURE_ENABLED &&
+      ['affinities', 'affinity', 'affinity-share'].includes(action)
+    ) {
+      return json(res, 404, { error: 'action_not_found' });
+    }
 
     if (method === 'GET') {
       if (!action) return catalog(req, res);
