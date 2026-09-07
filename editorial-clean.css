@@ -518,21 +518,25 @@ body.popElectric.rankingPage .rankingDuelEmpty {
 }
 
 body.popElectric.rankingPage .duelNextActions {
-  margin-top: 12px;
-  padding-top: 10px;
+  margin-top: 9px;
+  padding-top: 8px;
 }
 
 body.popElectric.rankingPage .duelNextActions .rankingFlowButton {
-  min-height: 62px;
-  padding: 11px 14px;
+  min-height: 50px;
+  padding: 8px 11px;
 }
 
 body.popElectric.rankingPage .duelNextActions .rankingFlowButton strong {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 body.popElectric.rankingPage .duelNextActions .rankingFlowButton small {
-  font-size: 9px;
+  font-size: 8.5px;
+}
+
+body.popElectric.rankingPage .duelNextActions .rankingFlowButton b {
+  font-size: 18px;
 }
 
 body.popElectric.rankingPage .rankingContinuation > .rankingFlowActions[hidden] {
@@ -570,7 +574,25 @@ body.popElectric.rankingPage .duelEndActions {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
-  margin-top: 25px;
+  margin-top: 12px;
+}
+
+body.popElectric.rankingPage .duelEndActions button {
+  width: max-content;
+  min-height: 32px;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 0;
+  font-size: 9px;
+}
+
+body.popElectric.rankingPage .duelEndActions button:hover,
+body.popElectric.rankingPage .duelEndActions button:focus-visible {
+  border-color: var(--clean-coral);
+  background: transparent;
+  color: var(--clean-coral);
 }
 
 body.popElectric.rankingPage .duelEndActions button.secondary {
@@ -799,8 +821,8 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .duelNextActions .rankingFlowButton {
-    min-height: 48px;
-    padding: 8px;
+    min-height: 44px;
+    padding: 6px 8px;
   }
 
   body.popElectric.rankingPage .duelNextActions .rankingFlowButton small {
@@ -808,7 +830,7 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
   }
 
   body.popElectric.rankingPage .duelEndActions {
-    align-items: stretch;
+    align-items: flex-start;
     flex-direction: column;
   }
 
@@ -819,6 +841,13 @@ body.popElectric.rankingPage .rankingFreeIntro > span {
     display: grid;
     place-items: center;
     text-align: center;
+  }
+
+  body.popElectric.rankingPage .duelEndActions button {
+    width: max-content;
+    min-height: 32px;
+    display: inline-flex;
+    padding: 0;
   }
 
   body.popElectric.rankingPage .duelStandings > header {
