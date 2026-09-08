@@ -51,6 +51,20 @@ test('the editorial collection publishes all 100 rankings without voting control
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
 });
 
+test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
+  const allHtml = renderDiscoverPage(template);
+  const categoryHtml = renderDiscoverPage(template, '', 'brasil');
+  assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
+  assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 100 rankings<\/span>/);
+  assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
+  assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
+  assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
+  assert.match(appSource, /button\.hidden = remaining === 0/);
+  assert.match(cssSource, /\.discoverCard\[hidden\]/);
+  assert.match(cssSource, /\.discoverLoadMore button:focus-visible/);
+});
+
 test('Rankings offers useful categories and filters the collection on the server', () => {
   const allHtml = renderDiscoverPage(template);
   assert.match(allHtml, /aria-label="Categorias dos rankings"/);

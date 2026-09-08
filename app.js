@@ -41,6 +41,7 @@ function rankingTitleSizeClass(value) {
 }
 const queryParams = new URLSearchParams(location.search);
 const CATEGORY_PAGE_SIZE = 12;
+const DISCOVER_PAGE_SIZE = 20;
 const DEFAULT_ANONYMOUS_LIMIT = 30;
 const DEFAULT_ANONYMOUS_DUEL_LIMIT = 5;
 const AFFINITY_FEATURE_ENABLED = false;
@@ -2384,8 +2385,35 @@ function popLocalCalloutHTML() {
 function discoverHomeCalloutHTML() {
   return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS EDITORIAIS</span><h2 id="discover-home-title">Rankings</h2><p>Informação clara, números reais, data e fonte — sem votação.</p></div><a href="/rankings">VER OS 100 RANKINGS →</a></header><div class="discoverHomePreview"><span class="discoverStatus">100 PUBLICADOS</span><div><h3>De Brasil, cinema e música a tecnologia, viagens e gastronomia.</h3><p>Top 10 completo, com o valor de cada posição.</p></div><a href="/rankings" aria-label="Abrir Rankings">↗</a></div></section>`;
 }
+function bindDiscoverPagination() {
+  const pagination = feed.querySelector('[data-discover-pagination]'),
+    grid = feed.querySelector('#discover-ranking-grid');
+  if (!pagination || !grid) return;
+  const cards = [...grid.children].filter((element) => element.classList.contains('discoverCard')),
+    button = pagination.querySelector('[data-discover-load-more]'),
+    progress = pagination.querySelector('[data-discover-progress]'),
+    pageSize = Math.max(1, Number(pagination.dataset.pageSize) || DISCOVER_PAGE_SIZE);
+  if (!button || cards.length <= pageSize) return;
+  let visibleCount = Math.min(pageSize, cards.length);
+  const sync = () => {
+    cards.forEach((card, index) => {
+      card.hidden = index >= visibleCount;
+    });
+    const remaining = cards.length - visibleCount;
+    button.hidden = remaining === 0;
+    if (remaining) button.textContent = `Ver mais ${Math.min(pageSize, remaining)} rankings`;
+    if (progress) progress.textContent = `${fmt(visibleCount)} de ${fmt(cards.length)} rankings`;
+  };
+  button.onclick = () => {
+    visibleCount = Math.min(visibleCount + pageSize, cards.length);
+    sync();
+  };
+  pagination.hidden = false;
+  sync();
+}
 function renderDiscoverPage() {
   if (feed.dataset.serverRendered === 'true') {
+    bindDiscoverPagination();
     const activeCategory = feed.querySelector('.discoverCategoryButton.active');
     if (activeCategory)
       requestAnimationFrame(() => {

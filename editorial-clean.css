@@ -128,6 +128,56 @@ body.popElectric .discoverCard {
   background: var(--clean-paper);
 }
 
+body.popElectric .discoverCard[hidden] {
+  display: none !important;
+}
+
+body.popElectric .discoverLoadMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border: 1px solid var(--clean-ink);
+  border-top: 0;
+  background: var(--clean-paper);
+  padding: 28px 20px;
+}
+
+body.popElectric .discoverLoadMore[hidden] {
+  display: none !important;
+}
+
+body.popElectric .discoverLoadMore button {
+  min-height: 52px;
+  border: 1px solid var(--clean-ink);
+  background: var(--clean-ink);
+  color: var(--clean-paper);
+  padding: 0 24px;
+  font:
+    950 13px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+body.popElectric .discoverLoadMore button:hover,
+body.popElectric .discoverLoadMore button:focus-visible {
+  border-color: var(--clean-coral);
+  background: var(--clean-coral);
+  outline: 3px solid color-mix(in srgb, var(--clean-coral) 25%, transparent);
+  outline-offset: 3px;
+}
+
+body.popElectric .discoverLoadMore span {
+  color: var(--clean-muted);
+  font:
+    800 12px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
 body.popElectric .discoverCard > a {
   min-height: 390px;
   display: flex;
@@ -705,6 +755,16 @@ body.popElectric .discoverCard.compact > a > p {
 
   body.popElectric .discoverGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.popElectric .discoverLoadMore {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 16px;
+  }
+
+  body.popElectric .discoverLoadMore button {
+    width: 100%;
   }
 
   body.popElectric .discoverCard.featured {

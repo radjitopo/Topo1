@@ -28,6 +28,7 @@ import {
 
 const templatePromise = readFile(new URL('./index.html', import.meta.url), 'utf8');
 const BASE_URL = 'https://somostopo.com.br';
+const DISCOVER_PAGE_SIZE = 20;
 const AFFINITY_FEATURE_ENABLED = false;
 const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
 let sqlClient;
@@ -472,6 +473,7 @@ function discoverCategoryNavigation(activeCategory) {
 function discoverCollectionHTML(categorySlug = '') {
   const activeCategory = discoverCategoryBySlug(categorySlug) || DISCOVER_CATEGORIES[0],
     visibleRankings = discoverRankingsForCategory(activeCategory.slug),
+    paginated = activeCategory.slug === 'todos' && visibleRankings.length > DISCOVER_PAGE_SIZE,
     collectionTitle =
       activeCategory.slug === 'todos'
         ? `${visibleRankings.length} jeitos de enxergar o mundo`
@@ -483,7 +485,15 @@ function discoverCollectionHTML(categorySlug = '') {
       <div><span class="discoverEyebrow">${activeCategory.slug === 'todos' ? 'ESCOLHA UM TEMA' : escapeHtml(activeCategory.label)}</span><h2 id="discover-list-title">${escapeHtml(collectionTitle)}</h2></div>
       <p>Cada ranking traz o Top 10, o valor de cada posição, o recorte usado e a fonte original.</p>
     </header>
-    <div class="discoverGrid">${visibleRankings.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
+    <div class="discoverGrid" id="discover-ranking-grid">${visibleRankings.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
+    ${
+      paginated
+        ? `<div class="discoverLoadMore" data-discover-pagination data-page-size="${DISCOVER_PAGE_SIZE}" hidden>
+      <button type="button" data-discover-load-more aria-controls="discover-ranking-grid">Ver mais ${DISCOVER_PAGE_SIZE} rankings</button>
+      <span data-discover-progress aria-live="polite">${DISCOVER_PAGE_SIZE} de ${visibleRankings.length} rankings</span>
+    </div>`
+        : ''
+    }
   </section>
   <div class="end">TOPO · tudo vira ranking</div>`;
 }
