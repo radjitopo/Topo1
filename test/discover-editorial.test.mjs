@@ -33,19 +33,19 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /101 PUBLICADOS/);
+  assert.match(appSource, /102 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 101 rankings without voting controls', () => {
+test('the editorial collection publishes all 102 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
-  assert.match(html, /101 rankings editoriais com Top 10/);
+  assert.match(html, /102 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 101);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 102);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -56,7 +56,7 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   const categoryHtml = renderDiscoverPage(template, '', 'brasil');
   assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
   assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
-  assert.match(allHtml, /data-discover-progress[^>]*>20 de 101 rankings<\/span>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 102 rankings<\/span>/);
   assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
   assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
   assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
@@ -155,12 +155,12 @@ test('Esportes gathers 10 varied and sourced rankings without duplicates', () =>
   assert.match(sportsHtml, /Jim Miller/);
 });
 
-test('Mundo & Geografia gathers 11 varied and sourced rankings without duplicates', () => {
+test('Mundo & Geografia gathers 12 varied and sourced rankings without duplicates', () => {
   const worldRankings = discoverRankingsForCategory('mundo');
   const worldHtml = renderDiscoverPage(template, '', 'mundo');
-  assert.equal(worldRankings.length, 11);
-  assert.equal(new Set(worldRankings.map(({ slug }) => slug)).size, 11);
-  assert.equal((worldHtml.match(/class="discoverCard/g) || []).length, 11);
+  assert.equal(worldRankings.length, 12);
+  assert.equal(new Set(worldRankings.map(({ slug }) => slug)).size, 12);
+  assert.equal((worldHtml.match(/class="discoverCard/g) || []).length, 12);
   assert.ok(worldRankings.some(({ category }) => category === 'Mundo'));
   assert.ok(worldRankings.some(({ category }) => category === 'Educação'));
   assert.match(worldHtml, /Países mais felizes do mundo/);
@@ -170,11 +170,38 @@ test('Mundo & Geografia gathers 11 varied and sourced rankings without duplicate
   assert.match(worldHtml, /Maiores ilhas do mundo/);
   assert.match(worldHtml, /Países com mais patrimônios mundiais da UNESCO/);
   assert.match(worldHtml, /Coleções estranhas gigantescas registradas pelo Guinness/);
+  assert.match(worldHtml, /Estados americanos com mais relatos de OVNIs/);
   assert.match(worldHtml, /class="discoverCategoryButton active"[^>]*>Mundo &amp; Geografia<\/a>/);
   assert.match(
     worldHtml,
-    /<h2 id="discover-list-title">11 rankings de Mundo &amp; Geografia<\/h2>/,
+    /<h2 id="discover-list-title">12 rankings de Mundo &amp; Geografia<\/h2>/,
   );
+});
+
+test('the NUFORC ranking uses report counts and clearly states their limits', () => {
+  const ranking = DISCOVER_RANKINGS.find(
+    ({ slug }) => slug === 'estados-americanos-mais-relatos-ovnis',
+  );
+  assert.ok(ranking);
+  assert.equal(ranking.source, 'National UFO Reporting Center (NUFORC)');
+  assert.equal(ranking.items.length, 10);
+  assert.deepEqual(
+    ranking.items.map(({ name, value }) => [name, value]),
+    [
+      ['Califórnia', '17.384 relatos'],
+      ['Flórida', '9.012 relatos'],
+      ['Washington', '7.708 relatos'],
+      ['Texas', '6.827 relatos'],
+      ['Nova York', '6.443 relatos'],
+      ['Pensilvânia', '5.462 relatos'],
+      ['Arizona', '5.415 relatos'],
+      ['Ohio', '4.800 relatos'],
+      ['Illinois', '4.570 relatos'],
+      ['Carolina do Norte', '3.975 relatos'],
+    ],
+  );
+  assert.match(ranking.note, /observações autodeclaradas/);
+  assert.match(ranking.note, /não significam ocorrências extraterrestres verificadas/);
 });
 
 test('the Guinness collection ranking is numerical, sourced and explicit about its curation', () => {
@@ -325,9 +352,9 @@ test('each editorial detail has a top 10, values, period and source', () => {
   );
 });
 
-test('the editorial catalog keeps 101 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 101);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 101);
+test('the editorial catalog keeps 102 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 102);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 102);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);

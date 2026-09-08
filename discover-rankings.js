@@ -1285,6 +1285,27 @@ export const DISCOVER_RANKINGS = Object.freeze([
 9|Sacos para enjoo de avião|6.290 itens
 10|Patos de borracha|5.631 itens`),
   },
+  {
+    slug: 'estados-americanos-mais-relatos-ovnis',
+    title: 'Estados americanos com mais relatos de OVNIs',
+    category: 'Mundo',
+    metric: 'Quantidade de relatos registrados no banco de dados',
+    period: 'Contagem acumulada consultada em 8 de setembro de 2026',
+    source: 'National UFO Reporting Center (NUFORC)',
+    sourceUrl: 'https://nuforc.org/ndx/?id=loc',
+    note: 'Contagens acumuladas de relatos enviados ao NUFORC por localização. São observações autodeclaradas e não significam ocorrências extraterrestres verificadas.',
+    items: rankingItems(`
+1|Califórnia|17.384 relatos
+2|Flórida|9.012 relatos
+3|Washington|7.708 relatos
+4|Texas|6.827 relatos
+5|Nova York|6.443 relatos
+6|Pensilvânia|5.462 relatos
+7|Arizona|5.415 relatos
+8|Ohio|4.800 relatos
+9|Illinois|4.570 relatos
+10|Carolina do Norte|3.975 relatos`),
+  },
   ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 
