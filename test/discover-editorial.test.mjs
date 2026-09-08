@@ -268,11 +268,14 @@ test('each editorial detail has a top 10, values, period and source', () => {
   const html = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
   assert.match(html, /<body class="popElectric homePage discoverPage discoverDetailPage">/);
   assert.match(html, /<h1>Pessoas mais ricas do mundo<\/h1>/);
-  assert.match(html, /class="discoverArticleMeta"[\s\S]*TOP 10[\s\S]*RANKING 01/);
+  assert.match(
+    html,
+    /class="discoverArticleMeta"[\s\S]*TOP 10[\s\S]*RANKING INFORMATIVO · SEM VOTAÇÃO/,
+  );
   assert.match(html, /class="discoverArticleSummary"[\s\S]*CRITÉRIO[\s\S]*RECORTE/);
   assert.match(
     html,
-    /class="discoverRankingSheet"[^>]*>\s*<h2 class="srOnly"[^>]*>Top 10 completo<\/h2>\s*<ol>/,
+    /class="discoverRankingSheet"[^>]*>\s*<header class="discoverRankingResultHead"><h2[^>]*>Resultado<\/h2><span>TOP 10 · VALOR<\/span><\/header>\s*<ol>/,
   );
   assert.doesNotMatch(html, /class="discoverArticleVisual"/);
   assert.equal((html.match(/class="discoverRankPosition"/g) || []).length, 10);
@@ -281,9 +284,12 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(html, /1º de setembro de 2026/);
   assert.match(html, /Forbes · forbes\.com/);
   assert.doesNotMatch(html, /class="discoverPodium"/);
-  assert.match(html, /medal-gold[\s\S]*OURO/);
-  assert.match(html, /medal-silver[\s\S]*PRATA/);
-  assert.match(html, /medal-bronze[\s\S]*BRONZE/);
+  const rankingSheet =
+    html.match(/<section class="discoverRankingSheet"[\s\S]*?<\/section>/)?.[0] || '';
+  assert.match(rankingSheet, /medal-gold/);
+  assert.match(rankingSheet, /medal-silver/);
+  assert.match(rankingSheet, /medal-bronze/);
+  assert.doesNotMatch(rankingSheet, /OURO|PRATA|BRONZE/);
   assert.equal((html.match(/class="discoverMedalRank"/g) || []).length, 9);
   assert.doesNotMatch(html, /class="react|data-duel/);
   assert.match(
@@ -314,6 +320,15 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverCategoryButton\.active/);
   assert.match(cssSource, /\.discoverRankingSheet/);
   assert.match(cssSource, /\.discoverArticleSummary/);
+  assert.match(cssSource, /Rankings informativos — mesma linguagem das páginas do TOPO/);
+  assert.match(
+    cssSource,
+    /body\.popElectric\.discoverDetailPage \.feed \{[\s\S]*?width: min\(860px, calc\(100% - 48px\)\)/,
+  );
+  assert.match(
+    cssSource,
+    /body\.popElectric\.discoverDetailPage \.discoverRankingSheet li,[\s\S]*?grid-template-columns: 34px minmax\(0, 1fr\) auto/,
+  );
   assert.match(cssSource, /\.discoverCard\.featured \{[\s\S]*?background: var\(--clean-paper\);/);
   assert.match(cssSource, /\.discoverCard\.featured > a \{[\s\S]*?color: var\(--clean-ink\);/);
   assert.match(
@@ -329,7 +344,8 @@ test('Rankings has responsive desktop and mobile styling', () => {
   );
   assert.match(
     cssSource,
-    /@media \(max-width: 700px\)[\s\S]*\.discoverRankingSheet[\s\S]*grid-template-columns: 56px minmax\(0, 1fr\)/,
+    /@media \(max-width: 700px\)[\s\S]*body\.popElectric\.discoverDetailPage \.discoverRankingSheet li,[\s\S]*grid-template-columns: 30px minmax\(0, 1fr\)/,
   );
+  assert.match(template, /editorial-clean\.css\?[^"']*rankings-topo-layout/);
   assert.match(cssSource, /localMode \.experienceInner \{[\s\S]*?flex-wrap: wrap/);
 });

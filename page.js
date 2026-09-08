@@ -515,21 +515,20 @@ function discoverDetailHTML(ranking) {
   const list = ranking.items
       .map((item) => {
         const medal = discoverMedal(item.rank);
-        return `<li class="discoverRankingItem${medal ? ` ${medal.className}` : ''}"><span class="discoverRankPosition"><b>${escapeHtml(item.rank)}<small>º</small></b>${medal ? `<em>${medal.label}</em>` : ''}</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
+        return `<li class="discoverRankingItem${medal ? ` ${medal.className}` : ''}"><span class="discoverRankPosition"><b>${escapeHtml(item.rank)}<small>º</small></b></span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
       })
       .join(''),
     sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
-    related = discoverRelated(ranking),
-    rankingNumber = String(DISCOVER_RANKINGS.indexOf(ranking) + 1).padStart(2, '0');
+    related = discoverRelated(ranking);
   return `<article class="discoverArticle">
     <a class="discoverBack" href="/rankings">← VOLTAR AOS RANKINGS</a>
     <header class="discoverArticleHero">
-      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span><small>RANKING ${rankingNumber}</small></div>
+      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span><small>RANKING INFORMATIVO · SEM VOTAÇÃO</small></div>
       <h1>${escapeHtml(ranking.title)}</h1>
       <div class="discoverArticleSummary"><p><span>CRITÉRIO</span>${escapeHtml(ranking.metric)}</p><p><span>RECORTE</span>${escapeHtml(ranking.period)}</p></div>
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
-      <h2 class="srOnly" id="discover-ranking-title">Top 10 completo</h2>
+      <header class="discoverRankingResultHead"><h2 id="discover-ranking-title">Resultado</h2><span>TOP 10 · VALOR</span></header>
       <ol>${list}</ol>
     </section>
     <aside class="discoverSourceBox">

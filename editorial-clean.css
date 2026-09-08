@@ -12189,3 +12189,378 @@ body.popElectric .discoverRelated {
     margin-top: 34px;
   }
 }
+
+/* Rankings informativos — mesma linguagem das páginas do TOPO. */
+body.popElectric.discoverDetailPage .feed {
+  width: min(860px, calc(100% - 48px));
+  padding: 24px 0 88px;
+}
+
+body.popElectric.discoverDetailPage .discoverArticle {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+body.popElectric.discoverDetailPage .discoverBack {
+  min-height: 0;
+  margin: 0 0 14px;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 0 0 10px;
+  color: var(--clean-ink);
+  font:
+    700 11px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.03em;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleHero {
+  min-height: 0;
+  margin: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: var(--clean-ink);
+  padding: 0;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 13px;
+  color: var(--clean-muted);
+}
+
+body.popElectric.discoverDetailPage .discoverArticleMeta span {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--clean-ink);
+  font:
+    800 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleMeta span:first-child {
+  border: 0;
+  background: transparent;
+  color: var(--clean-coral);
+}
+
+body.popElectric.discoverDetailPage .discoverArticleMeta small {
+  margin-left: auto;
+  color: var(--clean-muted);
+  font:
+    500 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.04em;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleHero h1 {
+  max-width: 790px;
+  margin: 0 0 30px;
+  color: var(--clean-ink);
+  font:
+    800 clamp(48px, 7vw, 78px) / 0.92 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleSummary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  max-width: none;
+  margin: 0 0 32px;
+  border-top: 1px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-ink);
+}
+
+body.popElectric.discoverDetailPage .discoverArticleSummary p {
+  min-height: 88px;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  margin: 0;
+  padding: 15px 0;
+  color: var(--clean-ink);
+  font:
+    800 18px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleSummary p + p {
+  border-left: 1px solid var(--clean-line);
+  padding-left: 24px;
+}
+
+body.popElectric.discoverDetailPage .discoverArticleSummary span {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    800 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.1em;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingSheet {
+  margin: 0;
+  border: 0;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingResultHead {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 0;
+  border-bottom: 1px solid var(--clean-ink);
+  padding: 0 0 12px;
+  color: var(--clean-muted);
+}
+
+body.popElectric.discoverDetailPage .discoverRankingResultHead h2,
+body.popElectric.discoverDetailPage .discoverRankingResultHead span {
+  margin: 0;
+  color: var(--clean-muted);
+  font:
+    800 10px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingResultHead h2 {
+  color: var(--clean-ink);
+  font-size: 11px;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingSheet ol {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingSheet li,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-silver,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-bronze {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  border-bottom: 1px solid var(--clean-line);
+  background: transparent;
+  padding: 14px 0;
+}
+
+body.popElectric.discoverDetailPage .discoverRankPosition,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold .discoverRankPosition,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-silver .discoverRankPosition,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-bronze .discoverRankPosition {
+  align-self: center;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+  background: transparent;
+  color: var(--clean-ink);
+}
+
+body.popElectric.discoverDetailPage .discoverRankPosition b {
+  display: flex;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--clean-coral);
+  padding-bottom: 4px;
+  color: inherit;
+  font:
+    800 20px/1 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+
+body.popElectric.discoverDetailPage .discoverRankPosition small {
+  margin: 1px 0 0 1px;
+  font-size: 8px;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold .discoverRankPosition {
+  color: #9a7410;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-silver .discoverRankPosition {
+  color: #737981;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-bronze .discoverRankPosition {
+  color: #9a5831;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingSheet li > strong,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold > strong {
+  min-width: 0;
+  align-self: center;
+  padding: 0;
+  color: var(--clean-ink);
+  font:
+    800 16px/1.15 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+body.popElectric.discoverDetailPage .discoverRankingSheet li > b,
+body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold > b {
+  align-self: center;
+  padding: 0;
+  color: var(--clean-muted);
+  font:
+    700 13px/1.25 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+body.popElectric.discoverDetailPage .discoverSourceBox {
+  grid-template-columns: minmax(180px, 0.65fr) minmax(0, 1.35fr);
+  gap: clamp(24px, 5vw, 56px);
+  margin-top: 38px;
+  border-top: 1px solid var(--clean-ink);
+  border-bottom: 1px solid var(--clean-line);
+  background: transparent;
+  padding: 24px 0;
+}
+
+body.popElectric.discoverDetailPage .discoverSourceBox h2 {
+  margin: 8px 0 0;
+  font:
+    800 clamp(25px, 3.5vw, 34px) / 0.96 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric.discoverDetailPage .discoverSourceBox p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+body.popElectric.discoverDetailPage .discoverSourceBox small {
+  margin-bottom: 12px;
+}
+
+body.popElectric.discoverDetailPage .discoverSourceBox a {
+  border-bottom-width: 1px;
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+body.popElectric.discoverDetailPage .discoverRelated {
+  margin-top: 48px;
+}
+
+@media (max-width: 700px) {
+  body.popElectric.discoverDetailPage .feed {
+    width: calc(100% - 32px);
+    padding: 16px 0 64px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverBack {
+    margin-bottom: 12px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleMeta {
+    flex-wrap: wrap;
+    gap: 7px 10px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleMeta small {
+    width: 100%;
+    margin: 2px 0 0;
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleHero h1 {
+    margin-bottom: 24px;
+    font-size: clamp(38px, 11vw, 54px);
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleSummary {
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 26px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleSummary p {
+    min-height: 72px;
+    padding: 13px 0;
+    font-size: 16px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverArticleSummary p + p {
+    border-top: 1px solid var(--clean-line);
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRankingSheet li,
+  body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold,
+  body.popElectric.discoverDetailPage .discoverRankingItem.medal-silver,
+  body.popElectric.discoverDetailPage .discoverRankingItem.medal-bronze {
+    min-height: 70px;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 11px;
+    padding: 12px 0;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRankingSheet li > strong,
+  body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold > strong {
+    align-self: end;
+    padding: 0;
+    font-size: 16px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRankingSheet li > b,
+  body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold > b {
+    grid-column: 2;
+    align-self: start;
+    padding: 4px 0 0;
+    font-size: 12px;
+    text-align: left;
+    white-space: normal;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRankPosition {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRankPosition b {
+    font-size: 18px;
+  }
+
+  body.popElectric.discoverDetailPage .discoverSourceBox {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 30px;
+    padding: 22px 0;
+  }
+
+  body.popElectric.discoverDetailPage .discoverRelated {
+    margin-top: 38px;
+  }
+}
