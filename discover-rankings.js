@@ -1264,6 +1264,27 @@ export const DISCOVER_RANKINGS = Object.freeze([
 1|Matsukawa — Tóquio|99,5
 1|Lung King Heen — Hong Kong|99,5`),
   },
+  {
+    slug: 'maiores-colecoes-estranhas-guinness',
+    title: 'Coleções estranhas gigantescas registradas pelo Guinness',
+    category: 'Mundo',
+    metric: 'Quantidade de itens distintos oficialmente verificados',
+    period: 'Registros verificados entre 2004 e 2025',
+    source: 'Guinness World Records',
+    sourceUrl: 'https://www.guinnessworldrecords.com/news/collections',
+    note: 'Seleção editorial de dez coleções inusitadas, ordenadas pela última quantidade publicada pelo Guinness em cada categoria. As coleções podem ter crescido depois da verificação.',
+    items: rankingItems(`
+1|Guardanapos|125.866 itens
+2|Marcadores de livro|103.009 itens
+3|Objetos relacionados a gatos|21.321 itens
+4|Porta-ovos|15.485 itens
+5|Placas de “Não Perturbe”|11.570 itens
+6|Dados de jogo|11.097 itens
+7|Copos de dose|9.670 itens
+8|Tijolos|8.882 itens
+9|Sacos para enjoo de avião|6.290 itens
+10|Patos de borracha|5.631 itens`),
+  },
   ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 
