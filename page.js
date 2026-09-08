@@ -398,6 +398,7 @@ const DISCOVER_COVER_MARKS = {
   Brasil: 'BR',
   Cinema: '▶',
   Dinheiro: 'R$',
+  Celebridades: '★',
   Economia: '↑',
   Educação: 'A+',
   Esporte: '01',

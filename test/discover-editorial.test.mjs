@@ -33,18 +33,18 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /36 PUBLICADOS/);
+  assert.match(appSource, /46 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 36 rankings without voting controls', () => {
+test('the editorial collection publishes all 46 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 36);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 46);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -88,6 +88,25 @@ test('Dinheiro gathers the 10 wealth rankings without duplicates', () => {
   assert.match(moneyHtml, /<h2 id="discover-list-title">10 rankings de Dinheiro<\/h2>/);
 });
 
+test('Celebridades gathers 10 current and sourced rankings without duplicates', () => {
+  const celebrityRankings = discoverRankingsForCategory('celebridades');
+  const celebrityHtml = renderDiscoverPage(template, '', 'celebridades');
+  assert.equal(celebrityRankings.length, 10);
+  assert.equal(new Set(celebrityRankings.map(({ slug }) => slug)).size, 10);
+  assert.equal((celebrityHtml.match(/class="discoverCard/g) || []).length, 10);
+  assert.match(celebrityHtml, /Celebridades mais seguidas no Instagram/);
+  assert.match(celebrityHtml, /Brasileiros mais seguidos no Instagram/);
+  assert.match(celebrityHtml, /Celebridades mais seguidas no TikTok/);
+  assert.match(celebrityHtml, /Streamers mais seguidos na Twitch/);
+  assert.match(celebrityHtml, /Criadores de conteúdo mais poderosos do mundo/);
+  assert.match(celebrityHtml, /Atores mais bem pagos de Hollywood/);
+  assert.match(celebrityHtml, /Músicos mais bem pagos do mundo/);
+  assert.match(celebrityHtml, /Atores de maior bilheteria da história/);
+  assert.match(celebrityHtml, /Rappers com mais Grammys/);
+  assert.match(celebrityHtml, /Artistas com mais ouvintes mensais no Spotify/);
+  assert.match(celebrityHtml, /<h2 id="discover-list-title">10 rankings de Celebridades<\/h2>/);
+});
+
 test('every published ranking belongs to exactly one visible editorial category', () => {
   assert.deepEqual(
     DISCOVER_CATEGORIES.map((category) => category.label),
@@ -96,6 +115,7 @@ test('every published ranking belongs to exactly one visible editorial category'
       'Brasil',
       'Mundo',
       'Dinheiro',
+      'Celebridades',
       'Esportes',
       'Cinema e TV',
       'Música',
@@ -168,8 +188,9 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.doesNotMatch(html, /class="react|data-duel/);
 });
 
-test('the editorial catalog keeps 36 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 36);
+test('the editorial catalog keeps 46 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 46);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 46);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);

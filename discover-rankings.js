@@ -19,6 +19,11 @@ export const DISCOVER_CATEGORIES = Object.freeze([
     label: 'Dinheiro',
     sourceCategories: ['Dinheiro', 'Economia'],
   },
+  {
+    slug: 'celebridades',
+    label: 'Celebridades',
+    sourceCategories: ['Celebridades'],
+  },
   { slug: 'esportes', label: 'Esportes', sourceCategories: ['Futebol', 'Esporte'] },
   {
     slug: 'cinema-tv',
@@ -441,6 +446,219 @@ export const DISCOVER_RANKINGS = Object.freeze([
 8|São Francisco|86 bilionários
 9|Moscou|82 bilionários
 10|Hangzhou|65 bilionários`),
+  },
+  {
+    slug: 'celebridades-mais-seguidas-instagram',
+    title: 'Celebridades mais seguidas no Instagram',
+    category: 'Celebridades',
+    metric: 'Número de seguidores',
+    period: '4 e 5 de setembro de 2026',
+    source: 'Epidemic Sound / HypeAuditor',
+    sourceUrl: 'https://www.epidemicsound.com/blog/most-followed-on-instagram/',
+    note: 'Retrato das contas pessoais, com marcas e plataformas excluídas. Os números são arredondados e mudam diariamente; a contagem de Justin Bieber foi conferida no HypeAuditor.',
+    items: rankingItems(`
+1|Cristiano Ronaldo|679 mi
+2|Lionel Messi|517 mi
+3|Selena Gomez|403 mi
+4|Dwayne Johnson|381 mi
+5|Kylie Jenner|381 mi
+6|Ariana Grande|362 mi
+7|Kim Kardashian|344 mi
+8|Beyoncé|299 mi
+9|Khloé Kardashian|291 mi
+10|Justin Bieber|286,5 mi`),
+  },
+  {
+    slug: 'brasileiros-mais-seguidos-instagram',
+    title: 'Brasileiros mais seguidos no Instagram',
+    category: 'Celebridades',
+    metric: 'Número de seguidores',
+    period: '10 de agosto de 2026',
+    source: 'Oficina da Net',
+    sourceUrl:
+      'https://www.oficinadanet.com.br/post/19181-10-perfis-mais-seguidos-no-instagram-no-brasil',
+    note: 'Retrato dos perfis pessoais brasileiros com maior número de seguidores. As contagens são arredondadas e podem mudar diariamente.',
+    items: rankingItems(`
+1|Neymar|242 mi
+2|Ronaldinho Gaúcho|80,9 mi
+3|Marcelo|67,2 mi
+4|Vinícius Júnior|64,2 mi
+5|Anitta|61,1 mi
+6|Virginia Fonseca|56,4 mi
+7|Tatá Werneck|54,6 mi
+8|Whindersson Nunes|54,5 mi
+9|Larissa Manoela|51,9 mi
+10|Maisa|46,7 mi`),
+  },
+  {
+    slug: 'celebridades-mais-seguidas-tiktok',
+    title: 'Celebridades mais seguidas no TikTok',
+    category: 'Celebridades',
+    metric: 'Número de seguidores',
+    period: '4 de setembro de 2026',
+    source: 'Epidemic Sound / CreatorsJet',
+    sourceUrl: 'https://www.epidemicsound.com/blog/who-has-the-most-followers-on-tiktok/',
+    note: 'Contas oficiais de plataformas, marcas e eventos foram excluídas. O retrato combina a atualização dos líderes da Epidemic Sound com o catálogo ampliado do CreatorsJet.',
+    items: rankingItems(`
+1|Khaby Lame|162,8 mi
+2|Charli D’Amelio|159,3 mi
+3|MrBeast|139,8 mi
+4|Bella Poarch|91,7 mi
+5|Addison Rae|87,8 mi
+6|Willie Salim|87,0 mi
+7|Zach King|86,9 mi
+8|Kimberly Loaiza|83,3 mi
+9|BTS|79,2 mi
+10|Will Smith|78,8 mi`),
+  },
+  {
+    slug: 'streamers-mais-seguidos-twitch',
+    title: 'Streamers mais seguidos na Twitch',
+    category: 'Celebridades',
+    metric: 'Número de seguidores',
+    period: '4 de setembro de 2026',
+    source: 'Epidemic Sound',
+    sourceUrl: 'https://www.epidemicsound.com/blog/most-followed-on-twitch/',
+    note: 'Ranking de canais pessoais pelo total público de seguidores. Seguidores não são o mesmo que assinantes pagos.',
+    items: rankingItems(`
+1|Kai Cenat|21,7 mi
+2|Ibai|20,3 mi
+3|Ninja|19,2 mi
+4|Auronplay|17,0 mi
+5|Rubius|16,5 mi
+6|xQc|12,5 mi
+7|EasyLiker|12,3 mi
+8|TheGrefg|12,3 mi
+9|Juansguarnizo|11,7 mi
+10|Tfue|11,5 mi`),
+  },
+  {
+    slug: 'criadores-conteudo-mais-poderosos',
+    title: 'Criadores de conteúdo mais poderosos do mundo',
+    category: 'Celebridades',
+    metric: 'Posição composta e ganhos anuais estimados',
+    period: 'Forbes Top Creators 2026',
+    source: 'Forbes',
+    sourceUrl: 'https://www.forbes.com/sites/stevenbertoni/2026/06/23/forbes-top-creators-2026/',
+    note: 'A ordem combina ganhos, alcance, engajamento e empreendedorismo. O valor exibido é a estimativa de ganhos brutos entre março de 2025 e março de 2026.',
+    items: rankingItems(`
+1|MrBeast|US$ 300 mi
+2|Dhar Mann|US$ 65 mi
+3|Steven Bartlett|US$ 52 mi
+4|Markiplier|US$ 38 mi
+5|Rhett & Link|US$ 37 mi
+6|Charli D’Amelio|US$ 18 mi
+7|Druski|US$ 20 mi
+8|IShowSpeed|US$ 30 mi
+9|Mark Rober|US$ 30 mi
+10|Codie Sanchez|US$ 31 mi`),
+  },
+  {
+    slug: 'atores-mais-bem-pagos',
+    title: 'Atores mais bem pagos de Hollywood',
+    category: 'Celebridades',
+    metric: 'Ganhos estimados após taxas de representantes',
+    period: 'Ano de 2025',
+    source: 'Forbes',
+    sourceUrl: 'https://www.forbes.com/sites/mattcraig/2026/03/13/the-highest-paid-actors-of-2025/',
+    note: 'Estimativas da Forbes depois das taxas de agentes e empresários. Millie Bobby Brown, John Cena e Reese Witherspoon empataram no corte com US$ 26 milhões; a lista preserva a ordem editorial da fonte.',
+    items: rankingItems(`
+1|Adam Sandler|US$ 48 mi
+2|Tom Cruise|US$ 46 mi
+3|Mark Wahlberg|US$ 44 mi
+4|Scarlett Johansson|US$ 43 mi
+5|Brad Pitt|US$ 41 mi
+6|Denzel Washington|US$ 38 mi
+7|Jack Black|US$ 28 mi
+7|Jason Momoa|US$ 28 mi
+9|Daniel Craig|US$ 27 mi
+10|Millie Bobby Brown|US$ 26 mi`),
+  },
+  {
+    slug: 'musicos-mais-bem-pagos',
+    title: 'Músicos mais bem pagos do mundo',
+    category: 'Celebridades',
+    metric: 'Ganhos estimados no ano',
+    period: 'Ano de 2025',
+    source: 'Forbes',
+    sourceUrl:
+      'https://www.forbes.com/sites/martinadilicosa/2025/12/30/the-highest-paid-musicians-of-2025/',
+    note: 'Estimativas da Forbes somando turnês, vendas, streaming e outros negócios musicais. Coldplay e Shakira dividem a quinta posição.',
+    items: rankingItems(`
+1|The Weeknd|US$ 298 mi
+2|Taylor Swift|US$ 202 mi
+3|Beyoncé|US$ 148 mi
+4|Kendrick Lamar|US$ 109 mi
+5|Coldplay|US$ 105 mi
+5|Shakira|US$ 105 mi
+7|Drake|US$ 78 mi
+8|Chris Brown|US$ 74 mi
+9|Zach Bryan|US$ 70 mi
+10|Bad Bunny|US$ 66 mi`),
+  },
+  {
+    slug: 'atores-maior-bilheteria-historia',
+    title: 'Atores de maior bilheteria da história',
+    category: 'Celebridades',
+    metric: 'Bilheteria mundial em papéis principais',
+    period: 'Dados atualizados em 23 de agosto de 2026',
+    source: 'The Numbers',
+    sourceUrl:
+      'https://www.the-numbers.com/box-office-star-records/worldwide/lifetime-acting/top-grossing-leading-stars',
+    note: 'Soma nominal da bilheteria mundial dos filmes em que cada ator teve papel principal ou integrou o elenco principal, sem ajuste pela inflação. Não representa ganhos pessoais.',
+    items: rankingItems(`
+1|Zoë Saldaña|US$ 15,47 bi
+2|Scarlett Johansson|US$ 15,40 bi
+3|Tom Holland|US$ 15,20 bi
+4|Chris Pratt|US$ 15,16 bi
+5|Samuel L. Jackson|US$ 14,61 bi
+6|Robert Downey Jr.|US$ 14,32 bi
+7|Tom Cruise|US$ 13,37 bi
+8|Chris Hemsworth|US$ 12,19 bi
+9|Vin Diesel|US$ 12,04 bi
+10|Chris Evans|US$ 11,49 bi`),
+  },
+  {
+    slug: 'rappers-com-mais-grammys',
+    title: 'Rappers com mais Grammys',
+    category: 'Celebridades',
+    metric: 'Número de prêmios Grammy conquistados',
+    period: 'Até 1º de fevereiro de 2026',
+    source: 'Recording Academy',
+    sourceUrl: 'https://www.grammy.com/news/rappers-who-have-the-most-grammy-wins/',
+    note: 'Contagem oficial atualizada após o Grammy de 2026. Os totais podem incluir trabalhos em grupos, participações e créditos de produção reconhecidos pela premiação.',
+    items: rankingItems(`
+1|Kendrick Lamar|27 Grammys
+2|Jay-Z|25 Grammys
+3|Kanye West|24 Grammys
+4|Eminem|15 Grammys
+5|Pharrell Williams|13 Grammys
+6|André 3000|9 Grammys
+6|Anderson .Paak|9 Grammys
+8|Lauryn Hill|8 Grammys
+9|Dr. Dre|7 Grammys
+10|OutKast|6 Grammys`),
+  },
+  {
+    slug: 'artistas-mais-ouvintes-spotify',
+    title: 'Artistas com mais ouvintes mensais no Spotify',
+    category: 'Celebridades',
+    metric: 'Ouvintes mensais',
+    period: '7 de setembro de 2026',
+    source: 'Spotify via Kworb',
+    sourceUrl: 'https://kworb.net/spotify/listeners.html',
+    note: 'Retrato da audiência mensal exibida pelo Spotify e consolidada pelo Kworb. O indicador é móvel e muda todos os dias.',
+    items: rankingItems(`
+1|Bruno Mars|132.890.504
+2|Justin Bieber|118.820.312
+3|Rihanna|116.202.772
+4|The Weeknd|115.105.571
+5|Taylor Swift|100.988.201
+6|Lady Gaga|99.327.864
+7|Shakira|99.092.619
+8|Ariana Grande|97.833.083
+9|Bad Bunny|97.761.530
+10|Drake|96.004.692`),
   },
   {
     slug: 'melhores-clubes-futebol-mundo',
