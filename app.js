@@ -2424,6 +2424,8 @@ function bindDiscoverPagination() {
 function renderDiscoverPage() {
   if (feed.dataset.serverRendered === 'true') {
     bindDiscoverPagination();
+    if (feed.querySelector('.discoverArticle'))
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const activeCategory = feed.querySelector('.discoverCategoryButton.active');
     if (activeCategory)
       requestAnimationFrame(() => {

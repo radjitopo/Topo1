@@ -522,15 +522,14 @@ function discoverDetailHTML(ranking) {
     related = discoverRelated(ranking),
     rankingNumber = String(DISCOVER_RANKINGS.indexOf(ranking) + 1).padStart(2, '0');
   return `<article class="discoverArticle">
-    <a class="discoverBack" href="/rankings">← TODOS OS RANKINGS</a>
+    <a class="discoverBack" href="/rankings">← VOLTAR AOS RANKINGS</a>
     <header class="discoverArticleHero">
-      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span></div>
+      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span><small>RANKING ${rankingNumber}</small></div>
       <h1>${escapeHtml(ranking.title)}</h1>
-      <p>${escapeHtml(ranking.metric)} · ${escapeHtml(ranking.period)}</p>
-      <div class="discoverArticleVisual" aria-hidden="true"><span>${escapeHtml(discoverCoverMark(ranking))}</span><small>RANKING ${rankingNumber}</small></div>
+      <div class="discoverArticleSummary"><p><span>CRITÉRIO</span>${escapeHtml(ranking.metric)}</p><p><span>RECORTE</span>${escapeHtml(ranking.period)}</p></div>
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
-      <header><div><span class="discoverEyebrow">RANKING COMPLETO</span><h2 id="discover-ranking-title">Top 10</h2></div><p>${escapeHtml(ranking.metric)}</p></header>
+      <h2 class="srOnly" id="discover-ranking-title">Top 10 completo</h2>
       <ol>${list}</ol>
     </section>
     <aside class="discoverSourceBox">

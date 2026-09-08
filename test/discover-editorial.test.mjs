@@ -232,7 +232,7 @@ test('every published ranking belongs to exactly one visible editorial category'
 
 test('editorial URLs use Rankings and keep Descobrir only as a legacy redirect', () => {
   const detail = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
-  assert.match(detail, /href="\/rankings">← TODOS OS RANKINGS<\/a>/);
+  assert.match(detail, /href="\/rankings">← VOLTAR AOS RANKINGS<\/a>/);
   assert.match(
     detail,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\/pessoas-mais-ricas-do-mundo"/,
@@ -268,10 +268,13 @@ test('each editorial detail has a top 10, values, period and source', () => {
   const html = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
   assert.match(html, /<body class="popElectric homePage discoverPage discoverDetailPage">/);
   assert.match(html, /<h1>Pessoas mais ricas do mundo<\/h1>/);
+  assert.match(html, /class="discoverArticleMeta"[\s\S]*TOP 10[\s\S]*RANKING 01/);
+  assert.match(html, /class="discoverArticleSummary"[\s\S]*CRITÉRIO[\s\S]*RECORTE/);
   assert.match(
     html,
-    /class="discoverArticleVisual" aria-hidden="true"><span>R\$<\/span><small>RANKING 01<\/small>/,
+    /class="discoverRankingSheet"[^>]*>\s*<h2 class="srOnly"[^>]*>Top 10 completo<\/h2>\s*<ol>/,
   );
+  assert.doesNotMatch(html, /class="discoverArticleVisual"/);
   assert.equal((html.match(/class="discoverRankPosition"/g) || []).length, 10);
   assert.match(html, /Elon Musk/);
   assert.match(html, /US\$ 892 bi/);
@@ -283,6 +286,10 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(html, /medal-bronze[\s\S]*BRONZE/);
   assert.equal((html.match(/class="discoverMedalRank"/g) || []).length, 9);
   assert.doesNotMatch(html, /class="react|data-duel/);
+  assert.match(
+    appSource,
+    /feed\.querySelector\('\.discoverArticle'\)[\s\S]*window\.scrollTo\(\{ top: 0, left: 0, behavior: 'auto' \}\)/,
+  );
 });
 
 test('the editorial catalog keeps 100 complete and sourced rankings', () => {
@@ -306,7 +313,7 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverCategoryRail/);
   assert.match(cssSource, /\.discoverCategoryButton\.active/);
   assert.match(cssSource, /\.discoverRankingSheet/);
-  assert.match(cssSource, /\.discoverArticleVisual/);
+  assert.match(cssSource, /\.discoverArticleSummary/);
   assert.match(cssSource, /\.discoverCard\.featured \{[\s\S]*?background: var\(--clean-paper\);/);
   assert.match(cssSource, /\.discoverCard\.featured > a \{[\s\S]*?color: var\(--clean-ink\);/);
   assert.match(
