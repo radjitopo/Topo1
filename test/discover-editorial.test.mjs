@@ -65,6 +65,17 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   assert.match(cssSource, /\.discoverLoadMore button:focus-visible/);
 });
 
+test('Todos shuffles the rankings on each visit before revealing the first 20', () => {
+  assert.match(appSource, /Math\.floor\(Math\.random\(\) \* \(current \+ 1\)\)/);
+  assert.match(
+    appSource,
+    /\[cards\[current\], cards\[target\]\] = \[cards\[target\], cards\[current\]\]/,
+  );
+  assert.match(appSource, /card\.classList\.toggle\('featured', index === 0\)/);
+  assert.match(appSource, /number\.textContent = String\(index \+ 1\)\.padStart\(2, '0'\)/);
+  assert.match(appSource, /grid\.append\(card\)/);
+});
+
 test('Rankings offers useful categories and filters the collection on the server', () => {
   const allHtml = renderDiscoverPage(template);
   assert.match(allHtml, /aria-label="Categorias dos rankings"/);

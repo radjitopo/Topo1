@@ -2394,6 +2394,16 @@ function bindDiscoverPagination() {
     progress = pagination.querySelector('[data-discover-progress]'),
     pageSize = Math.max(1, Number(pagination.dataset.pageSize) || DISCOVER_PAGE_SIZE);
   if (!button || cards.length <= pageSize) return;
+  for (let current = cards.length - 1; current > 0; current -= 1) {
+    const target = Math.floor(Math.random() * (current + 1));
+    [cards[current], cards[target]] = [cards[target], cards[current]];
+  }
+  cards.forEach((card, index) => {
+    card.classList.toggle('featured', index === 0);
+    const number = card.querySelector('header > span');
+    if (number) number.textContent = String(index + 1).padStart(2, '0');
+    grid.append(card);
+  });
   let visibleCount = Math.min(pageSize, cards.length);
   const sync = () => {
     cards.forEach((card, index) => {
