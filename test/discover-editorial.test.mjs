@@ -33,18 +33,18 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /46 PUBLICADOS/);
+  assert.match(appSource, /52 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 46 rankings without voting controls', () => {
+test('the editorial collection publishes all 52 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 46);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 52);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -57,12 +57,18 @@ test('Rankings offers useful categories and filters the collection on the server
   assert.match(allHtml, /href="\/rankings\?categoria=cinema-tv#categorias">Cinema e TV<\/a>/);
 
   const sportsHtml = renderDiscoverPage(template, '', 'esportes');
-  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 4);
+  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 10);
   assert.match(sportsHtml, /Maiores torcidas de futebol do Brasil/);
+  assert.match(sportsHtml, /Maiores artilheiros da história da Copa do Mundo/);
+  assert.match(sportsHtml, /Classificação da Fórmula 1 2026/);
+  assert.match(sportsHtml, /Tenistas com mais semanas como número 1 da ATP/);
+  assert.match(sportsHtml, /Franquias com mais títulos da NBA/);
+  assert.match(sportsHtml, /Países com mais medalhas em Paris 2024/);
+  assert.match(sportsHtml, /Lutadores ativos com mais vitórias no UFC/);
   assert.doesNotMatch(sportsHtml, /Atletas mais bem pagos do mundo/);
   assert.doesNotMatch(sportsHtml, /Pessoas mais ricas do mundo/);
   assert.match(sportsHtml, /class="discoverCategoryButton active"[^>]*>Esportes<\/a>/);
-  assert.match(sportsHtml, /<h2 id="discover-list-title">4 rankings de Esportes<\/h2>/);
+  assert.match(sportsHtml, /<h2 id="discover-list-title">10 rankings de Esportes<\/h2>/);
   assert.match(
     sportsHtml,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\?categoria=esportes"/,
@@ -105,6 +111,22 @@ test('Celebridades gathers 10 current and sourced rankings without duplicates', 
   assert.match(celebrityHtml, /Rappers com mais Grammys/);
   assert.match(celebrityHtml, /Artistas com mais ouvintes mensais no Spotify/);
   assert.match(celebrityHtml, /<h2 id="discover-list-title">10 rankings de Celebridades<\/h2>/);
+});
+
+test('Esportes gathers 10 varied and sourced rankings without duplicates', () => {
+  const sportsRankings = discoverRankingsForCategory('esportes');
+  const sportsHtml = renderDiscoverPage(template, '', 'esportes');
+  assert.equal(sportsRankings.length, 10);
+  assert.equal(new Set(sportsRankings.map(({ slug }) => slug)).size, 10);
+  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 10);
+  assert.ok(sportsRankings.some(({ category }) => category === 'Futebol'));
+  assert.ok(sportsRankings.some(({ category }) => category === 'Esporte'));
+  assert.match(sportsHtml, /Kylian Mbappé/);
+  assert.match(sportsHtml, /Kimi Antonelli/);
+  assert.match(sportsHtml, /Novak Djokovic/);
+  assert.match(sportsHtml, /Boston Celtics/);
+  assert.match(sportsHtml, /Estados Unidos/);
+  assert.match(sportsHtml, /Jim Miller/);
 });
 
 test('every published ranking belongs to exactly one visible editorial category', () => {
@@ -188,9 +210,9 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.doesNotMatch(html, /class="react|data-duel/);
 });
 
-test('the editorial catalog keeps 46 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 46);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 46);
+test('the editorial catalog keeps 52 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 52);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 52);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);

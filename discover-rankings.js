@@ -8,7 +8,7 @@ function rankingItems(block) {
     });
 }
 
-export const DISCOVER_UPDATED_AT = '2026-09-07';
+export const DISCOVER_UPDATED_AT = '2026-09-08';
 
 export const DISCOVER_CATEGORIES = Object.freeze([
   { slug: 'todos', label: 'Todos', sourceCategories: [] },
@@ -702,6 +702,133 @@ export const DISCOVER_RANKINGS = Object.freeze([
 8|Vitinha|€ 140 mi
 9|Khvicha Kvaratskhelia|€ 140 mi
 10|João Neves|€ 140 mi`),
+  },
+  {
+    slug: 'maiores-artilheiros-copa-do-mundo',
+    title: 'Maiores artilheiros da história da Copa do Mundo',
+    category: 'Futebol',
+    metric: 'Gols marcados em Copas do Mundo masculinas',
+    period: 'Após a Copa do Mundo de 2026',
+    source: 'FIFA',
+    sourceUrl:
+      'https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/fifa-world-cup-all-time-leading-scorers',
+    note: 'Contagem oficial da FIFA após a edição de 2026. Gols em disputas por pênaltis não entram no total individual.',
+    items: rankingItems(`
+1|Kylian Mbappé|22 gols
+2|Lionel Messi|21 gols
+3|Miroslav Klose|16 gols
+4|Ronaldo|15 gols
+5|Gerd Müller|14 gols
+5|Harry Kane|14 gols
+7|Just Fontaine|13 gols
+8|Pelé|12 gols
+9|Sándor Kocsis|11 gols
+9|Jürgen Klinsmann|11 gols`),
+  },
+  {
+    slug: 'classificacao-formula-1-2026',
+    title: 'Classificação da Fórmula 1 2026',
+    category: 'Esporte',
+    metric: 'Pontos no Mundial de Pilotos',
+    period: 'Após o GP da Itália, 6 de setembro de 2026',
+    source: 'Formula 1',
+    sourceUrl: 'https://www.formula1.com/en/results/2026/drivers',
+    note: 'Classificação oficial após a 13ª etapa. A temporada de 2026 ainda está em andamento e os pontos mudarão a cada Grande Prêmio.',
+    items: rankingItems(`
+1|Kimi Antonelli|267 pontos
+2|George Russell|201 pontos
+3|Lewis Hamilton|191 pontos
+4|Lando Norris|171 pontos
+5|Charles Leclerc|155 pontos
+6|Max Verstappen|127 pontos
+7|Oscar Piastri|116 pontos
+8|Isack Hadjar|71 pontos
+9|Liam Lawson|51 pontos
+10|Pierre Gasly|41 pontos`),
+  },
+  {
+    slug: 'tenistas-mais-semanas-numero-1-atp',
+    title: 'Tenistas com mais semanas como número 1 da ATP',
+    category: 'Esporte',
+    metric: 'Semanas acumuladas no topo do ranking masculino',
+    period: '21 de julho de 2026',
+    source: 'ATP Tour',
+    sourceUrl: 'https://www.atptour.com/en/news/sinner-top-10-weeks-at-no-1-july-2026',
+    note: 'A ATP contabiliza o ranking oficial masculino desde 1973. Jannik Sinner estava em atividade e seu total poderia crescer após este recorte.',
+    items: rankingItems(`
+1|Novak Djokovic|428 semanas
+2|Roger Federer|310 semanas
+3|Pete Sampras|286 semanas
+4|Ivan Lendl|270 semanas
+5|Jimmy Connors|268 semanas
+6|Rafael Nadal|209 semanas
+7|John McEnroe|170 semanas
+8|Björn Borg|109 semanas
+9|Andre Agassi|101 semanas
+10|Jannik Sinner|81 semanas`),
+  },
+  {
+    slug: 'franquias-mais-titulos-nba',
+    title: 'Franquias com mais títulos da NBA',
+    category: 'Esporte',
+    metric: 'Campeonatos conquistados pela franquia',
+    period: 'Após as finais de 2026',
+    source: 'NBA',
+    sourceUrl: 'https://www.nba.com/news/most-championships-nba-history',
+    note: 'A contagem acompanha a história de cada franquia, incluindo títulos obtidos antes de mudanças de cidade. Oklahoma City aparece no limite do Top 10 por ter o título mais recente entre as franquias empatadas com duas conquistas.',
+    items: rankingItems(`
+1|Boston Celtics|18 títulos
+2|Los Angeles Lakers|17 títulos
+3|Golden State Warriors|7 títulos
+4|Chicago Bulls|6 títulos
+5|San Antonio Spurs|5 títulos
+6|Miami Heat|3 títulos
+6|Detroit Pistons|3 títulos
+6|Philadelphia 76ers|3 títulos
+6|New York Knicks|3 títulos
+10|Oklahoma City Thunder|2 títulos`),
+  },
+  {
+    slug: 'paises-mais-medalhas-paris-2024',
+    title: 'Países com mais medalhas em Paris 2024',
+    category: 'Esporte',
+    metric: 'Total de medalhas conquistadas',
+    period: 'Jogos Olímpicos de Paris 2024',
+    source: 'Comitê Olímpico Internacional',
+    sourceUrl: 'https://www.olympics.com/en/olympic-games/paris-2024/medals',
+    note: 'O TOPO reordena o quadro pelo total de medalhas. O quadro oficial olímpico usa primeiro o número de ouros, depois pratas e bronzes.',
+    items: rankingItems(`
+1|Estados Unidos|126 medalhas
+2|China|91 medalhas
+3|Grã-Bretanha|65 medalhas
+4|França|64 medalhas
+5|Austrália|53 medalhas
+6|Japão|45 medalhas
+7|Itália|40 medalhas
+8|Países Baixos|34 medalhas
+9|Alemanha|33 medalhas
+10|Coreia do Sul|32 medalhas`),
+  },
+  {
+    slug: 'lutadores-ativos-mais-vitorias-ufc',
+    title: 'Lutadores ativos com mais vitórias no UFC',
+    category: 'Esporte',
+    metric: 'Vitórias registradas no UFC',
+    period: '8 de setembro de 2026',
+    source: 'UFC Record Book',
+    sourceUrl: 'https://statleaders.ufc.com/?fighter_status=1',
+    note: 'Recorte dos atletas marcados como ativos no livro oficial de recordes do UFC. Empates recebem a mesma posição.',
+    items: rankingItems(`
+1|Jim Miller|28 vitórias
+2|Charles Oliveira|25 vitórias
+2|Neil Magny|25 vitórias
+4|Max Holloway|24 vitórias
+5|Jon Jones|22 vitórias
+5|Dustin Poirier|22 vitórias
+7|Rafael dos Anjos|21 vitórias
+8|Derrick Lewis|20 vitórias
+9|Robert Whittaker|18 vitórias
+9|Aljamain Sterling|18 vitórias`),
   },
   {
     slug: 'atletas-mais-bem-pagos',
