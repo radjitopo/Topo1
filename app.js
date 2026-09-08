@@ -2397,7 +2397,7 @@ function renderDiscoverPage() {
     return;
   }
   document.title = 'Rankings editoriais — TOPO';
-  feed.innerHTML = `<section class="portalEmpty"><h1>Rankings</h1><p>Abra novamente a seção para carregar os rankings editoriais.</p><a class="categoryVoteCta" href="/rankings">Ver os 30 rankings →</a></section>`;
+  feed.innerHTML = `<section class="portalEmpty"><h1>Rankings</h1><p>Abra novamente a seção para carregar os rankings editoriais.</p><a class="categoryVoteCta" href="/rankings">Ver os 100 rankings →</a></section>`;
 }
 function portalSideStoryHTML(r) {
   return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;

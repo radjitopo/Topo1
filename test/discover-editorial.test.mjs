@@ -43,6 +43,7 @@ test('the editorial collection publishes all 100 rankings without voting control
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
+  assert.match(html, /100 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
   assert.equal((html.match(/class="discoverCard/g) || []).length, 100);
   assert.match(html, /Pessoas mais ricas do mundo/);

@@ -600,7 +600,7 @@ export function renderDiscoverPage(template, slug = '', categorySlug = '') {
       description: ranking
         ? `${ranking.title}: Top 10 com ${ranking.metric.toLowerCase()}, data, critério e fonte.`
         : activeCategory.slug === 'todos'
-          ? '30 rankings editoriais com Top 10, números, datas, critérios e fontes.'
+          ? `${DISCOVER_RANKINGS.length} rankings editoriais com Top 10, números, datas, critérios e fontes.`
           : `${collectionRankings.length} rankings de ${activeCategory.label} com Top 10, números, datas, critérios e fontes.`,
       canonical,
       image: `${BASE_URL}/og-topo-v4.png`,
