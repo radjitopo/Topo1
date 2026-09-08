@@ -1478,6 +1478,217 @@ export const DISCOVER_RANKINGS = Object.freeze([
 9|Tony Iommi|12 pontos
 10|Robert Johnson|8 pontos`),
   },
+  {
+    slug: 'menores-paises-area-terrestre',
+    title: 'Menores países do mundo por área terrestre',
+    category: 'Mundo',
+    metric: 'Área terrestre, sem águas interiores',
+    period: 'Edição final publicada em janeiro de 2026',
+    source: 'CIA World Factbook — edição final arquivada',
+    sourceUrl: 'https://github.com/factbook/cache.factbook.json',
+    note: 'Foram considerados apenas Estados soberanos. A ordem usa a área terrestre informada pelo Factbook, sem incluir águas interiores.',
+    items: rankingItems(`
+1|Cidade do Vaticano|0,44 km²
+2|Mônaco|2 km²
+3|Nauru|21 km²
+4|Tuvalu|26 km²
+5|San Marino|61 km²
+6|Liechtenstein|160 km²
+7|Ilhas Marshall|181 km²
+8|São Cristóvão e Névis|261 km²
+9|Maldivas|298 km²
+10|Malta|316 km²`),
+  },
+  {
+    slug: 'paises-menos-populosos',
+    title: 'Países menos populosos do mundo',
+    category: 'Mundo',
+    metric: 'Estimativa de população total',
+    period: 'Estimativas de 2024 e 2025 da edição final',
+    source: 'CIA World Factbook — edição final arquivada',
+    sourceUrl: 'https://github.com/factbook/cache.factbook.json',
+    note: 'Foram considerados apenas Estados soberanos. Cada número preserva o ano da estimativa disponível na edição final do Factbook; por isso, o recorte combina valores de 2024 e 2025.',
+    items: rankingItems(`
+1|Cidade do Vaticano|1.000 habitantes (2024)
+2|Nauru|9.930 habitantes (2025)
+3|Tuvalu|11.824 habitantes (2025)
+4|Palau|21.947 habitantes (2025)
+5|Mônaco|32.047 habitantes (2025)
+6|San Marino|35.291 habitantes (2025)
+7|Liechtenstein|40.547 habitantes (2025)
+8|São Cristóvão e Névis|55.434 habitantes (2025)
+9|Dominica|74.661 habitantes (2024)
+10|Ilhas Marshall|82.011 habitantes (2024)`),
+  },
+  {
+    slug: 'paises-menor-densidade-populacional',
+    title: 'Países com menor densidade populacional',
+    category: 'Mundo',
+    metric: 'Habitantes por quilômetro quadrado de terra',
+    period: 'Populações de 2024–2025 e áreas da edição final',
+    source: 'CIA World Factbook — edição final arquivada',
+    sourceUrl: 'https://github.com/factbook/cache.factbook.json',
+    note: 'Cálculo editorial feito ao dividir a estimativa populacional pela área terrestre do mesmo Factbook. Só entram Estados soberanos; resultados arredondados para duas casas decimais.',
+    items: rankingItems(`
+1|Mongólia|2,11 hab./km²
+2|Namíbia|3,47 hab./km²
+3|Austrália|3,58 hab./km²
+4|Islândia|3,63 hab./km²
+5|Guiana|4,03 hab./km²
+6|Líbia|4,18 hab./km²
+7|Suriname|4,19 hab./km²
+8|Canadá|4,31 hab./km²
+9|Botsuana|4,45 hab./km²
+10|Mauritânia|5,05 hab./km²`),
+  },
+  {
+    slug: 'paises-menores-litorais',
+    title: 'Países com os menores litorais do mundo',
+    category: 'Mundo',
+    metric: 'Comprimento informado da linha de costa',
+    period: 'Edição final publicada em janeiro de 2026',
+    source: 'CIA World Factbook — edição final arquivada',
+    sourceUrl: 'https://github.com/factbook/cache.factbook.json',
+    note: 'Países sem litoral foram excluídos. Medições de costa variam conforme a escala e o método — o chamado paradoxo do litoral —, então a lista reproduz um único padrão de fonte.',
+    items: rankingItems(`
+1|Mônaco|4,1 km
+2|Bósnia e Herzegovina|20 km
+3|Tuvalu|24 km
+4|Jordânia|26 km
+5|Nauru|30 km
+6|República Democrática do Congo|37 km
+7|Eslovênia|46,6 km
+8|Togo|56 km
+9|Iraque|58 km
+10|Bélgica|66,5 km`),
+  },
+  {
+    slug: 'paises-pontos-mais-altos-menos-elevados',
+    title: 'Países com os pontos mais altos de menor altitude',
+    category: 'Mundo',
+    metric: 'Altitude do ponto mais elevado do território',
+    period: 'Edição final publicada em janeiro de 2026',
+    source: 'CIA World Factbook — edição final arquivada',
+    sourceUrl: 'https://github.com/factbook/cache.factbook.json',
+    note: 'Foram considerados apenas Estados soberanos e o ponto nacional mais alto registrado pelo Factbook. Maldivas e Tuvalu dividem a primeira posição.',
+    items: rankingItems(`
+1|Maldivas|5 m
+1|Tuvalu|5 m
+3|Ilhas Marshall|14 m
+4|Gâmbia|63 m
+5|Bahamas|64 m
+6|Nauru|70 m
+7|Cidade do Vaticano|78 m
+8|Kiribati|81 m
+9|Catar|103 m
+10|Bahrein|135 m`),
+  },
+  {
+    slug: 'pequenos-estados-insulares-mais-remotos-mercados',
+    title: 'Pequenos Estados insulares mais remotos dos mercados',
+    category: 'Mundo',
+    metric: 'Índice de afastamento dos mercados mundiais',
+    period: '2021',
+    source: 'UNDP SIDS Data Platform',
+    sourceUrl:
+      'https://sids.data.undp.org/development-indicators/key-mvi-ldc-REM-Index/recentValue/bars',
+    note: 'O índice calcula a distância média aos mercados mundiais ponderada pelo comércio: quanto maior o valor, maior o afastamento. Não é a distância em linha reta ao país mais próximo.',
+    items: rankingItems(`
+1|Tonga|93,15 pontos
+2|Fiji|91,28 pontos
+3|Vanuatu|89,71 pontos
+4|Samoa|88,74 pontos
+5|Tuvalu|87,84 pontos
+6|Ilhas Salomão|84,26 pontos
+7|Kiribati|82,84 pontos
+8|Nauru|82,33 pontos
+9|Ilhas Marshall|79,88 pontos
+10|Papua-Nova Guiné|78,92 pontos`),
+  },
+  {
+    slug: 'mamiferos-mais-leves-pantheria',
+    title: 'Mamíferos mais leves na base PanTHERIA',
+    category: 'Mundo',
+    metric: 'Massa corporal adulta média',
+    period: 'PanTHERIA 1.0, publicada em 2009',
+    source: 'PanTHERIA',
+    sourceUrl: 'https://esapubs.org/archive/ecol/E090/184/metadata.htm',
+    note: 'Ranking entre as espécies com massa adulta positiva registrada na PanTHERIA. Os nomes científicos, a taxonomia e as medidas refletem a versão histórica da base.',
+    items: rankingItems(`
+1|Craseonycteris thonglongyai|1,96 g
+2|Kerivoula minuta|2,03 g
+3|Suncus etruscus|2,26 g
+4|Sorex minutissimus|2,46 g
+5|Suncus madagascariensis|2,47 g
+6|Crocidura lusitania|2,48 g
+7|Crocidura planiceps|2,50 g
+8|Pipistrellus nanulus|2,51 g
+9|Sorex nanus|2,57 g
+10|Sorex arizonae|2,70 g`),
+  },
+  {
+    slug: 'aves-mais-leves-amniota',
+    title: 'Aves mais leves na base Amniota',
+    category: 'Mundo',
+    metric: 'Mediana da massa corporal adulta',
+    period: 'Base publicada em 2015',
+    source: 'Amniota life-history database',
+    sourceUrl: 'https://esapubs.org/archive/ecol/E096/269/',
+    note: 'A base consolida valores publicados e usa a mediana da massa adulta por espécie. O ranking considera as aves com medida disponível e preserva os nomes científicos e comuns da versão original.',
+    items: rankingItems(`
+1|Thaumastura cora — Peruvian Sheartail|1,900 g
+1|Mellisuga helenae — Bee Hummingbird|1,900 g
+3|Phaethornis ruber — Reddish Hermit|2,150 g
+4|Selasphorus scintilla — Scintillant Hummingbird|2,200 g
+4|Tilmatura dupontii — Sparkling-tailed Woodstar|2,200 g
+4|Phaethornis stuarti — White-browed Hermit|2,200 g
+4|Mellisuga minima — Vervain Hummingbird|2,200 g
+8|Atthis heloisa — Bumblebee Hummingbird|2,275 g
+9|Myrtis fanny — Purple-collared Woodstar|2,300 g
+9|Phaethornis griseogularis — Grey-chinned Hermit|2,300 g`),
+  },
+  {
+    slug: 'peixes-menor-comprimento-maximo-fishbase',
+    title: 'Peixes com menor comprimento máximo no FishBase',
+    category: 'Mundo',
+    metric: 'Maior comprimento-padrão registrado',
+    period: 'Snapshot FishBase de junho de 2026',
+    source: 'FishBase',
+    sourceUrl: 'https://www.fishbase.se/',
+    note: 'SL significa comprimento-padrão, do focinho à base da nadadeira caudal. A ordem usa o maior valor disponível entre os campos por sexo; registros podem mudar com novas revisões da base.',
+    items: rankingItems(`
+1|Aspasmichthys alorensis|0,82 cm SL
+2|Schindleria brevipinguis|0,84 cm SL
+3|Eviota deminuta|0,87 cm SL
+4|Schindleria nana|0,90 cm SL
+5|Leptophilypnion pusillus|0,91 cm SL
+6|Leptophilypnion fittkaui|0,95 cm SL
+7|Eviota samota|0,96 cm SL
+8|Eviota amphipora|0,98 cm SL
+9|Acanthoplesiops naka|0,99 cm SL
+9|Eviota shibukawai|0,99 cm SL`),
+  },
+  {
+    slug: 'racas-caes-menor-altura-maxima-akc',
+    title: 'Raças de cães com menor altura máxima no AKC',
+    category: 'Mundo',
+    metric: 'Limite superior da faixa de altura adulta',
+    period: 'Catálogo consultado em 8 de setembro de 2026',
+    source: 'American Kennel Club (AKC)',
+    sourceUrl: 'https://www.akc.org/dog-breeds/',
+    note: 'Foram comparados os perfis de raças reconhecidas exibidos no catálogo. A ordem usa a altura máxima; empates são resolvidos pela mínima e depois alfabeticamente. Dachshund reúne as variedades miniatura e padrão.',
+    items: rankingItems(`
+1|Pomeranian|15,2–17,8 cm (máx. 17,8 cm)
+2|Chihuahua|12,7–20,3 cm (máx. 20,3 cm)
+3|Yorkshire Terrier|17,8–20,3 cm (máx. 20,3 cm)
+4|Dachshund|12,7–22,9 cm (máx. 22,9 cm)
+5|Pekingese|15,2–22,9 cm (máx. 22,9 cm)
+6|Maltese|17,8–22,9 cm (máx. 22,9 cm)
+7|Brussels Griffon|17,8–25,4 cm (máx. 25,4 cm)
+8|English Toy Spaniel|22,9–25,4 cm (máx. 25,4 cm)
+9|Norfolk Terrier|22,9–25,4 cm (máx. 25,4 cm)
+10|Silky Terrier|22,9–25,4 cm (máx. 25,4 cm)`),
+  },
   ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 

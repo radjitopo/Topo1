@@ -33,19 +33,19 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /110 PUBLICADOS/);
+  assert.match(appSource, /120 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 110 rankings without voting controls', () => {
+test('the editorial collection publishes all 120 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
-  assert.match(html, /110 rankings editoriais com Top 10/);
+  assert.match(html, /120 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 110);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 120);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -56,7 +56,7 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   const categoryHtml = renderDiscoverPage(template, '', 'brasil');
   assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
   assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
-  assert.match(allHtml, /data-discover-progress[^>]*>20 de 110 rankings<\/span>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 120 rankings<\/span>/);
   assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
   assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
   assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
@@ -155,12 +155,12 @@ test('Esportes gathers 10 varied and sourced rankings without duplicates', () =>
   assert.match(sportsHtml, /Jim Miller/);
 });
 
-test('Mundo & Geografia gathers 16 varied and sourced rankings without duplicates', () => {
+test('Mundo & Geografia gathers 26 varied and sourced rankings without duplicates', () => {
   const worldRankings = discoverRankingsForCategory('mundo');
   const worldHtml = renderDiscoverPage(template, '', 'mundo');
-  assert.equal(worldRankings.length, 16);
-  assert.equal(new Set(worldRankings.map(({ slug }) => slug)).size, 16);
-  assert.equal((worldHtml.match(/class="discoverCard/g) || []).length, 16);
+  assert.equal(worldRankings.length, 26);
+  assert.equal(new Set(worldRankings.map(({ slug }) => slug)).size, 26);
+  assert.equal((worldHtml.match(/class="discoverCard/g) || []).length, 26);
   assert.ok(worldRankings.some(({ category }) => category === 'Mundo'));
   assert.ok(worldRankings.some(({ category }) => category === 'Educação'));
   assert.match(worldHtml, /Países mais felizes do mundo/);
@@ -175,10 +175,14 @@ test('Mundo & Geografia gathers 16 varied and sourced rankings without duplicate
   assert.match(worldHtml, /Animais que passam mais horas do dia dormindo/);
   assert.match(worldHtml, /Formatos de OVNI mais relatados/);
   assert.match(worldHtml, /alienígenas disfarçados de humanos/);
+  assert.match(worldHtml, /Menores países do mundo por área terrestre/);
+  assert.match(worldHtml, /Países menos populosos do mundo/);
+  assert.match(worldHtml, /Mamíferos mais leves na base PanTHERIA/);
+  assert.match(worldHtml, /Peixes com menor comprimento máximo no FishBase/);
   assert.match(worldHtml, /class="discoverCategoryButton active"[^>]*>Mundo &amp; Geografia<\/a>/);
   assert.match(
     worldHtml,
-    /<h2 id="discover-list-title">16 rankings de Mundo &amp; Geografia<\/h2>/,
+    /<h2 id="discover-list-title">26 rankings de Mundo &amp; Geografia<\/h2>/,
   );
 });
 
@@ -357,6 +361,174 @@ test('the Guinness collection ranking is numerical, sourced and explicit about i
   assert.match(ranking.note, /podem ter crescido depois da verificação/);
 });
 
+const smallestRankingFixtures = [
+  {
+    slug: 'menores-paises-area-terrestre',
+    source: 'CIA World Factbook — edição final arquivada',
+    items: `
+1|Cidade do Vaticano|0,44 km²
+2|Mônaco|2 km²
+3|Nauru|21 km²
+4|Tuvalu|26 km²
+5|San Marino|61 km²
+6|Liechtenstein|160 km²
+7|Ilhas Marshall|181 km²
+8|São Cristóvão e Névis|261 km²
+9|Maldivas|298 km²
+10|Malta|316 km²`,
+  },
+  {
+    slug: 'paises-menos-populosos',
+    source: 'CIA World Factbook — edição final arquivada',
+    items: `
+1|Cidade do Vaticano|1.000 habitantes (2024)
+2|Nauru|9.930 habitantes (2025)
+3|Tuvalu|11.824 habitantes (2025)
+4|Palau|21.947 habitantes (2025)
+5|Mônaco|32.047 habitantes (2025)
+6|San Marino|35.291 habitantes (2025)
+7|Liechtenstein|40.547 habitantes (2025)
+8|São Cristóvão e Névis|55.434 habitantes (2025)
+9|Dominica|74.661 habitantes (2024)
+10|Ilhas Marshall|82.011 habitantes (2024)`,
+  },
+  {
+    slug: 'paises-menor-densidade-populacional',
+    source: 'CIA World Factbook — edição final arquivada',
+    items: `
+1|Mongólia|2,11 hab./km²
+2|Namíbia|3,47 hab./km²
+3|Austrália|3,58 hab./km²
+4|Islândia|3,63 hab./km²
+5|Guiana|4,03 hab./km²
+6|Líbia|4,18 hab./km²
+7|Suriname|4,19 hab./km²
+8|Canadá|4,31 hab./km²
+9|Botsuana|4,45 hab./km²
+10|Mauritânia|5,05 hab./km²`,
+  },
+  {
+    slug: 'paises-menores-litorais',
+    source: 'CIA World Factbook — edição final arquivada',
+    items: `
+1|Mônaco|4,1 km
+2|Bósnia e Herzegovina|20 km
+3|Tuvalu|24 km
+4|Jordânia|26 km
+5|Nauru|30 km
+6|República Democrática do Congo|37 km
+7|Eslovênia|46,6 km
+8|Togo|56 km
+9|Iraque|58 km
+10|Bélgica|66,5 km`,
+  },
+  {
+    slug: 'paises-pontos-mais-altos-menos-elevados',
+    source: 'CIA World Factbook — edição final arquivada',
+    items: `
+1|Maldivas|5 m
+1|Tuvalu|5 m
+3|Ilhas Marshall|14 m
+4|Gâmbia|63 m
+5|Bahamas|64 m
+6|Nauru|70 m
+7|Cidade do Vaticano|78 m
+8|Kiribati|81 m
+9|Catar|103 m
+10|Bahrein|135 m`,
+  },
+  {
+    slug: 'pequenos-estados-insulares-mais-remotos-mercados',
+    source: 'UNDP SIDS Data Platform',
+    items: `
+1|Tonga|93,15 pontos
+2|Fiji|91,28 pontos
+3|Vanuatu|89,71 pontos
+4|Samoa|88,74 pontos
+5|Tuvalu|87,84 pontos
+6|Ilhas Salomão|84,26 pontos
+7|Kiribati|82,84 pontos
+8|Nauru|82,33 pontos
+9|Ilhas Marshall|79,88 pontos
+10|Papua-Nova Guiné|78,92 pontos`,
+  },
+  {
+    slug: 'mamiferos-mais-leves-pantheria',
+    source: 'PanTHERIA',
+    items: `
+1|Craseonycteris thonglongyai|1,96 g
+2|Kerivoula minuta|2,03 g
+3|Suncus etruscus|2,26 g
+4|Sorex minutissimus|2,46 g
+5|Suncus madagascariensis|2,47 g
+6|Crocidura lusitania|2,48 g
+7|Crocidura planiceps|2,50 g
+8|Pipistrellus nanulus|2,51 g
+9|Sorex nanus|2,57 g
+10|Sorex arizonae|2,70 g`,
+  },
+  {
+    slug: 'aves-mais-leves-amniota',
+    source: 'Amniota life-history database',
+    items: `
+1|Thaumastura cora — Peruvian Sheartail|1,900 g
+1|Mellisuga helenae — Bee Hummingbird|1,900 g
+3|Phaethornis ruber — Reddish Hermit|2,150 g
+4|Selasphorus scintilla — Scintillant Hummingbird|2,200 g
+4|Tilmatura dupontii — Sparkling-tailed Woodstar|2,200 g
+4|Phaethornis stuarti — White-browed Hermit|2,200 g
+4|Mellisuga minima — Vervain Hummingbird|2,200 g
+8|Atthis heloisa — Bumblebee Hummingbird|2,275 g
+9|Myrtis fanny — Purple-collared Woodstar|2,300 g
+9|Phaethornis griseogularis — Grey-chinned Hermit|2,300 g`,
+  },
+  {
+    slug: 'peixes-menor-comprimento-maximo-fishbase',
+    source: 'FishBase',
+    items: `
+1|Aspasmichthys alorensis|0,82 cm SL
+2|Schindleria brevipinguis|0,84 cm SL
+3|Eviota deminuta|0,87 cm SL
+4|Schindleria nana|0,90 cm SL
+5|Leptophilypnion pusillus|0,91 cm SL
+6|Leptophilypnion fittkaui|0,95 cm SL
+7|Eviota samota|0,96 cm SL
+8|Eviota amphipora|0,98 cm SL
+9|Acanthoplesiops naka|0,99 cm SL
+9|Eviota shibukawai|0,99 cm SL`,
+  },
+  {
+    slug: 'racas-caes-menor-altura-maxima-akc',
+    source: 'American Kennel Club (AKC)',
+    items: `
+1|Pomeranian|15,2–17,8 cm (máx. 17,8 cm)
+2|Chihuahua|12,7–20,3 cm (máx. 20,3 cm)
+3|Yorkshire Terrier|17,8–20,3 cm (máx. 20,3 cm)
+4|Dachshund|12,7–22,9 cm (máx. 22,9 cm)
+5|Pekingese|15,2–22,9 cm (máx. 22,9 cm)
+6|Maltese|17,8–22,9 cm (máx. 22,9 cm)
+7|Brussels Griffon|17,8–25,4 cm (máx. 25,4 cm)
+8|English Toy Spaniel|22,9–25,4 cm (máx. 25,4 cm)
+9|Norfolk Terrier|22,9–25,4 cm (máx. 25,4 cm)
+10|Silky Terrier|22,9–25,4 cm (máx. 25,4 cm)`,
+  },
+];
+
+for (const fixture of smallestRankingFixtures) {
+  test(`${fixture.slug} keeps its verified Top 10`, () => {
+    const ranking = DISCOVER_RANKINGS.find(({ slug }) => slug === fixture.slug);
+    assert.ok(ranking);
+    assert.equal(ranking.source, fixture.source);
+    assert.deepEqual(
+      ranking.items.map(({ rank, name, value }) => [rank, name, value]),
+      fixture.items
+        .trim()
+        .split('\n')
+        .map((line) => line.split('|')),
+    );
+  });
+}
+
 test('the six expanded categories publish their sourced rankings without duplicates', () => {
   const expectedTitles = new Map([
     ['brasil', { count: 10, title: 'Estados mais populosos do Brasil' }],
@@ -501,9 +673,9 @@ test('Ranking Topo publishes the three editorial consensus lists with its seal',
   }
 });
 
-test('the editorial catalog keeps 110 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 110);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 110);
+test('the editorial catalog keeps 120 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 120);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 120);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);
