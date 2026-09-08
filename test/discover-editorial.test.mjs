@@ -33,18 +33,18 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /30 PUBLICADOS/);
+  assert.match(appSource, /36 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 30 rankings without voting controls', () => {
+test('the editorial collection publishes all 36 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 30);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 36);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -57,16 +57,35 @@ test('Rankings offers useful categories and filters the collection on the server
   assert.match(allHtml, /href="\/rankings\?categoria=cinema-tv#categorias">Cinema e TV<\/a>/);
 
   const sportsHtml = renderDiscoverPage(template, '', 'esportes');
-  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 5);
+  assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 4);
   assert.match(sportsHtml, /Maiores torcidas de futebol do Brasil/);
-  assert.match(sportsHtml, /Atletas mais bem pagos do mundo/);
+  assert.doesNotMatch(sportsHtml, /Atletas mais bem pagos do mundo/);
   assert.doesNotMatch(sportsHtml, /Pessoas mais ricas do mundo/);
   assert.match(sportsHtml, /class="discoverCategoryButton active"[^>]*>Esportes<\/a>/);
-  assert.match(sportsHtml, /<h2 id="discover-list-title">5 rankings de Esportes<\/h2>/);
+  assert.match(sportsHtml, /<h2 id="discover-list-title">4 rankings de Esportes<\/h2>/);
   assert.match(
     sportsHtml,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\?categoria=esportes"/,
   );
+});
+
+test('Dinheiro gathers the 10 wealth rankings without duplicates', () => {
+  const moneyRankings = discoverRankingsForCategory('dinheiro');
+  const moneyHtml = renderDiscoverPage(template, '', 'dinheiro');
+  assert.equal(moneyRankings.length, 10);
+  assert.equal(new Set(moneyRankings.map(({ slug }) => slug)).size, 10);
+  assert.equal((moneyHtml.match(/class="discoverCard/g) || []).length, 10);
+  assert.match(moneyHtml, /Pessoas mais ricas do mundo/);
+  assert.match(moneyHtml, /Brasileiros mais ricos/);
+  assert.match(moneyHtml, /Mulheres mais ricas do mundo/);
+  assert.match(moneyHtml, /Famílias mais ricas do mundo/);
+  assert.match(moneyHtml, /Empresas mais valiosas do mundo/);
+  assert.match(moneyHtml, /Marcas mais valiosas do mundo/);
+  assert.match(moneyHtml, /Países com maior PIB/);
+  assert.match(moneyHtml, /Países com maior PIB por habitante/);
+  assert.match(moneyHtml, /Cidades com mais bilionários/);
+  assert.match(moneyHtml, /Atletas mais bem pagos do mundo/);
+  assert.match(moneyHtml, /<h2 id="discover-list-title">10 rankings de Dinheiro<\/h2>/);
 });
 
 test('every published ranking belongs to exactly one visible editorial category', () => {
@@ -149,8 +168,8 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.doesNotMatch(html, /class="react|data-duel/);
 });
 
-test('the editorial catalog keeps 30 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 30);
+test('the editorial catalog keeps 36 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 36);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);

@@ -251,7 +251,7 @@ export const DISCOVER_RANKINGS = Object.freeze([
   },
   {
     slug: 'maiores-economias-mundo',
-    title: 'Maiores economias do mundo',
+    title: 'Países com maior PIB',
     category: 'Economia',
     metric: 'PIB nominal projetado',
     period: 'Projeções para 2026',
@@ -314,6 +314,135 @@ export const DISCOVER_RANKINGS = Object.freeze([
 10|Ricardo Castellar de Faria|R$ 35,1 bi`),
   },
   {
+    slug: 'mulheres-mais-ricas-do-mundo',
+    title: 'Mulheres mais ricas do mundo',
+    category: 'Dinheiro',
+    metric: 'Patrimônio estimado',
+    period: '1º de março de 2026',
+    source: 'Forbes',
+    sourceUrl:
+      'https://www.forbes.com/sites/gracechung/2026/03/10/the-richest-women-in-the-world-2026/',
+    note: 'Fortunas estimadas em dólares pela Forbes. Os valores variam com ações, moedas e outros ativos.',
+    items: rankingItems(`
+1|Alice Walton|US$ 134 bi
+2|Françoise Bettencourt Meyers e família|US$ 100 bi
+3|Julia Koch e família|US$ 81,2 bi
+4|Iris Fontbona e família|US$ 52,6 bi
+5|Jacqueline Mars|US$ 49,1 bi
+6|Rafaela Aponte-Diamant|US$ 44,5 bi
+7|Savitri Jindal e família|US$ 39,1 bi
+8|Miriam Adelson e família|US$ 37,5 bi
+9|Abigail Johnson|US$ 33,2 bi
+10|Zheng Shuliang e família|US$ 33,2 bi`),
+  },
+  {
+    slug: 'familias-mais-ricas-do-mundo',
+    title: 'Famílias mais ricas do mundo',
+    category: 'Dinheiro',
+    metric: 'Patrimônio familiar estimado',
+    period: '9 de dezembro de 2025',
+    source: 'Bloomberg via The Indian Express',
+    sourceUrl:
+      'https://indianexpress.com/article/trending/top-10-listing/top-10-richest-families-worldwide-2025-indian-family-ranks-8th-10426187/',
+    note: 'Estimativas anuais da Bloomberg para fortunas familiares. Os valores podem oscilar com ativos e moedas.',
+    items: rankingItems(`
+1|Família Walton|US$ 513,4 bi
+2|Família Al Nahyan|US$ 335,9 bi
+3|Família Al Saud|US$ 213,6 bi
+4|Família Al Thani|US$ 199,5 bi
+5|Família Hermès|US$ 184,5 bi
+6|Família Koch|US$ 150,5 bi
+7|Família Mars|US$ 143,4 bi
+8|Família Ambani|US$ 105,6 bi
+9|Família Wertheimer|US$ 85,6 bi
+10|Família Thomson|US$ 82,1 bi`),
+  },
+  {
+    slug: 'empresas-mais-valiosas-do-mundo',
+    title: 'Empresas mais valiosas do mundo',
+    category: 'Dinheiro',
+    metric: 'Valor de mercado estimado',
+    period: '7 de setembro de 2026',
+    source: 'CompaniesMarketCap',
+    sourceUrl: 'https://companiesmarketcap.com/',
+    note: 'Para empresas listadas, o valor corresponde à capitalização de mercado; para empresas privadas, à avaliação disponível.',
+    items: rankingItems(`
+1|Nvidia|US$ 5,562 tri
+2|Apple|US$ 4,669 tri
+3|Alphabet|US$ 4,100 tri
+4|Microsoft|US$ 3,710 tri
+5|Amazon|US$ 2,788 tri
+6|TSMC|US$ 2,224 tri
+7|SpaceX|US$ 1,950 tri
+8|Broadcom|US$ 1,702 tri
+9|Saudi Aramco|US$ 1,672 tri
+10|Meta|US$ 1,571 tri`),
+  },
+  {
+    slug: 'marcas-mais-valiosas-do-mundo',
+    title: 'Marcas mais valiosas do mundo',
+    category: 'Dinheiro',
+    metric: 'Valor de marca estimado',
+    period: 'Kantar BrandZ 2026',
+    source: 'Kantar BrandZ',
+    sourceUrl:
+      'https://www.kantar.com/north-america/Inspiration/Brands/most-valuable-global-brands-2026',
+    note: 'O BrandZ combina desempenho financeiro com a percepção de consumidores para estimar o valor de cada marca.',
+    items: rankingItems(`
+1|Google|US$ 1,485 tri
+2|Apple|US$ 1,380 tri
+3|Microsoft|US$ 1,112 tri
+4|Amazon|US$ 1,023 tri
+5|Nvidia|US$ 814,9 bi
+6|Facebook|US$ 366,6 bi
+7|Instagram|US$ 286,2 bi
+8|Tencent|US$ 251,6 bi
+9|Oracle|US$ 235,8 bi
+10|McDonald’s|US$ 235,1 bi`),
+  },
+  {
+    slug: 'paises-maior-pib-por-habitante',
+    title: 'Países com maior PIB por habitante',
+    category: 'Economia',
+    metric: 'PIB nominal por habitante projetado',
+    period: 'Projeções para 2026',
+    source: 'FMI / World Economic Outlook',
+    sourceUrl: 'https://www.worldometers.info/gdp/gdp-per-capita/',
+    note: 'Valores em dólares correntes para países soberanos com projeções comparáveis do FMI publicadas em abril de 2026.',
+    items: rankingItems(`
+1|Liechtenstein|US$ 226.809
+2|Luxemburgo|US$ 158.733
+3|Irlanda|US$ 140.186
+4|Suíça|US$ 126.177
+5|Islândia|US$ 110.048
+6|Singapura|US$ 107.758
+7|Noruega|US$ 105.877
+8|Estados Unidos|US$ 94.430
+9|Dinamarca|US$ 83.445
+10|Países Baixos|US$ 79.918`),
+  },
+  {
+    slug: 'cidades-com-mais-bilionarios',
+    title: 'Cidades com mais bilionários',
+    category: 'Dinheiro',
+    metric: 'Número de bilionários residentes',
+    period: 'Retrato em 15 de janeiro de 2026',
+    source: 'Hurun Global Rich List',
+    sourceUrl: 'https://www.hurun.net/en-us/info/detail?num=FTJ5PSSPOWOF',
+    note: 'A cidade é definida pela residência principal dos bilionários identificados pela Hurun.',
+    items: rankingItems(`
+1|Nova York|146 bilionários
+2|Shenzhen|132 bilionários
+3|Xangai|120 bilionários
+4|Pequim|107 bilionários
+5|Londres|102 bilionários
+6|Mumbai|95 bilionários
+7|Hong Kong|88 bilionários
+8|São Francisco|86 bilionários
+9|Moscou|82 bilionários
+10|Hangzhou|65 bilionários`),
+  },
+  {
     slug: 'melhores-clubes-futebol-mundo',
     title: 'Melhores clubes de futebol do mundo',
     category: 'Futebol',
@@ -359,7 +488,7 @@ export const DISCOVER_RANKINGS = Object.freeze([
   {
     slug: 'atletas-mais-bem-pagos',
     title: 'Atletas mais bem pagos do mundo',
-    category: 'Esporte',
+    category: 'Dinheiro',
     metric: 'Ganhos estimados em 12 meses',
     period: 'Maio de 2025 a maio de 2026',
     source: 'Forbes',
