@@ -1,3 +1,5 @@
+import { EXPANDED_DISCOVER_RANKINGS } from './discover-rankings-expanded.js';
+
 function rankingItems(block) {
   return block
     .trim()
@@ -37,7 +39,7 @@ export const DISCOVER_CATEGORIES = Object.freeze([
   { slug: 'musica', label: 'Música', sourceCategories: ['Música'] },
   {
     slug: 'tecnologia',
-    label: 'Tecnologia',
+    label: 'Tecnologia & Internet',
     sourceCategories: ['Tecnologia', 'Internet'],
   },
   { slug: 'viagens', label: 'Viagens', sourceCategories: ['Viagem'] },
@@ -1262,6 +1264,7 @@ export const DISCOVER_RANKINGS = Object.freeze([
 1|Matsukawa — Tóquio|99,5
 1|Lung King Heen — Hong Kong|99,5`),
   },
+  ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 
 export function discoverRankingBySlug(slug) {
