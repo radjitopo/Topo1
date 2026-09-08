@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { neon } from '@neondatabase/serverless';
 import { resolveRankingCover } from '../ranking-image-policy.js';
+import { inactiveTopoRankingIds, isInactiveTopoRanking } from '../ranking-status-policy.js';
 import { rankingTitleOverrides } from '../ranking-titles.js';
 import { auditRankingImages } from './audit-ranking-images.mjs';
 
@@ -131,6 +132,10 @@ const allTitles = {
     optionRelevanceReview.questions.map(({ rankingId, question }) => [rankingId, question]),
   ),
 };
+const activeNewRankings = newRankings.filter((ranking) => !isInactiveTopoRanking(ranking.id));
+const activeTitles = Object.fromEntries(
+  Object.entries(allTitles).filter(([id]) => !isInactiveTopoRanking(id)),
+);
 
 if (
   recoveredRankings.length !== 17 ||
@@ -189,6 +194,8 @@ console.log(`Catalog image audit passed: ${imageAudit.checked} covers checked.`)
 const sql = neon(process.env.DATABASE_URL);
 const rankingsJson = JSON.stringify(newRankings);
 const titlesJson = JSON.stringify(allTitles);
+const activeTitlesJson = JSON.stringify(activeTitles);
+const inactiveRankingIdsJson = JSON.stringify(inactiveTopoRankingIds);
 const taxonomyMigrationJson = JSON.stringify({
   football: [
     'futebol',
@@ -227,7 +234,7 @@ const taxonomyMigrationJson = JSON.stringify({
   animals: ['dinossauros-irados', 'animais-superpoderes', 'animais-extintos'],
 });
 const expectedOptionsJson = JSON.stringify(
-  newRankings.map((ranking) => ({ id: ranking.id, options: ranking.opts.length })),
+  activeNewRankings.map((ranking) => ({ id: ranking.id, options: ranking.opts.length })),
 );
 
 await sql.transaction(
@@ -345,6 +352,21 @@ await sql.transaction(
   `,
       [titlesJson],
     ),
+    sql.query(
+      `
+    WITH inactive_ids AS (
+      SELECT jsonb_array_elements_text($1::jsonb) AS id
+    )
+    UPDATE rankings ranking
+    SET
+      is_active = false,
+      content_updated_at = now()
+    FROM inactive_ids inactive
+    WHERE ranking.id = inactive.id
+      AND ranking.is_active = true
+  `,
+      [inactiveRankingIdsJson],
+    ),
   ],
   { isolationLevel: 'Serializable' },
 );
@@ -358,6 +380,9 @@ const [validation] = await sql.query(
   expected_options AS (
     SELECT *
     FROM jsonb_to_recordset($2::jsonb) AS expected(id text, options integer)
+  ),
+  inactive_ids AS (
+    SELECT jsonb_array_elements_text($3::jsonb) AS id
   ),
   option_counts AS (
     SELECT ranking_id, COUNT(*)::int AS options
@@ -376,20 +401,27 @@ const [validation] = await sql.query(
       JOIN option_counts counts ON counts.ranking_id = ranking.id
       WHERE ranking.is_active = true
         AND counts.options >= expected.options
-    ) AS valid_new_rankings
+    ) AS valid_new_rankings,
+    (
+      SELECT COUNT(*)::int
+      FROM inactive_ids inactive
+      JOIN rankings ranking ON ranking.id = inactive.id
+      WHERE ranking.is_active = false
+    ) AS inactive_rankings
   FROM expected_titles expected
   LEFT JOIN rankings ranking ON ranking.id = expected.id
 `,
-  [titlesJson, expectedOptionsJson],
+  [activeTitlesJson, expectedOptionsJson, inactiveRankingIdsJson],
 );
 
 if (
-  Number(validation?.valid_titles) !== Object.keys(allTitles).length ||
-  Number(validation?.valid_new_rankings) !== 245
+  Number(validation?.valid_titles) !== Object.keys(activeTitles).length ||
+  Number(validation?.valid_new_rankings) !== activeNewRankings.length ||
+  Number(validation?.inactive_rankings) !== inactiveTopoRankingIds.length
 ) {
   throw new Error(`Catalog validation failed: ${JSON.stringify(validation)}`);
 }
 
 console.log(
-  `Catalog applied: ${Object.keys(allTitles).length} titles and 245 rankings with ${GENERAL_PUBLIC_OPTION_COUNT} initial options validated.`,
+  `Catalog applied: ${Object.keys(activeTitles).length} active titles, ${activeNewRankings.length} active rankings and ${inactiveTopoRankingIds.length} inactive TOPO rankings validated.`,
 );

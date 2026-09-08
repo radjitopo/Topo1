@@ -42,6 +42,7 @@
     "db:floripa-neighborhood-expansion": "node scripts/apply-floripa-neighborhood-expansion.mjs",
     "db:floripa-service-ranking-status": "node scripts/apply-floripa-service-ranking-status.mjs",
     "db:floripa-general-ranking-status": "node scripts/apply-floripa-general-ranking-status.mjs",
+    "db:floripa-place-ranking-status": "node scripts/apply-floripa-place-ranking-status.mjs",
     "db:ranking-cover-review": "node scripts/apply-ranking-cover-review.mjs",
     "db:local-content-quality": "node scripts/apply-local-content-quality.mjs",
     "db:local-launch-curation": "node scripts/apply-local-launch-curation.mjs",

@@ -1,4 +1,5 @@
 import { rankingQuestion } from '../ranking-titles.js';
+import { isInactiveTopoRanking } from '../ranking-status-policy.js';
 
 const LOCAL_PUBLIC_OPTION_COUNT = 20;
 
@@ -140,6 +141,7 @@ const ranking = (id, category, title, image, options) => ({
   category,
   title: rankingQuestion(id, title),
   image: editorialImages[id] || images[image],
+  isActive: !isInactiveTopoRanking(id),
   options: options.slice(0, LOCAL_PUBLIC_OPTION_COUNT),
 });
 
@@ -844,11 +846,11 @@ function sqlStatements() {
   const rankingValues = rankings
     .map(
       (item, index) =>
-        `(${q(item.id)}, ${q(item.category)}, ${q(item.title)}, ${q(item.image)}, 0, true, now() + interval '${index + 1} seconds')`,
+        `(${q(item.id)}, ${q(item.category)}, ${q(item.title)}, ${q(item.image)}, 0, ${item.isActive}, now() + interval '${index + 1} seconds')`,
     )
     .join(',\n');
 
-  const upsertRankings = `INSERT INTO rankings (id, category, question, image_url, baseline_votes, is_active, created_at)\nVALUES\n${rankingValues}\nON CONFLICT (id) DO UPDATE SET\n  category = EXCLUDED.category,\n  question = EXCLUDED.question,\n  image_url = EXCLUDED.image_url,\n  is_active = true,\n  created_at = EXCLUDED.created_at;`;
+  const upsertRankings = `INSERT INTO rankings (id, category, question, image_url, baseline_votes, is_active, created_at)\nVALUES\n${rankingValues}\nON CONFLICT (id) DO UPDATE SET\n  category = EXCLUDED.category,\n  question = EXCLUDED.question,\n  image_url = EXCLUDED.image_url,\n  is_active = EXCLUDED.is_active,\n  created_at = EXCLUDED.created_at;`;
 
   const optionValues = rankings
     .flatMap((item) =>
