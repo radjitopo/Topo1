@@ -1306,6 +1306,112 @@ export const DISCOVER_RANKINGS = Object.freeze([
 9|Illinois|4.570 relatos
 10|Carolina do Norte|3.975 relatos`),
   },
+  {
+    slug: 'estados-americanos-mais-relatos-bigfoot',
+    title: 'Estados americanos com mais relatos de Bigfoot',
+    category: 'Mundo',
+    metric: 'Quantidade de relatos publicados no banco de dados',
+    period: 'Contagem acumulada consultada em 8 de setembro de 2026',
+    source: 'Bigfoot Field Researchers Organization (BFRO)',
+    sourceUrl: 'https://www.bfro.net/gdb/',
+    note: 'Os números contam relatos catalogados e publicados pelo BFRO. Eles registram o que foi reportado e não comprovam a existência de Bigfoot.',
+    items: rankingItems(`
+1|Washington|732 relatos
+2|Califórnia|471 relatos
+3|Flórida|348 relatos
+4|Ohio|335 relatos
+5|Illinois|305 relatos
+6|Texas|264 relatos
+7|Oregon|262 relatos
+8|Michigan|227 relatos
+9|Missouri|168 relatos
+10|Geórgia|147 relatos`),
+  },
+  {
+    slug: 'animais-que-mais-dormem',
+    title: 'Animais que passam mais horas do dia dormindo',
+    category: 'Mundo',
+    metric: 'Média de horas de sono por dia',
+    period: 'Tabela acadêmica consultada em 8 de setembro de 2026',
+    source: 'University of Washington — Neuroscience for Kids',
+    sourceUrl: 'https://faculty.washington.edu/chudler/chasleep.html',
+    note: 'Ranking dos animais não humanos reunidos na tabela da Universidade de Washington, adaptada de fontes científicas. As médias podem variar entre indivíduos e condições de observação.',
+    items: rankingItems(`
+1|Morcego-marrom|19,9 horas
+2|Gambá-norte-americano|19,4 horas
+3|Tatu-canastra|18,1 horas
+4|Píton|18,0 horas
+5|Macaco-da-noite|17,0 horas
+6|Tigre|15,8 horas
+6|Musaranho-arborícola|15,8 horas
+8|Esquilo|14,9 horas
+9|Sapo-ocidental|14,6 horas
+10|Furão|14,5 horas`),
+  },
+  {
+    slug: 'paises-mais-consomem-macarrao-instantaneo',
+    title: 'Países e regiões que mais consomem macarrão instantâneo',
+    category: 'Gastronomia',
+    metric: 'Demanda anual estimada de porções',
+    period: '2025',
+    source: 'World Instant Noodles Association (WINA)',
+    sourceUrl: 'https://instantnoodles.org/en/noodles/demand/table/',
+    note: 'Estimativas anuais da WINA, apresentadas em milhões de porções. China e Hong Kong aparecem juntas na tabela original; os números podem ser revisados.',
+    items: rankingItems(`
+1|China e Hong Kong|43.268 milhões de porções
+2|Indonésia|14.540 milhões de porções
+3|Índia|9.601 milhões de porções
+4|Vietnã|8.231 milhões de porções
+5|Japão|5.952 milhões de porções
+6|Estados Unidos|5.227 milhões de porções
+7|Filipinas|4.337 milhões de porções
+8|Tailândia|4.195 milhões de porções
+9|Coreia do Sul|4.061 milhões de porções
+10|Nigéria|3.115 milhões de porções`),
+  },
+  {
+    slug: 'formatos-ovni-mais-relatados',
+    title: 'Formatos de OVNI mais relatados',
+    category: 'Mundo',
+    metric: 'Quantidade de relatos classificados por formato',
+    period: 'Contagem acumulada consultada em 8 de setembro de 2026',
+    source: 'National UFO Reporting Center (NUFORC)',
+    sourceUrl: 'https://nuforc.org/ndx/?id=shape',
+    note: 'As categorias reproduzem descrições dadas por testemunhas. Foram excluídos “outro”, “desconhecido” e “não especificado”; os relatos não significam eventos extraterrestres verificados.',
+    items: rankingItems(`
+1|Luz|29.408 relatos
+2|Círculo|16.193 relatos
+3|Triângulo|14.404 relatos
+4|Bola de fogo|10.203 relatos
+5|Disco|9.644 relatos
+6|Orbe|8.391 relatos
+7|Esfera|8.336 relatos
+8|Oval|6.959 relatos
+9|Formação|5.210 relatos
+10|Forma variável|4.719 relatos`),
+  },
+  {
+    slug: 'paises-acreditavam-alienigenas-disfarcados-humanos',
+    title: 'Países onde mais gente acreditava em alienígenas disfarçados de humanos',
+    category: 'Mundo',
+    metric: 'Parcela dos entrevistados que concordou com a afirmação',
+    period: 'Pesquisa realizada entre novembro de 2009 e janeiro de 2010',
+    source: 'Ipsos / Reuters',
+    sourceUrl:
+      'https://www.ipsos.com/en-us/one-five-20-global-citizens-believe-alien-beings-have-come-down-earth-and-walk-amongst-us-our',
+    note: 'Pesquisa histórica on-line com 24.077 adultos de 22 países. O ranking mede a crença dos entrevistados naquela época, não a existência de alienígenas entre humanos.',
+    items: rankingItems(`
+1|Índia|45%
+2|China|42%
+3|Japão|29%
+4|Coreia do Sul|27%
+5|Itália|25%
+6|Estados Unidos|24%
+6|Brasil|24%
+8|Austrália|23%
+9|Rússia|21%
+9|Espanha|21%`),
+  },
   ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 
