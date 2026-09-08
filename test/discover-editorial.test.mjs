@@ -33,19 +33,19 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /107 PUBLICADOS/);
+  assert.match(appSource, /110 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 107 rankings without voting controls', () => {
+test('the editorial collection publishes all 110 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
-  assert.match(html, /107 rankings editoriais com Top 10/);
+  assert.match(html, /110 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 107);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 110);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /US\$ 892 bi/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
@@ -56,7 +56,7 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   const categoryHtml = renderDiscoverPage(template, '', 'brasil');
   assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
   assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
-  assert.match(allHtml, /data-discover-progress[^>]*>20 de 107 rankings<\/span>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 110 rankings<\/span>/);
   assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
   assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
   assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
@@ -361,7 +361,7 @@ test('the six expanded categories publish their sourced rankings without duplica
   const expectedTitles = new Map([
     ['brasil', { count: 10, title: 'Estados mais populosos do Brasil' }],
     ['cinema-tv', { count: 10, title: 'Séries mais bem avaliadas no IMDb' }],
-    ['musica', { count: 10, title: 'Álbuns mais ouvidos da história do Spotify' }],
+    ['musica', { count: 13, title: 'Álbuns mais ouvidos da história do Spotify' }],
     ['tecnologia', { count: 10, title: 'Navegadores mais usados no mundo' }],
     ['viagens', { count: 10, title: 'Aeroportos mais movimentados do mundo' }],
     ['gastronomia', { count: 11, title: 'Melhores pizzarias do mundo' }],
@@ -479,9 +479,31 @@ test('each editorial detail has a top 10, values, period and source', () => {
   );
 });
 
-test('the editorial catalog keeps 107 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 107);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 107);
+test('Ranking Topo publishes the three editorial consensus lists with its seal', () => {
+  const rankings = [
+    ['maiores-bandas-rock-todos-tempos', 'The Beatles', '93 pontos'],
+    ['maiores-idolos-pop-todos-tempos', 'The Beatles', '40 pontos'],
+    ['maiores-guitarristas-todos-tempos', 'Jimi Hendrix', '60 pontos'],
+  ];
+
+  for (const [slug, leader, points] of rankings) {
+    const ranking = DISCOVER_RANKINGS.find((item) => item.slug === slug);
+    assert.ok(ranking, slug);
+    assert.equal(ranking.topoRanking, true);
+    assert.equal(ranking.source, 'Ranking Topo');
+    assert.equal(ranking.items.length, 10);
+    assert.equal(ranking.items[0].name, leader);
+    assert.equal(ranking.items[0].value, points);
+
+    const html = renderDiscoverPage(template, slug);
+    assert.equal((html.match(/class="discoverTopoBadge"/g) || []).length, 1);
+    assert.match(html, />Ranking Topo<\/strong>/);
+  }
+});
+
+test('the editorial catalog keeps 110 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 110);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 110);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);
@@ -501,6 +523,7 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverCategoryButton\.active/);
   assert.match(cssSource, /\.discoverRankingSheet/);
   assert.match(cssSource, /\.discoverArticleSummary/);
+  assert.match(cssSource, /\.discoverTopoBadge/);
   assert.match(cssSource, /Rankings informativos — mesma linguagem das páginas do TOPO/);
   assert.match(
     cssSource,

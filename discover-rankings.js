@@ -1412,6 +1412,72 @@ export const DISCOVER_RANKINGS = Object.freeze([
 9|Rússia|21%
 9|Espanha|21%`),
   },
+  {
+    slug: 'maiores-bandas-rock-todos-tempos',
+    title: 'Maiores bandas de rock de todos os tempos',
+    category: 'Música',
+    metric: 'Pontuação acumulada por posição nos rankings',
+    period: 'Síntese editorial concluída em 8 de setembro de 2026',
+    source: 'Ranking Topo',
+    sourceUrl: 'https://somostopo.com.br/rankings',
+    topoRanking: true,
+    note: 'Ranking Topo criado pela soma das posições em rankings editoriais publicados por veículos de mídia. Em cada lista, o 1º lugar recebeu 10 pontos, o 2º recebeu 9 e assim por diante até 1 ponto para o 10º.',
+    items: rankingItems(`
+1|The Beatles|93 pontos
+2|Led Zeppelin|71 pontos
+3|The Rolling Stones|62 pontos
+4|Queen|52 pontos
+5|Pink Floyd|49 pontos
+6|The Who|26 pontos
+7|AC/DC|16 pontos
+8|Fleetwood Mac|16 pontos
+9|Black Sabbath|10 pontos
+10|Nirvana|9 pontos`),
+  },
+  {
+    slug: 'maiores-idolos-pop-todos-tempos',
+    title: 'Maiores ídolos do pop de todos os tempos',
+    category: 'Música',
+    metric: 'Pontuação acumulada por posição nos rankings',
+    period: 'Síntese editorial concluída em 8 de setembro de 2026',
+    source: 'Ranking Topo',
+    sourceUrl: 'https://somostopo.com.br/rankings',
+    topoRanking: true,
+    note: 'Ranking Topo calculado pela soma das posições em rankings editoriais comparáveis. O 1º lugar recebeu 10 pontos, o 2º recebeu 9 e assim por diante. Rankings baseados em votação popular aberta não entraram no cálculo.',
+    items: rankingItems(`
+1|The Beatles|40 pontos
+2|Elton John|33 pontos
+3|Michael Jackson|31 pontos
+4|The Rolling Stones|27 pontos
+5|Prince|21 pontos
+6|Elvis Presley|20 pontos
+7|Madonna|19 pontos
+8|Whitney Houston|17 pontos
+9|Bob Dylan|15 pontos
+10|Frank Sinatra|10 pontos`),
+  },
+  {
+    slug: 'maiores-guitarristas-todos-tempos',
+    title: 'Maiores guitarristas de todos os tempos',
+    category: 'Música',
+    metric: 'Pontuação acumulada por posição nos rankings',
+    period: 'Síntese editorial concluída em 8 de setembro de 2026',
+    source: 'Ranking Topo',
+    sourceUrl: 'https://somostopo.com.br/rankings',
+    topoRanking: true,
+    note: 'Ranking Topo calculado pela soma das posições em listas editoriais ou de especialistas. Enquetes abertas foram excluídas; empates foram resolvidos pela recorrência e pela melhor posição individual.',
+    items: rankingItems(`
+1|Jimi Hendrix|60 pontos
+2|Jimmy Page|41 pontos
+3|Chuck Berry|39 pontos
+4|Eddie Van Halen|36 pontos
+5|Eric Clapton|27 pontos
+6|Jeff Beck|24 pontos
+7|B.B. King|14 pontos
+8|Sister Rosetta Tharpe|14 pontos
+9|Tony Iommi|12 pontos
+10|Robert Johnson|8 pontos`),
+  },
   ...EXPANDED_DISCOVER_RANKINGS,
 ]);
 

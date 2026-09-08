@@ -2383,7 +2383,7 @@ function popLocalCalloutHTML() {
   return `<section class="popLocalCallout"><div><span class="popEyebrow">PERTO DE VOCÊ</span><h2>TOPO <em>LOCAL</em></h2><p>Quem mora escolhe. Todo mundo descobre.</p></div><div class="popLocalCity"><span>●</span><strong>${escapeHTML(selectedCity || 'Sua cidade')}</strong></div><div class="popLocalTopics"><span>Restaurantes</span><span>Pizza</span><span>Cafés</span><span>Academias</span></div><a href="/local" aria-label="Abrir o TOPO LOCAL">↗</a></section>`;
 }
 function discoverHomeCalloutHTML() {
-  return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS EDITORIAIS</span><h2 id="discover-home-title">Rankings</h2><p>Informação clara, números reais, data e fonte — sem votação.</p></div><a href="/rankings">VER OS 107 RANKINGS →</a></header><div class="discoverHomePreview"><span class="discoverStatus">107 PUBLICADOS</span><div><h3>De Brasil, cinema e música a tecnologia, viagens e gastronomia.</h3><p>Top 10 completo, com o valor de cada posição.</p></div><a href="/rankings" aria-label="Abrir Rankings">↗</a></div></section>`;
+  return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS EDITORIAIS</span><h2 id="discover-home-title">Rankings</h2><p>Informação clara, números reais, data e fonte — sem votação.</p></div><a href="/rankings">VER OS 110 RANKINGS →</a></header><div class="discoverHomePreview"><span class="discoverStatus">110 PUBLICADOS</span><div><h3>De Brasil, cinema e música a tecnologia, viagens e gastronomia.</h3><p>Top 10 completo, com o valor de cada posição.</p></div><a href="/rankings" aria-label="Abrir Rankings">↗</a></div></section>`;
 }
 function bindDiscoverPagination() {
   const pagination = feed.querySelector('[data-discover-pagination]'),
@@ -2437,7 +2437,7 @@ function renderDiscoverPage() {
     return;
   }
   document.title = 'Rankings editoriais — TOPO';
-  feed.innerHTML = `<section class="portalEmpty"><h1>Rankings</h1><p>Abra novamente a seção para carregar os rankings editoriais.</p><a class="categoryVoteCta" href="/rankings">Ver os 107 rankings →</a></section>`;
+  feed.innerHTML = `<section class="portalEmpty"><h1>Rankings</h1><p>Abra novamente a seção para carregar os rankings editoriais.</p><a class="categoryVoteCta" href="/rankings">Ver os 110 rankings →</a></section>`;
 }
 function portalSideStoryHTML(r) {
   return `<article class="portalSideStory"><a class="portalSideMedia" href="${rankingPath(r.id)}" aria-label="Abrir ${escapeHTML(r.q)}">${portalImageHTML(r)}</a><div class="portalSideCopy"><span class="portalKicker">${escapeHTML(categoryLabel(r))} ${newBadgeHTML(r)}</span><a href="${rankingPath(r.id)}"><h2>${escapeHTML(r.q)}</h2></a><div class="portalSideFoot"><span class="portalStoryMeta">${voteCountText(r.votes)}</span>${shareActionsHTML(r, true)}</div></div></article>`;

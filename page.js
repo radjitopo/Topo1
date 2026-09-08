@@ -519,11 +519,16 @@ function discoverDetailHTML(ranking) {
       })
       .join(''),
     sourceHost = new URL(ranking.sourceUrl).hostname.replace(/^www\./, ''),
+    topoBadge = ranking.topoRanking
+      ? '<strong class="discoverTopoBadge">Ranking Topo</strong>'
+      : '',
+    sourceEyebrow = ranking.topoRanking ? 'RANKING TOPO' : 'CRITÉRIO E FONTE',
+    sourceTitle = ranking.topoRanking ? 'Como calculamos' : 'De onde vêm os números',
     related = discoverRelated(ranking);
   return `<article class="discoverArticle">
     <a class="discoverBack" href="/rankings">← VOLTAR AOS RANKINGS</a>
     <header class="discoverArticleHero">
-      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span><small>RANKING INFORMATIVO · SEM VOTAÇÃO</small></div>
+      <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span>${topoBadge}<small>RANKING INFORMATIVO · SEM VOTAÇÃO</small></div>
       <h1>${escapeHtml(ranking.title)}</h1>
       <div class="discoverArticleSummary"><p><span>CRITÉRIO</span>${escapeHtml(ranking.metric)}</p><p><span>RECORTE</span>${escapeHtml(ranking.period)}</p></div>
     </header>
@@ -532,7 +537,7 @@ function discoverDetailHTML(ranking) {
       <ol>${list}</ol>
     </section>
     <aside class="discoverSourceBox">
-      <div><span class="discoverEyebrow">CRITÉRIO E FONTE</span><h2>De onde vêm os números</h2></div>
+      <div><span class="discoverEyebrow">${sourceEyebrow}</span><h2>${sourceTitle}</h2></div>
       <div><p>${escapeHtml(ranking.note)}</p><small>Referência: ${escapeHtml(ranking.period)}</small><a href="${escapeHtml(ranking.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(ranking.source)} · ${escapeHtml(sourceHost)} ↗</a></div>
     </aside>
     <section class="discoverRelated" aria-labelledby="discover-related-title">
