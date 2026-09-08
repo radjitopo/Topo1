@@ -13,7 +13,11 @@ export const DISCOVER_UPDATED_AT = '2026-09-08';
 export const DISCOVER_CATEGORIES = Object.freeze([
   { slug: 'todos', label: 'Todos', sourceCategories: [] },
   { slug: 'brasil', label: 'Brasil', sourceCategories: ['Brasil'] },
-  { slug: 'mundo', label: 'Mundo', sourceCategories: ['Mundo', 'Educação'] },
+  {
+    slug: 'mundo',
+    label: 'Mundo & Geografia',
+    sourceCategories: ['Mundo', 'Educação'],
+  },
   {
     slug: 'dinheiro',
     label: 'Dinheiro',
@@ -1067,6 +1071,112 @@ export const DISCOVER_RANKINGS = Object.freeze([
 8|ETH Zurich|96,3
 8|UCL|96,3
 10|National University of Singapore|96,2`),
+  },
+  {
+    slug: 'maiores-paises-area-terrestre',
+    title: 'Maiores países do mundo por área terrestre',
+    category: 'Mundo',
+    metric: 'Área terrestre',
+    period: 'Último ano comum disponível: 2023',
+    source: 'Banco Mundial / FAO',
+    sourceUrl: 'https://data.worldbank.org/indicator/AG.LND.TOTL.K2',
+    note: 'Área terrestre exclui águas interiores. Dados da FAO publicados pelo Banco Mundial.',
+    items: rankingItems(`
+1|Rússia|16.376.870 km²
+2|China|9.388.210 km²
+3|Estados Unidos|9.147.420 km²
+4|Canadá|8.788.700 km²
+5|Brasil|8.358.140 km²
+6|Austrália|7.692.020 km²
+7|Índia|2.973.190 km²
+8|Argentina|2.736.690 km²
+9|Cazaquistão|2.699.700 km²
+10|Argélia|2.381.740 km²`),
+  },
+  {
+    slug: 'cidades-mais-populosas-mundo',
+    title: 'Cidades mais populosas do mundo',
+    category: 'Mundo',
+    metric: 'População estimada da área urbana harmonizada',
+    period: '1º de julho de 2025',
+    source: 'ONU',
+    sourceUrl:
+      'https://population.un.org/wup/assets/Publications/undesa_pd_2025_wup2025_summary_of_results_final.pdf',
+    note: 'A ONU usa a metodologia harmonizada Degree of Urbanization, baseada em densidade e continuidade urbana. Valores arredondados.',
+    items: rankingItems(`
+1|Jacarta|41,9 mi de habitantes
+2|Daca|36,6 mi de habitantes
+3|Tóquio|33,4 mi de habitantes
+4|Nova Délhi|30,2 mi de habitantes
+5|Xangai|29,6 mi de habitantes
+6|Guangzhou|27,6 mi de habitantes
+7|Cairo|25,6 mi de habitantes
+8|Manila|24,7 mi de habitantes
+9|Calcutá|22,5 mi de habitantes
+10|Seul|22,5 mi de habitantes`),
+  },
+  {
+    slug: 'montanhas-mais-altas-mundo',
+    title: 'Montanhas mais altas do mundo',
+    category: 'Mundo',
+    metric: 'Altitude do cume acima do nível do mar',
+    period: 'Altitudes de referência consultadas em 8 de setembro de 2026',
+    source: '8000ers.com',
+    sourceUrl: 'https://www.8000ers.com/cms/en/8000ers-mainmenu-205.html',
+    note: 'Classificação por altitude entre os 14 picos principais acima de 8.000 metros. Medições podem variar alguns metros conforme o levantamento.',
+    items: rankingItems(`
+1|Monte Everest|8.848,86 m
+2|K2|8.611 m
+3|Kangchenjunga|8.586 m
+4|Lhotse|8.516 m
+5|Makalu|8.485 m
+6|Cho Oyu|8.188 m
+7|Dhaulagiri I|8.167 m
+8|Manaslu|8.163 m
+9|Nanga Parbat|8.126 m
+10|Annapurna I|8.091 m`),
+  },
+  {
+    slug: 'maiores-ilhas-mundo',
+    title: 'Maiores ilhas do mundo',
+    category: 'Mundo',
+    metric: 'Área da ilha',
+    period: 'Dados geoespaciais de 2026',
+    source: 'USGS, Esri e UNEP-WCMC via Wikipedia',
+    sourceUrl: 'https://en.wikipedia.org/wiki/List_of_islands_by_area',
+    note: 'A Austrália é tratada como continente e não entra na lista. Áreas calculadas com dados geoespaciais e arredondadas ao km².',
+    items: rankingItems(`
+1|Groenlândia|2.108.459 km²
+2|Nova Guiné|773.751 km²
+3|Bornéu|723.154 km²
+4|Madagascar|592.521 km²
+5|Ilha de Baffin|507.205 km²
+6|Sumatra|428.134 km²
+7|Honshu|228.296 km²
+8|Ilha Victoria|219.191 km²
+9|Grã-Bretanha|218.635 km²
+10|Ilha Ellesmere|197.790 km²`),
+  },
+  {
+    slug: 'paises-mais-patrimonios-mundiais-unesco',
+    title: 'Países com mais patrimônios mundiais da UNESCO',
+    category: 'Mundo',
+    metric: 'Bens inscritos na Lista do Patrimônio Mundial',
+    period: 'Após a 48ª sessão do Comitê, em julho de 2026',
+    source: 'UNESCO',
+    sourceUrl: 'https://whc.unesco.org/en/list/',
+    note: 'Contagem oficial por Estado Parte. Bens transnacionais aparecem na contagem de cada país participante.',
+    items: rankingItems(`
+1|Itália|62 bens
+2|China|61 bens
+3|França|56 bens
+4|Alemanha|55 bens
+5|Espanha|50 bens
+6|Índia|45 bens
+7|México|36 bens
+8|Reino Unido|35 bens
+9|Rússia|33 bens
+10|Irã|30 bens`),
   },
   {
     slug: 'maiores-bilheterias-historia',
