@@ -442,7 +442,7 @@ function discoverCard(ranking, index, compact = false) {
 
 function discoverCategoryPath(category) {
   const query = category.slug === 'todos' ? '' : `?categoria=${encodeURIComponent(category.slug)}`;
-  return `/rankings${query}#categorias`;
+  return `/rankings${query}`;
 }
 
 function discoverCategoryNavigation(activeCategory) {
@@ -453,7 +453,7 @@ function discoverCategoryNavigation(activeCategory) {
     <div class="discoverCategoryRail">${categories
       .map(
         (category) =>
-          `<a class="discoverCategoryButton${category.slug === activeCategory.slug ? ' active' : ''}" href="${discoverCategoryPath(category)}"${category.slug === activeCategory.slug ? ' aria-current="page"' : ''}>${escapeHtml(category.label)}</a>`,
+          `<a class="discoverCategoryButton${category.slug === activeCategory.slug ? ' active' : ''}" data-discover-category="${escapeHtml(category.slug)}" href="${discoverCategoryPath(category)}"${category.slug === activeCategory.slug ? ' aria-current="page"' : ''}>${escapeHtml(category.label)}</a>`,
       )
       .join('')}</div>
   </nav>`;

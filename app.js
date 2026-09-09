@@ -2390,6 +2390,89 @@ function popLocalCalloutHTML() {
 function discoverHomeCalloutHTML() {
   return `<section class="discoverHomeCallout" aria-labelledby="discover-home-title"><header><div><span class="discoverEyebrow">RANKINGS EDITORIAIS</span><h2 id="discover-home-title">Rankings</h2><p>Informação clara, números reais, data e fonte — sem votação.</p></div><a href="/rankings">VER OS 120 RANKINGS →</a></header><div class="discoverHomePreview"><span class="discoverStatus">120 PUBLICADOS</span><div><h3>De Brasil, cinema e música a tecnologia, viagens e gastronomia.</h3><p>Top 10 completo, com o valor de cada posição.</p></div><a href="/rankings" aria-label="Abrir Rankings">↗</a></div></section>`;
 }
+let discoverCategoryRequest = null;
+function syncDiscoverCategoryMetadata(nextDocument) {
+  document.title = nextDocument.title || document.title;
+  [
+    ['link[rel="canonical"]', 'href'],
+    ['meta[name="description"]', 'content'],
+    ['meta[property="og:title"]', 'content'],
+    ['meta[property="og:description"]', 'content'],
+    ['meta[property="og:url"]', 'content'],
+    ['meta[name="twitter:title"]', 'content'],
+    ['meta[name="twitter:description"]', 'content'],
+  ].forEach(([selector, attribute]) => {
+    const current = document.querySelector(selector),
+      next = nextDocument.querySelector(selector);
+    if (current && next) current.setAttribute(attribute, next.getAttribute(attribute) || '');
+  });
+}
+async function loadDiscoverCategory(url) {
+  const currentCollection = feed.querySelector('.discoverCollection'),
+    currentNav = feed.querySelector('.discoverCategoryNav');
+  if (!currentCollection || !currentNav) {
+    location.assign(url.pathname + url.search);
+    return;
+  }
+  discoverCategoryRequest?.abort();
+  const controller = new AbortController();
+  discoverCategoryRequest = controller;
+  currentCollection.setAttribute('aria-busy', 'true');
+  try {
+    const response = await fetch(url.pathname + url.search, {
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: { Accept: 'text/html' },
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error('discover_category_load_failed');
+    const nextDocument = new DOMParser().parseFromString(await response.text(), 'text/html'),
+      nextCollection = nextDocument.querySelector('.discoverCollection'),
+      nextNav = nextDocument.querySelector('.discoverCategoryNav'),
+      activeSlug = nextNav?.querySelector('.discoverCategoryButton.active')?.dataset
+        .discoverCategory;
+    if (!nextCollection || !nextNav || !activeSlug)
+      throw new Error('discover_category_content_missing');
+    currentCollection.replaceWith(nextCollection);
+    currentNav.querySelectorAll('.discoverCategoryButton').forEach((button) => {
+      const active = button.dataset.discoverCategory === activeSlug;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    syncDiscoverCategoryMetadata(nextDocument);
+    history.replaceState(history.state, '', url.pathname + url.search);
+    bindDiscoverPagination();
+  } catch (error) {
+    if (error.name !== 'AbortError') location.assign(url.pathname + url.search);
+  } finally {
+    if (discoverCategoryRequest === controller) discoverCategoryRequest = null;
+    if (currentCollection.isConnected) currentCollection.removeAttribute('aria-busy');
+  }
+}
+function bindDiscoverCategoryNavigation() {
+  const nav = feed.querySelector('.discoverCategoryNav');
+  if (!nav || nav.dataset.filterBound === 'true') return;
+  nav.dataset.filterBound = 'true';
+  nav.addEventListener('click', (event) => {
+    const link = event.target.closest?.('.discoverCategoryButton');
+    if (
+      !link ||
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin || url.pathname !== '/rankings') return;
+    event.preventDefault();
+    if (link.classList.contains('active')) return;
+    void loadDiscoverCategory(url);
+  });
+}
 function bindDiscoverPagination() {
   const pagination = feed.querySelector('[data-discover-pagination]'),
     grid = feed.querySelector('#discover-ranking-grid');
@@ -2428,6 +2511,7 @@ function bindDiscoverPagination() {
 }
 function renderDiscoverPage() {
   if (feed.dataset.serverRendered === 'true') {
+    bindDiscoverCategoryNavigation();
     bindDiscoverPagination();
     if (feed.querySelector('.discoverArticle'))
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });

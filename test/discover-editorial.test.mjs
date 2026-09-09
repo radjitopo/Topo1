@@ -86,8 +86,15 @@ test('Todos shuffles the rankings on each visit before revealing the first 20', 
 test('Rankings offers useful categories and filters the collection on the server', () => {
   const allHtml = renderDiscoverPage(template);
   assert.match(allHtml, /aria-label="Categorias dos rankings"/);
-  assert.match(allHtml, /href="\/rankings#categorias"[^>]*aria-current="page">Todos<\/a>/);
-  assert.match(allHtml, /href="\/rankings\?categoria=cinema-tv#categorias">Cinema e TV<\/a>/);
+  assert.match(
+    allHtml,
+    /data-discover-category="todos" href="\/rankings"[^>]*aria-current="page">Todos<\/a>/,
+  );
+  assert.match(
+    allHtml,
+    /data-discover-category="cinema-tv" href="\/rankings\?categoria=cinema-tv">Cinema e TV<\/a>/,
+  );
+  assert.doesNotMatch(allHtml, /#categorias/);
 
   const sportsHtml = renderDiscoverPage(template, '', 'esportes');
   assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 10);
@@ -109,6 +116,17 @@ test('Rankings offers useful categories and filters the collection on the server
     sportsHtml,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\?categoria=esportes"/,
   );
+});
+
+test('category changes replace only the Rankings collection without moving the page', () => {
+  assert.match(appSource, /function bindDiscoverCategoryNavigation\(\)/);
+  assert.match(appSource, /event\.preventDefault\(\)/);
+  assert.match(appSource, /currentCollection\.replaceWith\(nextCollection\)/);
+  assert.match(
+    appSource,
+    /history\.replaceState\(history\.state, '', url\.pathname \+ url\.search\)/,
+  );
+  assert.match(appSource, /bindDiscoverCategoryNavigation\(\);[\s\S]*bindDiscoverPagination\(\);/);
 });
 
 test('Dinheiro gathers the 10 wealth rankings without duplicates', () => {
