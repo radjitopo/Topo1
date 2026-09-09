@@ -179,11 +179,11 @@ body.popElectric .discoverLoadMore span {
 }
 
 body.popElectric .discoverCard > a {
-  min-height: 390px;
+  min-height: 244px;
   display: flex;
   flex-direction: column;
   color: var(--clean-ink);
-  padding: 22px;
+  padding: 20px;
   text-decoration: none;
   transition:
     background 150ms ease,
@@ -199,19 +199,15 @@ body.popElectric .discoverCard > a:focus-visible {
 body.popElectric .discoverCard header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
-  padding-bottom: 16px;
+  padding-bottom: 13px;
   border-bottom: 1px solid var(--clean-line);
   font:
-    900 11px/1 Arial,
+    900 12px/1 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0.08em;
-}
-
-body.popElectric .discoverCard header > span {
-  color: var(--clean-coral);
 }
 
 body.popElectric .discoverCard header em {
@@ -220,87 +216,65 @@ body.popElectric .discoverCard header em {
 }
 
 body.popElectric .discoverCard h2 {
-  min-height: 76px;
-  margin: 20px 0 7px;
+  min-height: 2.94em;
+  display: -webkit-box;
+  margin: 17px 0 8px;
   color: inherit;
   font:
-    950 clamp(25px, 2.35vw, 34px) / 0.95 Arial,
+    950 clamp(25px, 2.2vw, 32px) / 0.98 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: -0.05em;
   overflow-wrap: anywhere;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 body.popElectric .discoverCard > a > p {
-  min-height: 34px;
-  margin: 0 0 18px;
+  margin: 0;
   color: var(--clean-muted);
   font:
-    650 12px/1.35 Arial,
+    650 13px/1.35 Arial,
     Helvetica,
     sans-serif;
 }
 
-body.popElectric .discoverCard ol {
+body.popElectric .discoverTeaserSignal {
   display: grid;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--clean-line);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 19px;
 }
 
-body.popElectric .discoverCard li {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  border-bottom: 1px solid var(--clean-line);
-  font:
-    750 12px/1.2 Arial,
-    Helvetica,
-    sans-serif;
+body.popElectric .discoverTeaserSignal span {
+  height: 9px;
 }
 
-body.popElectric .discoverCard li > span {
-  color: var(--clean-coral);
-  font-weight: 950;
+body.popElectric .discoverTeaserSignal span:nth-child(1) {
+  background: var(--discover-gold);
 }
 
-body.popElectric .discoverCard li > strong {
-  min-width: 0;
-  overflow-wrap: anywhere;
+body.popElectric .discoverTeaserSignal span:nth-child(2) {
+  background: var(--discover-silver);
 }
 
-body.popElectric .discoverCard li > b {
-  text-align: right;
-  white-space: nowrap;
+body.popElectric .discoverTeaserSignal span:nth-child(3) {
+  background: var(--discover-bronze);
 }
 
 body.popElectric .discoverCard footer {
   display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 14px;
-  margin-top: auto;
-  padding-top: 20px;
-}
-
-body.popElectric .discoverCard footer small {
-  max-width: 62%;
-  color: var(--clean-muted);
-  font:
-    650 10px/1.35 Arial,
-    Helvetica,
-    sans-serif;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 13px;
 }
 
 body.popElectric .discoverCard footer strong {
   color: var(--clean-coral);
   font:
-    950 10px/1 Arial,
+    950 12px/1 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0.04em;
@@ -314,7 +288,7 @@ body.popElectric .discoverCard.featured {
 
 body.popElectric .discoverCard.featured > a {
   color: var(--clean-ink);
-  padding: 28px;
+  padding: 24px;
 }
 
 body.popElectric .discoverCard.featured > a:hover,
@@ -322,30 +296,19 @@ body.popElectric .discoverCard.featured > a:focus-visible {
   background: var(--clean-soft);
 }
 
-body.popElectric .discoverCard.featured header,
-body.popElectric .discoverCard.featured ol,
-body.popElectric .discoverCard.featured li {
+body.popElectric .discoverCard.featured header {
   border-color: var(--clean-line);
 }
 
 body.popElectric .discoverCard.featured h2 {
   max-width: 720px;
-  min-height: 0;
-  font-size: clamp(38px, 5vw, 66px);
+  min-height: 1.96em;
+  font-size: clamp(36px, 4.2vw, 52px);
+  -webkit-line-clamp: 2;
 }
 
-body.popElectric .discoverCard.featured > a > p,
-body.popElectric .discoverCard.featured footer small {
+body.popElectric .discoverCard.featured > a > p {
   color: var(--clean-muted);
-}
-
-body.popElectric .discoverCard.featured ol {
-  margin-top: 10px;
-}
-
-body.popElectric .discoverCard.featured li {
-  min-height: 46px;
-  font-size: 14px;
 }
 
 body.popElectric.discoverDetailPage .feed {
@@ -691,15 +654,15 @@ body.popElectric .discoverRelated > div {
 }
 
 body.popElectric .discoverCard.compact > a {
-  min-height: 360px;
+  min-height: 232px;
 }
 
 body.popElectric .discoverCard.compact h2 {
-  min-height: 76px;
+  min-height: 2.94em;
 }
 
 body.popElectric .discoverCard.compact > a > p {
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 @media (max-width: 900px) {
@@ -773,25 +736,23 @@ body.popElectric .discoverCard.compact > a > p {
 
   body.popElectric .discoverCard > a,
   body.popElectric .discoverCard.featured > a {
-    min-height: 340px;
+    min-height: 218px;
     padding: 18px 16px;
   }
 
   body.popElectric .discoverCard h2,
   body.popElectric .discoverCard.featured h2 {
-    min-height: 0;
-    font-size: 30px;
+    min-height: 1.96em;
+    font-size: 29px;
+    -webkit-line-clamp: 2;
   }
 
-  body.popElectric .discoverCard li {
-    grid-template-columns: 25px minmax(0, 1fr);
-    gap: 7px;
-    padding: 8px 0;
+  body.popElectric .discoverCard > a > p {
+    font-size: 12px;
   }
 
-  body.popElectric .discoverCard li > b {
-    grid-column: 2;
-    text-align: left;
+  body.popElectric .discoverTeaserSignal {
+    padding-top: 16px;
   }
 
   body.popElectric .discoverArticleHero {
@@ -11687,106 +11648,6 @@ body.popElectric .discoverPrinciples p {
   --discover-medal-ink: #17130c;
 }
 
-body.popElectric .discoverCard > a {
-  position: relative;
-  overflow: hidden;
-}
-
-body.popElectric .discoverCard.featured > a::after {
-  content: '01';
-  position: absolute;
-  z-index: 0;
-  top: 34px;
-  right: -12px;
-  color: rgba(10, 10, 10, 0.035);
-  font:
-    950 clamp(150px, 20vw, 250px) / 0.75 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: -0.11em;
-  pointer-events: none;
-}
-
-body.popElectric .discoverCard.featured > a > * {
-  position: relative;
-  z-index: 1;
-}
-
-body.popElectric .discoverCard li {
-  grid-template-columns: 58px minmax(0, 1fr) auto;
-  gap: 12px;
-  min-height: 50px;
-}
-
-body.popElectric .discoverCard li.medal-gold {
-  background: var(--discover-gold-soft);
-}
-
-body.popElectric .discoverCard li.medal-silver {
-  background: var(--discover-silver-soft);
-}
-
-body.popElectric .discoverCard li.medal-bronze {
-  background: var(--discover-bronze-soft);
-}
-
-body.popElectric .discoverCard .discoverMedalRank {
-  align-self: stretch;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 3px;
-  color: var(--discover-medal-ink);
-  font-weight: 950;
-}
-
-body.popElectric .discoverCard .discoverMedalRank b {
-  display: flex;
-  align-items: start;
-  font:
-    950 18px/0.85 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: -0.06em;
-}
-
-body.popElectric .discoverCard .discoverMedalRank b small {
-  margin: 1px 0 0 1px;
-  font-size: 8px;
-}
-
-body.popElectric .discoverCard .discoverMedalRank em {
-  font:
-    950 7px/1 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: 0.1em;
-}
-
-body.popElectric .discoverCard li.medal-gold .discoverMedalRank {
-  background: var(--discover-gold);
-}
-
-body.popElectric .discoverCard li.medal-silver .discoverMedalRank {
-  background: var(--discover-silver);
-}
-
-body.popElectric .discoverCard li.medal-bronze .discoverMedalRank {
-  background: var(--discover-bronze);
-}
-
-body.popElectric .discoverCard.featured li.medal-gold {
-  background: var(--discover-gold-soft);
-}
-
-body.popElectric .discoverCard.featured li.medal-silver {
-  background: var(--discover-silver-soft);
-}
-
-body.popElectric .discoverCard.featured li.medal-bronze {
-  background: var(--discover-bronze-soft);
-}
-
 body.popElectric .discoverArticleHero {
   min-height: 340px;
   isolation: isolate;
@@ -11985,20 +11846,6 @@ body.popElectric .discoverRankingItem.medal-gold > b {
 }
 
 @media (max-width: 700px) {
-  body.popElectric .discoverCard.featured > a::after {
-    top: 70px;
-    font-size: 160px;
-  }
-
-  body.popElectric .discoverCard li {
-    grid-template-columns: 58px minmax(0, 1fr);
-    gap: 9px;
-  }
-
-  body.popElectric .discoverCard li > b {
-    grid-column: 2;
-  }
-
   body.popElectric .discoverArticleHero {
     min-height: 0;
     padding-bottom: 18px;

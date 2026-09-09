@@ -2488,8 +2488,6 @@ function bindDiscoverPagination() {
   }
   cards.forEach((card, index) => {
     card.classList.toggle('featured', index === 0);
-    const number = card.querySelector('header > span');
-    if (number) number.textContent = String(index + 1).padStart(2, '0');
     grid.append(card);
   });
   let visibleCount = Math.min(pageSize, cards.length);

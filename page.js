@@ -422,20 +422,13 @@ function discoverCoverMark(ranking) {
 }
 
 function discoverCard(ranking, index, compact = false) {
-  const preview = ranking.items
-    .slice(0, 3)
-    .map((item) => {
-      const medal = discoverMedal(item.rank);
-      return `<li${medal ? ` class="${medal.className}"` : ''}><span class="discoverMedalRank"><b>${escapeHtml(item.rank)}<small>º</small></b>${medal ? `<em>${medal.label}</em>` : ''}</span><strong>${escapeHtml(item.name)}</strong><b>${escapeHtml(item.value)}</b></li>`;
-    })
-    .join('');
   return `<article class="discoverCard${index === 0 && !compact ? ' featured' : ''}${compact ? ' compact' : ''}">
     <a href="${discoverPath(ranking)}">
-      <header><span>${String(index + 1).padStart(2, '0')}</span><em>${escapeHtml(ranking.category)}</em></header>
+      <header><em>${escapeHtml(ranking.category)}</em></header>
       <h2>${escapeHtml(ranking.title)}</h2>
       <p>${escapeHtml(ranking.metric)}</p>
-      <ol>${preview}</ol>
-      <footer><small>${escapeHtml(ranking.period)}</small><strong>VER TOP 10 →</strong></footer>
+      <div class="discoverTeaserSignal" aria-hidden="true"><span></span><span></span><span></span></div>
+      <footer><strong>VER RANKING →</strong></footer>
     </a>
   </article>`;
 }
