@@ -1267,13 +1267,17 @@ function bindVipOwnerActions() {
   });
 }
 
-function personalAreaHeaderHTML(active = 'activity') {
-  const profilePath = viewer.registered
-      ? '/perfil'
-      : `/entrar?voltar=${encodeURIComponent('/perfil')}`,
-    activityCurrent = active === 'activity',
-    profileCurrent = active === 'profile';
-  return `<section class="personalHubHeader"><div><span class="portalKicker">Seu espaço pessoal</span><h1>Meu Topo</h1><p>Sua atividade e seu perfil reunidos no mesmo lugar.</p></div><nav class="personalHubTabs" aria-label="Áreas do Meu Topo"><a class="${activityCurrent ? 'active' : ''}" href="/vip" ${activityCurrent ? 'aria-current="page"' : ''}>Minha atividade</a><a class="${profileCurrent ? 'active' : ''}" href="${escapeHTML(profilePath)}" ${profileCurrent ? 'aria-current="page"' : ''}>Perfil</a></nav></section>`;
+function personalAreaHeaderHTML(data = null) {
+  const user = data?.user || {},
+    profile = data?.profile || {},
+    name = String(user.name || 'Pessoa no TOPO'),
+    avatar = String(profile.avatarData || ''),
+    profileControl = viewer.registered
+      ? data
+        ? `<div class="personalHubProfile"><div class="personalHubAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(name))}</span></div><div class="personalHubProfileMeta"><strong class="personalHubName profileName">${escapeHTML(name)}</strong><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="personalHubPhotoButton" id="chooseProfilePhoto" type="button">${avatar ? 'MUDAR FOTO' : 'ADICIONAR FOTO'}</button><a class="personalHubProfileLink" href="/perfil">Editar nome e conta</a><span class="personalHubPhotoStatus" id="profilePhotoStatus" aria-live="polite"></span></div></div>`
+        : '<a class="personalHubSignIn" href="/perfil">EDITAR PERFIL</a>'
+      : `<a class="personalHubSignIn" href="${escapeHTML(`/entrar?voltar=${encodeURIComponent('/vip')}`)}">ENTRAR</a>`;
+  return `<section class="personalHubHeader"><div class="personalHubTitle"><span class="portalKicker">Seu espaço pessoal</span><h1>Meu Topo</h1></div>${profileControl}</section>`;
 }
 
 function personalScorecardHTML(data = null) {
@@ -1436,13 +1440,14 @@ async function loadVipArea() {
     createdCount = viewer.registered
       ? `<small>${ownedVipRankings.length}/${Number(data.userRankingLimit || 20)} criados</small>`
       : '';
-  feed.innerHTML = `${personalAreaHeaderHTML('activity')}${viewer.registered ? personalScorecardHTML(profileData) : ''}${viewer.registered && AFFINITY_FEATURE_ENABLED ? affinityPanelHTML(affinityData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
+  feed.innerHTML = `${personalAreaHeaderHTML(profileData)}${viewer.registered ? personalScorecardHTML(profileData) : ''}${viewer.registered && AFFINITY_FEATURE_ENABLED ? affinityPanelHTML(affinityData) : ''}<section class="vipActivityLead"><div><span class="portalKicker">Minha atividade</span><h2>Tudo que é seu no TOPO</h2><p>Favoritos, rankings criados e a história da sua participação.</p></div><div class="vipHeroActions">${createAction}</div></section>${viewer.registered ? vipCreatePanelHTML(createOpen) : ''}<section class="vipCollection favoriteCollection"><div class="vipCollectionHead"><div><span class="portalKicker">Sua seleção</span><h2>Favoritos</h2></div><div class="favoriteCollectionTools"><small>${favoriteRankings.length} salvo${favoriteRankings.length === 1 ? '' : 's'}</small>${favoriteAction}</div></div>${favoriteCards}</section><section class="vipCollection" id="rankings-privados"><div class="vipCollectionHead"><div><span class="portalKicker">Somente para você</span><h2>Meus rankings privados</h2></div>${createdCount}</div>${privateCards}</section>${viewer.registered ? personalActivityHTML(profileData) : ''}`;
   bindVipCreateForm();
   bindVipOwnerActions();
   bindFavoriteButtons();
   bindWhatsAppShares();
   bindNativeShares();
   bindProfileRankingActivityMore(feed);
+  if (viewer.registered) bindProfileControls();
   if (AFFINITY_FEATURE_ENABLED) bindAffinityPanel(feed);
   document
     .getElementById('favoriteShareButton')
@@ -4878,7 +4883,7 @@ function bindProfileControls() {
     };
 }
 async function renderProfile() {
-  document.title = 'Perfil — Meu Topo — TOPO';
+  document.title = 'Editar perfil — Meu Topo — TOPO';
   if (!viewer.registered) {
     location.replace('/entrar?modo=entrar');
     return;
@@ -4905,7 +4910,7 @@ async function renderProfile() {
       showAvatar = p.profile?.showAvatarOnLeaderboard !== false;
     const profileSettings = `<section class="profileSection profileSettingsSection" id="perfil-publico"><div class="profileSectionHead"><div class="sectionLabel">Perfil público</div><span>nome e foto</span></div><div class="profileSettingsGrid">${profileNameEditorHTML(p.user)}<div class="profilePhotoPanel"><div class="profilePhotoTitle">Foto do perfil</div><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><div class="profilePhotoActions"><button type="button" id="chooseProfilePhoto">${avatar ? 'Trocar foto' : 'Adicionar foto'}</button><button type="button" id="removeProfilePhoto" ${avatar ? '' : 'hidden'}>Remover</button></div><label class="profilePhotoCheck"><input id="profilePhotoVisibility" type="checkbox" ${showAvatar ? 'checked' : ''}><span>Mostrar minha foto no ranking da comunidade</span></label><p class="profilePhotoNote">A imagem é recortada antes de ser salva.</p><div class="profilePhotoStatus" id="profilePhotoStatus" aria-live="polite"></div></div></div></section>`,
       accountSection = `<section class="profileSection profileAccountSection"><div class="profileSectionHead"><div class="sectionLabel">Conta</div><span>acesso e segurança</span></div><div class="profileAccountRow"><span>E-mail de acesso</span><strong>${escapeHTML(p.user.email || '')}</strong></div><button class="logoutBtn" id="logoutBtn" type="button">Sair da conta</button></section>`;
-    feed.innerHTML = `${personalAreaHeaderHTML('profile')}<section class="profileHero profileGameHero profileIdentityHero"><div class="profileHeroIntro"><div class="profileAvatarProgress"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div></div><div class="profileHeroHeading"><div><span class="portalKicker">Perfil</span><h2 class="profileName">${escapeHTML(p.user.name)}</h2><p>É assim que você aparece para a comunidade do TOPO.</p></div></div></div></section>${profileSettings}${accountSection}`;
+    feed.innerHTML = `<a class="profileBackLink" href="/vip">← VOLTAR AO MEU TOPO</a><section class="profileHero profileGameHero profileIdentityHero"><div class="profileHeroIntro"><div class="profileAvatarProgress"><div class="profileAvatarRing"><div class="profileAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(p.user.name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(p.user.name))}</span></div></div></div><div class="profileHeroHeading"><div><span class="portalKicker">Editar perfil</span><h2 class="profileName">${escapeHTML(p.user.name)}</h2><p>É assim que você aparece para a comunidade do TOPO.</p></div></div></div></section>${profileSettings}${accountSection}`;
     document.getElementById('logoutBtn').onclick = logout;
     bindProfileControls();
   } catch (e) {

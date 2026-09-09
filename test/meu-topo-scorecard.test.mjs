@@ -48,7 +48,7 @@ assert.doesNotMatch(scorecard, /Seuplacar/i, 'the redundant scorecard heading mu
 assert.doesNotMatch(scorecard, /SuaforçanoTOPO/, 'the repeated large heading must stay removed');
 assert.match(
   compactApp,
-  /personalAreaHeaderHTML\('activity'\).*personalScorecardHTML\(profileData\).*vipActivityLead/,
+  /personalAreaHeaderHTML\(profileData\).*personalScorecardHTML\(profileData\).*vipActivityLead/,
   'the scorecard must be the first content block in Meu Topo',
 );
 assert.match(compactApp, /scorecardPosition\.textContent=`\$\{fmt\(current\.position\)\}º`/);

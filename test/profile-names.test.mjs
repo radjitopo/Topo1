@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { compactSource } from './source-helpers.mjs';
 import {
   defaultDisplayName,
   displayNameChangeState,
@@ -61,15 +60,12 @@ test('profile name API, reporting and moderation stay wired', async () => {
   assert.match(api, /user_name_reports/);
   assert.match(app, /Escolha seu nome no TOPO/);
   const profileRender = app.slice(
-      app.indexOf('async function renderProfile'),
-      app.indexOf('async function logout'),
-    ),
-    compactProfileRender = compactSource(profileRender);
-  assert.match(
-    compactProfileRender,
-    /personalAreaHeaderHTML\('profile'\)[\s\S]*profileGameHeroprofileIdentityHero[\s\S]*profileHeroIntro/,
-    'profile must be an identity tab inside Meu Topo',
+    app.indexOf('async function renderProfile'),
+    app.indexOf('async function logout'),
   );
+  assert.match(profileRender, /class="profileBackLink" href="\/vip"/);
+  assert.match(profileRender, /profileGameHero profileIdentityHero/);
+  assert.doesNotMatch(profileRender, /personalAreaHeaderHTML/);
   assert.match(profileRender, /profileSettingsGrid">\$\{profileNameEditorHTML\(p\.user\)\}/);
   assert.match(profileRender, /profileAccountSection/);
   assert.match(profileRender, /E-mail de acesso/);

@@ -127,15 +127,19 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /Somente o criador encontra os rankings nesta área/);
   assert.match(vipArea, /Meu Topo/);
   assert.match(vipArea, /vipCreatePanelHTML\(createOpen\)/);
-  assert.match(vipArea, /personalAreaHeaderHTML\('activity'\)/);
+  assert.match(vipArea, /personalAreaHeaderHTML\(profileData\)/);
   assert.match(vipArea, /personalActivityHTML\(profileData\)/);
   assert.match(vipArea, /loadProfileLeaderboard\(\)/);
   assert.match(vipArea, /loadProfileSuggestionCenter\(\)/);
   assert.match(vipArea, /bindVipCreateForm\(\)/);
+  assert.match(vipArea, /bindProfileControls\(\)/);
   assert.doesNotMatch(vipArea, /Área VIP/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
-  assert.match(style, /900 clamp\(42px, 5vw, 62px\)/);
-  assert.match(style, /font-size: 43px/);
+  assert.match(style, /900 clamp\(30px, 4vw, 42px\)/);
+  assert.match(style, /font-size: 34px/);
+  assert.match(app, /class="personalHubAvatar"/);
+  assert.match(app, /id="chooseProfilePhoto"/);
+  assert.doesNotMatch(app, /class="personalHubTabs"/);
   assert.match(
     style,
     /\.vipOwnedGrid \.vipCard\s*\{[^}]*grid-template-columns: 88px minmax\(0, 1fr\)/s,
@@ -192,7 +196,7 @@ test('only the creator can manage a private ranking and Meu Topo exposes the com
   assert.match(style, /\.vipCreatePanel/);
   assert.match(style, /\.vipOwnerActions/);
   assert.match(style, /\.vipHeroActions/);
-  assert.match(style, /\.personalHubTabs/);
+  assert.match(style, /\.personalHubProfile/);
   assert.match(style, /\.personalActivityDashboard/);
   assert.match(style, /\.vipOwnerEditor/);
   assert.match(style, /\.vipOwnerEditor > \.vipOwnerEditorHead/);
