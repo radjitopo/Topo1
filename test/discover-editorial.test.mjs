@@ -718,6 +718,16 @@ test('the editorial catalog keeps 120 complete and sourced rankings', () => {
   }
 });
 
+test('the desserts ranking consolidates pastel de nata and pastel de Belém', () => {
+  const ranking = DISCOVER_RANKINGS.find(({ slug }) => slug === 'melhores-sobremesas-mundo');
+  assert.ok(ranking);
+  assert.equal(ranking.items.length, 10);
+  assert.equal(ranking.items[0].name, 'Pastel de nata (pastel de Belém) — Portugal');
+  assert.equal(ranking.items[9].name, 'Tinginys — Lituânia');
+  assert.equal(ranking.items.filter(({ name }) => /pastel de (nata|belém)/i.test(name)).length, 1);
+  assert.match(ranking.note, /reunidos como uma única sobremesa/);
+});
+
 test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.discoverHomeCallout/);
   assert.match(cssSource, /\.discoverPageHero/);

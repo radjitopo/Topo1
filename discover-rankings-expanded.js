@@ -910,17 +910,17 @@ export const EXPANDED_DISCOVER_RANKINGS = Object.freeze([
     period: 'Consulta em 15 de agosto de 2026',
     source: 'TasteAtlas',
     sourceUrl: 'https://www.tasteatlas.com/best-rated-desserts-in-the-world',
-    note: 'Avaliações do público filtradas pela plataforma. Notas arredondadas podem produzir empates aparentes, mantendo-se a ordem calculada pelo TasteAtlas.',
+    note: 'Avaliações do público filtradas pela plataforma. Para evitar repetição, pastel de Belém e pastel de nata foram reunidos como uma única sobremesa; o item seguinte da fonte completa o Top 10. Notas arredondadas podem produzir empates aparentes.',
     items: rankingItems(`
-1|Pastel de Belém — Portugal|4,6/5
-2|Pastel de nata — Portugal|4,5/5
-3|Antakya künefesi — Turquia|4,5/5
-4|Clotted cream ice cream — Reino Unido|4,5/5
-5|Gelato al pistacchio — Itália|4,5/5
-6|Strudel Trentino — Itália|4,5/5
-7|Fıstıklı sarma — Turquia|4,4/5
-8|Tembleque — Porto Rico|4,4/5
-9|Gaziantep baklavası — Turquia|4,4/5
-10|Crêpes sucrées — França|4,4/5`),
+1|Pastel de nata (pastel de Belém) — Portugal|4,6/5
+2|Antakya künefesi — Turquia|4,5/5
+3|Clotted cream ice cream — Reino Unido|4,5/5
+4|Gelato al pistacchio — Itália|4,5/5
+5|Strudel Trentino — Itália|4,5/5
+6|Fıstıklı sarma — Turquia|4,4/5
+7|Tembleque — Porto Rico|4,4/5
+8|Gaziantep baklavası — Turquia|4,4/5
+9|Crêpes sucrées — França|4,4/5
+10|Tinginys — Lituânia|4,4/5`),
   },
 ]);

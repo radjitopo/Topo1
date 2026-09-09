@@ -10,7 +10,7 @@ function rankingItems(block) {
     });
 }
 
-export const DISCOVER_UPDATED_AT = '2026-09-08';
+export const DISCOVER_UPDATED_AT = '2026-09-09';
 
 export const DISCOVER_CATEGORIES = Object.freeze([
   { slug: 'todos', label: 'Todos', sourceCategories: [] },
