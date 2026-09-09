@@ -53,10 +53,13 @@ test('the editorial collection publishes all 120 rankings without voting control
   assert.match(html, /120 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
   assert.equal((html.match(/class="discoverCard/g) || []).length, 120);
-  assert.equal((html.match(/class="discoverTeaserSignal"/g) || []).length, 120);
+  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 120);
+  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 360);
   assert.equal((html.match(/VER RANKING/g) || []).length, 120);
   assert.match(html, /Pessoas mais ricas do mundo/);
-  assert.doesNotMatch(html, /Elon Musk|US\$ 892 bi|1º de setembro de 2026/);
+  assert.match(html, /Elon Musk/);
+  assert.doesNotMatch(html, /US\$ 892 bi|1º de setembro de 2026/);
+  assert.doesNotMatch(html, />OURO<|>PRATA<|>BRONZE</);
   assert.doesNotMatch(html, /class="discoverMedalRank"|<header><span>\d{2}<\/span>/);
   assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
 });
@@ -181,20 +184,12 @@ test('Esportes gathers 10 varied and sourced rankings without duplicates', () =>
   assert.equal((sportsHtml.match(/class="discoverCard/g) || []).length, 10);
   assert.ok(sportsRankings.some(({ category }) => category === 'Futebol'));
   assert.ok(sportsRankings.some(({ category }) => category === 'Esporte'));
-  for (const hiddenResult of [
-    'Kylian Mbappé',
-    'Kimi Antonelli',
-    'Novak Djokovic',
-    'Boston Celtics',
-    'Estados Unidos',
-    'Jim Miller',
-  ]) {
-    assert.ok(
-      sportsRankings.some(({ items }) => items.some(({ name }) => name === hiddenResult)),
-      hiddenResult,
-    );
-    assert.doesNotMatch(sportsHtml, new RegExp(hiddenResult));
-  }
+  assert.match(sportsHtml, /Kylian Mbappé/);
+  assert.match(sportsHtml, /Kimi Antonelli/);
+  assert.match(sportsHtml, /Novak Djokovic/);
+  assert.match(sportsHtml, /Boston Celtics/);
+  assert.match(sportsHtml, /Estados Unidos/);
+  assert.match(sportsHtml, /Jim Miller/);
 });
 
 test('Mundo & Geografia gathers 26 varied and sourced rankings without duplicates', () => {
@@ -685,7 +680,8 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(rankingSheet, /medal-silver/);
   assert.match(rankingSheet, /medal-bronze/);
   assert.doesNotMatch(rankingSheet, /OURO|PRATA|BRONZE/);
-  assert.equal((html.match(/class="discoverTeaserSignal"/g) || []).length, 3);
+  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 3);
+  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 9);
   assert.doesNotMatch(html, /class="discoverMedalRank"/);
   assert.doesNotMatch(html, /class="react|data-duel/);
   assert.match(
@@ -769,10 +765,13 @@ test('Rankings has responsive desktop and mobile styling', () => {
   assert.match(cssSource, /\.medal-bronze/);
   assert.match(
     cssSource,
-    /\.discoverTeaserSignal \{[\s\S]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/,
+    /\.discoverTeaserTopThree li \{[\s\S]*grid-template-columns: 54px minmax\(0, 1fr\)/,
   );
-  assert.match(cssSource, /\.discoverTeaserSignal span:nth-child\(1\)[\s\S]*--discover-gold/);
-  assert.match(cssSource, /\.discoverCard > a \{[\s\S]*min-height: 244px/);
+  assert.match(
+    cssSource,
+    /\.discoverTeaserTopThree li\.medal-gold \.discoverTeaserPosition[\s\S]*--discover-gold/,
+  );
+  assert.match(cssSource, /\.discoverCard > a \{[\s\S]*min-height: 338px/);
   assert.match(
     cssSource,
     /\.discoverArticleHero,[\s\S]*\.discoverRankingSheet > header[\s\S]*height: auto/,
@@ -789,6 +788,6 @@ test('Rankings has responsive desktop and mobile styling', () => {
     cssSource,
     /body\.popElectric\.discoverDetailPage \.discoverArticleHero h1 \{[\s\S]*?800 clamp\(42px, 6vw, 66px\) \/ 0\.94/,
   );
-  assert.match(template, /editorial-clean\.css\?[^"']*compact-editorial-teasers/);
+  assert.match(template, /editorial-clean\.css\?[^"']*compact-editorial-top-three/);
   assert.match(cssSource, /localMode \.experienceInner \{[\s\S]*?flex-wrap: wrap/);
 });

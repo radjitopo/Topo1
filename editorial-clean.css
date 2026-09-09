@@ -179,7 +179,7 @@ body.popElectric .discoverLoadMore span {
 }
 
 body.popElectric .discoverCard > a {
-  min-height: 244px;
+  min-height: 338px;
   display: flex;
   flex-direction: column;
   color: var(--clean-ink);
@@ -232,36 +232,92 @@ body.popElectric .discoverCard h2 {
 }
 
 body.popElectric .discoverCard > a > p {
+  min-height: 2.7em;
+  display: -webkit-box;
   margin: 0;
   color: var(--clean-muted);
   font:
     650 13px/1.35 Arial,
     Helvetica,
     sans-serif;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-body.popElectric .discoverTeaserSignal {
+body.popElectric .discoverTeaserTopThree {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px;
-  margin-top: auto;
-  padding-top: 19px;
+  margin: 13px 0 0;
+  border-top: 1px solid var(--clean-line);
+  padding: 0;
+  list-style: none;
 }
 
-body.popElectric .discoverTeaserSignal span {
-  height: 9px;
+body.popElectric .discoverTeaserTopThree li {
+  min-width: 0;
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: stretch;
+  border-bottom: 1px solid var(--clean-line);
 }
 
-body.popElectric .discoverTeaserSignal span:nth-child(1) {
+body.popElectric .discoverTeaserTopThree li.medal-gold {
+  background: var(--discover-gold-soft);
+}
+
+body.popElectric .discoverTeaserTopThree li.medal-silver {
+  background: var(--discover-silver-soft);
+}
+
+body.popElectric .discoverTeaserTopThree li.medal-bronze {
+  background: var(--discover-bronze-soft);
+}
+
+body.popElectric .discoverTeaserPosition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--discover-medal-ink);
+}
+
+body.popElectric .discoverTeaserPosition b {
+  display: flex;
+  align-items: start;
+  font:
+    950 20px/0.85 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+
+body.popElectric .discoverTeaserPosition b small {
+  margin: 1px 0 0 1px;
+  font-size: 7px;
+}
+
+body.popElectric .discoverTeaserTopThree li.medal-gold .discoverTeaserPosition {
   background: var(--discover-gold);
 }
 
-body.popElectric .discoverTeaserSignal span:nth-child(2) {
+body.popElectric .discoverTeaserTopThree li.medal-silver .discoverTeaserPosition {
   background: var(--discover-silver);
 }
 
-body.popElectric .discoverTeaserSignal span:nth-child(3) {
+body.popElectric .discoverTeaserTopThree li.medal-bronze .discoverTeaserPosition {
   background: var(--discover-bronze);
+}
+
+body.popElectric .discoverTeaserTopThree li > strong {
+  min-width: 0;
+  align-self: center;
+  padding: 8px 10px;
+  font:
+    900 14px/1.12 Arial,
+    Helvetica,
+    sans-serif;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 body.popElectric .discoverCard footer {
@@ -654,7 +710,7 @@ body.popElectric .discoverRelated > div {
 }
 
 body.popElectric .discoverCard.compact > a {
-  min-height: 232px;
+  min-height: 330px;
 }
 
 body.popElectric .discoverCard.compact h2 {
@@ -736,23 +792,23 @@ body.popElectric .discoverCard.compact > a > p {
 
   body.popElectric .discoverCard > a,
   body.popElectric .discoverCard.featured > a {
-    min-height: 218px;
+    min-height: 332px;
     padding: 18px 16px;
   }
 
   body.popElectric .discoverCard h2,
   body.popElectric .discoverCard.featured h2 {
-    min-height: 1.96em;
+    min-height: 2.94em;
     font-size: 29px;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
   }
 
   body.popElectric .discoverCard > a > p {
     font-size: 12px;
   }
 
-  body.popElectric .discoverTeaserSignal {
-    padding-top: 16px;
+  body.popElectric .discoverTeaserTopThree {
+    margin-top: 12px;
   }
 
   body.popElectric .discoverArticleHero {

@@ -390,9 +390,9 @@ function discoverPath(ranking) {
 }
 
 const DISCOVER_MEDALS = {
-  1: { className: 'medal-gold', label: 'OURO' },
-  2: { className: 'medal-silver', label: 'PRATA' },
-  3: { className: 'medal-bronze', label: 'BRONZE' },
+  1: { className: 'medal-gold' },
+  2: { className: 'medal-silver' },
+  3: { className: 'medal-bronze' },
 };
 
 const DISCOVER_COVER_MARKS = {
@@ -422,12 +422,19 @@ function discoverCoverMark(ranking) {
 }
 
 function discoverCard(ranking, index, compact = false) {
+  const preview = ranking.items
+    .slice(0, 3)
+    .map((item) => {
+      const medal = discoverMedal(item.rank);
+      return `<li${medal ? ` class="${medal.className}"` : ''}><span class="discoverTeaserPosition"><b>${escapeHtml(item.rank)}<small>º</small></b></span><strong>${escapeHtml(item.name)}</strong></li>`;
+    })
+    .join('');
   return `<article class="discoverCard${index === 0 && !compact ? ' featured' : ''}${compact ? ' compact' : ''}">
     <a href="${discoverPath(ranking)}">
       <header><em>${escapeHtml(ranking.category)}</em></header>
       <h2>${escapeHtml(ranking.title)}</h2>
       <p>${escapeHtml(ranking.metric)}</p>
-      <div class="discoverTeaserSignal" aria-hidden="true"><span></span><span></span><span></span></div>
+      <ol class="discoverTeaserTopThree" aria-label="Três primeiras posições">${preview}</ol>
       <footer><strong>VER RANKING →</strong></footer>
     </a>
   </article>`;
