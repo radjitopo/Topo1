@@ -82,7 +82,7 @@ body.popElectric .discoverCategoryButton.active {
 }
 
 body.popElectric .discoverCollection {
-  margin-top: 44px;
+  margin-top: 24px;
 }
 
 body.popElectric .discoverCollectionHead {
@@ -736,7 +736,7 @@ body.popElectric .discoverCard.compact > a > p {
   }
 
   body.popElectric .discoverCollection {
-    margin-top: 30px;
+    margin-top: 16px;
   }
 
   body.popElectric .discoverCollectionHead,
@@ -11395,7 +11395,7 @@ body.popElectric .discoverHomePreview > a:focus-visible {
 }
 
 body.popElectric.discoverPage .feed {
-  padding-top: 34px;
+  padding-top: 0;
 }
 
 body.popElectric .discoverPageHero {
@@ -11607,7 +11607,7 @@ body.popElectric .discoverPrinciples p {
   }
 
   body.popElectric.discoverPage .feed {
-    padding-top: 18px;
+    padding-top: 0;
   }
 
   body.popElectric .discoverPageHero {

@@ -41,7 +41,14 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
 test('the editorial collection publishes all 120 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
-  assert.match(html, /<h1 id="discover-page-title">Rankings<\/h1>/);
+  assert.match(html, /<h1 class="srOnly" id="discover-list-title">Rankings editoriais<\/h1>/);
+  assert.doesNotMatch(html, /class="discoverPageHero"/);
+  assert.doesNotMatch(html, /RANKINGS PUBLICADOS/);
+  assert.doesNotMatch(html, /ESCOLHA UM TEMA/);
+  assert.doesNotMatch(html, /Cada ranking traz o Top 10/);
+  assert.ok(
+    html.indexOf('class="discoverCategoryNav"') < html.indexOf('id="discover-ranking-grid"'),
+  );
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /120 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
@@ -94,7 +101,10 @@ test('Rankings offers useful categories and filters the collection on the server
   assert.doesNotMatch(sportsHtml, /Atletas mais bem pagos do mundo/);
   assert.doesNotMatch(sportsHtml, /Pessoas mais ricas do mundo/);
   assert.match(sportsHtml, /class="discoverCategoryButton active"[^>]*>Esportes<\/a>/);
-  assert.match(sportsHtml, /<h2 id="discover-list-title">10 rankings de Esportes<\/h2>/);
+  assert.match(
+    sportsHtml,
+    /<h1 class="srOnly" id="discover-list-title">Rankings de Esportes<\/h1>/,
+  );
   assert.match(
     sportsHtml,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\?categoria=esportes"/,
@@ -117,7 +127,7 @@ test('Dinheiro gathers the 10 wealth rankings without duplicates', () => {
   assert.match(moneyHtml, /Países com maior PIB por habitante/);
   assert.match(moneyHtml, /Cidades com mais bilionários/);
   assert.match(moneyHtml, /Atletas mais bem pagos do mundo/);
-  assert.match(moneyHtml, /<h2 id="discover-list-title">10 rankings de Dinheiro<\/h2>/);
+  assert.match(moneyHtml, /<h1 class="srOnly" id="discover-list-title">Rankings de Dinheiro<\/h1>/);
 });
 
 test('Celebridades gathers 10 current and sourced rankings without duplicates', () => {
@@ -136,7 +146,10 @@ test('Celebridades gathers 10 current and sourced rankings without duplicates', 
   assert.match(celebrityHtml, /Atores de maior bilheteria da história/);
   assert.match(celebrityHtml, /Rappers com mais Grammys/);
   assert.match(celebrityHtml, /Artistas com mais ouvintes mensais no Spotify/);
-  assert.match(celebrityHtml, /<h2 id="discover-list-title">10 rankings de Celebridades<\/h2>/);
+  assert.match(
+    celebrityHtml,
+    /<h1 class="srOnly" id="discover-list-title">Rankings de Celebridades<\/h1>/,
+  );
 });
 
 test('Esportes gathers 10 varied and sourced rankings without duplicates', () => {
@@ -182,7 +195,7 @@ test('Mundo & Geografia gathers 26 varied and sourced rankings without duplicate
   assert.match(worldHtml, /class="discoverCategoryButton active"[^>]*>Mundo &amp; Geografia<\/a>/);
   assert.match(
     worldHtml,
-    /<h2 id="discover-list-title">26 rankings de Mundo &amp; Geografia<\/h2>/,
+    /<h1 class="srOnly" id="discover-list-title">Rankings de Mundo &amp; Geografia<\/h1>/,
   );
 });
 

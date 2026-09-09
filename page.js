@@ -440,17 +440,6 @@ function discoverCard(ranking, index, compact = false) {
   </article>`;
 }
 
-function discoverHero() {
-  return `<section class="discoverPageHero" aria-labelledby="discover-page-title">
-    <div>
-      <span class="discoverEyebrow">RANKINGS EDITORIAIS</span>
-      <h1 id="discover-page-title">Rankings</h1>
-      <p>Informação clara, números reais, data e fonte — sem votação.</p>
-    </div>
-    <span class="discoverMode"><strong>${DISCOVER_RANKINGS.length}</strong><span>RANKINGS<br>PUBLICADOS</span></span>
-  </section>`;
-}
-
 function discoverCategoryPath(category) {
   const query = category.slug === 'todos' ? '' : `?categoria=${encodeURIComponent(category.slug)}`;
   return `/rankings${query}#categorias`;
@@ -476,15 +465,11 @@ function discoverCollectionHTML(categorySlug = '') {
     paginated = activeCategory.slug === 'todos' && visibleRankings.length > DISCOVER_PAGE_SIZE,
     collectionTitle =
       activeCategory.slug === 'todos'
-        ? `${visibleRankings.length} jeitos de enxergar o mundo`
-        : `${visibleRankings.length} ${visibleRankings.length === 1 ? 'ranking' : 'rankings'} de ${activeCategory.label}`;
-  return `${discoverHero()}
-  ${discoverCategoryNavigation(activeCategory)}
+        ? 'Rankings editoriais'
+        : `Rankings de ${activeCategory.label}`;
+  return `${discoverCategoryNavigation(activeCategory)}
   <section class="discoverCollection" aria-labelledby="discover-list-title">
-    <header class="discoverCollectionHead">
-      <div><span class="discoverEyebrow">${activeCategory.slug === 'todos' ? 'ESCOLHA UM TEMA' : escapeHtml(activeCategory.label)}</span><h2 id="discover-list-title">${escapeHtml(collectionTitle)}</h2></div>
-      <p>Cada ranking traz o Top 10, o valor de cada posição, o recorte usado e a fonte original.</p>
-    </header>
+    <h1 class="srOnly" id="discover-list-title">${escapeHtml(collectionTitle)}</h1>
     <div class="discoverGrid" id="discover-ranking-grid">${visibleRankings.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
     ${
       paginated
