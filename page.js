@@ -539,7 +539,7 @@ function discoverDetailHTML(ranking) {
       <div class="discoverArticleSummary"><p><span>CRITÉRIO</span>${escapeHtml(ranking.metric)}</p><p><span>RECORTE</span>${escapeHtml(ranking.period)}</p></div>
     </header>
     <section class="discoverRankingSheet" aria-labelledby="discover-ranking-title">
-      <header class="discoverRankingResultHead"><h2 id="discover-ranking-title">Resultado</h2><span>TOP 10 · VALOR</span></header>
+      <header class="discoverRankingResultHead"><h2 id="discover-ranking-title">Resultado</h2><span>TOP 10 · ${escapeHtml(ranking.valueLabel || 'VALOR')}</span></header>
       <ol>${list}</ol>
     </section>
     <aside class="discoverSourceBox">

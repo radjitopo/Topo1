@@ -200,6 +200,34 @@ test('Esportes gathers 10 varied and sourced rankings without duplicates', () =>
   assert.match(sportsHtml, /Jim Miller/);
 });
 
+test('the world club ranking is historical rather than a current power snapshot', () => {
+  const ranking = DISCOVER_RANKINGS.find(({ slug }) => slug === 'melhores-clubes-futebol-mundo');
+  assert.ok(ranking);
+  assert.equal(ranking.title, 'Melhores clubes de futebol de todos os tempos');
+  assert.equal(ranking.source, 'Bleacher Report');
+  assert.equal(ranking.valueLabel, 'PAÍS');
+  assert.deepEqual(
+    ranking.items.map(({ name, value }) => [name, value]),
+    [
+      ['Real Madrid', 'Espanha'],
+      ['Barcelona', 'Espanha'],
+      ['Bayern de Munique', 'Alemanha'],
+      ['Juventus', 'Itália'],
+      ['Liverpool', 'Inglaterra'],
+      ['Manchester United', 'Inglaterra'],
+      ['Milan', 'Itália'],
+      ['Ajax', 'Países Baixos'],
+      ['Boca Juniors', 'Argentina'],
+      ['Palmeiras', 'Brasil'],
+    ],
+  );
+  assert.doesNotMatch(ranking.note, /temporada atual|atualizado diariamente/i);
+
+  const detail = renderDiscoverPage(template, ranking.slug);
+  assert.match(detail, /TOP 10 · PAÍS/);
+  assert.doesNotMatch(detail, /Opta Power Rankings|Nota de força/);
+});
+
 test('Mundo & Geografia gathers 26 varied and sourced rankings without duplicates', () => {
   const worldRankings = discoverRankingsForCategory('mundo');
   const worldHtml = renderDiscoverPage(template, '', 'mundo');

@@ -669,24 +669,25 @@ export const DISCOVER_RANKINGS = Object.freeze([
   },
   {
     slug: 'melhores-clubes-futebol-mundo',
-    title: 'Melhores clubes de futebol do mundo',
+    title: 'Melhores clubes de futebol de todos os tempos',
     category: 'Futebol',
-    metric: 'Nota de força, de 0 a 100',
-    period: '24 de julho de 2026',
-    source: 'Opta Power Rankings',
-    sourceUrl: 'https://theanalyst.com/articles/power-rankings-your-club-ranked',
-    note: 'Sistema baseado em Elo, resultados e xG. É atualizado diariamente; este é o retrato publicado pela Opta em julho.',
+    metric: 'Seleção editorial sobre a trajetória histórica dos clubes',
+    period: 'Ranking publicado em 9 de julho de 2025',
+    source: 'Bleacher Report',
+    sourceUrl: 'https://bleacherreport.com/articles/25224336-ranking-10-best-soccer-clubs-all-time',
+    valueLabel: 'PAÍS',
+    note: 'Lista histórica do Bleacher Report sobre o conjunto da obra dos clubes, em vez da força de uma temporada específica. O país de origem aparece ao lado de cada nome.',
     items: rankingItems(`
-1|Arsenal|100,0
-2|Bayern de Munique|99,96
-3|Manchester City|98,2
-4|Paris Saint-Germain|97,4
-5|Barcelona|96,3
-6|Manchester United|96,1
-7|Aston Villa|95,2
-8|Real Madrid|95,2
-9|Inter de Milão|94,8
-10|Liverpool|94,7`),
+1|Real Madrid|Espanha
+2|Barcelona|Espanha
+3|Bayern de Munique|Alemanha
+4|Juventus|Itália
+5|Liverpool|Inglaterra
+6|Manchester United|Inglaterra
+7|Milan|Itália
+8|Ajax|Países Baixos
+9|Boca Juniors|Argentina
+10|Palmeiras|Brasil`),
   },
   {
     slug: 'jogadores-futebol-mais-valiosos',
