@@ -616,7 +616,7 @@ test('every published ranking belongs to exactly one visible editorial category'
 
 test('editorial URLs use Rankings and keep Descobrir only as a legacy redirect', () => {
   const detail = renderDiscoverPage(template, 'pessoas-mais-ricas-do-mundo');
-  assert.match(detail, /href="\/rankings">← VOLTAR AOS RANKINGS<\/a>/);
+  assert.match(detail, /href="\/rankings">← RANKINGS<\/a>/);
   assert.match(
     detail,
     /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings\/pessoas-mais-ricas-do-mundo"/,
@@ -763,6 +763,14 @@ test('Rankings has responsive desktop and mobile styling', () => {
     cssSource,
     /@media \(max-width: 700px\)[\s\S]*body\.popElectric\.discoverDetailPage \.discoverRankingSheet li,[\s\S]*grid-template-columns: 30px minmax\(0, 1fr\)/,
   );
-  assert.match(template, /editorial-clean\.css\?[^"']*rankings-topo-layout/);
+  assert.match(
+    cssSource,
+    /body\.popElectric\.discoverDetailPage \.discoverArticleSummary \{[\s\S]*?grid-template-columns: minmax\(0, 1\.08fr\) minmax\(0, 0\.92fr\)[\s\S]*?margin: 0 0 16px/,
+  );
+  assert.match(
+    cssSource,
+    /body\.popElectric\.discoverDetailPage \.discoverArticleHero h1 \{[\s\S]*?800 clamp\(42px, 6vw, 66px\) \/ 0\.94/,
+  );
+  assert.match(template, /editorial-clean\.css\?[^"']*compact-ranking-detail/);
   assert.match(cssSource, /localMode \.experienceInner \{[\s\S]*?flex-wrap: wrap/);
 });

@@ -511,7 +511,7 @@ function discoverDetailHTML(ranking) {
     sourceTitle = ranking.topoRanking ? 'Como calculamos' : 'De onde vêm os números',
     related = discoverRelated(ranking);
   return `<article class="discoverArticle">
-    <a class="discoverBack" href="/rankings">← VOLTAR AOS RANKINGS</a>
+    <a class="discoverBack" href="/rankings">← RANKINGS</a>
     <header class="discoverArticleHero">
       <div class="discoverArticleMeta"><span>${escapeHtml(ranking.category)}</span><span>TOP 10</span>${topoBadge}<small>RANKING INFORMATIVO · SEM VOTAÇÃO</small></div>
       <h1>${escapeHtml(ranking.title)}</h1>

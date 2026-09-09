@@ -12300,7 +12300,7 @@ body.popElectric .discoverRelated {
 /* Rankings informativos — mesma linguagem das páginas do TOPO. */
 body.popElectric.discoverDetailPage .feed {
   width: min(860px, calc(100% - 48px));
-  padding: 24px 0 88px;
+  padding: 16px 0 88px;
 }
 
 body.popElectric.discoverDetailPage .discoverArticle {
@@ -12311,15 +12311,15 @@ body.popElectric.discoverDetailPage .discoverArticle {
 
 body.popElectric.discoverDetailPage .discoverBack {
   min-height: 0;
-  margin: 0 0 14px;
-  border-bottom: 1px solid var(--clean-line);
-  padding: 0 0 10px;
+  margin: 0 0 12px;
+  border-bottom: 1px solid currentColor;
+  padding: 0 0 3px;
   color: var(--clean-ink);
   font:
-    700 11px/1.2 Arial,
+    800 12px/1.2 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 body.popElectric.discoverDetailPage .discoverArticleHero {
@@ -12335,8 +12335,8 @@ body.popElectric.discoverDetailPage .discoverArticleHero {
 body.popElectric.discoverDetailPage .discoverArticleMeta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0 0 13px;
+  gap: 7px 9px;
+  margin: 0 0 9px;
   color: var(--clean-muted);
 }
 
@@ -12359,13 +12359,14 @@ body.popElectric.discoverDetailPage .discoverArticleMeta span:first-child {
 }
 
 body.popElectric.discoverDetailPage .discoverArticleMeta small {
-  margin-left: auto;
+  margin-left: 0;
   color: var(--clean-muted);
   font:
-    500 10px/1.2 Arial,
+    700 9px/1.2 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.035em;
+  white-space: nowrap;
 }
 
 body.popElectric.discoverDetailPage .discoverTopoBadge {
@@ -12388,50 +12389,50 @@ body.popElectric.discoverDetailPage .discoverTopoBadge {
 
 body.popElectric.discoverDetailPage .discoverArticleHero h1 {
   max-width: 790px;
-  margin: 0 0 30px;
+  margin: 0 0 16px;
   color: var(--clean-ink);
   font:
-    800 clamp(48px, 7vw, 78px) / 0.92 Arial,
+    800 clamp(42px, 6vw, 66px) / 0.94 Arial,
     Helvetica,
     sans-serif;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 
 body.popElectric.discoverDetailPage .discoverArticleSummary {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   gap: 0;
   max-width: none;
-  margin: 0 0 32px;
+  margin: 0 0 16px;
   border-top: 1px solid var(--clean-ink);
   border-bottom: 1px solid var(--clean-ink);
 }
 
 body.popElectric.discoverDetailPage .discoverArticleSummary p {
-  min-height: 88px;
+  min-height: 62px;
   display: grid;
   align-content: center;
-  gap: 7px;
+  gap: 4px;
   margin: 0;
-  padding: 15px 0;
+  padding: 10px 0;
   color: var(--clean-ink);
   font:
-    800 18px/1.2 Arial,
+    800 14px/1.2 Arial,
     Helvetica,
     sans-serif;
 }
 
 body.popElectric.discoverDetailPage .discoverArticleSummary p + p {
   border-left: 1px solid var(--clean-line);
-  padding-left: 24px;
+  padding-left: 18px;
 }
 
 body.popElectric.discoverDetailPage .discoverArticleSummary span {
   margin: 0;
   color: var(--clean-muted);
   font:
-    800 10px/1.2 Arial,
+    800 9px/1.2 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0.1em;
@@ -12443,14 +12444,14 @@ body.popElectric.discoverDetailPage .discoverRankingSheet {
 }
 
 body.popElectric.discoverDetailPage .discoverRankingResultHead {
-  min-height: 44px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   border: 0;
   border-bottom: 1px solid var(--clean-ink);
-  padding: 0 0 12px;
+  padding: 0 0 9px;
   color: var(--clean-muted);
 }
 
@@ -12554,7 +12555,7 @@ body.popElectric.discoverDetailPage .discoverRankingItem.medal-gold > b {
   padding: 0;
   color: var(--clean-muted);
   font:
-    700 13px/1.25 Arial,
+    500 12px/1.25 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0;
@@ -12603,43 +12604,44 @@ body.popElectric.discoverDetailPage .discoverRelated {
 @media (max-width: 700px) {
   body.popElectric.discoverDetailPage .feed {
     width: calc(100% - 32px);
-    padding: 16px 0 64px;
+    padding: 12px 0 64px;
   }
 
   body.popElectric.discoverDetailPage .discoverBack {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   body.popElectric.discoverDetailPage .discoverArticleMeta {
     flex-wrap: wrap;
-    gap: 7px 10px;
+    gap: 5px 8px;
+    margin-bottom: 8px;
   }
 
   body.popElectric.discoverDetailPage .discoverArticleMeta small {
-    width: 100%;
-    margin: 2px 0 0;
+    width: auto;
+    margin: 0;
   }
 
   body.popElectric.discoverDetailPage .discoverArticleHero h1 {
-    margin-bottom: 24px;
-    font-size: clamp(38px, 11vw, 54px);
+    margin-bottom: 14px;
+    font-size: clamp(34px, 9.5vw, 44px);
   }
 
   body.popElectric.discoverDetailPage .discoverArticleSummary {
-    grid-template-columns: minmax(0, 1fr);
-    margin-bottom: 26px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    margin-bottom: 14px;
   }
 
   body.popElectric.discoverDetailPage .discoverArticleSummary p {
-    min-height: 72px;
-    padding: 13px 0;
-    font-size: 16px;
+    min-height: 58px;
+    padding: 9px 0;
+    font-size: 14px;
   }
 
   body.popElectric.discoverDetailPage .discoverArticleSummary p + p {
-    border-top: 1px solid var(--clean-line);
-    border-left: 0;
-    padding-left: 0;
+    border-top: 0;
+    border-left: 1px solid var(--clean-line);
+    padding-left: 12px;
   }
 
   body.popElectric.discoverDetailPage .discoverRankingSheet li,
@@ -12664,7 +12666,7 @@ body.popElectric.discoverDetailPage .discoverRelated {
     grid-column: 2;
     align-self: start;
     padding: 4px 0 0;
-    font-size: 12px;
+    font-size: 11px;
     text-align: left;
     white-space: normal;
   }
@@ -12675,7 +12677,7 @@ body.popElectric.discoverDetailPage .discoverRelated {
   }
 
   body.popElectric.discoverDetailPage .discoverRankPosition b {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   body.popElectric.discoverDetailPage .discoverSourceBox {
