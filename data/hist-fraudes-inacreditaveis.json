@@ -1,0 +1,38 @@
+{
+  "version": "2026-09-09",
+  "rankingId": "hist-fraudes-inacreditaveis",
+  "question": "Qual é a farsa ou o golpe mais inacreditável?",
+  "previousQuestion": "Qual foi o golpe ou fraude mais inacreditável da história?",
+  "previousOptions": [
+    "Bernie Madoff",
+    "Esquema Ponzi",
+    "Theranos",
+    "Fyre Festival",
+    "Enron",
+    "Wirecard",
+    "South Sea Bubble",
+    "Golpe do Tinder",
+    "Jordan Belfort / Stratton Oakmont",
+    "WorldCom",
+    "OneCoin",
+    "Golpe do bilhete premiado",
+    "Falso príncipe nigeriano",
+    "Esquema da TelexFree"
+  ],
+  "options": [
+    "Grávida de Taubaté — a falsa gravidez de quadrigêmeos",
+    "Golpe do bilhete premiado",
+    "Golpe do falso sequestro",
+    "Golpe do falso parente no WhatsApp",
+    "Golpe da falsa central bancária",
+    "Urubu do Pix — o dinheiro que prometia se multiplicar",
+    "Avestruz Master — o investimento em avestruzes",
+    "TelexFree — a renda prometida com telefonia",
+    "Golpe do príncipe nigeriano — a herança milionária",
+    "O homem que vendeu a Torre Eiffel duas vezes",
+    "O golpista do Tinder — o falso milionário",
+    "Fyre Festival — o luxo que nunca foi entregue",
+    "Theranos — exames prometidos com uma gota de sangue",
+    "Bernie Madoff — o esquema Ponzi bilionário"
+  ]
+}
