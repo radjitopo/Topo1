@@ -1,4 +1,5 @@
 import { EXPANDED_DISCOVER_RANKINGS } from './discover-rankings-expanded.js';
+import { CONSUMPTION_DISCOVER_RANKINGS } from './discover-rankings-consumption.js';
 
 function rankingItems(block) {
   return block
@@ -1690,6 +1691,7 @@ export const DISCOVER_RANKINGS = Object.freeze([
 10|Silky Terrier|22,9–25,4 cm (máx. 25,4 cm)`),
   },
   ...EXPANDED_DISCOVER_RANKINGS,
+  ...CONSUMPTION_DISCOVER_RANKINGS,
 ]);
 
 export function discoverRankingBySlug(slug) {

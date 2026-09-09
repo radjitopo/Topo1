@@ -34,12 +34,12 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /120 PUBLICADOS/);
+  assert.match(appSource, /130 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 120 rankings without voting controls', () => {
+test('the editorial collection publishes all 130 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 class="srOnly" id="discover-list-title">Rankings editoriais<\/h1>/);
@@ -58,12 +58,12 @@ test('the editorial collection publishes all 120 rankings without voting control
     /RANKINGS<\/strong><span>Explore rankings prontos, com dados, datas e fontes\.<\/span>/,
   );
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
-  assert.match(html, /120 rankings editoriais com Top 10/);
+  assert.match(html, /130 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 120);
-  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 120);
-  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 360);
-  assert.equal((html.match(/VER RANKING/g) || []).length, 120);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 130);
+  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 130);
+  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 390);
+  assert.equal((html.match(/VER RANKING/g) || []).length, 130);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /Elon Musk/);
   assert.doesNotMatch(html, /US\$ 892 bi|1º de setembro de 2026/);
@@ -77,7 +77,7 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   const categoryHtml = renderDiscoverPage(template, '', 'brasil');
   assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
   assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
-  assert.match(allHtml, /data-discover-progress[^>]*>20 de 120 rankings<\/span>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 130 rankings<\/span>/);
   assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
   assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
   assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
@@ -581,7 +581,7 @@ test('the six expanded categories publish their sourced rankings without duplica
     ['musica', { count: 13, title: 'Álbuns mais ouvidos da história do Spotify' }],
     ['tecnologia', { count: 10, title: 'Navegadores mais usados no mundo' }],
     ['viagens', { count: 10, title: 'Aeroportos mais movimentados do mundo' }],
-    ['gastronomia', { count: 11, title: 'Melhores pizzarias do mundo' }],
+    ['gastronomia', { count: 21, title: 'Melhores pizzarias do mundo' }],
   ]);
 
   for (const [slug, { count, title }] of expectedTitles) {
@@ -721,9 +721,9 @@ test('Ranking Topo publishes the three editorial consensus lists with its seal',
   }
 });
 
-test('the editorial catalog keeps 120 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 120);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 120);
+test('the editorial catalog keeps 130 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 130);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 130);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);
@@ -733,6 +733,36 @@ test('the editorial catalog keeps 120 complete and sourced rankings', () => {
       ranking.slug,
     );
   }
+});
+
+test('the consumption collection publishes 10 sourced Top 10 rankings', () => {
+  const slugs = [
+    'paises-mais-consomem-vinho',
+    'paises-mais-consomem-cerveja-por-pessoa',
+    'paises-mais-consomem-cafe-por-pessoa',
+    'paises-mais-consomem-cha-mate-por-pessoa',
+    'paises-mais-consomem-carne-bovina-por-pessoa',
+    'paises-mais-consomem-pimentas-por-pessoa',
+    'paises-mais-consomem-arroz-por-pessoa',
+    'paises-mais-consomem-peixes-frutos-mar-por-pessoa',
+    'paises-mais-consomem-ovos-por-pessoa',
+    'paises-mais-consomem-batatas-por-pessoa',
+  ];
+  const rankings = slugs.map((slug) => DISCOVER_RANKINGS.find((ranking) => ranking.slug === slug));
+
+  assert.ok(rankings.every(Boolean));
+  assert.ok(rankings.every((ranking) => ranking.category === 'Gastronomia'));
+  assert.ok(rankings.every((ranking) => ranking.items.length === 10));
+  assert.ok(rankings.every((ranking) => ranking.sourceUrl.startsWith('https://')));
+  assert.equal(rankings[0].items[0].name, 'Estados Unidos');
+  assert.equal(rankings[1].items[0].name, 'Tchéquia');
+  assert.equal(rankings[5].items[0].name, 'Bósnia e Herzegovina');
+  assert.match(rankings[4].note, /não há uma série mundial comparável/);
+
+  const detail = renderDiscoverPage(template, slugs[5]);
+  assert.match(detail, /TOP 10 · VALOR/);
+  assert.equal((detail.match(/class="discoverRankingItem/g) || []).length, 10);
+  assert.doesNotMatch(detail, /data-duel|VOTE AGORA/);
 });
 
 test('the desserts ranking consolidates pastel de nata and pastel de Belém', () => {
