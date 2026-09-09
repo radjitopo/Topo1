@@ -7153,16 +7153,19 @@ body.popElectric.rankingPage .rankingEditorSave:disabled {
 /* Meu Topo --------------------------------------------------------------- */
 
 body.popElectric:is(.vipPage, .profilePage) .personalHubHeader {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px 32px;
-  align-items: center;
   border-bottom: 1px solid var(--clean-ink);
-  padding: 18px 0 14px;
+  padding: 18px 0 16px;
 }
 
-body.popElectric:is(.vipPage, .profilePage) .personalHubHeader h1 {
-  margin: 5px 0 0;
+body.popElectric .personalHubGuest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+body.popElectric .personalHubGuest h1 {
+  margin: 0;
   color: var(--clean-ink);
   font:
     900 clamp(30px, 4vw, 42px) / 0.92 Arial,
@@ -7174,14 +7177,14 @@ body.popElectric:is(.vipPage, .profilePage) .personalHubHeader h1 {
 body.popElectric .personalHubProfile {
   min-width: 0;
   display: grid;
-  grid-template-columns: 70px minmax(112px, auto);
-  gap: 12px;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 18px;
   align-items: center;
 }
 
 body.popElectric .personalHubAvatar {
-  width: 70px;
-  height: 70px;
+  width: 104px;
+  height: 104px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -7204,7 +7207,7 @@ body.popElectric .personalHubAvatar [hidden] {
 
 body.popElectric .personalHubAvatar > span {
   font:
-    900 25px/1 Arial,
+    900 34px/1 Arial,
     Helvetica,
     sans-serif;
 }
@@ -7213,24 +7216,32 @@ body.popElectric .personalHubProfileMeta {
   min-width: 0;
   display: grid;
   justify-items: start;
-  gap: 5px;
+  align-content: center;
+  gap: 7px;
 }
 
 body.popElectric .personalHubName {
-  max-width: 180px;
-  overflow: hidden;
+  max-width: 100%;
   color: var(--clean-ink);
   font:
-    900 14px/1.05 Arial,
+    900 clamp(26px, 3.2vw, 38px) / 0.95 Arial,
     Helvetica,
     sans-serif;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+body.popElectric .personalHubName:hover,
+body.popElectric .personalHubName:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
 body.popElectric .personalHubPhotoButton,
 body.popElectric .personalHubSignIn {
-  min-height: 29px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -7238,10 +7249,10 @@ body.popElectric .personalHubSignIn {
   border-radius: 0;
   background: var(--clean-ink);
   color: #fff;
-  padding: 0 10px;
+  padding: 0 13px;
   cursor: pointer;
   font:
-    900 9px/1 Arial,
+    900 10px/1 Arial,
     Helvetica,
     sans-serif;
   letter-spacing: 0.06em;
@@ -7261,29 +7272,16 @@ body.popElectric .personalHubPhotoButton:disabled {
   opacity: 0.55;
 }
 
-body.popElectric .personalHubProfileLink {
-  border-bottom: 1px solid var(--clean-line);
-  color: var(--clean-muted);
-  font:
-    800 9px/1.2 Arial,
-    Helvetica,
-    sans-serif;
-  text-decoration: none;
-}
-
-body.popElectric .personalHubProfileLink:hover,
-body.popElectric .personalHubProfileLink:focus-visible {
-  border-color: var(--clean-coral);
-  color: var(--clean-coral);
-}
-
 body.popElectric .personalHubPhotoStatus {
-  min-height: 10px;
   color: var(--clean-muted);
   font:
     700 8px/1.2 Arial,
     Helvetica,
     sans-serif;
+}
+
+body.popElectric .personalHubPhotoStatus:empty {
+  display: none;
 }
 
 body.popElectric.profilePage .profileBackLink {
@@ -9098,47 +9096,40 @@ body.popElectric.vipPage .profileLeaderboardRow.current {
 
 @media (max-width: 700px) {
   body.popElectric:is(.vipPage, .profilePage) .personalHubHeader {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 12px;
     padding: 14px 0 12px;
   }
 
-  body.popElectric:is(.vipPage, .profilePage) .personalHubHeader h1 {
+  body.popElectric .personalHubGuest h1 {
     font-size: 34px;
   }
 
   body.popElectric .personalHubProfile {
-    grid-template-columns: 58px minmax(86px, auto);
-    gap: 8px;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 14px;
   }
 
   body.popElectric .personalHubAvatar {
-    width: 58px;
-    height: 58px;
+    width: 88px;
+    height: 88px;
   }
 
   body.popElectric .personalHubAvatar > span {
-    font-size: 21px;
+    font-size: 29px;
   }
 
   body.popElectric .personalHubName {
-    max-width: 105px;
-    font-size: 12px;
+    font-size: clamp(22px, 7vw, 28px);
   }
 
   body.popElectric .personalHubPhotoButton,
   body.popElectric .personalHubSignIn {
-    min-height: 27px;
-    padding: 0 8px;
-    font-size: 8px;
-  }
-
-  body.popElectric .personalHubProfileLink {
-    font-size: 8px;
+    min-height: 32px;
+    padding: 0 11px;
+    font-size: 9px;
   }
 
   body.popElectric .personalHubPhotoStatus {
-    max-width: 105px;
+    max-width: 190px;
   }
 
   body.popElectric .vipActivityLead {

@@ -135,10 +135,15 @@ test('the VIP area is compact and renders only rankings created by the signed-in
   assert.match(vipArea, /bindProfileControls\(\)/);
   assert.doesNotMatch(vipArea, /Área VIP/);
   assert.doesNotMatch(vipArea, /Rankings VIP do TOPO/);
-  assert.match(style, /900 clamp\(30px, 4vw, 42px\)/);
-  assert.match(style, /font-size: 34px/);
+  assert.match(style, /grid-template-columns: 104px minmax\(0, 1fr\)/);
+  assert.match(style, /width: 104px/);
+  assert.match(style, /grid-template-columns: 88px minmax\(0, 1fr\)/);
+  assert.match(style, /width: 88px/);
   assert.match(app, /class="personalHubAvatar"/);
   assert.match(app, /id="chooseProfilePhoto"/);
+  assert.match(app, /class="personalHubName profileName" href="\/perfil"/);
+  assert.doesNotMatch(app, /Seu espaço pessoal/);
+  assert.doesNotMatch(app, /personalHubProfileLink/);
   assert.doesNotMatch(app, /class="personalHubTabs"/);
   assert.match(
     style,

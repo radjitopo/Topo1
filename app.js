@@ -1274,10 +1274,10 @@ function personalAreaHeaderHTML(data = null) {
     avatar = String(profile.avatarData || ''),
     profileControl = viewer.registered
       ? data
-        ? `<div class="personalHubProfile"><div class="personalHubAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(name))}</span></div><div class="personalHubProfileMeta"><strong class="personalHubName profileName">${escapeHTML(name)}</strong><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="personalHubPhotoButton" id="chooseProfilePhoto" type="button">${avatar ? 'MUDAR FOTO' : 'ADICIONAR FOTO'}</button><a class="personalHubProfileLink" href="/perfil">Editar nome e conta</a><span class="personalHubPhotoStatus" id="profilePhotoStatus" aria-live="polite"></span></div></div>`
-        : '<a class="personalHubSignIn" href="/perfil">EDITAR PERFIL</a>'
-      : `<a class="personalHubSignIn" href="${escapeHTML(`/entrar?voltar=${encodeURIComponent('/vip')}`)}">ENTRAR</a>`;
-  return `<section class="personalHubHeader"><div class="personalHubTitle"><span class="portalKicker">Seu espaço pessoal</span><h1>Meu Topo</h1></div>${profileControl}</section>`;
+        ? `<div class="personalHubProfile"><div class="personalHubAvatar"><img id="profileAvatarImage" alt="Foto de perfil de ${escapeHTML(name)}" ${avatar ? `src="${escapeHTML(avatar)}"` : 'hidden'}><span id="profileAvatarInitial" ${avatar ? 'hidden' : ''}>${escapeHTML(profileInitial(name))}</span></div><div class="personalHubProfileMeta"><span class="portalKicker">Meu Topo</span><a class="personalHubName profileName" href="/perfil" aria-label="Editar nome e conta de ${escapeHTML(name)}">${escapeHTML(name)}</a><input id="profilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="personalHubPhotoButton" id="chooseProfilePhoto" type="button">${avatar ? 'MUDAR FOTO' : 'ADICIONAR FOTO'}</button><span class="personalHubPhotoStatus" id="profilePhotoStatus" aria-live="polite"></span></div></div>`
+        : '<div class="personalHubGuest"><h1>Meu Topo</h1><a class="personalHubSignIn" href="/perfil">EDITAR PERFIL</a></div>'
+      : `<div class="personalHubGuest"><h1>Meu Topo</h1><a class="personalHubSignIn" href="${escapeHTML(`/entrar?voltar=${encodeURIComponent('/vip')}`)}">ENTRAR</a></div>`;
+  return `<section class="personalHubHeader">${profileControl}</section>`;
 }
 
 function personalScorecardHTML(data = null) {
