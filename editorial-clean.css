@@ -2380,6 +2380,38 @@ body.popElectric .experienceLink.local.active {
   color: var(--clean-coral);
 }
 
+body.popElectric .experienceIntroCopy {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 0;
+  border-bottom: 1px solid var(--clean-line);
+  padding: 11px 0 10px;
+  color: var(--clean-muted);
+  font:
+    650 12px/1.35 Arial,
+    Helvetica,
+    sans-serif;
+}
+
+body.popElectric .experienceIntroCopy::before {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: var(--clean-coral);
+  content: '';
+  transform: translateY(-1px);
+}
+
+body.popElectric .experienceIntroCopy strong {
+  flex: 0 0 auto;
+  color: var(--clean-ink);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
 body.popElectric .localMark {
   display: inline-grid;
   flex: 0 0 18px;
@@ -11560,6 +11592,12 @@ body.popElectric .discoverPrinciples p {
 }
 
 @media (max-width: 700px) {
+  body.popElectric .experienceIntroCopy {
+    gap: 7px;
+    padding-block: 9px;
+    font-size: 11px;
+  }
+
   body.popElectric .experienceSwitch {
     gap: 18px;
   }

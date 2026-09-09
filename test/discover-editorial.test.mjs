@@ -17,11 +17,12 @@ const [template, appSource, cssSource, vercelConfig, sitemapSource] = await Prom
   readFile(new URL('sitemap.js', root), 'utf8'),
 ]);
 
-test('the primary navigation clearly separates Rankings, TOPO and TOPO LOCAL', () => {
+test('the primary navigation leads with the two ways to vote and then Rankings', () => {
   assert.match(
     template,
-    /data-experience="discover" href="\/rankings">RANKINGS<\/a>[\s\S]*data-experience="topo" href="\/"[\s\S]*data-experience="local" href="\/local"/,
+    /data-experience="topo" href="\/">[\s\S]*?VOTAR<\/a><a[^>]*data-experience="local" href="\/local">[\s\S]*?VOTAR LOCAL<\/a><a[^>]*data-experience="discover" href="\/rankings">RANKINGS<\/a>/,
   );
+  assert.doesNotMatch(template, /experienceIntroCopy/);
   assert.match(vercelConfig, /"src": "\/rankings\/\?"/);
   assert.match(vercelConfig, /"src": "\/rankings\/\(\[\^\/\]\+\)\/\?"/);
   assert.match(vercelConfig, /view=discover-legacy/);
@@ -47,7 +48,14 @@ test('the editorial collection publishes all 120 rankings without voting control
   assert.doesNotMatch(html, /ESCOLHA UM TEMA/);
   assert.doesNotMatch(html, /Cada ranking traz o Top 10/);
   assert.ok(
+    html.indexOf('class="experienceIntroCopy"') < html.indexOf('class="discoverCategoryNav"'),
+  );
+  assert.ok(
     html.indexOf('class="discoverCategoryNav"') < html.indexOf('id="discover-ranking-grid"'),
+  );
+  assert.match(
+    html,
+    /RANKINGS<\/strong><span>Explore rankings prontos, com dados, datas e fontes\.<\/span>/,
   );
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
   assert.match(html, /120 rankings editoriais com Top 10/);
@@ -61,7 +69,7 @@ test('the editorial collection publishes all 120 rankings without voting control
   assert.doesNotMatch(html, /US\$ 892 bi|1º de setembro de 2026/);
   assert.doesNotMatch(html, />OURO<|>PRATA<|>BRONZE</);
   assert.doesNotMatch(html, /class="discoverMedalRank"|<header><span>\d{2}<\/span>/);
-  assert.doesNotMatch(html, /class="react|data-duel|VOTAR|VOTE AGORA/);
+  assert.doesNotMatch(html, /class="react|data-duel|VOTE AGORA/);
 });
 
 test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
@@ -673,6 +681,7 @@ test('each editorial detail has a top 10, values, period and source', () => {
   assert.match(html, /US\$ 892 bi/);
   assert.match(html, /1º de setembro de 2026/);
   assert.match(html, /Forbes · forbes\.com/);
+  assert.doesNotMatch(html, /experienceIntroCopy|Explore rankings prontos/);
   assert.doesNotMatch(html, /class="discoverPodium"/);
   const rankingSheet =
     html.match(/<section class="discoverRankingSheet"[\s\S]*?<\/section>/)?.[0] || '';

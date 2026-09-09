@@ -214,6 +214,10 @@ test('the two newer local collection routes render indexable pages with their ra
 test('home and category pages expose crawlable ranking and category links', () => {
   const vip = { ...cinema, id: 'amigos-vip', isVip: true };
   const home = renderHomePage(template, [cinema, local, vip]);
+  assert.match(
+    home,
+    /VOTAR<\/strong><span>Vote nos rankings mais incríveis, relevantes e estranhos\.<\/span>/,
+  );
   assert.match(home, /<h1>Rankings para votar e descobrir<\/h1>/);
   assert.match(home, /href="\/categoria\/cinema"/);
   assert.match(home, /href="\/ranking\/filmes"/);
@@ -234,6 +238,7 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.equal(category.count, 1);
   assert.match(category.html, /<h1>Cinema<\/h1>/);
   assert.match(category.html, /https:\/\/somostopo\.com\.br\/categoria\/cinema/);
+  assert.doesNotMatch(category.html, /experienceIntroCopy/);
 
   const generalSport = renderGeneralCategoryPage(template, generalCategoryBySlug('futebol'), [
     fluminensePlayers,
@@ -266,10 +271,24 @@ test('home and category pages expose crawlable ranking and category links', () =
   assert.match(search, /name="robots" content="noindex,follow"/);
   assert.match(search, /Resultados para “filmes”/);
   assert.match(search, /href="\/ranking\/filmes"/);
+  assert.doesNotMatch(search, /experienceIntroCopy/);
 
   const localSearch = renderHomePage(template, [cinema, local], 'sushi', 'Florianópolis');
   assert.match(localSearch, /TOPO \+ TOPO LOCAL · Florianópolis/);
   assert.match(localSearch, /href="\/ranking\/sushi-floripa"/);
+
+  const localLanding = renderLocalPage(template, [local]);
+  assert.match(
+    localLanding.html,
+    /VOTAR LOCAL<\/strong><span>Escolha os melhores lugares da sua cidade\.<\/span>/,
+  );
+  const localGroup = renderLocalPage(
+    template,
+    [local],
+    localCityBySlug('florianopolis'),
+    localGroupBySlug('sushi-japones'),
+  );
+  assert.doesNotMatch(localGroup.html, /experienceIntroCopy/);
 });
 
 test('not-found HTML remains a not-found page after the client starts', () => {

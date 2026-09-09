@@ -31,6 +31,20 @@ const BASE_URL = 'https://somostopo.com.br';
 const DISCOVER_PAGE_SIZE = 20;
 const AFFINITY_FEATURE_ENABLED = false;
 const LOCAL_CITY_LABELS = Object.freeze(LOCAL_CITIES.map((city) => city.label));
+const EXPERIENCE_INTROS = Object.freeze({
+  topo: {
+    label: 'VOTAR',
+    copy: 'Vote nos rankings mais incríveis, relevantes e estranhos.',
+  },
+  local: {
+    label: 'VOTAR LOCAL',
+    copy: 'Escolha os melhores lugares da sua cidade.',
+  },
+  discover: {
+    label: 'RANKINGS',
+    copy: 'Explore rankings prontos, com dados, datas e fontes.',
+  },
+});
 let sqlClient;
 
 function database() {
@@ -50,6 +64,13 @@ export function escapeHtml(value) {
         "'": '&#39;',
       })[character],
   );
+}
+
+function experienceIntroHTML(kind) {
+  const intro = EXPERIENCE_INTROS[kind];
+  return intro
+    ? `<p class="experienceIntroCopy"><strong>${escapeHtml(intro.label)}</strong><span>${escapeHtml(intro.copy)}</span></p>`
+    : '';
 }
 
 function truncate(value, limit) {
@@ -364,7 +385,7 @@ export function renderHomePage(template, rankings, search = '', searchCity = 'Fl
           ? `<section class="searchRankList">${featured.map(rankingCard).join('')}</section>`
           : '<section class="portalEmpty"><h2>Nenhum ranking encontrado.</h2><p>Tente outro termo ou volte a ver todos os temas.</p></section>'
       }`
-    : `<section class="categoryLandingHead seoLandingHead">
+    : `${experienceIntroHTML('topo')}<section class="categoryLandingHead seoLandingHead">
       <div><span class="portalKicker">Tudo vira ranking</span><h1>Rankings para votar e descobrir</h1><p>${escapeHtml(description)}</p></div>
       <div class="categoryLandingCount"><strong>${formatNumber(publicRankings.length)}</strong><span>rankings</span></div>
     </section>
@@ -467,7 +488,7 @@ function discoverCollectionHTML(categorySlug = '') {
       activeCategory.slug === 'todos'
         ? 'Rankings editoriais'
         : `Rankings de ${activeCategory.label}`;
-  return `${discoverCategoryNavigation(activeCategory)}
+  return `${experienceIntroHTML('discover')}${discoverCategoryNavigation(activeCategory)}
   <section class="discoverCollection" aria-labelledby="discover-list-title">
     <h1 class="srOnly" id="discover-list-title">${escapeHtml(collectionTitle)}</h1>
     <div class="discoverGrid" id="discover-ranking-grid">${visibleRankings.map((ranking, index) => discoverCard(ranking, index)).join('')}</div>
@@ -747,7 +768,7 @@ export function renderLocalPage(template, rankings, city = null, group = null, s
     breadcrumbSchema(breadcrumbs),
     itemListSchema(selected, heading, listId),
   ]);
-  const content = `<section class="categoryLandingHead localCatalogHead seoLandingHead">
+  const content = `${!group && !search ? experienceIntroHTML('local') : ''}<section class="categoryLandingHead localCatalogHead seoLandingHead">
       <div><span class="portalKicker">${city ? `${escapeHtml(city.label)} no TOPO` : 'Escolha sua cidade'}</span><h1>${escapeHtml(heading)}</h1><p>${escapeHtml(description)}</p></div>
       <div class="categoryLandingCount"><strong>${formatNumber(selected.length)}</strong><span>${city ? 'na cidade' : 'rankings locais'}</span></div>
     </section>
