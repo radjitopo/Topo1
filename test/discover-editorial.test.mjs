@@ -34,12 +34,12 @@ test('the home introduces editorial rankings after TOPO LOCAL', () => {
   assert.match(appSource, /RANKINGS EDITORIAIS/);
   assert.match(appSource, /id="discover-home-title">Rankings<\/h2>/);
   assert.match(appSource, /Informação clara, números reais, data e fonte — sem votação\./);
-  assert.match(appSource, /140 PUBLICADOS/);
+  assert.match(appSource, /139 PUBLICADOS/);
   assert.doesNotMatch(appSource, /Os primeiros temas entram aqui em breve/);
   assert.doesNotMatch(appSource, /MAIS PARA DESCOBRIR|PARA DESCOBRIR/);
 });
 
-test('the editorial collection publishes all 140 rankings without voting controls', () => {
+test('the editorial collection publishes all 139 rankings without voting controls', () => {
   const html = renderDiscoverPage(template);
   assert.match(html, /<body class="popElectric homePage discoverPage">/);
   assert.match(html, /<h1 class="srOnly" id="discover-list-title">Rankings editoriais<\/h1>/);
@@ -58,12 +58,12 @@ test('the editorial collection publishes all 140 rankings without voting control
     /RANKINGS<\/strong><span>Explore rankings prontos, com dados, datas e fontes\.<\/span>/,
   );
   assert.match(html, /rel="canonical" href="https:\/\/somostopo\.com\.br\/rankings"/);
-  assert.match(html, /140 rankings editoriais com Top 10/);
+  assert.match(html, /139 rankings editoriais com Top 10/);
   assert.match(html, /name="robots" content="index,follow/);
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 140);
-  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 140);
-  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 420);
-  assert.equal((html.match(/VER RANKING/g) || []).length, 140);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 139);
+  assert.equal((html.match(/class="discoverTeaserTopThree"/g) || []).length, 139);
+  assert.equal((html.match(/class="discoverTeaserPosition"/g) || []).length, 417);
+  assert.equal((html.match(/VER RANKING/g) || []).length, 139);
   assert.match(html, /Pessoas mais ricas do mundo/);
   assert.match(html, /Elon Musk/);
   assert.doesNotMatch(html, /US\$ 892 bi|1º de setembro de 2026/);
@@ -77,7 +77,7 @@ test('Todos reveals the editorial collection in blocks of 20 rankings', () => {
   const categoryHtml = renderDiscoverPage(template, '', 'brasil');
   assert.match(allHtml, /data-discover-pagination data-page-size="20" hidden/);
   assert.match(allHtml, /data-discover-load-more[^>]*>Ver mais 20 rankings<\/button>/);
-  assert.match(allHtml, /data-discover-progress[^>]*>20 de 140 rankings<\/span>/);
+  assert.match(allHtml, /data-discover-progress[^>]*>20 de 139 rankings<\/span>/);
   assert.doesNotMatch(categoryHtml, /data-discover-pagination/);
   assert.match(appSource, /const DISCOVER_PAGE_SIZE = 20/);
   assert.match(appSource, /visibleCount = Math\.min\(visibleCount \+ pageSize, cards\.length\)/);
@@ -750,19 +750,19 @@ test('Ranking Topo publishes the three editorial consensus lists with its seal',
   }
 });
 
-test('Velocidade publishes 10 reviewed, sourced and non-votable rankings', () => {
+test('Velocidade publishes 9 reviewed, sourced and non-votable rankings', () => {
   const rankings = discoverRankingsForCategory('velocidade');
   const html = renderDiscoverPage(template, '', 'velocidade');
 
-  assert.equal(rankings.length, 10);
-  assert.equal(new Set(rankings.map(({ slug }) => slug)).size, 10);
+  assert.equal(rankings.length, 9);
+  assert.equal(new Set(rankings.map(({ slug }) => slug)).size, 9);
   assert.ok(rankings.every(({ category }) => category === 'Velocidade'));
   assert.ok(rankings.every(({ items }) => items.length === 10));
   assert.ok(rankings.every(({ sourceUrl }) => sourceUrl.startsWith('https://')));
-  assert.equal((html.match(/class="discoverCard/g) || []).length, 10);
+  assert.equal((html.match(/class="discoverCard/g) || []).length, 9);
   assert.match(html, /Homens mais rápidos nos 100 metros/);
   assert.match(html, /Carros de produção mais rápidos em testes reconhecidos/);
-  assert.match(html, /Passagens mais rápidas da Parker Solar Probe/);
+  assert.doesNotMatch(html, /Parker Solar Probe/);
   assert.match(html, /class="discoverCategoryButton active"[^>]*>Velocidade<\/a>/);
   assert.match(html, /Rankings de Velocidade/);
   assert.doesNotMatch(html, /data-duel|VOTE AGORA/);
@@ -776,23 +776,21 @@ test('the speed rankings preserve their reviewed cutoffs and caveats', () => {
   const cars = DISCOVER_RANKINGS.find(
     ({ slug }) => slug === 'carros-producao-mais-rapidos-testes-reconhecidos',
   );
-  const probe = DISCOVER_RANKINGS.find(
-    ({ slug }) => slug === 'passagens-mais-rapidas-parker-solar-probe',
-  );
-
   assert.equal(sprint.items[0].name, 'Usain Bolt');
   assert.equal(sprint.items[0].value, '9,58 s');
   assert.match(sprint.items[9].name, /Ferdinand Omanyala.*Oblique Seville/);
   assert.match(animals.note, /estimativas históricas contestadas/);
   assert.equal(cars.items[0].name, 'SSC Tuatara — 2021');
   assert.match(cars.note, /uma direção/);
-  assert.equal(probe.items[0].name, '29º periélio — 5 de setembro de 2026');
-  assert.match(probe.note, /mesmo referencial/);
+  assert.equal(
+    DISCOVER_RANKINGS.some(({ slug }) => slug === 'passagens-mais-rapidas-parker-solar-probe'),
+    false,
+  );
 });
 
-test('the editorial catalog keeps 140 complete and sourced rankings', () => {
-  assert.equal(DISCOVER_RANKINGS.length, 140);
-  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 140);
+test('the editorial catalog keeps 139 complete and sourced rankings', () => {
+  assert.equal(DISCOVER_RANKINGS.length, 139);
+  assert.equal(new Set(DISCOVER_RANKINGS.map(({ slug }) => slug)).size, 139);
   for (const ranking of DISCOVER_RANKINGS) {
     assert.equal(ranking.items.length, 10, ranking.slug);
     assert.match(ranking.sourceUrl, /^https:\/\//, ranking.slug);

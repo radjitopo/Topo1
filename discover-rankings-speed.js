@@ -208,26 +208,4 @@ export const SPEED_DISCOVER_RANKINGS = Object.freeze([
 9|Orion — Kings Island|146 km/h
 10|Pantherian — Kings Dominion|140 km/h`),
   },
-  {
-    slug: 'passagens-mais-rapidas-parker-solar-probe',
-    title: 'Passagens mais rápidas da Parker Solar Probe',
-    category: 'Velocidade',
-    metric: 'Pico heliocêntrico aproximado no periélio',
-    period: 'Passagens concluídas até 5 de setembro de 2026',
-    source: 'NASA e Johns Hopkins Applied Physics Laboratory',
-    sourceUrl: 'https://science.nasa.gov/mission/parker-solar-probe/',
-    note: 'Todas as velocidades usam o mesmo referencial, em relação ao Sol. As oito passagens na órbita final empatam quando arredondadas e são ordenadas da mais recente para a mais antiga; assim evitamos comparar sondas medidas contra astros diferentes.',
-    valueLabel: 'VELOCIDADE',
-    items: rankingItems(`
-1|29º periélio — 5 de setembro de 2026|~690.000 km/h
-2|28º periélio — 8 de junho de 2026|~690.000 km/h
-3|27º periélio — 11 de março de 2026|~690.000 km/h
-4|26º periélio — 13 de dezembro de 2025|~690.000 km/h
-5|25º periélio — 15 de setembro de 2025|~690.000 km/h
-6|24º periélio — 19 de junho de 2025|~690.000 km/h
-7|23º periélio — 22 de março de 2025|~690.000 km/h
-8|22º periélio — 24 de dezembro de 2024|~690.000 km/h
-9|21º periélio — 30 de setembro de 2024|~635.000 km/h
-10|20º periélio — 30 de junho de 2024|~635.000 km/h`),
-  },
 ]);
