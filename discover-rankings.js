@@ -1,5 +1,6 @@
 import { EXPANDED_DISCOVER_RANKINGS } from './discover-rankings-expanded.js';
 import { CONSUMPTION_DISCOVER_RANKINGS } from './discover-rankings-consumption.js';
+import { SPEED_DISCOVER_RANKINGS } from './discover-rankings-speed.js';
 
 function rankingItems(block) {
   return block
@@ -11,7 +12,7 @@ function rankingItems(block) {
     });
 }
 
-export const DISCOVER_UPDATED_AT = '2026-09-09';
+export const DISCOVER_UPDATED_AT = '2026-09-10';
 
 export const DISCOVER_CATEGORIES = Object.freeze([
   { slug: 'todos', label: 'Todos', sourceCategories: [] },
@@ -45,6 +46,7 @@ export const DISCOVER_CATEGORIES = Object.freeze([
   },
   { slug: 'viagens', label: 'Viagens', sourceCategories: ['Viagem'] },
   { slug: 'gastronomia', label: 'Gastronomia', sourceCategories: ['Gastronomia'] },
+  { slug: 'velocidade', label: 'Velocidade', sourceCategories: ['Velocidade'] },
 ]);
 
 export const DISCOVER_RANKINGS = Object.freeze([
@@ -1693,6 +1695,7 @@ export const DISCOVER_RANKINGS = Object.freeze([
   },
   ...EXPANDED_DISCOVER_RANKINGS,
   ...CONSUMPTION_DISCOVER_RANKINGS,
+  ...SPEED_DISCOVER_RANKINGS,
 ]);
 
 export function discoverRankingBySlug(slug) {
