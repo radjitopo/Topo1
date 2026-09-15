@@ -2,6 +2,9 @@
   "name": "topo-beta",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "check": "node --check api.js && node --check affinity.js && node --check discover-rankings.js && node --check discover-rankings-speed.js && node --check duel-bottom-api.js && node --check moderator-option-delete.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js",
     "test": "node --test test/*.test.mjs",
@@ -38,6 +41,7 @@
     "db:public-option-targets": "node scripts/apply-public-option-targets.mjs",
     "db:option-relevance-review": "node scripts/apply-option-relevance-review.mjs",
     "db:cafes-floripa-refresh": "node scripts/apply-cafes-floripa-refresh.mjs",
+    "db:topo-audit-fixes": "node scripts/apply-topo-audit-fixes-20260915.mjs",
     "db:vegan-floripa-refresh": "node scripts/apply-vegan-floripa-refresh.mjs",
     "db:floripa-neighborhood-expansion": "node scripts/apply-floripa-neighborhood-expansion.mjs",
     "db:floripa-service-ranking-status": "node scripts/apply-floripa-service-ranking-status.mjs",
@@ -54,7 +58,7 @@
     "test:suggestions": "node test/suggestions.test.mjs"
   },
   "dependencies": {
-    "@clerk/backend": "^3.16.10",
+    "@clerk/backend": "^3.17.2",
     "@neondatabase/serverless": "^1.0.0"
   },
   "devDependencies": {

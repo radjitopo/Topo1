@@ -123,6 +123,7 @@ const wanted = [
   'homeContextOnlyRankingIds',
   'isClubPlayerRanking',
   'foldText',
+  'searchPhrase',
   'searchSingular',
   'searchTerms',
   'searchMatches',
@@ -139,6 +140,7 @@ const wanted = [
   'cityPriorityDelta',
   'sortForExperience',
   'categorySortedRankings',
+  'searchRelevance',
   'relatedStopWords',
   'strongRelatedWords',
   'relatedTokens',
@@ -170,6 +172,7 @@ globalThis.groupOfForTest=groupOf;
 globalThis.relatedScoreForTest=relatedScore;
 globalThis.rankingsInSameExperienceForTest=rankingsInSameExperience;
 globalThis.categorySortedRankingsForTest=categorySortedRankings;
+globalThis.searchRelevanceForTest=searchRelevance;
 `,
   context,
 );
@@ -271,6 +274,28 @@ assert.deepEqual(
   context.visibleRankingsForTest().map((ranking) => ranking.id),
   ['hoteis-rio'],
   'accented irregular plurals must be normalized in the main TOPO',
+);
+
+const allTimePlayer = {
+  id: 'melhor-jogador-futebol-todos-tempos',
+  cat: 'Futebol',
+  q: 'Quem é o melhor jogador de futebol de todos os tempos?',
+  opts: [],
+};
+const clubPlayers = {
+  id: 'melhores-jogadores-fluminense',
+  cat: 'Futebol',
+  q: 'Quais foram os melhores jogadores do Fluminense de todos os tempos?',
+  opts: [],
+};
+context.setDiscoveryState({
+  rankings: [clubPlayers, allTimePlayer],
+  activeGroup: 'Todos',
+  homeSearch: 'melhor jogador',
+});
+assert.ok(
+  context.searchRelevanceForTest(allTimePlayer) > context.searchRelevanceForTest(clubPlayers),
+  'an exact search phrase must outrank a broader plural/stem match',
 );
 
 assert.equal(context.groupOfForTest({ id: 'influencers-brasil', cat: 'Diversão' }), 'Famosos');

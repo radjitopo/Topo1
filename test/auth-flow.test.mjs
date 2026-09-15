@@ -24,6 +24,7 @@ test('Clerk keeps the passwordless TOPO UI and OAuth callback inside SomosTopo',
   assert.match(app, /Continuar com Google/);
   assert.match(app, /Receber código por e-mail/);
   assert.match(app, /Entrar no TOPO/);
+  assert.match(app, /<h1 class="authTitle">Entre em segundos\.<\/h1>/);
   assert.match(app, /transferable: true/);
   assert.match(app, /signIn\?\.isTransferable/);
   assert.match(app, /transferClerkSignUp\(clerk\)/);

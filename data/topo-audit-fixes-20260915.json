@@ -1,0 +1,28 @@
+{
+  "cafesReviewKey": "20260915_cafes_floripa_cleanup",
+  "unexpectedCafeOptions": [
+    "Fazendinha Floripa",
+    "FairyLand Café & Cupcakeria",
+    "Lighthouse Cafés Especiais",
+    "Rocambole Café",
+    "Tens Tempo Café",
+    "Caffè 54"
+  ],
+  "coverReviewKey": "20260915_missing_ranking_covers",
+  "covers": [
+    {
+      "rankingId": "melhores-sobremesas",
+      "replacement": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1200&h=675&q=82",
+      "sourcePage": "https://unsplash.com/photos/white-ice-cream-on-brown-cookie-idTwDKt2j2o",
+      "license": "Unsplash License",
+      "reason": "O ranking público estava sem capa; a sobremesa fotografada representa o tema sem favorecer uma opção específica."
+    },
+    {
+      "rankingId": "tarefas-mais-sinistras-em-casa",
+      "replacement": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&h=675&q=82",
+      "sourcePage": "https://unsplash.com/photos/woman-in-white-long-sleeve-shirt-and-blue-denim-jeans-standing-beside-white-wooden-framed-glass-VRpjDw3WqqI",
+      "license": "Unsplash License",
+      "reason": "O ranking público estava sem capa; a limpeza doméstica com equipamento de proteção comunica uma tarefa difícil em casa."
+    }
+  ]
+}
