@@ -136,7 +136,7 @@ $('#correctionForm').addEventListener('submit',async e=>{
   const ordered=[$('#corrIn').value,$('#corrBreakOut').value,$('#corrBreakIn').value,$('#corrOut').value];
   const correctionDate=todayData.date;
   const minutes=ordered.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
-  if(minutes.some((value,index)=>index>0&&value<=minutes[index-1])){alert('Os horários precisam seguir a ordem: chegada, intervalo, volta e saída.');return}
+  if(minutes.some((value,index)=>index>0&&value<minutes[index-1])){alert('Confira os horários: o intervalo não pode ser antes da chegada, a volta não pode ser antes do intervalo e a saída não pode ser antes da volta.');return}
   try{
     await api('correction-batch','POST',{
       date:correctionDate,

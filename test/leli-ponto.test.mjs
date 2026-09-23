@@ -42,6 +42,18 @@ test('a correction is saved and decided as one complete journey', async () => {
   assert.match(employee, /\['Status','Aguardando aprovação'\]/);
 });
 
+test('corrections accept consecutive punches recorded in the same minute', async () => {
+  const [api, employee] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/app-real.js'),
+  ]);
+
+  assert.match(employee, /value<minutes\[index-1\]/);
+  assert.match(api, /value<minutes\[index-1\]/);
+  assert.doesNotMatch(employee, /Os horários precisam seguir a ordem: chegada/);
+  assert.doesNotMatch(api, /Os horários precisam seguir a ordem: chegada/);
+});
+
 test('sessions reach the API and activation codes remain visible to admins', async () => {
   const [api, admin] = await Promise.all([
     source('leli-api.js'),

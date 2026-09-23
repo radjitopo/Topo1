@@ -230,7 +230,7 @@ export default async function handler(req,res){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||reason.length<3)return json(res,400,{error:'Explique rapidamente o motivo da correção.'});
       for(const kind of kinds){if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(times[kind]||'')))return json(res,400,{error:'Preencha os quatro horários.'})}
       const minutes=kinds.map(kind=>{const value=String(times[kind]);return Number(value.slice(0,2))*60+Number(value.slice(3))});
-      if(minutes.some((value,index)=>index>0&&value<=minutes[index-1]))return json(res,400,{error:'Os horários precisam seguir a ordem: chegada, intervalo, volta e saída.'});
+      if(minutes.some((value,index)=>index>0&&value<minutes[index-1]))return json(res,400,{error:'Confira os horários: o intervalo não pode ser antes da chegada, a volta não pode ser antes do intervalo e a saída não pode ser antes da volta.'});
       const punches=await sql`SELECT id,kind,occurred_at FROM leli_punches WHERE user_id=${user.id} AND work_date=${date}`;
       const byKind=Object.fromEntries(punches.map(p=>[p.kind,p]));
       for(const kind of kinds){if(!byKind[kind])return json(res,400,{error:'A jornada precisa ter as quatro batidas antes de solicitar a correção.'})}
