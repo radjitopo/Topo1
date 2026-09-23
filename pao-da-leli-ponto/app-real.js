@@ -62,7 +62,9 @@ async function openChecklist(){
   try{
     await loadChecklistData();
     $('#checklistUnitLabel').textContent=checklistData.unit||currentUser.unit||'Pão da Leli';
-    $('#checklistQuestions').innerHTML=checklistData.items.length?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">Nenhuma pergunta cadastrada para esta área.</div>';
+    const hasQuestions=checklistData.items.length>0;
+    $('#checklistQuestions').innerHTML=hasQuestions?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">O checklist desta área ainda não foi configurado. Avise o administrador.</div>';
+    $('#checklistSubmit').disabled=!hasQuestions;
     $('#messageRecipient').innerHTML='<option value="">Escolha o destinatário</option>'+checklistData.recipients.map(person=>'<option value="'+person.id+'">'+esc(person.name)+' · '+esc(person.unit)+'</option>').join('');
     $('#checklistMessage').value='';$('#messageRecipient').value='';show('checklist');
   }catch(e){alert(e.message)}
@@ -90,6 +92,7 @@ async function punch(){
     await api('punch','POST',{});
     todayData=await api('today');
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
+    if(p.kind==='breakIn'){await openChecklist();return}
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
     lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
   }catch(e){if(e.data?.needsChecklist)openChecklist();else{alert(e.message);loadToday()}}
@@ -128,7 +131,10 @@ async function boot(){
   if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 async function enterEmployeeApp(user){
-  if(user?.role!=='employee'){location.replace('./admin.html');return false}
+  if(user?.role!=='employee'){
+    await api('logout','POST',{}).catch(()=>{});
+    currentUser=null;show('login');return false;
+  }
   currentUser=user;
   try{await loadChecklistData();if(checklistData.unreadMessages.length){renderMessages();show('messages')}else show('ponto')}
   catch{checklistData=null;show('ponto')}

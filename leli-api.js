@@ -130,6 +130,8 @@ async function ensureSchema(){
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
   await sql`UPDATE leli_users SET position='Colaborador',updated_at=now() WHERE role='employee' AND position IN ('Funcionária','Funcionário')`;
+  await sql`UPDATE leli_users SET unit='Pão da Leli Café',updated_at=now()
+    WHERE role='employee' AND unit IN ('Pão da Leli','Pão da Leli atendimento')`;
   const missingCodes = await sql`SELECT id FROM leli_users WHERE activation_hash IS NOT NULL AND activation_code IS NULL`;
   for (const row of missingCodes) {
     const code = activationCode();
@@ -299,6 +301,7 @@ export default async function handler(req,res){
       const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current);
       if(expectedKind(state)!=='out')return json(res,409,{error:state==='out'?'A jornada de hoje já foi encerrada.':'A saída só pode ser registrada depois da volta do intervalo.'});
       const items=await sql`SELECT id,question FROM leli_checklist_items WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;
+      if(!items.length)return json(res,409,{error:'O checklist desta área ainda não foi configurado. Avise o administrador.'});
       const b=body(req),submitted=Array.isArray(b.answers)?b.answers:[],answerMap=new Map();
       for(const answer of submitted){
         const id=String(answer?.id||'');

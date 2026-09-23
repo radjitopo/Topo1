@@ -27,7 +27,10 @@ test('administrators cannot use the employee app or employee-only API actions', 
     source('pao-da-leli-ponto/app-real.js'),
   ]);
 
-  assert.match(employee, /if\(user\?\.role!=='employee'\)\{location\.replace\('\.\/admin\.html'\);return false\}/);
+  assert.match(employee, /if\(user\?\.role!=='employee'\)/);
+  assert.match(employee, /api\('logout','POST',\{\}\)\.catch/);
+  assert.match(employee, /currentUser=null;show\('login'\);return false/);
+  assert.doesNotMatch(employee, /location\.replace\('\.\/admin\.html'\)/);
   assert.match(employee, /if\(!\(await enterEmployeeApp\(m\.user\)\)\)return/);
   assert.match(employee, /await enterEmployeeApp\(r\.user\)/);
   assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'\]/);
@@ -125,6 +128,7 @@ test('employee registration requires one of the two Pão da Leli areas', async (
   assert.match(admin, /position:'Colaborador'/);
   assert.match(api, /EMPLOYEE_UNITS = new Set\(\['Pão da Leli Café','Pão da Leli Produção'\]\)/);
   assert.match(api, /!EMPLOYEE_UNITS\.has\(unit\)/);
+  assert.match(api, /unit IN \('Pão da Leli','Pão da Leli atendimento'\)/);
 });
 
 test('admins can open an employee record with full history and a weekly schedule', async () => {
@@ -163,6 +167,7 @@ test('checkout requires the area checklist and delivers individual messages', as
   assert.match(api, /WHERE unit=\$\{user\.unit\} AND active=true/);
   assert.match(api, /needsChecklist:true/);
   assert.match(api, /action==='checkout'/);
+  assert.match(api, /if\(!items\.length\)return json\(res,409/);
   assert.match(api, /typeof answer\?\.answer!=='boolean'/);
   assert.match(api, /checkout_with_checklist/);
   assert.match(api, /action==='messages-read'/);
@@ -172,6 +177,8 @@ test('checkout requires the area checklist and delivers individual messages', as
   assert.match(employeeHtml, /id="messageRecipient"/);
   assert.match(employeeHtml, /id="unreadMessages"/);
   assert.match(employee, /before==='afterbreak'/);
+  assert.match(employee, /if\(p\.kind==='breakIn'\)\{await openChecklist\(\);return\}/);
+  assert.match(employee, /\$\('#checklistSubmit'\)\.disabled=!hasQuestions/);
   assert.match(employee, /api\('checkout','POST'/);
   assert.match(employee, /api\('messages-read','POST'/);
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
@@ -180,10 +187,10 @@ test('checkout requires the area checklist and delivers individual messages', as
   assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=10/);
+  assert.match(employeeHtml, /app-real\.js\?v=11/);
   assert.match(adminHtml, /admin-real\.js\?v=12/);
-  assert.match(sw, /leli-ponto-v18/);
-  assert.match(sw, /app-real\.js\?v=10/);
+  assert.match(sw, /leli-ponto-v19/);
+  assert.match(sw, /app-real\.js\?v=11/);
   assert.match(sw, /admin-real\.js\?v=12/);
 });
 
