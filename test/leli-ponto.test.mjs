@@ -176,11 +176,12 @@ test('checkout requires the area checklist and delivers individual messages', as
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
   assert.match(adminHtml, /id="checklistFormAdmin"/);
   assert.match(adminHtml, /id="checklistHistory"/);
+  assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=10/);
   assert.match(adminHtml, /admin-real\.js\?v=11/);
-  assert.match(sw, /leli-ponto-v16/);
+  assert.match(sw, /leli-ponto-v17/);
   assert.match(sw, /app-real\.js\?v=10/);
   assert.match(sw, /admin-real\.js\?v=11/);
 });
