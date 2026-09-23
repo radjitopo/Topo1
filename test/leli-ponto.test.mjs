@@ -49,15 +49,20 @@ test('sessions reach the API and activation codes remain visible to admins', asy
   assert.match(admin, /Copiar código/);
 });
 
-test('employee registration requires one of the two Pão da Leli categories', async () => {
-  const [html, api] = await Promise.all([
+test('employee registration requires one of the two Pão da Leli areas', async () => {
+  const [html, admin, api] = await Promise.all([
     source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
     source('leli-api.js'),
   ]);
 
   assert.match(html, /<select id="empUnit" required/);
+  assert.match(html, /Escolha a área/);
   assert.match(html, /value="Pão da Leli Café"/);
   assert.match(html, /value="Pão da Leli Produção"/);
+  assert.doesNotMatch(html, /id="empRole"/);
+  assert.doesNotMatch(admin, /\$\('#empRole'\)/);
+  assert.match(admin, /position:'Colaborador'/);
   assert.match(api, /EMPLOYEE_UNITS = new Set\(\['Pão da Leli Café','Pão da Leli Produção'\]\)/);
   assert.match(api, /!EMPLOYEE_UNITS\.has\(unit\)/);
 });

@@ -95,7 +95,7 @@ function renderAvatar(){
 }
 function renderProfile(){
   if(!currentUser)return;
-  $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Funcionária';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';renderAvatar();
+  $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Colaborador';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';renderAvatar();
 }
 function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})

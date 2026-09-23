@@ -27,7 +27,7 @@ async function ensureSchema(){
     email text UNIQUE NOT NULL,
     name text NOT NULL,
     role text NOT NULL CHECK (role IN ('employee','admin')),
-    position text NOT NULL DEFAULT 'Funcionária',
+    position text NOT NULL DEFAULT 'Colaborador',
     unit text NOT NULL DEFAULT 'Pão da Leli',
     active boolean NOT NULL DEFAULT true,
     password_salt text,
@@ -85,6 +85,7 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
+  await sql`UPDATE leli_users SET position='Colaborador',updated_at=now() WHERE role='employee' AND position IN ('Funcionária','Funcionário')`;
   const missingCodes = await sql`SELECT id FROM leli_users WHERE activation_hash IS NOT NULL AND activation_code IS NULL`;
   for (const row of missingCodes) {
     const code = activationCode();
@@ -261,7 +262,7 @@ export default async function handler(req,res){
       return json(res,200,{date,users,punches,corrections});
     }
     if(req.method==='POST'&&action==='admin-create-user'){
-      const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=String(b.position||'Funcionária').trim(),unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
+      const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=role==='admin'?'Administrador':'Colaborador',unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
       if(!email||!name)return json(res,400,{error:'Informe nome e e-mail.'});
       if(role==='employee'&&!EMPLOYEE_UNITS.has(unit))return json(res,400,{error:'Escolha Pão da Leli Café ou Pão da Leli Produção.'});
       if(role==='admin'){const c=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin' AND active=true`;if(c[0].n>=2)return json(res,409,{error:'O limite é de 2 administradores.'})}
