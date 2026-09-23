@@ -215,15 +215,15 @@ export default async function handler(req,res){
       const kinds=['in','breakOut','breakIn','out'];
       if(reason.length<3)return json(res,400,{error:'Explique rapidamente o motivo da correção.'});
       for(const kind of kinds){if(!/^[0-2]\d:[0-5]\d$/.test(String(times[kind]||'')))return json(res,400,{error:'Preencha os quatro horários.'})}
-      const punches=await sql`SELECT id,kind,occurred_at FROM leli_punches WHERE user_id=${user.id} AND work_date=${date}\`;
+      const punches=await sql`SELECT id,kind,occurred_at FROM leli_punches WHERE user_id=${user.id} AND work_date=${date}`;
       const byKind=Object.fromEntries(punches.map(p=>[p.kind,p]));
       for(const kind of kinds){if(!byKind[kind])return json(res,400,{error:'A jornada precisa ter as quatro batidas antes de solicitar a correção.'})}
-      const groupRows=await sql`SELECT gen_random_uuid() AS id\`; const groupId=groupRows[0].id;
+      const groupRows=await sql`SELECT gen_random_uuid() AS id`; const groupId=groupRows[0].id;
       for(const kind of kinds){
-        const reqTs=await sql`SELECT ((${date}::date + ${String(times[kind])}::time) AT TIME ZONE 'America/Sao_Paulo') AS ts\`;
+        const reqTs=await sql`SELECT ((${date}::date + ${String(times[kind])}::time) AT TIME ZONE 'America/Sao_Paulo') AS ts`;
         const p=byKind[kind];
         await sql`INSERT INTO leli_corrections(user_id,punch_id,work_date,kind,original_at,requested_at,reason,request_group)
-          VALUES(${user.id},${p.id},${date},${kind},${p.occurred_at},${reqTs[0].ts},${reason},${groupId})\`;
+          VALUES(${user.id},${p.id},${date},${kind},${p.occurred_at},${reqTs[0].ts},${reason},${groupId})`;
       }
       await audit(user.id,'request_correction_group','correction_group',groupId,{date});
       return json(res,201,{ok:true,groupId});
@@ -274,7 +274,7 @@ export default async function handler(req,res){
       const b=body(req),groupId=String(b.groupId||''),status=String(b.status||''),note=String(b.note||'').trim();
       if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
       const rows=await sql`UPDATE leli_corrections SET status=${status},decided_by=${user.id},decided_at=now(),decision_note=${note}
-        WHERE request_group=${groupId}::uuid AND status='pending' RETURNING id\`;
+        WHERE request_group=${groupId}::uuid AND status='pending' RETURNING id`;
       if(!rows.length)return json(res,404,{error:'Solicitação não encontrada ou já decidida.'});
       await audit(user.id,'decide_correction_group','correction_group',groupId,{status,count:rows.length});
       return json(res,200,{ok:true,count:rows.length});
