@@ -83,6 +83,11 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
+  const missingCodes = await sql`SELECT id FROM leli_users WHERE activation_hash IS NOT NULL AND activation_code IS NULL`;
+  for (const row of missingCodes) {
+    const code = activationCode();
+    await sql`UPDATE leli_users SET activation_code=${code}, activation_hash=${sha(code)}, activation_expires_at=NULL, updated_at=now() WHERE id=${row.id}`;
+  }
   await sql`CREATE INDEX IF NOT EXISTS leli_punches_user_date_idx ON leli_punches(user_id, work_date)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_corrections_status_idx ON leli_corrections(status, created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_sessions_token_idx ON leli_sessions(token_hash)`;
