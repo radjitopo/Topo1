@@ -51,6 +51,11 @@ test('a correction is sent as one journey and each time is decided separately', 
   assert.match(admin, /pendingCorrectionRequests/);
   assert.match(admin, /decideCorrection/);
   assert.match(admin, /api\('admin-decide-correction','POST'/);
+  assert.match(admin, /redoCorrection/);
+  assert.match(admin, />Refazer</);
+  assert.match(admin, /api\('admin-reset-correction-decision','POST'/);
+  assert.match(api, /action==='admin-reset-correction-decision'/);
+  assert.match(api, /status='pending',decided_by=NULL,decided_at=NULL,decision_note=NULL/);
   assert.doesNotMatch(admin, /Aprovar tudo|Recusar tudo|admin-decide-correction-group/);
   assert.match(adminHtml, /id="correctionCount"/);
   assert.match(employeeHtml, /id="confirmDetails"/);

@@ -353,6 +353,15 @@ export default async function handler(req,res){
       const b=body(req),id=String(b.id||''),status=String(b.status||''),note=String(b.note||'').trim();if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
       const rows=await sql`UPDATE leli_corrections SET status=${status},decided_by=${user.id},decided_at=now(),decision_note=${note} WHERE id=${id} AND status='pending' RETURNING id,user_id`;if(!rows[0])return json(res,404,{error:'Solicitação não encontrada ou já decidida.'});await audit(user.id,'decide_correction','correction',id,{status});return json(res,200,{ok:true});
     }
+    if(req.method==='POST'&&action==='admin-reset-correction-decision'){
+      const b=body(req),id=String(b.id||'');
+      if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Correção inválida.'});
+      const rows=await sql`UPDATE leli_corrections SET status='pending',decided_by=NULL,decided_at=NULL,decision_note=NULL
+        WHERE id=${id} AND status IN ('approved','rejected') RETURNING id,user_id`;
+      if(!rows[0])return json(res,404,{error:'Decisão não encontrada ou já está pendente.'});
+      await audit(user.id,'reset_correction_decision','correction',id);
+      return json(res,200,{ok:true});
+    }
 
     return json(res,404,{error:'Operação não encontrada.'});
   }catch(e){console.error('leli-api',e);return json(res,500,{error:'Erro interno do sistema.'})}

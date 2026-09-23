@@ -49,7 +49,7 @@ function correctionGroups(rows){
 function correctionDecision(item){
   if(item.status==='pending')return '<div class="correction-decision"><button class="btn small" type="button" onclick="decideCorrection(\''+item.id+'\',\'approved\')">Aprovar</button><button class="btn small red" type="button" onclick="decideCorrection(\''+item.id+'\',\'rejected\')">Recusar</button></div>';
   const label=item.status==='approved'?'Aprovado':'Recusado';
-  return '<div class="correction-decision"><span class="badge '+item.status+'">'+label+'</span>'+(item.decided_by_name?'<span class="sub">por '+esc(item.decided_by_name)+'</span>':'')+'</div>';
+  return '<div class="correction-decision"><span class="badge '+item.status+'">'+label+'</span>'+(item.decided_by_name?'<span class="sub">por '+esc(item.decided_by_name)+'</span>':'')+'<button class="btn small secondary" type="button" onclick="redoCorrection(\''+item.id+'\')">Refazer</button></div>';
 }
 function correctionRequestSummary(items){
   const approved=items.filter(item=>item.status==='approved').length,rejected=items.filter(item=>item.status==='rejected').length,pending=items.filter(item=>item.status==='pending').length;
@@ -166,6 +166,7 @@ window.copyActivation=async code=>{if(!code)return;try{await navigator.clipboard
 window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});await render()}catch(e){alert(e.message)}}
 window.regenActivation=async id=>{const email=overview?.users?.find(u=>u.id===id)?.email||'esta pessoa';if(!confirm('Trocar o código de ativação de '+email+'? O código anterior deixará de funcionar.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código: '+r.activationCode)}catch(e){alert(e.message)}}
 window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});await render()}catch(e){alert(e.message)}}
+window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});await render()}catch(e){alert(e.message)}}
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
