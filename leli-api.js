@@ -5,6 +5,7 @@ const sql = neon(process.env.DATABASE_URL);
 const SESSION_COOKIE = 'leli_session';
 const BOOTSTRAP_HASH = '01258930c8e560ff164c8b6d29170d573a61327f4df7ec5facc15e39b443e75e';
 const TZ = 'America/Sao_Paulo';
+const EMPLOYEE_UNITS = new Set(['Pão da Leli Café','Pão da Leli Produção']);
 
 function json(res,status,body){res.setHeader('Cache-Control','no-store');return res.status(status).json(body)}
 function body(req){if(typeof req.body==='string'){try{return JSON.parse(req.body||'{}')}catch{return{}}}return req.body||{}}
@@ -260,8 +261,9 @@ export default async function handler(req,res){
       return json(res,200,{date,users,punches,corrections});
     }
     if(req.method==='POST'&&action==='admin-create-user'){
-      const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=String(b.position||'Funcionária').trim(),unit=String(b.unit||'Pão da Leli').trim();
+      const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=String(b.position||'Funcionária').trim(),unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
       if(!email||!name)return json(res,400,{error:'Informe nome e e-mail.'});
+      if(role==='employee'&&!EMPLOYEE_UNITS.has(unit))return json(res,400,{error:'Escolha Pão da Leli Café ou Pão da Leli Produção.'});
       if(role==='admin'){const c=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin' AND active=true`;if(c[0].n>=2)return json(res,409,{error:'O limite é de 2 administradores.'})}
       const code=activationCode(),codeHash=sha(code);
       try{
