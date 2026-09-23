@@ -23,7 +23,7 @@ const scheduleDays=[
   {weekday:6,label:'Sábado'},
   {weekday:0,label:'Domingo'}
 ];
-let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null;
+let currentUser=null,overview=null,selectedEmployeeId=null,monthlyReport=null;
 async function api(action,method='GET',data){
   const params=new URLSearchParams({action});
   const opt={method,headers:{'Content-Type':'application/json'}};
@@ -45,34 +45,6 @@ async function endAdminSession(destination){
 }
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
-function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
-function renderChecklistEditor(values){
-  const unit=$('#checklistUnit').value;
-  const questions=values??(checklistAdminData?.items||[]).filter(item=>item.unit===unit).map(item=>item.question);
-  const rows=questions.length?questions:[''];
-  $('#checklistQuestionsAdmin').innerHTML=rows.map((question,index)=>'<div class="checklist-question-row"><span class="checklist-number">'+(index+1)+'</span><input value="'+esc(question)+'" maxlength="220" placeholder="Digite uma pergunta" aria-label="Pergunta '+(index+1)+'"><div class="checklist-row-actions"><button type="button" title="Subir pergunta" aria-label="Subir pergunta" onclick="moveChecklistQuestion('+index+',-1)" '+(index===0?'disabled':'')+'>↑</button><button type="button" title="Descer pergunta" aria-label="Descer pergunta" onclick="moveChecklistQuestion('+index+',1)" '+(index===rows.length-1?'disabled':'')+'>↓</button><button type="button" title="Remover pergunta" aria-label="Remover pergunta" onclick="removeChecklistQuestion('+index+')">×</button></div></div>').join('');
-}
-function checklistAnswers(value){
-  if(Array.isArray(value))return value;
-  try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[]}catch{return[]}
-}
-function renderChecklistHistory(){
-  const submissions=checklistAdminData?.submissions||[];
-  $('#checklistHistory').innerHTML=submissions.map(row=>{
-    const answers=checklistAnswers(row.answers);
-    const answerHtml=answers.length?'<div class="checklist-answers">'+answers.map(answer=>'<div class="checklist-answer '+(answer.answer?'yes':'no')+'"><span>'+esc(answer.question)+'</span><b>'+(answer.answer?'Sim':'Não')+'</b></div>').join('')+'</div>':'<div class="sub" style="margin-top:9px">Nenhuma pergunta estava configurada para esta área.</div>';
-    const messageHtml=row.message?'<div class="message-box"><div class="sub">Recado para '+esc(row.recipient_name||'destinatário removido')+' · '+(row.read_at?'lido pelo destinatário':'ainda não lido')+'</div><p>'+esc(row.message)+'</p></div>':'';
-    return '<article class="checklist-entry"><div class="checklist-entry-head"><div><strong>'+esc(row.employee_name)+'</strong><div class="sub">'+esc(row.unit)+' · '+dateTime(row.created_at)+'</div></div><span class="badge approved">'+esc(fullDateLabel(row.work_date))+'</span></div>'+answerHtml+messageHtml+'</article>';
-  }).join('')||'<div class="empty">Nenhum checklist concluído ainda.</div>';
-}
-async function loadAdminChecklist(){
-  $('#checklistHistory').innerHTML='<div class="empty">Carregando...</div>';
-  try{checklistAdminData=await api('admin-checklist');renderChecklistEditor();renderChecklistHistory()}
-  catch(e){if(e.status===401)showOnly('adminLogin');else alert(e.message)}
-}
-window.removeChecklistQuestion=index=>{const questions=editorQuestions();questions.splice(index,1);renderChecklistEditor(questions)};
-window.moveChecklistQuestion=(index,direction)=>{const questions=editorQuestions(),target=index+direction;if(target<0||target>=questions.length)return;[questions[index],questions[target]]=[questions[target],questions[index]];renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input')[target]?.focus()};
 function correctionGroups(rows){
   const groups=new Map();
   for(const row of rows){
@@ -98,6 +70,57 @@ function correctionRequestSummary(items){
 function fullDateLabel(value){
   if(!value)return'';
   return new Date(value+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function currentMonth(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).slice(0,7)}
+function monthLabel(value){if(!value)return'';const label=new Date(value+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return label.charAt(0).toUpperCase()+label.slice(1)}
+function durationLabel(value){if(value===null||value===undefined)return'—';const total=Math.max(0,Number(value)||0),hours=Math.floor(total/60),minutes=total%60;return hours?(hours+'h'+(minutes?' '+minutes+'min':'')):(minutes+'min')}
+function reportStatusBadge(status){const type=status==='Completo'?'approved':status==='Falta'||status==='Batidas incompletas'?'rejected':status==='Fora da escala'?'':'pending';return '<span class="badge '+type+'">'+esc(status)+'</span>'}
+function populateReportEmployees(users){
+  const select=$('#reportEmployee'),selected=select.value;
+  select.innerHTML='<option value="">Equipe inteira</option>'+users.map(user=>'<option value="'+esc(user.id)+'">'+esc(user.name)+(user.active?'':' (inativo)')+'</option>').join('');
+  if([...select.options].some(option=>option.value===selected))select.value=selected;
+}
+function invalidateMonthlyReport(message='Os dados mudaram. Gere o fechamento novamente.'){
+  monthlyReport=null;$('#reportContent').classList.add('hidden');$('#reportStatus').textContent=message;
+}
+function renderMonthlyReport(report){
+  monthlyReport=report;$('#reportContent').classList.remove('hidden');$('#reportStatus').textContent='Fechamento atualizado.';
+  $('#reportPeriodLabel').textContent=monthLabel(report.month);
+  const people=report.employees.length===1?report.employees[0].name:report.employees.length+' '+(report.employees.length===1?'funcionário':'funcionários');
+  $('#reportFilterLabel').textContent=people+' · período até '+report.periodEnd.split('-').reverse().join('/');
+  $('#reportWorked').textContent=durationLabel(report.totals.workedMinutes);
+  $('#reportExpected').textContent=durationLabel(report.totals.expectedMinutes);
+  $('#reportDelays').textContent=durationLabel(report.totals.delayMinutes);
+  $('#reportAbsences').textContent=report.totals.absenceDays;
+  $('#reportCorrections').textContent=report.totals.correctionRequests;
+  $('#reportEmployeeSummary').innerHTML=report.employees.map(employee=>'<article class="report-person"><div class="report-person-head"><div><strong>'+esc(employee.name)+'</strong><div class="sub">'+esc(employee.unit)+'</div></div>'+(employee.pendingCorrections?'<span class="badge pending">'+employee.pendingCorrections+' pendente'+(employee.pendingCorrections===1?'':'s')+'</span>':'')+'</div><div class="report-person-stats"><div class="report-person-stat"><span>Previsto</span><b>'+durationLabel(employee.expectedMinutes)+'</b></div><div class="report-person-stat"><span>Trabalhado</span><b>'+durationLabel(employee.workedMinutes)+'</b></div><div class="report-person-stat"><span>Atraso</span><b>'+durationLabel(employee.delayMinutes)+'</b></div><div class="report-person-stat"><span>Faltas</span><b>'+employee.absenceDays+'</b></div><div class="report-person-stat"><span>Incompletas</span><b>'+employee.incompleteDays+'</b></div><div class="report-person-stat"><span>Correções</span><b>'+employee.correctionRequests+'</b></div></div></article>').join('')||'<div class="empty">Nenhum funcionário encontrado.</div>';
+  $('#reportRows').innerHTML=report.rows.map(row=>'<tr><td class="nowrap"><strong>'+esc(fullDateLabel(row.date))+'</strong></td><td><strong>'+esc(row.name)+'</strong><span class="sub">'+esc(row.unit)+'</span></td><td class="nowrap">'+esc(row.schedule)+'</td><td class="nowrap">'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td class="nowrap">'+durationLabel(row.workedMinutes)+'</td><td class="nowrap">'+durationLabel(row.delayMinutes)+'</td><td>'+reportStatusBadge(row.status)+'</td><td>'+(row.correctionRequests?row.correctionRequests+(row.pendingCorrections?' · '+row.pendingCorrections+' pendente'+(row.pendingCorrections===1?'':'s'):''):'—')+'</td></tr>').join('')||'<tr><td colspan="8" class="empty">Nenhuma jornada encontrada neste período.</td></tr>';
+}
+function csvCell(value){return '"'+String(value??'').replace(/"/g,'""')+'"'}
+function downloadMonthlyReport(){
+  if(!monthlyReport)return;
+  const report=monthlyReport,lines=[
+    ['Pão da Leli — Fechamento mensal'],
+    ['Mês',monthLabel(report.month)],
+    ['Período',report.periodStart.split('-').reverse().join('/')+' a '+report.periodEnd.split('-').reverse().join('/')],
+    [],
+    ['Resumo por funcionário'],
+    ['Funcionário','Área','Horas previstas','Horas trabalhadas','Atrasos','Faltas','Jornadas incompletas','Correções','Correções pendentes'],
+    ...report.employees.map(employee=>[employee.name,employee.unit,durationLabel(employee.expectedMinutes),durationLabel(employee.workedMinutes),durationLabel(employee.delayMinutes),employee.absenceDays,employee.incompleteDays,employee.correctionRequests,employee.pendingCorrections]),
+    [],
+    ['Detalhamento diário'],
+    ['Data','Funcionário','Área','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Atraso','Situação','Correções','Correções pendentes'],
+    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(value=>value||''),durationLabel(row.workedMinutes),durationLabel(row.delayMinutes),row.status,row.correctionRequests,row.pendingCorrections])
+  ];
+  const blob=new Blob(['\ufeff'+lines.map(line=>line.map(csvCell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download='pao-da-leli-fechamento-'+report.month+'.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function printMonthlyReport(){
+  if(!monthlyReport)return;
+  const report=monthlyReport,popup=window.open('','_blank');if(!popup){alert('O navegador bloqueou a janela do PDF. Autorize a abertura e tente novamente.');return}
+  const employeeRows=report.employees.map(employee=>'<tr><td><b>'+esc(employee.name)+'</b><br><small>'+esc(employee.unit)+'</small></td><td>'+durationLabel(employee.expectedMinutes)+'</td><td>'+durationLabel(employee.workedMinutes)+'</td><td>'+durationLabel(employee.delayMinutes)+'</td><td>'+employee.absenceDays+'</td><td>'+employee.incompleteDays+'</td><td>'+employee.correctionRequests+(employee.pendingCorrections?' ('+employee.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
+  const dailyRows=report.rows.map(row=>'<tr><td>'+esc(row.date.split('-').reverse().join('/'))+'</td><td><b>'+esc(row.name)+'</b></td><td>'+esc(row.schedule)+'</td><td>'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td>'+durationLabel(row.workedMinutes)+'</td><td>'+durationLabel(row.delayMinutes)+'</td><td>'+esc(row.status)+'</td><td>'+row.correctionRequests+(row.pendingCorrections?' ('+row.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
+  popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fechamento '+esc(report.month)+'</title><style>@page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#31251f;margin:0;font-size:10px}h1,h2{font-family:Georgia,serif;color:#a71831;margin:0 0 8px}h1{font-size:25px}h2{font-size:16px;margin-top:20px}.meta{color:#6f6259;margin-bottom:14px}.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:12px 0}.total{border:1px solid #dbcdbd;border-radius:8px;padding:8px}.total b{display:block;color:#a71831;font:700 17px Georgia,serif}.total span{color:#7d6d63;text-transform:uppercase;font-size:8px}table{width:100%;border-collapse:collapse;margin-top:6px}th{background:#f2e5d3;color:#6f6259;text-align:left;text-transform:uppercase;font-size:8px}th,td{border:1px solid #dbcdbd;padding:6px;vertical-align:top}small{color:#7d6d63}.foot{margin-top:12px;color:#7d6d63;font-size:8px}@media print{button{display:none}}</style></head><body><h1>Pão da Leli — Fechamento mensal</h1><div class="meta">'+esc(monthLabel(report.month))+' · '+esc(report.periodStart.split('-').reverse().join('/'))+' a '+esc(report.periodEnd.split('-').reverse().join('/'))+'</div><div class="totals"><div class="total"><b>'+durationLabel(report.totals.workedMinutes)+'</b><span>Trabalhadas</span></div><div class="total"><b>'+durationLabel(report.totals.expectedMinutes)+'</b><span>Previstas</span></div><div class="total"><b>'+durationLabel(report.totals.delayMinutes)+'</b><span>Atrasos</span></div><div class="total"><b>'+report.totals.absenceDays+'</b><span>Faltas</span></div><div class="total"><b>'+report.totals.correctionRequests+'</b><span>Correções</span></div></div><h2>Resumo por funcionário</h2><table><thead><tr><th>Funcionário</th><th>Previsto</th><th>Trabalhado</th><th>Atraso</th><th>Faltas</th><th>Incompletas</th><th>Correções</th></tr></thead><tbody>'+employeeRows+'</tbody></table><h2>Detalhamento diário</h2><table><thead><tr><th>Data</th><th>Funcionário</th><th>Escala</th><th>Batidas</th><th>Trabalhado</th><th>Atraso</th><th>Situação</th><th>Correções</th></tr></thead><tbody>'+dailyRows+'</tbody></table><div class="foot">Gerado em '+esc(new Date(report.generatedAt).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}))+'. Relatório para conferência administrativa.</div></body></html>');popup.document.close();popup.focus();setTimeout(()=>popup.print(),350);
 }
 function syncScheduleRow(row){
   const active=row.querySelector('input[type="checkbox"]').checked;
@@ -181,6 +204,7 @@ async function render(){
     $('#funcionarios').textContent=users.filter(u=>u.role==='employee'&&u.active).length;
 
     const empUsers=users.filter(u=>u.role==='employee');
+    populateReportEmployees(empUsers);
     const todayBy={};for(const p of punches){todayBy[p.user_id]??={};todayBy[p.user_id][p.kind]=p}
     $('#todayList').innerHTML=empUsers.map(u=>{const r=todayBy[u.id]||{};let st='<span class="badge">sem jornada</span>';if(r.in&&!r.out)st='<span class="badge pending">em andamento</span>';if(r.out)st='<span class="badge approved">jornada encerrada</span>';return '<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">Entrada '+time(r.in?.occurred_at)+' · Intervalo '+time(r.breakOut?.occurred_at)+' / '+time(r.breakIn?.occurred_at)+' · Saída '+time(r.out?.occurred_at)+'</div></div><div>'+st+'</div></div>'}).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
 
@@ -199,14 +223,14 @@ async function render(){
   }catch(e){if(e.status===401){showOnly('adminLogin')}else alert(e.message)}
 }
 window.copyActivation=async code=>{if(!code)return;try{await navigator.clipboard.writeText(code);alert('Código copiado.')}catch{prompt('Copie o código:',code)}}
-window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});await render()}catch(e){alert(e.message)}}
+window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 window.regenActivation=async id=>{const email=overview?.users?.find(u=>u.id===id)?.email||'esta pessoa';if(!confirm('Trocar o código de ativação de '+email+'? O código anterior deixará de funcionar.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código: '+r.activationCode)}catch(e){alert(e.message)}}
-window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});await render()}catch(e){alert(e.message)}}
-window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});await render()}catch(e){alert(e.message)}}
+window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
+window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
-$('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),email:$('#empEmail').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
+$('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),email:$('#empEmail').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),email:$('#newAdminEmail').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px">Código do novo administrador: <strong>'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até o administrador ativar a conta.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#closeEmployeeDetail').addEventListener('click',closeEmployeeDetail);
 $('#scheduleForm').addEventListener('submit',async e=>{
@@ -219,20 +243,22 @@ $('#scheduleForm').addEventListener('submit',async e=>{
     endTime:row.querySelector('[data-time="endTime"]').value
   }));
   const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#scheduleStatus').textContent='Salvando...';
-  try{const id=selectedEmployeeId;await api('admin-save-schedule','POST',{id,days});await openEmployee(id);$('#scheduleStatus').textContent='Escala salva.'}
+  try{const id=selectedEmployeeId;await api('admin-save-schedule','POST',{id,days});invalidateMonthlyReport();await openEmployee(id);$('#scheduleStatus').textContent='Escala salva.'}
   catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
-$('#checklistUnit').addEventListener('change',()=>{renderChecklistEditor();$('#checklistSaveStatus').textContent=''});
-$('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
-$('#checklistFormAdmin').addEventListener('submit',async e=>{
-  e.preventDefault();const button=$('#saveChecklist'),questions=editorQuestions().map(value=>value.trim()).filter(Boolean);button.disabled=true;$('#checklistSaveStatus').textContent='Salvando...';
-  try{await api('admin-save-checklist','POST',{unit:$('#checklistUnit').value,questions});await loadAdminChecklist();$('#checklistSaveStatus').textContent=questions.length?'Checklist salvo.':'Checklist removido.'}
-  catch(err){$('#checklistSaveStatus').textContent='';alert(err.message)}
+$('#reportForm').addEventListener('submit',async e=>{
+  e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#reportStatus').textContent='Calculando o fechamento...';$('#reportContent').classList.add('hidden');
+  try{const report=await api('admin-monthly-report','GET',{month:$('#reportMonth').value,employeeId:$('#reportEmployee').value});renderMonthlyReport(report)}
+  catch(err){monthlyReport=null;$('#reportStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
+$('#downloadReportCsv').addEventListener('click',downloadMonthlyReport);
+$('#printReport').addEventListener('click',printMonthlyReport);
 $('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
 $('#adminLogout').addEventListener('click',()=>endAdminSession());
-$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else render()}));
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()}));
 initPasswordToggles();
+$('#reportMonth').value=currentMonth();
+$('#reportMonth').max=currentMonth();
 boot();
