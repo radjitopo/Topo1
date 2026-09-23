@@ -15,8 +15,8 @@ function hashPassword(password,saltHex){return scryptSync(String(password),Buffe
 function safeEqualHex(a,b){try{const A=Buffer.from(a,'hex'),B=Buffer.from(b,'hex');return A.length===B.length&&timingSafeEqual(A,B)}catch{return false}}
 function newPasswordHash(password){const salt=randomBytes(16).toString('hex');return{salt,hash:hashPassword(password,salt)}}
 function activationCode(){return randomBytes(7).toString('base64url')}
-function setSessionCookie(res,token){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`)}
-function clearSessionCookie(res){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=0`)}
+function setSessionCookie(res,token){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`)}
+function clearSessionCookie(res){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`)}
 function validPassword(p){return typeof p==='string'&&p.length>=8&&p.length<=100}
 function localDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
 
