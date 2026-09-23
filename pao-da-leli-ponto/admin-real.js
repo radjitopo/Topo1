@@ -1,3 +1,16 @@
+function initPasswordToggles(){
+  document.querySelectorAll('[data-password-toggle]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const input=document.getElementById(btn.dataset.passwordToggle);
+      if(!input)return;
+      const showing=input.type==='text';
+      input.type=showing?'password':'text';
+      btn.textContent=showing?'◉':'◎';
+      btn.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');
+      btn.setAttribute('title',showing?'Mostrar senha':'Ocultar senha');
+    });
+  });
+}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 let currentUser=null,overview=null;
@@ -55,4 +68,5 @@ $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{co
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),email:$('#newAdminEmail').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px">Código do novo administrador: <strong>'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até o administrador ativar a conta.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#adminLogout').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;showOnly('adminLogin')});
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()}));
+initPasswordToggles();
 boot();
