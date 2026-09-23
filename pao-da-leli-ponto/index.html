@@ -31,7 +31,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div class="brand"><img src="./icon.svg" alt="Pão da Leli"><div class="brand-name">Pão da Leli</div><div class="brand-sub">PONTO</div></div>
   <div style="margin-top:34px"><h1>Bem-vindo.</h1><p class="lead">Entre para registrar seu ponto.</p></div>
   <form id="loginForm">
-    <label class="field"><span>✉</span><input id="email" type="email" value="vanessa@paodaleli.com.br" placeholder="Seu e-mail" required></label>
+    <label class="field"><span>✉</span><input id="email" type="email" value="leslie.araujo@paodaleli.com.br" placeholder="Seu e-mail" required></label>
     <label class="field"><span>🔒</span><input id="password" type="password" value="demo" placeholder="Sua senha" required></label>
     <button class="btn" type="submit">Entrar</button>
   </form>
@@ -41,7 +41,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 
 <section id="ponto" class="screen">
   <div class="top"><div class="tiny">Pão da Leli</div><img src="./icon.svg" alt=""></div>
-  <div class="hero"><h1 id="greeting">Bom dia,<br>Vanessa.</h1><p class="lead">Seu dia começa por aqui.</p><div id="dateLine" class="date"></div><div id="clock" class="clock">07:32</div></div>
+  <div class="hero"><h1 id="greeting">Bom dia,<br>Leslie Araújo.</h1><p class="lead">Seu dia começa por aqui.</p><div id="dateLine" class="date"></div><div id="clock" class="clock">07:32</div></div>
   <div class="notice"><div style="font-size:24px">✓</div><div><b>Modo de teste</b><small>Nesta versão, o ponto pode ser registrado de qualquer rede. A validação do Wi‑Fi será ativada depois.</small></div></div>
   <div id="workCard" class="card"></div>
   <div class="actions"><button id="mainAction" class="btn">ENTRAR</button><button id="installBtn" class="btn secondary" style="display:none">Instalar no celular</button></div>
@@ -63,7 +63,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 
 <section id="profile" class="screen">
   <div class="top"><div class="tiny">Pão da Leli</div><img src="./icon.svg" alt=""></div><h2>Meu perfil</h2>
-  <div class="profile-grid"><div class="card"><div class="label">Funcionária</div><div class="big" id="profileName">Vanessa</div></div><div class="card"><div class="label">Unidade</div><div class="big">Pão da Leli</div></div><div class="card"><div class="label">Rede</div><div class="big">Sem restrição no teste</div></div></div>
+  <div class="profile-grid"><div class="card"><div class="label">Funcionária</div><div class="big" id="profileName">Leslie Araújo</div></div><div class="card"><div class="label">Unidade</div><div class="big">Pão da Leli</div></div><div class="card"><div class="label">Rede</div><div class="big">Sem restrição no teste</div></div></div>
   <button id="logoutBtn" class="btn secondary">Sair da conta</button>
   <a href="./admin.html" style="display:block;text-align:center;color:var(--wine);margin:24px 0;text-decoration:none;font-weight:700">Abrir painel administrativo</a>
 </section>
@@ -79,7 +79,7 @@ function iso(d=now()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart
 function hm(d=now()){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function hms(d=now()){return hm(d)+':'+String(d.getSeconds()).padStart(2,'0')}
 function brDate(d=now()){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
-function read(){try{return JSON.parse(localStorage.getItem(KEY))||{logged:false,name:'Vanessa',state:'idle',events:[]}}catch(e){return{logged:false,name:'Vanessa',state:'idle',events:[]}}}
+function read(){try{return JSON.parse(localStorage.getItem(KEY))||{logged:false,name:'Leslie Araújo',state:'idle',events:[]}}catch(e){return{logged:false,name:'Leslie Araújo',state:'idle',events:[]}}}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
 let data=read();
 function show(id){$$('.screen').forEach(x=>x.classList.remove('active')); $('#'+id).classList.add('active'); $('#bottom').classList.toggle('show',id!=='login'&&id!=='confirm'); $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id)); if(id==='ponto')renderPonto(); if(id==='history')renderHistory(); if(id==='profile')$('#profileName').textContent=data.name}
@@ -111,7 +111,7 @@ function renderHistory(){
  rows.forEach(([date,r])=>{const [y,m,day]=date.split('-');const inter=r.breakOut?(r.breakOut+(r.breakIn?'–'+r.breakIn:'')):'—';html+='<div class="hrow"><div><b>'+day+'/'+m+'</b></div><div>'+ (r.in||'—') +'</div><div>'+inter+'</div><div>'+ (r.out||'—') +'</div></div>'});
  $('#historyTable').innerHTML=html
 }
-$('#loginForm').addEventListener('submit',e=>{e.preventDefault();const mail=$('#email').value.trim();data.logged=true;data.name=mail?mail.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'Vanessa';save(data);show('ponto')});
+$('#loginForm').addEventListener('submit',e=>{e.preventDefault();const mail=$('#email').value.trim();data.logged=true;data.name=mail==='leslie.araujo@paodaleli.com.br'?'Leslie Araújo':(mail?mail.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'Leslie Araújo');save(data);show('ponto')});
 $('#mainAction').addEventListener('click',register);$('#confirmOk').addEventListener('click',()=>show('ponto'));$('#logoutBtn').addEventListener('click',()=>{data.logged=false;save(data);show('login')});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));
 setInterval(()=>{if($('#ponto').classList.contains('active'))$('#clock').textContent=hm()},1000);
