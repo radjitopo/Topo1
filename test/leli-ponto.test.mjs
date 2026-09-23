@@ -14,7 +14,7 @@ test('the employee app only references controls that exist in its page', async (
     source('pao-da-leli-ponto/app-real.js'),
   ]);
   const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
-  const selectors = [...js.matchAll(/\$\('#([^']+)'\)/g)].map((match) => match[1]);
+  const selectors = [...js.matchAll(/(?<!\$)\$\('#([^']+)'\)/g)].map((match) => match[1]);
 
   assert.deepEqual([...new Set(selectors.filter((id) => !ids.has(id)))], []);
   assert.doesNotMatch(js, /corrType|corrTime/);
@@ -65,4 +65,36 @@ test('employee registration requires one of the two Pão da Leli areas', async (
   assert.match(admin, /position:'Colaborador'/);
   assert.match(api, /EMPLOYEE_UNITS = new Set\(\['Pão da Leli Café','Pão da Leli Produção'\]\)/);
   assert.match(api, /!EMPLOYEE_UNITS\.has\(unit\)/);
+});
+
+test('admins can open an employee record with full history and a weekly schedule', async () => {
+  const [api, html, admin] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+  ]);
+
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_schedules/);
+  assert.match(api, /action==='admin-employee-detail'/);
+  assert.match(api, /FROM leli_punches WHERE user_id=\$\{id\}/);
+  assert.match(api, /action==='admin-save-schedule'/);
+  assert.match(api, /Acesso restrito aos administradores/);
+  assert.match(html, /id="employeeDetail"/);
+  assert.match(html, /id="scheduleForm"/);
+  assert.match(html, /id="employeeHistory"/);
+  assert.match(admin, /openEmployee/);
+  assert.match(admin, /admin-employee-detail/);
+  assert.match(admin, /admin-save-schedule/);
+  assert.match(admin, /Segunda-feira/);
+});
+
+test('the admin app only references controls that exist in its page', async () => {
+  const [html, js] = await Promise.all([
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+  ]);
+  const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
+  const selectors = [...js.matchAll(/(?<!\$)\$\('#([^']+)'\)/g)].map((match) => match[1]);
+
+  assert.deepEqual([...new Set(selectors.filter((id) => !ids.has(id)))], []);
 });

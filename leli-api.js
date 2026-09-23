@@ -84,6 +84,17 @@ async function ensureSchema(){
     details jsonb,
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_schedules (
+    user_id uuid NOT NULL REFERENCES leli_users(id) ON DELETE CASCADE,
+    weekday smallint NOT NULL CHECK (weekday BETWEEN 0 AND 6),
+    start_time time NOT NULL,
+    break_start_time time NOT NULL,
+    break_end_time time NOT NULL,
+    end_time time NOT NULL,
+    updated_by uuid REFERENCES leli_users(id),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, weekday)
+  )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
   await sql`UPDATE leli_users SET position='Colaborador',updated_at=now() WHERE role='employee' AND position IN ('Funcionária','Funcionário')`;
   const missingCodes = await sql`SELECT id FROM leli_users WHERE activation_hash IS NOT NULL AND activation_code IS NULL`;
@@ -260,6 +271,50 @@ export default async function handler(req,res){
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
       return json(res,200,{date,users,punches,corrections});
+    }
+    if(req.method==='GET'&&action==='admin-employee-detail'){
+      const id=String(req.query?.id||'');
+      if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
+      const employees=await sql`SELECT id,email,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at
+        FROM leli_users WHERE id=${id} AND role='employee' LIMIT 1`;
+      if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      const schedule=await sql`SELECT weekday,
+          to_char(start_time,'HH24:MI') AS start_time,
+          to_char(break_start_time,'HH24:MI') AS break_start_time,
+          to_char(break_end_time,'HH24:MI') AS break_end_time,
+          to_char(end_time,'HH24:MI') AS end_time,
+          updated_at
+        FROM leli_schedules WHERE user_id=${id} ORDER BY weekday`;
+      const punches=await sql`SELECT work_date::text AS work_date,kind,occurred_at
+        FROM leli_punches WHERE user_id=${id} ORDER BY work_date DESC,occurred_at ASC`;
+      const corrections=await sql`SELECT id,work_date::text AS work_date,kind,status,requested_at,decided_at,request_group
+        FROM leli_corrections WHERE user_id=${id} ORDER BY created_at DESC`;
+      return json(res,200,{employee:employees[0],schedule,punches,corrections});
+    }
+    if(req.method==='POST'&&action==='admin-save-schedule'){
+      const b=body(req),id=String(b.id||''),days=Array.isArray(b.days)?b.days:[];
+      if(!/^[0-9a-f-]{36}$/i.test(id)||days.length>7)return json(res,400,{error:'Escala inválida.'});
+      const employees=await sql`SELECT id FROM leli_users WHERE id=${id} AND role='employee' LIMIT 1`;
+      if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      const seen=new Set(),normalized=[];
+      for(const day of days){
+        const weekday=Number(day.weekday),times=['startTime','breakStartTime','breakEndTime','endTime'].map(key=>String(day[key]||''));
+        if(!Number.isInteger(weekday)||weekday<0||weekday>6||seen.has(weekday)||times.some(value=>!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value)))return json(res,400,{error:'Revise os dias e horários da escala.'});
+        const minutes=times.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
+        if(minutes.some((value,index)=>index>0&&value<=minutes[index-1]))return json(res,400,{error:'Em cada dia, os horários devem seguir a ordem: entrada, intervalo, volta e saída.'});
+        seen.add(weekday);normalized.push({weekday,start_time:times[0],break_start_time:times[1],break_end_time:times[2],end_time:times[3]});
+      }
+      await sql`WITH removed AS (
+          DELETE FROM leli_schedules WHERE user_id=${id}
+        ), schedule_rows AS (
+          SELECT * FROM jsonb_to_recordset(${JSON.stringify(normalized)}::jsonb)
+          AS x(weekday integer,start_time text,break_start_time text,break_end_time text,end_time text)
+        )
+        INSERT INTO leli_schedules(user_id,weekday,start_time,break_start_time,break_end_time,end_time,updated_by)
+        SELECT ${id},weekday,start_time::time,break_start_time::time,break_end_time::time,end_time::time,${user.id}
+        FROM schedule_rows`;
+      await audit(user.id,'save_schedule','user',id,{weekdays:normalized.map(day=>day.weekday)});
+      return json(res,200,{ok:true,schedule:normalized});
     }
     if(req.method==='POST'&&action==='admin-create-user'){
       const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=role==='admin'?'Administrador':'Colaborador',unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();

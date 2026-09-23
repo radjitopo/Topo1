@@ -13,11 +13,23 @@ function initPasswordToggles(){
 }
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
-let currentUser=null,overview=null;
+const punchLabels={in:'Entrada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'};
+const scheduleDays=[
+  {weekday:1,label:'Segunda-feira'},
+  {weekday:2,label:'Terça-feira'},
+  {weekday:3,label:'Quarta-feira'},
+  {weekday:4,label:'Quinta-feira'},
+  {weekday:5,label:'Sexta-feira'},
+  {weekday:6,label:'Sábado'},
+  {weekday:0,label:'Domingo'}
+];
+let currentUser=null,overview=null,selectedEmployeeId=null;
 async function api(action,method='GET',data){
+  const params=new URLSearchParams({action});
   const opt={method,headers:{'Content-Type':'application/json'}};
-  if(data!==undefined)opt.body=JSON.stringify(data);
-  const r=await fetch(API+'?action='+encodeURIComponent(action),opt);
+  if(method==='GET'&&data){for(const [key,value] of Object.entries(data))params.set(key,String(value))}
+  else if(data!==undefined)opt.body=JSON.stringify(data);
+  const r=await fetch(API+'?'+params.toString(),opt);
   const j=await r.json().catch(()=>({error:'Resposta inválida do servidor.'}));
   if(!r.ok){const e=new Error(j.error||'Erro no sistema.');e.status=r.status;e.data=j;throw e}
   return j;
@@ -34,6 +46,67 @@ function correctionGroups(rows){
   }
   return [...groups.values()];
 }
+function fullDateLabel(value){
+  if(!value)return'';
+  return new Date(value+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function syncScheduleRow(row){
+  const active=row.querySelector('input[type="checkbox"]').checked;
+  row.querySelectorAll('input[type="time"]').forEach(input=>{input.disabled=!active;input.required=active});
+}
+function renderSchedule(schedule){
+  const byDay=new Map(schedule.map(day=>[Number(day.weekday),day]));
+  $('#scheduleList').innerHTML=scheduleDays.map(day=>{
+    const saved=byDay.get(day.weekday);
+    const times=[
+      ['startTime','Entrada',saved?.start_time||''],
+      ['breakStartTime','Saída intervalo',saved?.break_start_time||''],
+      ['breakEndTime','Volta intervalo',saved?.break_end_time||''],
+      ['endTime','Saída',saved?.end_time||'']
+    ];
+    return '<div class="schedule-row" data-weekday="'+day.weekday+'"><label class="schedule-toggle"><input type="checkbox" '+(saved?'checked':'')+'> '+day.label+'</label>'+times.map(([key,label,value])=>'<label class="schedule-time">'+label+'<input type="time" data-time="'+key+'" value="'+esc(value)+'" '+(saved?'':'disabled')+'></label>').join('')+'</div>';
+  }).join('');
+  $$('#scheduleList .schedule-row').forEach(row=>{syncScheduleRow(row);row.querySelector('input[type="checkbox"]').addEventListener('change',()=>syncScheduleRow(row))});
+}
+function historyBadge(date,corrections,row){
+  const statuses=corrections.filter(c=>c.work_date===date).map(c=>c.status);
+  if(statuses.includes('pending'))return'<span class="badge pending">correção pendente</span>';
+  if(statuses.includes('approved'))return'<span class="badge approved">corrigido</span>';
+  if(statuses.includes('rejected'))return'<span class="badge rejected">correção recusada</span>';
+  return Object.keys(row).length===4?'<span class="badge approved">completo</span>':'<span class="badge pending">incompleto</span>';
+}
+function renderEmployeeHistory(detail){
+  const days={};
+  for(const punch of detail.punches){days[punch.work_date]??={};days[punch.work_date][punch.kind]=punch.occurred_at}
+  const applied=new Set();
+  for(const correction of detail.corrections){
+    if(correction.status!=='approved')continue;
+    const key=correction.work_date+':'+correction.kind;
+    if(applied.has(key))continue;
+    days[correction.work_date]??={};days[correction.work_date][correction.kind]=correction.requested_at;applied.add(key);
+  }
+  const dates=Object.keys(days).sort().reverse();
+  $('#historyCount').textContent=dates.length+' '+(dates.length===1?'jornada':'jornadas');
+  $('#employeeHistory').innerHTML=dates.map(date=>{
+    const row=days[date];
+    return '<article class="history-day"><div class="history-day-head"><strong>'+fullDateLabel(date)+'</strong>'+historyBadge(date,detail.corrections,row)+'</div><div class="history-times">'+Object.entries(punchLabels).map(([kind,label])=>'<div class="history-time"><span>'+label+'</span><b>'+time(row[kind])+'</b></div>').join('')+'</div></article>';
+  }).join('')||'<div class="empty">Nenhuma jornada registrada ainda.</div>';
+}
+window.openEmployee=async id=>{
+  selectedEmployeeId=id;
+  $('#employeeGrid').classList.add('hidden');$('#employeeDetail').classList.remove('hidden');$('#employeeDetailBody').classList.add('hidden');
+  $('#employeeDetailName').textContent='Carregando funcionário...';$('#employeeDetailMeta').textContent='';$('#employeeDetailStatus').innerHTML='';$('#scheduleStatus').textContent='';
+  try{
+    const detail=await api('admin-employee-detail','GET',{id});
+    const employee=detail.employee;
+    $('#employeeDetailName').textContent=employee.name;
+    $('#employeeDetailMeta').textContent=[employee.email,employee.unit].filter(Boolean).join(' · ');
+    $('#employeeDetailStatus').innerHTML=employee.pending_activation?'<span class="badge pending">aguardando ativação</span>':employee.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>';
+    renderSchedule(detail.schedule);renderEmployeeHistory(detail);$('#employeeDetailBody').classList.remove('hidden');
+    $('#employeeDetail').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');alert(e.message)}
+};
+function closeEmployeeDetail(){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');$('#scheduleStatus').textContent=''}
 async function boot(){
   try{
     const health=await api('health');
@@ -57,7 +130,11 @@ async function render(){
     const todayBy={};for(const p of punches){todayBy[p.user_id]??={};todayBy[p.user_id][p.kind]=p}
     $('#todayList').innerHTML=empUsers.map(u=>{const r=todayBy[u.id]||{};let st='<span class="badge">sem jornada</span>';if(r.in&&!r.out)st='<span class="badge pending">em andamento</span>';if(r.out)st='<span class="badge approved">jornada encerrada</span>';return '<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">Entrada '+time(r.in?.occurred_at)+' · Intervalo '+time(r.breakOut?.occurred_at)+' / '+time(r.breakIn?.occurred_at)+' · Saída '+time(r.out?.occurred_at)+'</div></div><div>'+st+'</div></div>'}).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
 
-    $('#employeeList').innerHTML=empUsers.map(u=>'<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+' · '+esc(u.unit)+'</div><div style="margin-top:6px">'+(u.pending_activation?'<span class="badge pending">aguardando ativação</span><div class="activation-code">Código de ativação: <strong>'+esc(u.activation_code||'—')+'</strong></div>':u.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>')+'</div></div><div class="actions">'+(u.pending_activation&&u.activation_code?'<button class="btn small secondary" onclick="copyActivation(\''+esc(u.activation_code)+'\')">Copiar código</button>':'')+(u.pending_activation?'<button class="btn small secondary" onclick="regenActivation(\''+u.id+'\')">Trocar código</button>':'')+'<button class="btn small secondary" onclick="toggleUser(\''+u.id+'\')">'+(u.active?'Desativar':'Reativar')+'</button></div></div>').join('')||'<p class="muted">Nenhum funcionário.</p>';
+    $('#employeeList').innerHTML=empUsers.map(u=>'<div class="item employee-item" role="button" tabindex="0" data-employee-id="'+esc(u.id)+'"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+' · '+esc(u.unit)+'</div><div style="margin-top:6px">'+(u.pending_activation?'<span class="badge pending">aguardando ativação</span><div class="activation-code">Código de ativação: <strong>'+esc(u.activation_code||'—')+'</strong></div>':u.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>')+'</div></div><div class="actions"><button class="btn small" onclick="openEmployee(\''+u.id+'\')">Ver ficha</button>'+(u.pending_activation&&u.activation_code?'<button class="btn small secondary" onclick="copyActivation(\''+esc(u.activation_code)+'\')">Copiar código</button>':'')+(u.pending_activation?'<button class="btn small secondary" onclick="regenActivation(\''+u.id+'\')">Trocar código</button>':'')+'<button class="btn small secondary" onclick="toggleUser(\''+u.id+'\')">'+(u.active?'Desativar':'Reativar')+'</button></div></div>').join('')||'<p class="muted">Nenhum funcionário.</p>';
+    $$('#employeeList .employee-item').forEach(item=>{
+      item.addEventListener('click',event=>{if(!event.target.closest('button'))openEmployee(item.dataset.employeeId)});
+      item.addEventListener('keydown',event=>{if(event.target.closest('button'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();openEmployee(item.dataset.employeeId)}});
+    });
 
     const labels={in:'Chegada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'},order={in:0,breakOut:1,breakIn:2,out:3};
     $('#correctionList').innerHTML=correctionRequests.map(c=>{const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+time(x.original_at)+'</b><b>'+time(x.requested_at)+'</b></div>').join('')+'</div>';return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div><div style="margin-top:6px"><span class="badge '+c.status+'">'+(c.status==='pending'?'pendente':c.status==='approved'?'aprovada':'recusada')+'</span>'+(c.decided_by_name?'<span class="sub"> · por '+esc(c.decided_by_name)+'</span>':'')+'</div></div>'+(c.status==='pending'?'<div class="actions"><button class="btn small" onclick="decideRequest(\''+c.key+'\','+c.grouped+',\'approved\')">'+(complete?'Aprovar tudo':'Aprovar')+'</button><button class="btn small red" onclick="decideRequest(\''+c.key+'\','+c.grouped+',\'rejected\')">'+(complete?'Recusar tudo':'Recusar')+'</button></div>':'')+'</div>'}).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
@@ -76,6 +153,21 @@ $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),email:$('#empEmail').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),email:$('#newAdminEmail').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px">Código do novo administrador: <strong>'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até o administrador ativar a conta.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
+$('#closeEmployeeDetail').addEventListener('click',closeEmployeeDetail);
+$('#scheduleForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!selectedEmployeeId)return;
+  const days=$$('#scheduleList .schedule-row').filter(row=>row.querySelector('input[type="checkbox"]').checked).map(row=>({
+    weekday:Number(row.dataset.weekday),
+    startTime:row.querySelector('[data-time="startTime"]').value,
+    breakStartTime:row.querySelector('[data-time="breakStartTime"]').value,
+    breakEndTime:row.querySelector('[data-time="breakEndTime"]').value,
+    endTime:row.querySelector('[data-time="endTime"]').value
+  }));
+  const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#scheduleStatus').textContent='Salvando...';
+  try{const id=selectedEmployeeId;await api('admin-save-schedule','POST',{id,days});await openEmployee(id);$('#scheduleStatus').textContent='Escala salva.'}
+  catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
+  finally{button.disabled=false}
+});
 $('#adminLogout').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;showOnly('adminLogin')});
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()}));
 initPasswordToggles();
