@@ -94,9 +94,49 @@ async function boot(){
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});currentUser=r.user;show('ponto')}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
 $('#goActivate').addEventListener('click',()=>{$('#activateEmail').value=$('#email').value.trim();show('activate')});$('#backToLogin').addEventListener('click',()=>show('login'));
 $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('activate','POST',{email:$('#activateEmail').value.trim(),code:$('#activateCode').value.trim(),password:$('#activatePassword').value});alert('Conta ativada. Agora você já pode entrar.');$('#email').value=$('#activateEmail').value.trim();$('#password').value='';show('login')}catch(err){alert(err.message)}});
-$('#mainAction').addEventListener('click',punch);$('#confirmOk').addEventListener('click',()=>show(lastConfirmReturn));$('#reviewOk').addEventListener('click',()=>{$('#confirmTitle').textContent='Jornada encerrada.';$('#confirmText').textContent='Tudo certo por hoje.';$('#confirmTime').textContent=effective('out');$('#confirmDate').textContent=new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});lastConfirmReturn='ponto';show('confirm')});
-$('#requestCorrection').addEventListener('click',()=>{$('#corrTime').value=effective($('#corrType').value).replace('—','');show('correction')});$('#cancelCorrection').addEventListener('click',()=>show('review'));$('#corrType').addEventListener('change',()=>{$('#corrTime').value=effective($('#corrType').value).replace('—','')});
-$('#correctionForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('correction','POST',{kind:$('#corrType').value,requestedTime:$('#corrTime').value,reason:$('#corrReason').value.trim(),date:todayData.date});$('#corrReason').value='';$('#confirmTitle').textContent='Correção enviada.';$('#confirmText').textContent='Ela só será aplicada depois da aprovação de um administrador.';$('#confirmTime').textContent='Pendente';$('#confirmDate').textContent='';lastConfirmReturn='ponto';show('confirm')}catch(err){alert(err.message)}});
+$('#mainAction').addEventListener('click',punch);
+$('#confirmOk').addEventListener('click',()=>show(lastConfirmReturn));
+$('#reviewOk').addEventListener('click',()=>{
+  $('#confirmTitle').textContent='Jornada encerrada.';
+  $('#confirmText').textContent='Tudo certo por hoje.';
+  $('#confirmTime').textContent=effective('out');
+  $('#confirmDate').textContent=new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
+  lastConfirmReturn='ponto';
+  show('confirm');
+});
+
+function fillCorrectionForm(){
+  const map={in:['origIn','corrIn'],breakOut:['origBreakOut','corrBreakOut'],breakIn:['origBreakIn','corrBreakIn'],out:['origOut','corrOut']};
+  for(const [kind,[origId,inputId]] of Object.entries(map)){
+    const value=effective(kind);
+    $('#'+origId).textContent=value;
+    $('#'+inputId).value=value==='—'?'':value;
+  }
+}
+$('#requestCorrection').addEventListener('click',()=>{fillCorrectionForm();show('correction')});
+$('#cancelCorrection').addEventListener('click',()=>show('review'));
+$('#correctionForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  try{
+    await api('correction-batch','POST',{
+      date:todayData.date,
+      reason:$('#corrReason').value.trim(),
+      times:{
+        in:$('#corrIn').value,
+        breakOut:$('#corrBreakOut').value,
+        breakIn:$('#corrBreakIn').value,
+        out:$('#corrOut').value
+      }
+    });
+    $('#corrReason').value='';
+    $('#confirmTitle').textContent='Correção enviada.';
+    $('#confirmText').textContent='Os quatro horários foram enviados juntos e só serão aplicados depois da aprovação de um administrador.';
+    $('#confirmTime').textContent='Pendente';
+    $('#confirmDate').textContent='';
+    lastConfirmReturn='ponto';
+    show('confirm');
+  }catch(err){alert(err.message)}
+});
 $('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const photo=await resizeImage(f);await api('photo','POST',{photo});currentUser.photo_data=photo;renderAvatar()}catch(err){alert(err.message)}});
 $('#logoutBtn').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;show('login')});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));setInterval(()=>{if($('#ponto')?.classList.contains('active'))$('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())},1000);
