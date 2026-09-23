@@ -7,10 +7,10 @@
   "theme_color": "#a71831",
   "icons": [
     {
-      "src": "./icon.svg",
+      "src": "./logo-leli.jpg",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }
