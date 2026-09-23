@@ -1,44 +1,167 @@
 {
   "version": 2,
-  "alias": ["somostopo.com.br", "www.somostopo.com.br"],
+  "alias": [
+    "somostopo.com.br",
+    "www.somostopo.com.br"
+  ],
   "builds": [
-    { "src": "api.js", "use": "@vercel/node" },
-    { "src": "moderator-option-delete.js", "use": "@vercel/node" },
-    { "src": "duel-bottom-api.js", "use": "@vercel/node" },
-    { "src": "page.js", "use": "@vercel/node", "config": { "includeFiles": ["index.html"] } },
-    { "src": "institutional.js", "use": "@vercel/node" },
-    { "src": "sitemap.js", "use": "@vercel/node" },
-    { "src": "og-topo.png", "use": "@vercel/static" },
-    { "src": "og-topo-v2.png", "use": "@vercel/static" },
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "robots.txt", "use": "@vercel/static" },
-    { "src": "style.css", "use": "@vercel/static" },
-    { "src": "pop-electric.css", "use": "@vercel/static" },
-    { "src": "editorial-clean.css", "use": "@vercel/static" },
-    { "src": "logo-topo.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-v2.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-v3.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-footer-v3.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-v4.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-footer-v4.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-v5.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-footer-v5.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-v6.svg", "use": "@vercel/static" },
-    { "src": "logo-topo-footer-v6.svg", "use": "@vercel/static" },
-    { "src": "topo-mark.svg", "use": "@vercel/static" },
-    { "src": "topo-mark-v2.svg", "use": "@vercel/static" },
-    { "src": "topo-mark-v3.svg", "use": "@vercel/static" },
-    { "src": "topo-mark-v4.svg", "use": "@vercel/static" },
-    { "src": "topo-mark-v5.svg", "use": "@vercel/static" },
-    { "src": "og-topo-v3.png", "use": "@vercel/static" },
-    { "src": "topo-mark-v6.svg", "use": "@vercel/static" },
-    { "src": "og-topo-v4.png", "use": "@vercel/static" },
-    { "src": "topo-local.js", "use": "@vercel/static" },
-    { "src": "app.js", "use": "@vercel/static" },
-    { "src": "duel-option-photos.js", "use": "@vercel/static" },
-    { "src": "editorial-*.js", "use": "@vercel/static" },
-    { "src": "covers/**/*.svg", "use": "@vercel/static" },
-    { "src": "social/*.jpg", "use": "@vercel/static" }
+    {
+      "src": "api.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "moderator-option-delete.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "duel-bottom-api.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "page.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "index.html"
+        ]
+      }
+    },
+    {
+      "src": "institutional.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "sitemap.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "og-topo.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "og-topo-v2.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "robots.txt",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "style.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pop-electric.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "editorial-clean.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-v2.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-v3.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-footer-v3.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-v4.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-footer-v4.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-v5.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-footer-v5.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-v6.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo-topo-footer-v6.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark-v2.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark-v3.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark-v4.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark-v5.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "og-topo-v3.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-mark-v6.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "og-topo-v4.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "topo-local.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "app.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "duel-option-photos.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "editorial-*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "covers/**/*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pao-da-leli-ponto/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "social/*.jpg",
+      "use": "@vercel/static"
+    }
   ],
   "routes": [
     {
@@ -51,18 +174,42 @@
       },
       "continue": true
     },
-    { "src": "/api", "dest": "/api.js" },
-    { "src": "/moderator-option-delete", "dest": "/moderator-option-delete.js" },
-    { "src": "/duel-bottom-api", "dest": "/duel-bottom-api.js" },
-    { "src": "/sitemap.xml", "dest": "/sitemap.js" },
-    { "src": "/", "dest": "/page.js?view=home" },
-    { "src": "/rankings/([^/]+)/?", "dest": "/page.js?view=discover&slug=$1" },
-    { "src": "/rankings/?", "dest": "/page.js?view=discover" },
+    {
+      "src": "/api",
+      "dest": "/api.js"
+    },
+    {
+      "src": "/moderator-option-delete",
+      "dest": "/moderator-option-delete.js"
+    },
+    {
+      "src": "/duel-bottom-api",
+      "dest": "/duel-bottom-api.js"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.js"
+    },
+    {
+      "src": "/",
+      "dest": "/page.js?view=home"
+    },
+    {
+      "src": "/rankings/([^/]+)/?",
+      "dest": "/page.js?view=discover&slug=$1"
+    },
+    {
+      "src": "/rankings/?",
+      "dest": "/page.js?view=discover"
+    },
     {
       "src": "/descobrir/([^/]+)/?",
       "dest": "/page.js?view=discover-legacy&slug=$1"
     },
-    { "src": "/descobrir/?", "dest": "/page.js?view=discover-legacy" },
+    {
+      "src": "/descobrir/?",
+      "dest": "/page.js?view=discover-legacy"
+    },
     {
       "src": "/favoritos/([^/]+)/?",
       "dest": "/page.js?view=private&kind=favoritos"
@@ -79,8 +226,14 @@
       "src": "/local/([^/]+)/([^/]+)/?",
       "dest": "/page.js?view=local&city=$1&local_category=$2"
     },
-    { "src": "/local/([^/]+)/?", "dest": "/page.js?view=local&city=$1" },
-    { "src": "/local/?", "dest": "/page.js?view=local" },
+    {
+      "src": "/local/([^/]+)/?",
+      "dest": "/page.js?view=local&city=$1"
+    },
+    {
+      "src": "/local/?",
+      "dest": "/page.js?view=local"
+    },
     {
       "src": "/categoria/futebol/times/?",
       "dest": "/page.js?view=category&category=futebol&section=times"
@@ -89,13 +242,32 @@
       "src": "/categoria/esporte/times/?",
       "dest": "/page.js?view=category&category=futebol&section=times"
     },
-    { "src": "/categoria/([^/]+)/?", "dest": "/page.js?view=category&category=$1" },
-    { "src": "/ranking/([^/]+)/?", "dest": "/page.js?id=$1" },
+    {
+      "src": "/categoria/([^/]+)/?",
+      "dest": "/page.js?view=category&category=$1"
+    },
+    {
+      "src": "/ranking/([^/]+)/?",
+      "dest": "/page.js?id=$1"
+    },
     {
       "src": "/(sobre|como-funciona|imprensa|anuncie|contato|denuncie|regras|seguranca|privacidade|termos|cookies|direitos-autorais)/?",
       "dest": "/institutional.js?slug=$1"
     },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/page.js?view=not-found" }
+    {
+      "src": "/pao-da-leli-ponto/?",
+      "dest": "/pao-da-leli-ponto/index.html"
+    },
+    {
+      "src": "/pao-da-leli-ponto/(.*)",
+      "dest": "/pao-da-leli-ponto/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/page.js?view=not-found"
+    }
   ]
 }
