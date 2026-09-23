@@ -1,0 +1,16 @@
+{
+  "name": "Pão da Leli — Ponto",
+  "short_name": "Leli Ponto",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbf2df",
+  "theme_color": "#a71831",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
