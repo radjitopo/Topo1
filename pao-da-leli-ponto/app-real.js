@@ -1,3 +1,16 @@
+function initPasswordToggles(){
+  document.querySelectorAll('[data-password-toggle]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const input=document.getElementById(btn.dataset.passwordToggle);
+      if(!input)return;
+      const showing=input.type==='text';
+      input.type=showing?'password':'text';
+      btn.textContent=showing?'◉':'◎';
+      btn.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');
+      btn.setAttribute('title',showing?'Mostrar senha':'Ocultar senha');
+    });
+  });
+}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 let currentUser=null,todayData=null,lastConfirmReturn='ponto';
@@ -140,4 +153,5 @@ $('#correctionForm').addEventListener('submit',async e=>{
 $('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const photo=await resizeImage(f);await api('photo','POST',{photo});currentUser.photo_data=photo;renderAvatar()}catch(err){alert(err.message)}});
 $('#logoutBtn').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;show('login')});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));setInterval(()=>{if($('#ponto')?.classList.contains('active'))$('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())},1000);
+initPasswordToggles();
 boot();
