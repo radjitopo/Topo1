@@ -1,13 +1,14 @@
 {
   "name": "Pão da Leli — Ponto",
   "short_name": "Leli Ponto",
+  "id": "./?app=leli-ponto-v4",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#fbf2df",
   "theme_color": "#a71831",
   "icons": [
     {
-      "src": "./logo-leli.jpg",
+      "src": "./logo-leli.jpg?v=4",
       "sizes": "any",
       "type": "image/jpeg",
       "purpose": "any"
