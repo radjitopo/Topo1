@@ -33,6 +33,7 @@ async function ensureSchema(){
     password_hash text,
     must_change_password boolean NOT NULL DEFAULT false,
     activation_hash text,
+    activation_code text,
     activation_expires_at timestamptz,
     failed_login_count integer NOT NULL DEFAULT 0,
     locked_until timestamptz,
@@ -81,6 +82,7 @@ async function ensureSchema(){
     details jsonb,
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
+  await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
   await sql`CREATE INDEX IF NOT EXISTS leli_punches_user_date_idx ON leli_punches(user_id, work_date)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_corrections_status_idx ON leli_corrections(status, created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_sessions_token_idx ON leli_sessions(token_hash)`;
@@ -157,9 +159,9 @@ export default async function handler(req,res){
       const b=body(req),email=normEmail(b.email),code=String(b.code||'').trim(),password=String(b.password||'');
       if(!validPassword(password))return json(res,400,{error:'A senha precisa ter pelo menos 8 caracteres.'});
       const rows=await sql`SELECT * FROM leli_users WHERE email=${email} AND active=true LIMIT 1`;const u=rows[0];
-      if(!u||!u.activation_hash||!safeEqualHex(sha(code),u.activation_hash)||!u.activation_expires_at||new Date(u.activation_expires_at)<new Date())return json(res,400,{error:'Código de ativação inválido ou vencido.'});
+      if(!u||!u.activation_hash||!safeEqualHex(sha(code),u.activation_hash)||(u.activation_expires_at&&new Date(u.activation_expires_at)<new Date()))return json(res,400,{error:'Código de ativação inválido.'});
       const ph=newPasswordHash(password);
-      await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_expires_at=NULL,must_change_password=false,updated_at=now() WHERE id=${u.id}`;
+      await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,must_change_password=false,updated_at=now() WHERE id=${u.id}`;
       await audit(u.id,'activate_account','user',u.id);return json(res,200,{ok:true});
     }
 
@@ -215,7 +217,7 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
-      const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at FROM leli_users ORDER BY role DESC,name ASC`;
+      const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,created_at FROM leli_users ORDER BY role DESC,name ASC`;
       const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
@@ -227,8 +229,8 @@ export default async function handler(req,res){
       if(role==='admin'){const c=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin' AND active=true`;if(c[0].n>=2)return json(res,409,{error:'O limite é de 2 administradores.'})}
       const code=activationCode(),codeHash=sha(code);
       try{
-        const rows=await sql`INSERT INTO leli_users(email,name,role,position,unit,activation_hash,activation_expires_at)
-          VALUES(${email},${name},${role},${position},${unit},${codeHash},now()+interval '7 days')
+        const rows=await sql`INSERT INTO leli_users(email,name,role,position,unit,activation_hash,activation_code,activation_expires_at)
+          VALUES(${email},${name},${role},${position},${unit},${codeHash},${code},NULL)
           RETURNING id,email,name,role`;
         await audit(user.id,'create_user','user',rows[0].id,{email,role});return json(res,201,{user:rows[0],activationCode:code});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Este e-mail já está cadastrado.'});throw e}
@@ -239,7 +241,7 @@ export default async function handler(req,res){
       await audit(user.id,'toggle_user','user',id,{active:rows[0].active});return json(res,200,{user:rows[0]});
     }
     if(req.method==='POST'&&action==='admin-reset-activation'){
-      const b=body(req),id=String(b.id||''),code=activationCode();const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_expires_at=now()+interval '7 days',password_hash=NULL,password_salt=NULL WHERE id=${id} RETURNING id,email`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});await audit(user.id,'reset_activation','user',id);return json(res,200,{activationCode:code});
+      const b=body(req),id=String(b.id||''),code=activationCode();const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL WHERE id=${id} RETURNING id,email`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});await audit(user.id,'reset_activation','user',id);return json(res,200,{activationCode:code});
     }
     if(req.method==='POST'&&action==='admin-decide-correction'){
       const b=body(req),id=String(b.id||''),status=String(b.status||''),note=String(b.note||'').trim();if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
