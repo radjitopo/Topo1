@@ -14,7 +14,7 @@
 </style></head>
 <body>
 <div class="wrap">
-<header class="head"><div class="brand"><img src="./logo-leli.jpg" alt="Pão da Leli"><div><h1>Pão da Leli</h1><p>Administração do ponto</p></div></div><a href="./">← App da equipe</a></header>
+<header class="head"><div class="brand"><img src="./logo-leli.jpg" alt="Pão da Leli"><div><h1>Pão da Leli</h1><p>Administração do ponto</p></div></div><a id="leaveAdmin" href="./">← Sair para o ponto</a></header>
 
 <section id="setup" class="login hidden"><div class="card"><h2>Primeiro administrador</h2><p class="muted">Cadastre o e-mail de quem vai administrar funcionários e correções. Depois você poderá adicionar um segundo administrador.</p><form id="setupForm"><div class="field"><input id="setupToken" placeholder="Código inicial de configuração" required></div><div class="field"><input id="setupName" placeholder="Nome do administrador" required></div><div class="field"><input id="setupEmail" type="email" placeholder="E-mail do administrador" required></div><div class="field password-field"><input id="setupPassword" type="password" placeholder="Crie uma senha (mínimo 8 caracteres)" minlength="8" required><button class="password-toggle" type="button" data-password-toggle="setupPassword" aria-label="Mostrar senha" title="Mostrar senha">◉</button></div><button class="btn" type="submit">Criar primeiro administrador</button></form></div></section>
 
@@ -34,5 +34,5 @@
 <section id="admins" class="panel"><div class="grid"><div class="card"><h3>Administradores</h3><div id="adminList"></div></div><div class="card"><h3>Adicionar administrador</h3><p class="muted">Máximo de 2 administradores.</p><form id="addAdminForm"><div class="field"><input id="newAdminName" placeholder="Nome" required></div><div class="field"><input id="newAdminEmail" type="email" placeholder="E-mail" required></div><button class="btn" type="submit">Adicionar</button></form><div id="adminActivationResult"></div></div></div><button id="adminLogout" class="btn secondary" style="margin-top:10px">Sair da administração</button></section>
 </main>
 </div>
-<script src="./admin-real.js?v=9"></script>
+<script src="./admin-real.js?v=10"></script>
 </body></html>

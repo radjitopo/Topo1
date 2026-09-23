@@ -35,6 +35,14 @@ async function api(action,method='GET',data){
   return j;
 }
 function showOnly(id){['setup','adminLogin','dashboard'].forEach(x=>$('#'+x).classList.add('hidden'));$('#'+id).classList.remove('hidden')}
+async function endAdminSession(destination){
+  try{
+    await api('logout','POST',{});
+    currentUser=null;
+    if(destination)location.replace(destination);
+    else showOnly('adminLogin');
+  }catch(err){alert('Não foi possível encerrar a sessão. '+err.message)}
+}
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function correctionGroups(rows){
@@ -187,7 +195,8 @@ $('#scheduleForm').addEventListener('submit',async e=>{
   catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
-$('#adminLogout').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;showOnly('adminLogin')});
+$('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
+$('#adminLogout').addEventListener('click',()=>endAdminSession());
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()}));
 initPasswordToggles();
 boot();

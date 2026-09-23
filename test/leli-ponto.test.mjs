@@ -34,6 +34,24 @@ test('administrators cannot use the employee app or employee-only API actions', 
   assert.match(api, /Esta área é exclusiva para colaboradores/);
 });
 
+test('leaving the admin area ends the session before opening the employee login', async () => {
+  const [html, admin, sw] = await Promise.all([
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+    source('pao-da-leli-ponto/sw.js'),
+  ]);
+
+  assert.match(html, /id="leaveAdmin"/);
+  assert.match(html, /Sair para o ponto/);
+  assert.match(admin, /async function endAdminSession\(destination\)/);
+  assert.match(admin, /await api\('logout','POST',\{\}\)/);
+  assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
+  assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
+  assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
+  assert.match(html, /admin-real\.js\?v=10/);
+  assert.match(sw, /admin-real\.js\?v=10/);
+});
+
 test('a correction is sent as one journey and each time is decided separately', async () => {
   const [api, employee, admin, employeeHtml, adminHtml] = await Promise.all([
     source('leli-api.js'),
