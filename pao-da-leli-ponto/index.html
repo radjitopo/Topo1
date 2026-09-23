@@ -39,7 +39,20 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
     <label class="field"><span>🔒</span><input id="password" type="password" value="demo" placeholder="Sua senha" required></label>
     <button class="btn" type="submit">Entrar</button>
   </form>
-  <p class="micro">Versão de teste: qualquer senha funciona para funcionário cadastrado.</p>
+  <button id="goActivate" class="btn secondary" type="button">Primeiro acesso / ativar conta</button>
+  <p class="micro">Acesso exclusivo para funcionários cadastrados pela empresa.</p>
+</section>
+
+<section id="activate" class="screen">
+  <div class="top"><img src="./logo-leli.jpg" alt="Pão da Leli"></div>
+  <h2>Primeiro acesso</h2><p class="lead">Use o código entregue pela empresa e escolha sua senha.</p>
+  <form id="activateForm">
+    <label class="field"><span>✉</span><input id="activateEmail" type="email" placeholder="Seu e-mail" required></label>
+    <label class="field"><span>#</span><input id="activateCode" placeholder="Código de ativação" required></label>
+    <label class="field"><span>🔒</span><input id="activatePassword" type="password" placeholder="Crie uma senha (mínimo 8 caracteres)" required minlength="8"></label>
+    <button class="btn" type="submit">ATIVAR MINHA CONTA</button>
+    <button id="backToLogin" class="btn secondary" type="button">Voltar</button>
+  </form>
 </section>
 
 <section id="ponto" class="screen">
@@ -93,41 +106,11 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div class="top"><img src="./logo-leli.jpg" alt="Pão da Leli"></div><h2>Meu perfil</h2>
   <div class="profile-head"><div id="avatar" class="avatar"><span>LA</span></div><div id="profileName" class="profile-name">Leslie Araújo</div><div id="profileRole" class="profile-role">Funcionária</div><button id="photoBtn" class="photoBtn" type="button">Trocar foto</button><input id="photoInput" type="file" accept="image/*" hidden></div>
   <div class="profile-grid"><div class="card"><div class="label">Unidade</div><div id="profileUnit" class="big">Pão da Leli</div></div><div class="card"><div class="label">Rede</div><div class="big">Sem restrição no teste</div></div></div>
-  <button id="resetBtn" class="btn secondary">Limpar dados de teste</button><button id="logoutBtn" class="btn secondary">Sair da conta</button>
+  <button id="logoutBtn" class="btn secondary">Sair da conta</button>
   <a href="./admin.html" style="display:block;text-align:center;color:var(--wine);margin:18px 0;text-decoration:none;font-weight:700">Abrir área administrativa</a>
 </section>
 
 <nav id="bottom" class="bottom"><button class="nav active" data-screen="ponto"><span>◷</span>Ponto</button><button class="nav" data-screen="history"><span>▤</span>Histórico</button><button class="nav" data-screen="profile"><span>♙</span>Perfil</button></nav>
 </main>
-<script>
-const KEY='leli_ponto_test_v3', OLD='leli_ponto_test_v2', ADMIN_KEY='leli_admin_test_v1';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const CORRECTION_TYPES=[{type:'in',label:'Chegada',original:'origIn',input:'corrIn'},{type:'breakOut',label:'Saída para intervalo',original:'origBreakOut',input:'corrBreakOut'},{type:'breakIn',label:'Volta do intervalo',original:'origBreakIn',input:'corrBreakIn'},{type:'out',label:'Saída',original:'origOut',input:'corrOut'}];
-function now(){return new Date()} function iso(d=now()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function hm(d=now()){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')} function hms(d=now()){return hm(d)+':'+String(d.getSeconds()).padStart(2,'0')} function brDate(d=now()){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
-function adminState(){let a={admins:[],employees:[{name:'Leslie Araújo',email:'leslie.araujo@paodaleli.com.br',role:'Funcionária',unit:'Pão da Leli',active:true}]};try{a={...a,...JSON.parse(localStorage.getItem(ADMIN_KEY)||'{}')}}catch(e){};if(!a.employees?.length)a.employees=[{name:'Leslie Araújo',email:'leslie.araujo@paodaleli.com.br',role:'Funcionária',unit:'Pão da Leli',active:true}];localStorage.setItem(ADMIN_KEY,JSON.stringify(a));return a}
-function defaultData(){return{logged:false,name:'Leslie Araújo',email:'leslie.araujo@paodaleli.com.br',role:'Funcionária',unit:'Pão da Leli',state:'idle',events:[],corrections:[]}}
-function read(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v)return{...defaultData(),...v};const old=JSON.parse(localStorage.getItem(OLD));if(old){const n={...defaultData(),...old,corrections:[]};localStorage.setItem(KEY,JSON.stringify(n));return n}}catch(e){}return defaultData()}
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-let data=read(), lastConfirmReturns='ponto';
-function show(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$('#bottom').classList.toggle('show',!['login','confirm','review','correction'].includes(id));$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));if(id==='ponto')renderPonto();if(id==='history')renderHistory();if(id==='profile')renderProfile();if(id==='review')renderReview()}
-function greeting(){const h=now().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
-function todayEvents(){return data.events.filter(e=>e.date===iso())} function getEvent(type,date=iso()){return data.events.find(e=>e.date===date&&e.type===type)}
-function correctionEntry(c,type){if(Array.isArray(c.entries))return c.entries.find(x=>x.type===type);if(c.type===type)return{type,originalTime:c.originalTime,requestedTime:c.requestedTime};return null}
-function effectiveTime(type,date){const ev=getEvent(type,date);const approved=(data.corrections||[]).filter(c=>c.date===date&&c.status==='approved'&&correctionEntry(c,type)).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')))[0];return correctionEntry(approved||{},type)?.requestedTime||ev?.time||'—'}
-function statusFor(date){const cs=(data.corrections||[]).filter(c=>c.date===date);if(cs.some(c=>c.status==='pending'))return'<span class="pending">correção pendente</span>';if(cs.some(c=>c.status==='approved'))return'<span class="approved">corrigido</span>';if(cs.some(c=>c.status==='rejected'))return'<span class="rejected">correção recusada</span>';return''}
-function renderPonto(){const d=now();$('#greeting').innerHTML=greeting()+',<br>'+data.name+'.';$('#dateLine').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});$('#clock').textContent=hm(d);let html='',label='INICIAR JORNADA',disabled=false;if(data.state==='idle'){html='<div class="label">Hoje</div><div class="big">Você ainda não iniciou sua jornada.</div>'}if(data.state==='working'){html='<div class="statusline"><span class="dot"></span><b>Você está trabalhando</b></div><div class="big">Entrada '+effectiveTime('in',iso())+'</div>';label='SAIR PARA INTERVALO'}if(data.state==='break'){html='<div class="label">Intervalo em andamento</div><div class="big">Desde '+effectiveTime('breakOut',iso())+'</div>';label='VOLTAR AO TRABALHO'}if(data.state==='afterbreak'){html='<div class="statusline"><span class="dot"></span><b>Você voltou ao trabalho</b></div><div class="big">Retorno '+effectiveTime('breakIn',iso())+'</div>';label='ENCERRAR JORNADA'}if(data.state==='out'){html='<div class="label">Jornada encerrada</div><div class="big">Saída '+effectiveTime('out',iso())+'</div>'+statusFor(iso());label='JORNADA ENCERRADA';disabled=true}$('#workCard').innerHTML=html;$('#mainAction').textContent=label;$('#mainAction').disabled=disabled}
-function confirmScreen(title,text,d,returnTo='ponto'){lastConfirmReturns=returnTo;$('#confirmTitle').textContent=title;$('#confirmText').textContent=text;$('#confirmTime').textContent=hms(d);$('#confirmDate').textContent=brDate(d);show('confirm')}
-function register(){let type,title,text,next;if(data.state==='idle'){type='in';title='Jornada iniciada.';text='Entrada registrada com sucesso.';next='working'}else if(data.state==='working'){type='breakOut';title='Intervalo iniciado.';text='Saída para intervalo registrada.';next='break'}else if(data.state==='break'){type='breakIn';title='De volta!';text='Retorno do intervalo registrado.';next='afterbreak'}else if(data.state==='afterbreak'){type='out';next='out'}else return;const d=now();data.events.push({type,date:iso(d),time:hm(d),ts:d.toISOString()});data.state=next;save();if(type==='out'){show('review')}else confirmScreen(title,text,d)}
-function renderReview(){const date=iso();$('#reviewGrid').innerHTML=[['Entrada','in'],['Saída intervalo','breakOut'],['Volta intervalo','breakIn'],['Saída','out']].map(([l,t])=>'<div class="mini"><span>'+l+'</span><b>'+effectiveTime(t,date)+'</b></div>').join('')}
-function populateCorrection(){const date=iso();CORRECTION_TYPES.forEach(x=>{const value=effectiveTime(x.type,date).replace('—','');$('#'+x.original).textContent=value||'—';$('#'+x.input).value=value})}
-function renderHistory(){const d=now();$('#monthLabel').textContent=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const dates=[...new Set(data.events.map(e=>e.date))].sort().reverse();let html='<div class="hrow head"><div>Data</div><div>Entrada</div><div>Intervalo</div><div>Saída</div></div>';if(!dates.length)html+='<div class="empty">Nenhum registro ainda.</div>';dates.forEach(date=>{const [y,m,day]=date.split('-');const bo=effectiveTime('breakOut',date),bi=effectiveTime('breakIn',date),inter=bo==='—'?'—':bo+(bi!=='—'?'–'+bi:'');html+='<div class="hrow"><div><b>'+day+'/'+m+'</b><br>'+statusFor(date)+'</div><div>'+effectiveTime('in',date)+'</div><div>'+inter+'</div><div>'+effectiveTime('out',date)+'</div></div>'});$('#historyTable').innerHTML=html}
-function renderAvatar(){const a=$('#avatar');if(data.photo){a.innerHTML='<img src="'+data.photo+'" alt="Foto de '+data.name+'">'}else{const initials=(data.name||'Leslie Araújo').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();a.innerHTML='<span>'+initials+'</span>'}}
-function renderProfile(){$('#profileName').textContent=data.name;$('#profileRole').textContent=data.role||'Funcionária';$('#profileUnit').textContent=data.unit||'Pão da Leli';renderAvatar()}
-$('#loginForm').addEventListener('submit',e=>{e.preventDefault();const mail=$('#email').value.trim().toLowerCase();const emp=adminState().employees.find(x=>x.email.toLowerCase()===mail&&x.active!==false);if(!emp){alert('Este e-mail ainda não foi cadastrado pela empresa.');return}data.logged=true;data.name=emp.name;data.email=emp.email;data.role=emp.role||'Funcionária';data.unit=emp.unit||'Pão da Leli';save();show('ponto')});
-$('#mainAction').addEventListener('click',register);$('#confirmOk').addEventListener('click',()=>show(lastConfirmReturns));$('#reviewOk').addEventListener('click',()=>confirmScreen('Jornada encerrada.','Tudo certo por hoje.',now(),'ponto'));$('#requestCorrection').addEventListener('click',()=>{populateCorrection();show('correction')});$('#cancelCorrection').addEventListener('click',()=>show('review'));
-$('#correctionForm').addEventListener('submit',e=>{e.preventDefault();const entries=CORRECTION_TYPES.map(x=>({type:x.type,originalTime:$('#'+x.original).textContent,requestedTime:$('#'+x.input).value})),reason=$('#corrReason').value.trim();data.corrections=data.corrections||[];data.corrections.push({id:'c_'+Date.now(),employeeEmail:data.email,employeeName:data.name,date:iso(),entries,reason,status:'pending',createdAt:new Date().toISOString()});save();$('#corrReason').value='';confirmScreen('Correção enviada.','Os quatro horários foram enviados para a aprovação de um administrador.',now(),'ponto')});
-$('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>3*1024*1024){alert('Escolha uma foto de até 3 MB.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{data.photo=reader.result;save();renderAvatar()};reader.readAsDataURL(file)});
-$('#resetBtn').addEventListener('click',()=>{if(confirm('Limpar todas as batidas e correções de teste deste celular?')){data.events=[];data.corrections=[];data.state='idle';save();show('ponto')}});$('#logoutBtn').addEventListener('click',()=>{data.logged=false;save();show('login')});$$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));setInterval(()=>{if($('#ponto').classList.contains('active'))$('#clock').textContent=hm()},1000);
-adminState();show(data.logged?'ponto':'login');
-</script>
+<script src="./app-real.js?v=1"></script>
 </body></html>
