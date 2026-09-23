@@ -64,7 +64,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 <section id="profile" class="screen">
   <div class="top"><div class="tiny">Pão da Leli</div><img src="./icon.svg" alt=""></div><h2>Meu perfil</h2>
   <div class="profile-grid"><div class="card"><div class="label">Funcionária</div><div class="big" id="profileName">Leslie Araújo</div></div><div class="card"><div class="label">Unidade</div><div class="big">Pão da Leli</div></div><div class="card"><div class="label">Rede</div><div class="big">Sem restrição no teste</div></div></div>
-  <button id="logoutBtn" class="btn secondary">Sair da conta</button>
+  <button id="resetBtn" class="btn secondary">Limpar dados de teste</button><button id="logoutBtn" class="btn secondary">Sair da conta</button>
   <a href="./admin.html" style="display:block;text-align:center;color:var(--wine);margin:24px 0;text-decoration:none;font-weight:700">Abrir painel administrativo</a>
 </section>
 
@@ -112,7 +112,7 @@ function renderHistory(){
  $('#historyTable').innerHTML=html
 }
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();const mail=$('#email').value.trim();data.logged=true;data.name=mail==='leslie.araujo@paodaleli.com.br'?'Leslie Araújo':(mail?mail.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'Leslie Araújo');save(data);show('ponto')});
-$('#mainAction').addEventListener('click',register);$('#confirmOk').addEventListener('click',()=>show('ponto'));$('#logoutBtn').addEventListener('click',()=>{data.logged=false;save(data);show('login')});
+$('#mainAction').addEventListener('click',register);$('#confirmOk').addEventListener('click',()=>show('ponto'));$('#resetBtn').addEventListener('click',()=>{if(confirm('Limpar todas as batidas de teste deste celular?')){data.events=[];data.state='idle';save(data);show('ponto')}});$('#logoutBtn').addEventListener('click',()=>{data.logged=false;save(data);show('login')});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));
 setInterval(()=>{if($('#ponto').classList.contains('active'))$('#clock').textContent=hm()},1000);
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').style.display='block'});
