@@ -202,6 +202,8 @@ export default async function handler(req,res){
       const ph=newPasswordHash(next);await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},must_change_password=false,updated_at=now() WHERE id=${user.id}`;
       await audit(user.id,'change_password','user',user.id);return json(res,200,{ok:true});
     }
+    const employeeActions=['photo','today','history','punch','correction-batch','correction'];
+    if(employeeActions.includes(action)&&user.role!=='employee')return json(res,403,{error:'Esta área é exclusiva para colaboradores.'});
     if(req.method==='POST'&&action==='photo'){
       const b=body(req),photo=String(b.photo||'');if(photo.length>220000||!photo.startsWith('data:image/'))return json(res,400,{error:'Foto inválida ou muito grande.'});
       await sql`UPDATE leli_users SET photo_data=${photo},updated_at=now() WHERE id=${user.id}`;return json(res,200,{ok:true});

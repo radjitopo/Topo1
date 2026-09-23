@@ -108,10 +108,14 @@ function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})
 }
 async function boot(){
-  try{const m=await api('me');currentUser=m.user;show('ponto')}catch{show('login')}
+  try{const m=await api('me');if(!enterEmployeeApp(m.user))return}catch{show('login')}
   if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
-$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});currentUser=r.user;show('ponto')}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
+function enterEmployeeApp(user){
+  if(user?.role!=='employee'){location.replace('./admin.html');return false}
+  currentUser=user;show('ponto');return true;
+}
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
 $('#goActivate').addEventListener('click',()=>{$('#activateEmail').value=$('#email').value.trim();show('activate')});$('#backToLogin').addEventListener('click',()=>show('login'));
 $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('activate','POST',{email:$('#activateEmail').value.trim(),code:$('#activateCode').value.trim(),password:$('#activatePassword').value});alert('Conta ativada. Agora você já pode entrar.');$('#email').value=$('#activateEmail').value.trim();$('#password').value='';show('login')}catch(err){alert(err.message)}});
 $('#mainAction').addEventListener('click',punch);

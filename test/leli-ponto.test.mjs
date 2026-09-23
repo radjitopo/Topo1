@@ -20,6 +20,20 @@ test('the employee app only references controls that exist in its page', async (
   assert.doesNotMatch(js, /corrType|corrTime/);
 });
 
+test('administrators cannot use the employee app or employee-only API actions', async () => {
+  const [api, employee] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/app-real.js'),
+  ]);
+
+  assert.match(employee, /if\(user\?\.role!=='employee'\)\{location\.replace\('\.\/admin\.html'\);return false\}/);
+  assert.match(employee, /if\(!enterEmployeeApp\(m\.user\)\)return/);
+  assert.match(employee, /enterEmployeeApp\(r\.user\)/);
+  assert.match(api, /employeeActions=\['photo','today','history','punch','correction-batch','correction'\]/);
+  assert.match(api, /employeeActions\.includes\(action\)&&user\.role!=='employee'/);
+  assert.match(api, /Esta área é exclusiva para colaboradores/);
+});
+
 test('a correction is sent as one journey and each time is decided separately', async () => {
   const [api, employee, admin, employeeHtml, adminHtml] = await Promise.all([
     source('leli-api.js'),
