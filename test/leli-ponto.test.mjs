@@ -20,12 +20,13 @@ test('the employee app only references controls that exist in its page', async (
   assert.doesNotMatch(js, /corrType|corrTime/);
 });
 
-test('a correction is saved and decided as one complete journey', async () => {
-  const [api, employee, admin, html] = await Promise.all([
+test('a correction is sent as one journey and each time is decided separately', async () => {
+  const [api, employee, admin, employeeHtml, adminHtml] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/app-real.js'),
     source('pao-da-leli-ponto/admin-real.js'),
     source('pao-da-leli-ponto/index.html'),
+    source('pao-da-leli-ponto/admin.html'),
   ]);
 
   assert.match(employee, /api\('correction-batch','POST'/);
@@ -33,9 +34,12 @@ test('a correction is saved and decided as one complete journey', async () => {
   assert.match(api, /request_group/);
   assert.match(api, /count\(\*\)::int AS count/);
   assert.match(admin, /correctionGroups/);
-  assert.match(admin, /Aprovar tudo/);
-  assert.match(admin, /Recusar tudo/);
-  assert.match(html, /id="confirmDetails"/);
+  assert.match(admin, /pendingCorrectionRequests/);
+  assert.match(admin, /decideCorrection/);
+  assert.match(admin, /api\('admin-decide-correction','POST'/);
+  assert.doesNotMatch(admin, /Aprovar tudo|Recusar tudo|admin-decide-correction-group/);
+  assert.match(adminHtml, /id="correctionCount"/);
+  assert.match(employeeHtml, /id="confirmDetails"/);
   assert.match(employee, /O administrador ainda precisa aprovar/);
   assert.match(employee, /horários antigos continuam valendo/);
   assert.match(employee, /\['Data',fullDateLabel\(correctionDate\)\]/);

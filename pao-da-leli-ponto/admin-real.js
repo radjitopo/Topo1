@@ -46,6 +46,19 @@ function correctionGroups(rows){
   }
   return [...groups.values()];
 }
+function correctionDecision(item){
+  if(item.status==='pending')return '<div class="correction-decision"><button class="btn small" type="button" onclick="decideCorrection(\''+item.id+'\',\'approved\')">Aprovar</button><button class="btn small red" type="button" onclick="decideCorrection(\''+item.id+'\',\'rejected\')">Recusar</button></div>';
+  const label=item.status==='approved'?'Aprovado':'Recusado';
+  return '<div class="correction-decision"><span class="badge '+item.status+'">'+label+'</span>'+(item.decided_by_name?'<span class="sub">por '+esc(item.decided_by_name)+'</span>':'')+'</div>';
+}
+function correctionRequestSummary(items){
+  const approved=items.filter(item=>item.status==='approved').length,rejected=items.filter(item=>item.status==='rejected').length,pending=items.filter(item=>item.status==='pending').length;
+  const parts=[];
+  if(approved)parts.push(approved+' '+(approved===1?'aprovado':'aprovados'));
+  if(rejected)parts.push(rejected+' '+(rejected===1?'recusado':'recusados'));
+  if(pending)parts.push(pending+' '+(pending===1?'pendente':'pendentes'));
+  return '<div class="correction-summary"><span class="badge '+(pending?'pending':'approved')+'">'+(pending?'Aguardando decisão':'Pedido analisado')+'</span><span class="sub">'+parts.join(' · ')+'</span></div>';
+}
 function fullDateLabel(value){
   if(!value)return'';
   return new Date(value+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
@@ -121,9 +134,14 @@ async function render(){
     overview=await api('admin-overview');
     const {users,punches,corrections,date}=overview;
     const correctionRequests=correctionGroups(corrections);
+    const pendingCorrectionRequests=correctionRequests.filter(request=>request.items.some(item=>item.status==='pending')).length;
     $('#batidas').textContent=punches.length;
     $('#entradas').textContent=punches.filter(p=>p.kind==='in').length;
-    $('#pendentes').textContent=correctionRequests.filter(c=>c.status==='pending').length;
+    $('#pendentes').textContent=pendingCorrectionRequests;
+    $('#correctionCount').textContent=pendingCorrectionRequests;
+    $('#correctionCount').classList.toggle('hidden',pendingCorrectionRequests===0);
+    $('#correctionCount').setAttribute('aria-hidden',pendingCorrectionRequests===0?'true':'false');
+    $('[data-tab="corrections"]').setAttribute('aria-label',pendingCorrectionRequests?'Correções, '+pendingCorrectionRequests+' '+(pendingCorrectionRequests===1?'pedido pendente':'pedidos pendentes'):'Correções');
     $('#funcionarios').textContent=users.filter(u=>u.role==='employee'&&u.active).length;
 
     const empUsers=users.filter(u=>u.role==='employee');
@@ -137,7 +155,7 @@ async function render(){
     });
 
     const labels={in:'Chegada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'},order={in:0,breakOut:1,breakIn:2,out:3};
-    $('#correctionList').innerHTML=correctionRequests.map(c=>{const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+time(x.original_at)+'</b><b>'+time(x.requested_at)+'</b></div>').join('')+'</div>';return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div><div style="margin-top:6px"><span class="badge '+c.status+'">'+(c.status==='pending'?'pendente':c.status==='approved'?'aprovada':'recusada')+'</span>'+(c.decided_by_name?'<span class="sub"> · por '+esc(c.decided_by_name)+'</span>':'')+'</div></div>'+(c.status==='pending'?'<div class="actions"><button class="btn small" onclick="decideRequest(\''+c.key+'\','+c.grouped+',\'approved\')">'+(complete?'Aprovar tudo':'Aprovar')+'</button><button class="btn small red" onclick="decideRequest(\''+c.key+'\','+c.grouped+',\'rejected\')">'+(complete?'Recusar tudo':'Recusar')+'</button></div>':'')+'</div>'}).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
+    $('#correctionList').innerHTML=correctionRequests.map(c=>{const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span><span>Decisão</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+time(x.original_at)+'</b><b>'+time(x.requested_at)+'</b>'+correctionDecision(x)+'</div>').join('')+'</div>';return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div>'+correctionRequestSummary(items)+'</div></div>'}).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
 
     const admins=users.filter(u=>u.role==='admin');
     $('#adminList').innerHTML=admins.map(u=>'<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+'</div><div style="margin-top:6px">'+(u.pending_activation?'<span class="badge pending">aguardando ativação</span>':u.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>')+'</div></div></div>').join('');
@@ -147,7 +165,7 @@ async function render(){
 window.copyActivation=async code=>{if(!code)return;try{await navigator.clipboard.writeText(code);alert('Código copiado.')}catch{prompt('Copie o código:',code)}}
 window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});await render()}catch(e){alert(e.message)}}
 window.regenActivation=async id=>{const email=overview?.users?.find(u=>u.id===id)?.email||'esta pessoa';if(!confirm('Trocar o código de ativação de '+email+'? O código anterior deixará de funcionar.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código: '+r.activationCode)}catch(e){alert(e.message)}}
-window.decideRequest=async(key,grouped,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api(grouped?'admin-decide-correction-group':'admin-decide-correction','POST',grouped?{groupId:key,status,note}:{id:key,status,note});await render()}catch(e){alert(e.message)}}
+window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});await render()}catch(e){alert(e.message)}}
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
