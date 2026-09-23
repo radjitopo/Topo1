@@ -44,7 +44,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div class="hero"><h1 id="greeting">Bom dia,<br>Leslie Araújo.</h1><p class="lead">Seu dia começa por aqui.</p><div id="dateLine" class="date"></div><div id="clock" class="clock">07:32</div></div>
   <div class="notice"><div style="font-size:19px">✓</div><div><b>Modo de teste</b><small>Sem restrição de rede nesta versão.</small></div></div>
   <div id="workCard" class="card"></div>
-  <div class="actions"><button id="mainAction" class="btn">ENTRAR</button><button id="installBtn" class="btn secondary" style="display:none">Instalar no celular</button></div>
+  <div class="actions"><button id="mainAction" class="btn">INICIAR JORNADA</button><button id="installBtn" class="btn secondary" style="display:none">Instalar no celular</button></div>
   <p class="quote">Pão com tempo <span style="color:var(--yellow)">•</span> Café com calma</p>
 </section>
 
@@ -86,7 +86,7 @@ function show(id){$$('.screen').forEach(x=>x.classList.remove('active')); $('#'+
 function greeting(){const h=now().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function renderPonto(){const d=now();$('#greeting').innerHTML=greeting()+',<br>'+data.name+'.';$('#dateLine').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});$('#clock').textContent=hm(d);
  const today=data.events.filter(e=>e.date===iso()); const get=t=>today.find(e=>e.type===t);
- let html='',label='ENTRAR',disabled=false;
+ let html='',label='INICIAR JORNADA',disabled=false;
  if(data.state==='idle'){html='<div class="label">Hoje</div><div class="big">Você ainda não iniciou sua jornada.</div>'}
  if(data.state==='working'){html='<div class="statusline"><span class="dot"></span><b>Você está trabalhando</b></div><div class="big">Entrada '+(get('in')?.time||'—')+'</div>';label='SAIR PARA INTERVALO'}
  if(data.state==='break'){html='<div class="label">Intervalo em andamento</div><div class="big">Desde '+(get('breakOut')?.time||'—')+'</div>';label='VOLTAR AO TRABALHO'}
