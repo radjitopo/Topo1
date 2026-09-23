@@ -71,6 +71,7 @@ async function ensureSchema(){
     decided_by uuid REFERENCES leli_users(id),
     decided_at timestamptz,
     decision_note text,
+    request_group uuid,
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`CREATE TABLE IF NOT EXISTS leli_audit_log (
@@ -89,6 +90,7 @@ async function ensureSchema(){
     await sql`UPDATE leli_users SET activation_code=${code}, activation_hash=${sha(code)}, activation_expires_at=NULL, updated_at=now() WHERE id=${row.id}`;
   }
   await sql`CREATE INDEX IF NOT EXISTS leli_punches_user_date_idx ON leli_punches(user_id, work_date)`;
+  await sql`ALTER TABLE leli_corrections ADD COLUMN IF NOT EXISTS request_group uuid`;
   await sql`CREATE INDEX IF NOT EXISTS leli_corrections_status_idx ON leli_corrections(status, created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_sessions_token_idx ON leli_sessions(token_hash)`;
 }
@@ -207,6 +209,25 @@ export default async function handler(req,res){
         await audit(user.id,'punch','punch',rows[0].id,{kind,date});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
     }
+    if(req.method==='POST'&&action==='correction-batch'){
+      const b=body(req),date=String(b.date||localDate()),reason=String(b.reason||'').trim(),times=b.times||{};
+      const kinds=['in','breakOut','breakIn','out'];
+      if(reason.length<3)return json(res,400,{error:'Explique rapidamente o motivo da correção.'});
+      for(const kind of kinds){if(!/^[0-2]\\d:[0-5]\\d$/.test(String(times[kind]||'')))return json(res,400,{error:'Preencha os quatro horários.'})}
+      const punches=await sql\`SELECT id,kind,occurred_at FROM leli_punches WHERE user_id=\${user.id} AND work_date=\${date}\`;
+      const byKind=Object.fromEntries(punches.map(p=>[p.kind,p]));
+      for(const kind of kinds){if(!byKind[kind])return json(res,400,{error:'A jornada precisa ter as quatro batidas antes de solicitar a correção.'})}
+      const groupRows=await sql\`SELECT gen_random_uuid() AS id\`; const groupId=groupRows[0].id;
+      for(const kind of kinds){
+        const reqTs=await sql\`SELECT ((\${date}::date + \${String(times[kind])}::time) AT TIME ZONE 'America/Sao_Paulo') AS ts\`;
+        const p=byKind[kind];
+        await sql\`INSERT INTO leli_corrections(user_id,punch_id,work_date,kind,original_at,requested_at,reason,request_group)
+          VALUES(\${user.id},\${p.id},\${date},\${kind},\${p.occurred_at},\${reqTs[0].ts},\${reason},\${groupId})\`;
+      }
+      await audit(user.id,'request_correction_group','correction_group',groupId,{date});
+      return json(res,201,{ok:true,groupId});
+    }
+
     if(req.method==='POST'&&action==='correction'){
       const b=body(req),kind=String(b.kind||''),requestedTime=String(b.requestedTime||''),reason=String(b.reason||'').trim(),date=String(b.date||localDate());
       if(!['in','breakOut','breakIn','out'].includes(kind)||!/^[0-2]\d:[0-5]\d$/.test(requestedTime)||reason.length<3)return json(res,400,{error:'Revise o horário e informe o motivo.'});
@@ -224,7 +245,7 @@ export default async function handler(req,res){
       const date=localDate();
       const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,created_at FROM leli_users ORDER BY role DESC,name ASC`;
       const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
-      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
+      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
       return json(res,200,{date,users,punches,corrections});
     }
@@ -247,6 +268,15 @@ export default async function handler(req,res){
     }
     if(req.method==='POST'&&action==='admin-reset-activation'){
       const b=body(req),id=String(b.id||''),code=activationCode();const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL WHERE id=${id} RETURNING id,email`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});await audit(user.id,'reset_activation','user',id);return json(res,200,{activationCode:code});
+    }
+    if(req.method==='POST'&&action==='admin-decide-correction-group'){
+      const b=body(req),groupId=String(b.groupId||''),status=String(b.status||''),note=String(b.note||'').trim();
+      if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
+      const rows=await sql\`UPDATE leli_corrections SET status=\${status},decided_by=\${user.id},decided_at=now(),decision_note=\${note}
+        WHERE request_group=\${groupId}::uuid AND status='pending' RETURNING id\`;
+      if(!rows.length)return json(res,404,{error:'Solicitação não encontrada ou já decidida.'});
+      await audit(user.id,'decide_correction_group','correction_group',groupId,{status,count:rows.length});
+      return json(res,200,{ok:true,count:rows.length});
     }
     if(req.method==='POST'&&action==='admin-decide-correction'){
       const b=body(req),id=String(b.id||''),status=String(b.status||''),note=String(b.note||'').trim();if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
