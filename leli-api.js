@@ -126,7 +126,8 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='health'){
       const a=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin'`;
-      return json(res,200,{ok:true,hasAdmin:a[0].n>0});
+      const s=await sql`SELECT count(*)::int AS users, count(*) FILTER (WHERE password_hash IS NOT NULL)::int AS password_users, count(*) FILTER (WHERE activation_hash IS NOT NULL)::int AS pending_activation, count(*) FILTER (WHERE locked_until IS NOT NULL AND locked_until>now())::int AS locked_users FROM leli_users`;
+      return json(res,200,{ok:true,hasAdmin:a[0].n>0,authStats:s[0]});
     }
 
     if(req.method==='POST'&&action==='bootstrap'){
