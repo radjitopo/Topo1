@@ -126,10 +126,13 @@ function fillCorrectionForm(){
     $('#'+inputId).value=value==='—'?'':value;
   }
 }
-$('#requestCorrection').addEventListener('click',()=>{fillCorrectionForm();show('correction')});
+$('#requestCorrection').addEventListener('click',()=>{if(['in','breakOut','breakIn','out'].some(kind=>effective(kind)==='—')){alert('A jornada precisa ter as quatro batidas antes da correção.');return}fillCorrectionForm();show('correction')});
 $('#cancelCorrection').addEventListener('click',()=>show('review'));
 $('#correctionForm').addEventListener('submit',async e=>{
   e.preventDefault();
+  const ordered=[$('#corrIn').value,$('#corrBreakOut').value,$('#corrBreakIn').value,$('#corrOut').value];
+  const minutes=ordered.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
+  if(minutes.some((value,index)=>index>0&&value<=minutes[index-1])){alert('Os horários precisam seguir a ordem: chegada, intervalo, volta e saída.');return}
   try{
     await api('correction-batch','POST',{
       date:todayData.date,
