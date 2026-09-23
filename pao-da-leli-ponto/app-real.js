@@ -34,6 +34,13 @@ function show(id){
 }
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function dateLabel(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}
+function fullDateLabel(v){if(!v)return'—';return new Date(v+'T12:00:00').toLocaleDateString('pt-BR')}
+function showConfirmation(title,text,rows){
+  $('#confirmTitle').textContent=title;$('#confirmText').textContent=text;
+  const details=$('#confirmDetails');details.textContent='';
+  for(const [label,value] of rows){const row=document.createElement('div'),name=document.createElement('span'),result=document.createElement('b');row.className='row';name.textContent=label;result.textContent=value;row.append(name,result);details.append(row)}
+  show('confirm');
+}
 function greeting(){const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',hour:'2-digit',hour12:false}).format(new Date()));return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function event(kind){return todayData?.punches?.find(p=>p.kind===kind)}
 function effective(kind){return time(event(kind)?.effective_at)}
@@ -68,7 +75,7 @@ async function punch(){
     if(before==='afterbreak'&&todayData.state==='out'){show('review');return}
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
-    $('#confirmTitle').textContent=t[0];$('#confirmText').textContent=t[1];$('#confirmTime').textContent=time(p.occurred_at);$('#confirmDate').textContent=new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});lastConfirmReturn='ponto';show('confirm');
+    lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
   }catch(e){alert(e.message);loadToday()}
 }
 function renderReview(){
@@ -110,12 +117,8 @@ $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{aw
 $('#mainAction').addEventListener('click',punch);
 $('#confirmOk').addEventListener('click',()=>show(lastConfirmReturn));
 $('#reviewOk').addEventListener('click',()=>{
-  $('#confirmTitle').textContent='Jornada encerrada.';
-  $('#confirmText').textContent='Tudo certo por hoje.';
-  $('#confirmTime').textContent=effective('out');
-  $('#confirmDate').textContent=new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
   lastConfirmReturn='ponto';
-  show('confirm');
+  showConfirmation('Jornada encerrada.','Tudo certo por hoje.',[['Horário',effective('out')],['Data',new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
 });
 
 function fillCorrectionForm(){
@@ -131,11 +134,12 @@ $('#cancelCorrection').addEventListener('click',()=>show('review'));
 $('#correctionForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const ordered=[$('#corrIn').value,$('#corrBreakOut').value,$('#corrBreakIn').value,$('#corrOut').value];
+  const correctionDate=todayData.date;
   const minutes=ordered.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
   if(minutes.some((value,index)=>index>0&&value<=minutes[index-1])){alert('Os horários precisam seguir a ordem: chegada, intervalo, volta e saída.');return}
   try{
     await api('correction-batch','POST',{
-      date:todayData.date,
+      date:correctionDate,
       reason:$('#corrReason').value.trim(),
       times:{
         in:$('#corrIn').value,
@@ -145,12 +149,15 @@ $('#correctionForm').addEventListener('submit',async e=>{
       }
     });
     $('#corrReason').value='';
-    $('#confirmTitle').textContent='Correção enviada.';
-    $('#confirmText').textContent='Os quatro horários foram enviados juntos e só serão aplicados depois da aprovação de um administrador.';
-    $('#confirmTime').textContent='Pendente';
-    $('#confirmDate').textContent='';
     lastConfirmReturn='ponto';
-    show('confirm');
+    showConfirmation('Pedido enviado.','O administrador ainda precisa aprovar. Até lá, os horários antigos continuam valendo.',[
+      ['Data',fullDateLabel(correctionDate)],
+      ['Entrada',ordered[0]],
+      ['Saída para intervalo',ordered[1]],
+      ['Volta do intervalo',ordered[2]],
+      ['Saída',ordered[3]],
+      ['Status','Aguardando aprovação']
+    ]);
   }catch(err){alert(err.message)}
 });
 $('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const photo=await resizeImage(f);await api('photo','POST',{photo});currentUser.photo_data=photo;renderAvatar()}catch(err){alert(err.message)}});

@@ -21,10 +21,11 @@ test('the employee app only references controls that exist in its page', async (
 });
 
 test('a correction is saved and decided as one complete journey', async () => {
-  const [api, employee, admin] = await Promise.all([
+  const [api, employee, admin, html] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/app-real.js'),
     source('pao-da-leli-ponto/admin-real.js'),
+    source('pao-da-leli-ponto/index.html'),
   ]);
 
   assert.match(employee, /api\('correction-batch','POST'/);
@@ -34,6 +35,11 @@ test('a correction is saved and decided as one complete journey', async () => {
   assert.match(admin, /correctionGroups/);
   assert.match(admin, /Aprovar tudo/);
   assert.match(admin, /Recusar tudo/);
+  assert.match(html, /id="confirmDetails"/);
+  assert.match(employee, /O administrador ainda precisa aprovar/);
+  assert.match(employee, /horários antigos continuam valendo/);
+  assert.match(employee, /\['Data',fullDateLabel\(correctionDate\)\]/);
+  assert.match(employee, /\['Status','Aguardando aprovação'\]/);
 });
 
 test('sessions reach the API and activation codes remain visible to admins', async () => {
