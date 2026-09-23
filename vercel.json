@@ -6,6 +6,10 @@
   ],
   "builds": [
     {
+      "src": "leli-api.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api.js",
       "use": "@vercel/node"
     },
@@ -261,6 +265,10 @@
     {
       "src": "/pao-da-leli-ponto/(.*)",
       "dest": "/pao-da-leli-ponto/$1"
+    },
+    {
+      "src": "/leli-api",
+      "dest": "/leli-api.js"
     },
     {
       "handle": "filesystem"
