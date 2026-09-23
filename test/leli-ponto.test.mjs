@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { buildMonthlyReport } from '../leli-report.js';
 
 const root = new URL('../', import.meta.url);
 
@@ -27,9 +28,9 @@ test('administrators cannot use the employee app or employee-only API actions', 
   ]);
 
   assert.match(employee, /if\(user\?\.role!=='employee'\)\{location\.replace\('\.\/admin\.html'\);return false\}/);
-  assert.match(employee, /if\(!\(await enterEmployeeApp\(m\.user\)\)\)return/);
-  assert.match(employee, /await enterEmployeeApp\(r\.user\)/);
-  assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'\]/);
+  assert.match(employee, /if\(!enterEmployeeApp\(m\.user\)\)return/);
+  assert.match(employee, /enterEmployeeApp\(r\.user\)/);
+  assert.match(api, /employeeActions=\['photo','today','history','punch','correction-batch','correction'\]/);
   assert.match(api, /employeeActions\.includes\(action\)&&user\.role!=='employee'/);
   assert.match(api, /Esta área é exclusiva para colaboradores/);
 });
@@ -147,43 +148,72 @@ test('admins can open an employee record with full history and a weekly schedule
   assert.match(admin, /Segunda-feira/);
 });
 
-test('checkout requires the area checklist and delivers individual messages', async () => {
-  const [api, employeeHtml, employee, adminHtml, admin, sw] = await Promise.all([
+test('monthly closing calculates hours, absences and approved corrections from schedule history', () => {
+  const employee = { id: 'employee-1', name: 'Leli', unit: 'Pão da Leli Café', active: true };
+  const report = buildMonthlyReport({
+    month: '2026-09',
+    employees: [employee],
+    scheduleVersions: [{
+      user_id: employee.id,
+      effective_from: '2026-09-07',
+      schedule: [
+        { weekday: 1, start_time: '08:00', break_start_time: '12:00', break_end_time: '13:00', end_time: '17:00' },
+        { weekday: 2, start_time: '08:00', break_start_time: '12:00', break_end_time: '13:00', end_time: '17:00' },
+      ],
+    }],
+    punches: [
+      { user_id: employee.id, work_date: '2026-09-07', kind: 'in', occurred_at: '2026-09-07T11:10:00.000Z' },
+      { user_id: employee.id, work_date: '2026-09-07', kind: 'breakOut', occurred_at: '2026-09-07T15:00:00.000Z' },
+      { user_id: employee.id, work_date: '2026-09-07', kind: 'breakIn', occurred_at: '2026-09-07T16:00:00.000Z' },
+      { user_id: employee.id, work_date: '2026-09-07', kind: 'out', occurred_at: '2026-09-07T20:00:00.000Z' },
+    ],
+    corrections: [{
+      id: 'correction-1',
+      user_id: employee.id,
+      work_date: '2026-09-07',
+      kind: 'in',
+      status: 'approved',
+      requested_at: '2026-09-07T11:00:00.000Z',
+      decided_at: '2026-09-07T21:00:00.000Z',
+      request_group: 'group-1',
+    }],
+    now: new Date('2026-09-09T02:00:00.000Z'),
+  });
+
+  assert.equal(report.periodEnd, '2026-09-08');
+  assert.equal(report.rows.length, 2);
+  assert.equal(report.rows[0].workedMinutes, 480);
+  assert.equal(report.rows[0].delayMinutes, 0);
+  assert.equal(report.rows[1].status, 'Falta');
+  assert.deepEqual(report.totals, {
+    expectedMinutes: 960,
+    workedMinutes: 480,
+    delayMinutes: 0,
+    absenceDays: 1,
+    incompleteDays: 0,
+    correctionRequests: 1,
+    pendingCorrections: 0,
+  });
+});
+
+test('the admin monthly closing can filter employees and export spreadsheet or PDF', async () => {
+  const [api, html, admin] = await Promise.all([
     source('leli-api.js'),
-    source('pao-da-leli-ponto/index.html'),
-    source('pao-da-leli-ponto/app-real.js'),
     source('pao-da-leli-ponto/admin.html'),
     source('pao-da-leli-ponto/admin-real.js'),
-    source('pao-da-leli-ponto/sw.js'),
   ]);
 
-  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_items/);
-  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_submissions/);
-  assert.match(api, /WHERE unit=\$\{user\.unit\} AND active=true/);
-  assert.match(api, /needsChecklist:true/);
-  assert.match(api, /action==='checkout'/);
-  assert.match(api, /typeof answer\?\.answer!=='boolean'/);
-  assert.match(api, /checkout_with_checklist/);
-  assert.match(api, /action==='messages-read'/);
-  assert.match(api, /action==='admin-checklist'/);
-  assert.match(api, /action==='admin-save-checklist'/);
-  assert.match(employeeHtml, /id="checklistForm"/);
-  assert.match(employeeHtml, /id="messageRecipient"/);
-  assert.match(employeeHtml, /id="unreadMessages"/);
-  assert.match(employee, /before==='afterbreak'/);
-  assert.match(employee, /api\('checkout','POST'/);
-  assert.match(employee, /api\('messages-read','POST'/);
-  assert.match(adminHtml, /data-tab="checklistAdmin"/);
-  assert.match(adminHtml, /id="checklistFormAdmin"/);
-  assert.match(adminHtml, /id="checklistHistory"/);
-  assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
-  assert.match(admin, /api\('admin-checklist'/);
-  assert.match(admin, /api\('admin-save-checklist','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=10/);
-  assert.match(adminHtml, /admin-real\.js\?v=11/);
-  assert.match(sw, /leli-ponto-v17/);
-  assert.match(sw, /app-real\.js\?v=10/);
-  assert.match(sw, /admin-real\.js\?v=11/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_schedule_versions/);
+  assert.match(api, /action==='admin-monthly-report'/);
+  assert.match(api, /buildMonthlyReport/);
+  assert.match(html, /data-tab="reports">Fechamento/);
+  assert.match(html, /id="reportMonth"/);
+  assert.match(html, /id="reportEmployee"/);
+  assert.match(html, /id="downloadReportCsv"/);
+  assert.match(html, /id="printReport"/);
+  assert.match(admin, /admin-monthly-report/);
+  assert.match(admin, /text\/csv;charset=utf-8/);
+  assert.match(admin, /popup\.print\(\)/);
 });
 
 test('the admin app only references controls that exist in its page', async () => {
