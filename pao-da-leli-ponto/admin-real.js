@@ -23,7 +23,7 @@ const scheduleDays=[
   {weekday:6,label:'Sábado'},
   {weekday:0,label:'Domingo'}
 ];
-let currentUser=null,overview=null,selectedEmployeeId=null,monthlyReport=null;
+let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,monthlyReport=null;
 async function api(action,method='GET',data){
   const params=new URLSearchParams({action});
   const opt={method,headers:{'Content-Type':'application/json'}};
@@ -45,6 +45,34 @@ async function endAdminSession(destination){
 }
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
+function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
+function renderChecklistEditor(values){
+  const unit=$('#checklistUnit').value;
+  const questions=values??(checklistAdminData?.items||[]).filter(item=>item.unit===unit).map(item=>item.question);
+  const rows=questions.length?questions:[''];
+  $('#checklistQuestionsAdmin').innerHTML=rows.map((question,index)=>'<div class="checklist-question-row"><span class="checklist-number">'+(index+1)+'</span><input value="'+esc(question)+'" maxlength="220" placeholder="Digite uma pergunta" aria-label="Pergunta '+(index+1)+'"><div class="checklist-row-actions"><button type="button" title="Subir pergunta" aria-label="Subir pergunta" onclick="moveChecklistQuestion('+index+',-1)" '+(index===0?'disabled':'')+'>↑</button><button type="button" title="Descer pergunta" aria-label="Descer pergunta" onclick="moveChecklistQuestion('+index+',1)" '+(index===rows.length-1?'disabled':'')+'>↓</button><button type="button" title="Remover pergunta" aria-label="Remover pergunta" onclick="removeChecklistQuestion('+index+')">×</button></div></div>').join('');
+}
+function checklistAnswers(value){
+  if(Array.isArray(value))return value;
+  try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[]}catch{return[]}
+}
+function renderChecklistHistory(){
+  const submissions=checklistAdminData?.submissions||[];
+  $('#checklistHistory').innerHTML=submissions.map(row=>{
+    const answers=checklistAnswers(row.answers);
+    const answerHtml=answers.length?'<div class="checklist-answers">'+answers.map(answer=>'<div class="checklist-answer '+(answer.answer?'yes':'no')+'"><span>'+esc(answer.question)+'</span><b>'+(answer.answer?'Sim':'Não')+'</b></div>').join('')+'</div>':'<div class="sub" style="margin-top:9px">Nenhuma pergunta estava configurada para esta área.</div>';
+    const messageHtml=row.message?'<div class="message-box"><div class="sub">Recado para '+esc(row.recipient_name||'destinatário removido')+' · '+(row.read_at?'lido pelo destinatário':'ainda não lido')+'</div><p>'+esc(row.message)+'</p></div>':'';
+    return '<article class="checklist-entry"><div class="checklist-entry-head"><div><strong>'+esc(row.employee_name)+'</strong><div class="sub">'+esc(row.unit)+' · '+dateTime(row.created_at)+'</div></div><span class="badge approved">'+esc(fullDateLabel(row.work_date))+'</span></div>'+answerHtml+messageHtml+'</article>';
+  }).join('')||'<div class="empty">Nenhum checklist concluído ainda.</div>';
+}
+async function loadAdminChecklist(){
+  $('#checklistHistory').innerHTML='<div class="empty">Carregando...</div>';
+  try{checklistAdminData=await api('admin-checklist');renderChecklistEditor();renderChecklistHistory()}
+  catch(e){if(e.status===401)showOnly('adminLogin');else alert(e.message)}
+}
+window.removeChecklistQuestion=index=>{const questions=editorQuestions();questions.splice(index,1);renderChecklistEditor(questions)};
+window.moveChecklistQuestion=(index,direction)=>{const questions=editorQuestions(),target=index+direction;if(target<0||target>=questions.length)return;[questions[index],questions[target]]=[questions[target],questions[index]];renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input')[target]?.focus()};
 function correctionGroups(rows){
   const groups=new Map();
   for(const row of rows){
@@ -247,6 +275,14 @@ $('#scheduleForm').addEventListener('submit',async e=>{
   catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
+$('#checklistUnit').addEventListener('change',()=>{renderChecklistEditor();$('#checklistSaveStatus').textContent=''});
+$('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
+$('#checklistFormAdmin').addEventListener('submit',async e=>{
+  e.preventDefault();const button=$('#saveChecklist'),questions=editorQuestions().map(value=>value.trim()).filter(Boolean);button.disabled=true;$('#checklistSaveStatus').textContent='Salvando...';
+  try{await api('admin-save-checklist','POST',{unit:$('#checklistUnit').value,questions});await loadAdminChecklist();$('#checklistSaveStatus').textContent=questions.length?'Checklist salvo.':'Checklist removido.'}
+  catch(err){$('#checklistSaveStatus').textContent='';alert(err.message)}
+  finally{button.disabled=false}
+});
 $('#reportForm').addEventListener('submit',async e=>{
   e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#reportStatus').textContent='Calculando o fechamento...';$('#reportContent').classList.add('hidden');
   try{const report=await api('admin-monthly-report','GET',{month:$('#reportMonth').value,employeeId:$('#reportEmployee').value});renderMonthlyReport(report)}
@@ -257,7 +293,7 @@ $('#downloadReportCsv').addEventListener('click',downloadMonthlyReport);
 $('#printReport').addEventListener('click',printMonthlyReport);
 $('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
 $('#adminLogout').addEventListener('click',()=>endAdminSession());
-$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()}));
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else render()}));
 initPasswordToggles();
 $('#reportMonth').value=currentMonth();
 $('#reportMonth').max=currentMonth();
