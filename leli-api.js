@@ -95,6 +95,29 @@ async function ensureSchema(){
     updated_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, weekday)
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_checklist_items (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    unit text NOT NULL,
+    question text NOT NULL,
+    sort_order integer NOT NULL DEFAULT 0,
+    active boolean NOT NULL DEFAULT true,
+    created_by uuid REFERENCES leli_users(id),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_checklist_submissions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES leli_users(id),
+    work_date date NOT NULL,
+    unit text NOT NULL,
+    answers jsonb NOT NULL,
+    message text,
+    recipient_user_id uuid REFERENCES leli_users(id) ON DELETE SET NULL,
+    read_at timestamptz,
+    punch_id uuid NOT NULL UNIQUE REFERENCES leli_punches(id),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    UNIQUE(user_id, work_date)
+  )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
   await sql`UPDATE leli_users SET position='Colaborador',updated_at=now() WHERE role='employee' AND position IN ('Funcionária','Funcionário')`;
   const missingCodes = await sql`SELECT id FROM leli_users WHERE activation_hash IS NOT NULL AND activation_code IS NULL`;
@@ -107,6 +130,8 @@ async function ensureSchema(){
   await sql`CREATE INDEX IF NOT EXISTS leli_corrections_status_idx ON leli_corrections(status, created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_corrections_group_idx ON leli_corrections(request_group)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_sessions_token_idx ON leli_sessions(token_hash)`;
+  await sql`CREATE INDEX IF NOT EXISTS leli_checklist_items_unit_idx ON leli_checklist_items(unit,active,sort_order)`;
+  await sql`CREATE INDEX IF NOT EXISTS leli_checklist_submissions_recipient_idx ON leli_checklist_submissions(recipient_user_id,read_at,created_at)`;
 }
 
 async function sessionUser(req){
@@ -202,7 +227,7 @@ export default async function handler(req,res){
       const ph=newPasswordHash(next);await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},must_change_password=false,updated_at=now() WHERE id=${user.id}`;
       await audit(user.id,'change_password','user',user.id);return json(res,200,{ok:true});
     }
-    const employeeActions=['photo','today','history','punch','correction-batch','correction'];
+    const employeeActions=['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'];
     if(employeeActions.includes(action)&&user.role!=='employee')return json(res,403,{error:'Esta área é exclusiva para colaboradores.'});
     if(req.method==='POST'&&action==='photo'){
       const b=body(req),photo=String(b.photo||'');if(photo.length>220000||!photo.startsWith('data:image/'))return json(res,400,{error:'Foto inválida ou muito grande.'});
@@ -218,13 +243,67 @@ export default async function handler(req,res){
       const corr=await sql`SELECT work_date::text AS work_date,kind,status,requested_at,decided_at FROM leli_corrections WHERE user_id=${user.id} ORDER BY created_at DESC LIMIT 120`;
       return json(res,200,{punches:rows,corrections:corr});
     }
+    if(req.method==='GET'&&action==='checklist'){
+      const items=await sql`SELECT id,question,sort_order FROM leli_checklist_items WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;
+      const recipients=await sql`SELECT id,name,unit FROM leli_users WHERE role='employee' AND active=true AND id<>${user.id} ORDER BY name`;
+      const unreadMessages=await sql`SELECT s.id,s.work_date::text AS work_date,s.message,s.created_at,u.name AS sender_name,u.unit AS sender_unit
+        FROM leli_checklist_submissions s JOIN leli_users u ON u.id=s.user_id
+        WHERE s.recipient_user_id=${user.id} AND s.message IS NOT NULL AND s.read_at IS NULL
+        ORDER BY s.created_at ASC LIMIT 30`;
+      return json(res,200,{unit:user.unit,items,recipients,unreadMessages});
+    }
+    if(req.method==='POST'&&action==='messages-read'){
+      const b=body(req),ids=Array.isArray(b.ids)?[...new Set(b.ids.map(id=>String(id)))]:[];
+      if(!ids.length||ids.length>30||ids.some(id=>!/^[0-9a-f-]{36}$/i.test(id)))return json(res,400,{error:'Recados inválidos.'});
+      const rows=await sql`WITH selected AS (
+          SELECT value::uuid AS id FROM jsonb_array_elements_text(${JSON.stringify(ids)}::jsonb)
+        ) UPDATE leli_checklist_submissions s SET read_at=now() FROM selected
+        WHERE s.id=selected.id AND s.recipient_user_id=${user.id} AND s.read_at IS NULL RETURNING s.id`;
+      await audit(user.id,'read_checklist_messages','checklist_message',null,{count:rows.length});
+      return json(res,200,{ok:true,count:rows.length});
+    }
     if(req.method==='POST'&&action==='punch'){
       const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current),kind=expectedKind(state);
       if(!kind)return json(res,409,{error:'A jornada de hoje já foi encerrada.'});
+      if(kind==='out')return json(res,428,{error:'Preencha o checklist antes de registrar a saída.',needsChecklist:true});
       try{
         const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent) VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)}) RETURNING id,kind,occurred_at,work_date`;
         await audit(user.id,'punch','punch',rows[0].id,{kind,date});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
+    }
+    if(req.method==='POST'&&action==='checkout'){
+      const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current);
+      if(expectedKind(state)!=='out')return json(res,409,{error:state==='out'?'A jornada de hoje já foi encerrada.':'A saída só pode ser registrada depois da volta do intervalo.'});
+      const items=await sql`SELECT id,question FROM leli_checklist_items WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;
+      const b=body(req),submitted=Array.isArray(b.answers)?b.answers:[],answerMap=new Map();
+      for(const answer of submitted){
+        const id=String(answer?.id||'');
+        if(!/^[0-9a-f-]{36}$/i.test(id)||typeof answer?.answer!=='boolean'||answerMap.has(id))return json(res,400,{error:'Responda todas as perguntas com Sim ou Não.'});
+        answerMap.set(id,answer.answer);
+      }
+      if(answerMap.size!==items.length||items.some(item=>!answerMap.has(String(item.id))))return json(res,409,{error:'O checklist foi atualizado. Abra novamente e responda às perguntas atuais.',checklistChanged:true});
+      const snapshot=items.map(item=>({itemId:item.id,question:item.question,answer:answerMap.get(String(item.id))}));
+      const message=String(b.message||'').trim();let recipientId=String(b.recipientId||'').trim()||null;
+      if(message.length>1000)return json(res,400,{error:'O recado pode ter no máximo 1.000 caracteres.'});
+      if(message){
+        if(!recipientId||!/^[0-9a-f-]{36}$/i.test(recipientId)||recipientId===user.id)return json(res,400,{error:'Escolha o colaborador que receberá o recado.'});
+        const recipient=await sql`SELECT id FROM leli_users WHERE id=${recipientId} AND role='employee' AND active=true LIMIT 1`;
+        if(!recipient[0])return json(res,400,{error:'O destinatário do recado não está disponível.'});
+      }else recipientId=null;
+      try{
+        const rows=await sql`WITH new_punch AS (
+            INSERT INTO leli_punches(user_id,kind,work_date,user_agent)
+            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)})
+            RETURNING id,kind,occurred_at,work_date
+          ), saved AS (
+            INSERT INTO leli_checklist_submissions(user_id,work_date,unit,answers,message,recipient_user_id,punch_id)
+            SELECT ${user.id},${date},${user.unit},${JSON.stringify(snapshot)}::jsonb,${message||null},${recipientId}::uuid,p.id FROM new_punch p
+            RETURNING id,punch_id
+          ) SELECT p.id,p.kind,p.occurred_at,p.work_date,s.id AS submission_id FROM new_punch p JOIN saved s ON s.punch_id=p.id`;
+        if(!rows[0])return json(res,409,{error:'Não foi possível registrar a saída.'});
+        await audit(user.id,'checkout_with_checklist','checklist_submission',rows[0].submission_id,{date,unit:user.unit,answers:snapshot.length,hasMessage:Boolean(message)});
+        return json(res,201,{punch:rows[0],submissionId:rows[0].submission_id,state:'out'});
+      }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'A saída ou o checklist de hoje já foi registrado.'});throw e}
     }
     if(req.method==='POST'&&action==='correction-batch'){
       const b=body(req),date=String(b.date||localDate()),reason=String(b.reason||'').trim(),times=b.times||{};
@@ -273,6 +352,30 @@ export default async function handler(req,res){
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
       return json(res,200,{date,users,punches,corrections});
+    }
+    if(req.method==='GET'&&action==='admin-checklist'){
+      const items=await sql`SELECT id,unit,question,sort_order,active,updated_at FROM leli_checklist_items WHERE active=true ORDER BY unit,sort_order,id`;
+      const submissions=await sql`SELECT s.id,s.work_date::text AS work_date,s.unit,s.answers,s.message,s.read_at,s.created_at,
+          u.name AS employee_name,r.name AS recipient_name
+        FROM leli_checklist_submissions s JOIN leli_users u ON u.id=s.user_id
+        LEFT JOIN leli_users r ON r.id=s.recipient_user_id ORDER BY s.created_at DESC LIMIT 120`;
+      return json(res,200,{items,submissions});
+    }
+    if(req.method==='POST'&&action==='admin-save-checklist'){
+      const b=body(req),unit=String(b.unit||'').trim(),raw=Array.isArray(b.questions)?b.questions:[];
+      if(!EMPLOYEE_UNITS.has(unit)||raw.length>30)return json(res,400,{error:'Checklist inválido.'});
+      const questions=raw.map(value=>String(value||'').trim());
+      if(questions.some(value=>value.length<3||value.length>220))return json(res,400,{error:'Cada pergunta precisa ter entre 3 e 220 caracteres.'});
+      if(new Set(questions.map(value=>value.toLocaleLowerCase('pt-BR'))).size!==questions.length)return json(res,400,{error:'Existem perguntas repetidas neste checklist.'});
+      const payload=questions.map((question,sort_order)=>({question,sort_order}));
+      await sql`WITH removed AS (
+          DELETE FROM leli_checklist_items WHERE unit=${unit}
+        ), checklist_rows AS (
+          SELECT * FROM jsonb_to_recordset(${JSON.stringify(payload)}::jsonb) AS x(question text,sort_order integer)
+        ) INSERT INTO leli_checklist_items(unit,question,sort_order,created_by)
+          SELECT ${unit},question,sort_order,${user.id} FROM checklist_rows`;
+      await audit(user.id,'save_checklist','checklist',unit,{count:questions.length});
+      return json(res,200,{ok:true,count:questions.length});
     }
     if(req.method==='GET'&&action==='admin-employee-detail'){
       const id=String(req.query?.id||'');

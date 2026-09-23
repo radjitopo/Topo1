@@ -27,9 +27,9 @@ test('administrators cannot use the employee app or employee-only API actions', 
   ]);
 
   assert.match(employee, /if\(user\?\.role!=='employee'\)\{location\.replace\('\.\/admin\.html'\);return false\}/);
-  assert.match(employee, /if\(!enterEmployeeApp\(m\.user\)\)return/);
-  assert.match(employee, /enterEmployeeApp\(r\.user\)/);
-  assert.match(api, /employeeActions=\['photo','today','history','punch','correction-batch','correction'\]/);
+  assert.match(employee, /if\(!\(await enterEmployeeApp\(m\.user\)\)\)return/);
+  assert.match(employee, /await enterEmployeeApp\(r\.user\)/);
+  assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'\]/);
   assert.match(api, /employeeActions\.includes\(action\)&&user\.role!=='employee'/);
   assert.match(api, /Esta área é exclusiva para colaboradores/);
 });
@@ -48,8 +48,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=10/);
-  assert.match(sw, /admin-real\.js\?v=10/);
+  assert.match(html, /admin-real\.js\?v=11/);
+  assert.match(sw, /admin-real\.js\?v=11/);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -145,6 +145,44 @@ test('admins can open an employee record with full history and a weekly schedule
   assert.match(admin, /admin-employee-detail/);
   assert.match(admin, /admin-save-schedule/);
   assert.match(admin, /Segunda-feira/);
+});
+
+test('checkout requires the area checklist and delivers individual messages', async () => {
+  const [api, employeeHtml, employee, adminHtml, admin, sw] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/index.html'),
+    source('pao-da-leli-ponto/app-real.js'),
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+    source('pao-da-leli-ponto/sw.js'),
+  ]);
+
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_items/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_submissions/);
+  assert.match(api, /WHERE unit=\$\{user\.unit\} AND active=true/);
+  assert.match(api, /needsChecklist:true/);
+  assert.match(api, /action==='checkout'/);
+  assert.match(api, /typeof answer\?\.answer!=='boolean'/);
+  assert.match(api, /checkout_with_checklist/);
+  assert.match(api, /action==='messages-read'/);
+  assert.match(api, /action==='admin-checklist'/);
+  assert.match(api, /action==='admin-save-checklist'/);
+  assert.match(employeeHtml, /id="checklistForm"/);
+  assert.match(employeeHtml, /id="messageRecipient"/);
+  assert.match(employeeHtml, /id="unreadMessages"/);
+  assert.match(employee, /before==='afterbreak'/);
+  assert.match(employee, /api\('checkout','POST'/);
+  assert.match(employee, /api\('messages-read','POST'/);
+  assert.match(adminHtml, /data-tab="checklistAdmin"/);
+  assert.match(adminHtml, /id="checklistFormAdmin"/);
+  assert.match(adminHtml, /id="checklistHistory"/);
+  assert.match(admin, /api\('admin-checklist'/);
+  assert.match(admin, /api\('admin-save-checklist','POST'/);
+  assert.match(employeeHtml, /app-real\.js\?v=10/);
+  assert.match(adminHtml, /admin-real\.js\?v=11/);
+  assert.match(sw, /leli-ponto-v16/);
+  assert.match(sw, /app-real\.js\?v=10/);
+  assert.match(sw, /admin-real\.js\?v=11/);
 });
 
 test('the admin app only references controls that exist in its page', async () => {

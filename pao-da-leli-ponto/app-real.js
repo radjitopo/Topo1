@@ -13,7 +13,7 @@ function initPasswordToggles(){
 }
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
-let currentUser=null,todayData=null,lastConfirmReturn='ponto';
+let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto';
 
 async function api(action,method='GET',data){
   const opt={method,headers:{'Content-Type':'application/json'}};
@@ -25,7 +25,7 @@ async function api(action,method='GET',data){
 }
 function show(id){
   $$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id)?.classList.add('active');
-  $('#bottom')?.classList.toggle('show',!['login','activate','confirm','review','correction'].includes(id));
+  $('#bottom')?.classList.toggle('show',!['login','activate','confirm','review','correction','checklist','messages'].includes(id));
   $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
   if(id==='ponto')loadToday();
   if(id==='history')loadHistory();
@@ -35,6 +35,8 @@ function show(id){
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function dateLabel(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}
 function fullDateLabel(v){if(!v)return'—';return new Date(v+'T12:00:00').toLocaleDateString('pt-BR')}
+function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(v)):'—'}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function showConfirmation(title,text,rows){
   $('#confirmTitle').textContent=title;$('#confirmText').textContent=text;
   const details=$('#confirmDetails');details.textContent='';
@@ -50,6 +52,20 @@ function statusBadge(date,corr){
   if(xs.some(c=>c.status==='approved'))return'<span class="approved">corrigido</span>';
   if(xs.some(c=>c.status==='rejected'))return'<span class="rejected">correção recusada</span>';
   return'';
+}
+async function loadChecklistData(){checklistData=await api('checklist');return checklistData}
+function renderMessages(){
+  const messages=checklistData?.unreadMessages||[];
+  $('#unreadMessages').innerHTML=messages.map(message=>'<article class="message-item"><div class="message-meta">De '+esc(message.sender_name)+' · '+dateTime(message.created_at)+'</div><p>'+esc(message.message)+'</p><div class="message-meta">'+esc(message.sender_unit||'')+'</div></article>').join('')||'<div class="empty">Nenhum recado novo.</div>';
+}
+async function openChecklist(){
+  try{
+    await loadChecklistData();
+    $('#checklistUnitLabel').textContent=checklistData.unit||currentUser.unit||'Pão da Leli';
+    $('#checklistQuestions').innerHTML=checklistData.items.length?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">Nenhuma pergunta cadastrada para esta área.</div>';
+    $('#messageRecipient').innerHTML='<option value="">Escolha o destinatário</option>'+checklistData.recipients.map(person=>'<option value="'+person.id+'">'+esc(person.name)+' · '+esc(person.unit)+'</option>').join('');
+    $('#checklistMessage').value='';$('#messageRecipient').value='';show('checklist');
+  }catch(e){alert(e.message)}
 }
 async function loadToday(){
   try{
@@ -70,13 +86,13 @@ async function loadToday(){
 async function punch(){
   try{
     const before=todayData?.state;
+    if(before==='afterbreak'){await openChecklist();return}
     await api('punch','POST',{});
     todayData=await api('today');
-    if(before==='afterbreak'&&todayData.state==='out'){show('review');return}
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
     lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
-  }catch(e){alert(e.message);loadToday()}
+  }catch(e){if(e.data?.needsChecklist)openChecklist();else{alert(e.message);loadToday()}}
 }
 function renderReview(){
   if(!todayData)return;
@@ -108,17 +124,43 @@ function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})
 }
 async function boot(){
-  try{const m=await api('me');if(!enterEmployeeApp(m.user))return}catch{show('login')}
+  try{const m=await api('me');if(!(await enterEmployeeApp(m.user)))return}catch{show('login')}
   if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
-function enterEmployeeApp(user){
+async function enterEmployeeApp(user){
   if(user?.role!=='employee'){location.replace('./admin.html');return false}
-  currentUser=user;show('ponto');return true;
+  currentUser=user;
+  try{await loadChecklistData();if(checklistData.unreadMessages.length){renderMessages();show('messages')}else show('ponto')}
+  catch{checklistData=null;show('ponto')}
+  return true;
 }
-$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});await enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
 $('#goActivate').addEventListener('click',()=>{$('#activateEmail').value=$('#email').value.trim();show('activate')});$('#backToLogin').addEventListener('click',()=>show('login'));
 $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('activate','POST',{email:$('#activateEmail').value.trim(),code:$('#activateCode').value.trim(),password:$('#activatePassword').value});alert('Conta ativada. Agora você já pode entrar.');$('#email').value=$('#activateEmail').value.trim();$('#password').value='';show('login')}catch(err){alert(err.message)}});
 $('#mainAction').addEventListener('click',punch);
+$('#cancelChecklist').addEventListener('click',()=>show('ponto'));
+$('#checklistForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const answers=[];
+  for(const item of checklistData?.items||[]){
+    const selected=document.querySelector('input[name="checklist_'+item.id+'"]:checked');
+    if(!selected){alert('Responda todas as perguntas com Sim ou Não.');return}
+    answers.push({id:item.id,answer:selected.value==='yes'});
+  }
+  const message=$('#checklistMessage').value.trim(),recipientId=$('#messageRecipient').value;
+  if(message&&!recipientId){alert('Escolha quem deve receber o recado.');return}
+  const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;button.textContent='REGISTRANDO...';
+  try{
+    await api('checkout','POST',{answers,message,recipientId});
+    todayData=await api('today');show('review');
+  }catch(err){
+    if(err.data?.checklistChanged){alert(err.message);await openChecklist()}else alert(err.message)
+  }finally{button.disabled=false;button.textContent='CONCLUIR E REGISTRAR SAÍDA'}
+});
+$('#messagesOk').addEventListener('click',async()=>{
+  const ids=(checklistData?.unreadMessages||[]).map(message=>message.id);
+  try{if(ids.length)await api('messages-read','POST',{ids});if(checklistData)checklistData.unreadMessages=[];show('ponto')}catch(err){alert(err.message)}
+});
 $('#confirmOk').addEventListener('click',()=>show(lastConfirmReturn));
 $('#reviewOk').addEventListener('click',()=>{
   lastConfirmReturn='ponto';
