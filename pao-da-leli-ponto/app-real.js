@@ -25,7 +25,7 @@ async function api(action,method='GET',data){
 }
 function show(id){
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
-  $('.screen').forEach(x=>x.classList.remove('active'));$('#'+id)?.classList.add('active');
+  $$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id)?.classList.add('active');
   $('#bottom')?.classList.toggle('show',!['login','activate','confirm','review','correction','checklist','messages'].includes(id));
   $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
   if(id==='ponto')loadToday();
