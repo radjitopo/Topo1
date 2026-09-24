@@ -213,12 +213,13 @@ test('checkout requires the area checklist, tracks missing items and delivers te
 });
 
 test('admins can require the bakery network and location or temporarily leave punches free', async () => {
-  const [api, employeeHtml, employee, adminHtml, admin] = await Promise.all([
+  const [api, employeeHtml, employee, adminHtml, admin, vercel] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/index.html'),
     source('pao-da-leli-ponto/app-real.js'),
     source('pao-da-leli-ponto/admin.html'),
     source('pao-da-leli-ponto/admin-real.js'),
+    source('vercel.json'),
   ]);
 
   assert.match(api, /CREATE TABLE IF NOT EXISTS leli_access_policy/);
@@ -241,6 +242,8 @@ test('admins can require the bakery network and location or temporarily leave pu
   assert.match(admin, /admin-access-policy/);
   assert.match(admin, /Atualizar local \+ rede/);
   assert.match(admin, /funcionários poderão registrar de qualquer lugar/);
+  assert.match(vercel, /geolocation=\(self\)/);
+  assert.doesNotMatch(vercel, /geolocation=\(\)/);
 });
 
 test('monthly closing calculates hours, absences and approved corrections from schedule history', () => {
