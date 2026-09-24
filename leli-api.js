@@ -136,7 +136,6 @@ async function ensureSchema(){
     updated_by uuid REFERENCES leli_users(id),
     updated_at timestamptz NOT NULL DEFAULT now()
   )`;
-  await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',20) ON CONFLICT(id) DO NOTHING`;
   await sql`ALTER TABLE leli_access_policy ADD COLUMN IF NOT EXISTS network_name text`;
   await sql`ALTER TABLE leli_access_policy ALTER COLUMN radius_m SET DEFAULT 20`;
   await sql`ALTER TABLE leli_access_policy DROP CONSTRAINT IF EXISTS leli_access_policy_radius_m_check`;
@@ -146,6 +145,7 @@ async function ensureSchema(){
     END IF;
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$`;
+  await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',20) ON CONFLICT(id) DO NOTHING`;
   await sql`UPDATE leli_access_policy SET radius_m=20 WHERE radius_m<>20`;
   await sql`UPDATE leli_access_policy SET network_name='Wi-Fi Pão da Leli' WHERE network_fingerprint IS NOT NULL AND (network_name IS NULL OR btrim(network_name)='')`;
   await sql`CREATE TABLE IF NOT EXISTS leli_corrections (
