@@ -62,7 +62,7 @@ function renderAccessPolicy(policy){
   const restricted=policy?.mode==='restricted',status=$('#accessPolicyStatus');
   status.classList.toggle('free',!restricted);
   $('#accessPolicyTitle').textContent=restricted?'Local + rede ativos':'Ponto livre';
-  $('#accessPolicyText').textContent=restricted?'O ponto só é aceito na rede da padaria e dentro de um raio de 100 metros.':'Funcionários podem registrar o ponto de qualquer lugar.';
+  $('#accessPolicyText').textContent=restricted?'O ponto só é aceito na rede da padaria e dentro de um raio de 20 metros.':'Funcionários podem registrar o ponto de qualquer lugar.';
   const changed=policy?.updatedAt?'Alterado'+(policy.updatedByName?' por '+policy.updatedByName:'')+' em '+dateTime(policy.updatedAt):'';
   $('#accessPolicyMeta').textContent=changed;
   const details=$('#accessPolicyDetails'),latitude=Number(policy?.latitude),longitude=Number(policy?.longitude),configured=Boolean(policy?.configured&&Number.isFinite(latitude)&&Number.isFinite(longitude)&&policy?.networkCode);
@@ -70,8 +70,8 @@ function renderAccessPolicy(policy){
   if(configured){
     const coordinates=latitude.toFixed(5)+', '+longitude.toFixed(5),map=$('#accessPolicyMap');
     $('#accessPolicyLocation').textContent=coordinates;
-    $('#accessPolicyRadius').textContent='Até '+(Number(policy.radiusMeters)||100)+' metros';
-    $('#accessPolicyNetwork').textContent='Código '+String(policy.networkCode).replace(/(.{4})/,'$1-');
+    $('#accessPolicyRadius').textContent='Até '+(Number(policy.radiusMeters)||20)+' metros';
+    $('#accessPolicyNetwork').textContent=policy.networkName||'Wi-Fi Pão da Leli';
     map.href='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
   }
   $('#restrictPunches').textContent=restricted?'Atualizar local + rede':'Ativar local + rede';
@@ -314,10 +314,13 @@ window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário 
 
 $('#restrictPunches').addEventListener('click',async()=>{
   if(!confirm('Faça esta ativação dentro do Pão da Leli e conectado ao Wi-Fi da padaria. Continuar?'))return;
+  const networkName=prompt('Qual nome você quer mostrar para esta rede?',overview?.accessPolicy?.networkName||'Wi-Fi Pão da Leli');
+  if(networkName===null)return;
+  if(!networkName.trim()){alert('Digite um nome para identificar esta rede.');return}
   const button=$('#restrictPunches'),free=$('#freePunches');button.disabled=true;free.disabled=true;button.textContent='CONFIRMANDO LOCAL...';
   try{
     const location=await captureAccessLocation();
-    await api('admin-access-policy','POST',{mode:'restricted',location});
+    await api('admin-access-policy','POST',{mode:'restricted',location,networkName:networkName.trim()});
     await render();alert('Restrição ativada. Agora o ponto exige o local e a rede da padaria.');
   }catch(err){alert(err.message);renderAccessPolicy(overview?.accessPolicy)}
 });

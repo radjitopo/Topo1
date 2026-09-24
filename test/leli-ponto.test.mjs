@@ -54,8 +54,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=17/);
-  assert.match(sw, /admin-real\.js\?v=17/);
+  assert.match(html, /admin-real\.js\?v=18/);
+  assert.match(sw, /admin-real\.js\?v=18/);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -208,10 +208,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=15/);
-  assert.match(adminHtml, /admin-real\.js\?v=17/);
-  assert.match(sw, /leli-ponto-v27/);
+  assert.match(adminHtml, /admin-real\.js\?v=18/);
+  assert.match(sw, /leli-ponto-v28/);
   assert.match(sw, /app-real\.js\?v=15/);
-  assert.match(sw, /admin-real\.js\?v=17/);
+  assert.match(sw, /admin-real\.js\?v=18/);
 });
 
 test('admins can require the bakery network and location or temporarily leave punches free', async () => {
@@ -228,7 +228,7 @@ test('admins can require the bakery network and location or temporarily leave pu
   assert.match(api, /x-forwarded-for/);
   assert.match(api, /networkFingerprint/);
   assert.match(api, /distanceMeters/);
-  assert.match(api, /radius_m=100/);
+  assert.match(api, /ACCESS_RADIUS_METERS = 20/);
   assert.match(api, /action==='admin-access-policy'/);
   assert.match(api, /mode:'restricted'/);
   assert.match(api, /mode:'free'/);
@@ -244,11 +244,16 @@ test('admins can require the bakery network and location or temporarily leave pu
   assert.match(adminHtml, /id="accessPolicyLocation"/);
   assert.match(adminHtml, /id="accessPolicyNetwork"/);
   assert.match(adminHtml, /Abrir no mapa/);
+  assert.match(adminHtml, /Até 20 metros/);
   assert.match(admin, /admin-access-policy/);
   assert.match(admin, /Atualizar local \+ rede/);
   assert.match(api, /view\.networkCode/);
+  assert.match(api, /view\.networkName/);
   assert.match(api, /view\.latitude/);
-  assert.match(admin, /policy\.networkCode/);
+  assert.match(admin, /policy\?\.networkCode/);
+  assert.match(admin, /policy\.networkName/);
+  assert.match(admin, /Qual nome você quer mostrar para esta rede/);
+  assert.match(api, /network_name text/);
   assert.match(admin, /funcionários poderão registrar de qualquer lugar/);
   assert.match(vercel, /geolocation=\(self\)/);
   assert.doesNotMatch(vercel, /geolocation=\(\)/);
