@@ -600,6 +600,31 @@ export default async function handler(req,res){
 
     if(user.role!=='admin')return json(res,403,{error:'Acesso restrito aos administradores.'});
 
+    if(req.method==='POST'&&action==='admin-reset-system'){
+      const b=body(req),confirmation=String(b.confirmation||'').trim(),sessionToken=cookie(req,SESSION_COOKIE);
+      if(confirmation!=='APAGAR TUDO')return json(res,400,{error:'Confirmação inválida. Digite APAGAR TUDO para zerar o sistema.'});
+      if(!sessionToken)return json(res,401,{error:'Sua sessão expirou. Entre novamente antes de zerar o sistema.'});
+      const currentSessionHash=sha(sessionToken);
+      await sql.transaction([
+        sql`LOCK TABLE leli_users,leli_sessions,leli_punches,leli_access_policy,leli_access_profiles,leli_corrections,leli_audit_log,leli_schedules,leli_schedule_versions,leli_checklist_items,leli_checklist_missing_options,leli_checklist_submissions,leli_checklist_message_reads,leli_missing_reports IN ACCESS EXCLUSIVE MODE`,
+        sql`DELETE FROM leli_checklist_message_reads`,
+        sql`DELETE FROM leli_missing_reports`,
+        sql`DELETE FROM leli_checklist_submissions`,
+        sql`DELETE FROM leli_checklist_items`,
+        sql`DELETE FROM leli_checklist_missing_options`,
+        sql`DELETE FROM leli_corrections`,
+        sql`DELETE FROM leli_schedule_versions`,
+        sql`DELETE FROM leli_schedules`,
+        sql`DELETE FROM leli_punches`,
+        sql`DELETE FROM leli_audit_log`,
+        sql`UPDATE leli_access_policy SET mode='free',latitude=NULL,longitude=NULL,radius_m=20,network_fingerprint=NULL,network_name=NULL,active_profile_id=NULL,updated_by=${user.id},updated_at=now() WHERE id=1`,
+        sql`DELETE FROM leli_access_profiles`,
+        sql`DELETE FROM leli_sessions WHERE token_hash<>${currentSessionHash}`,
+        sql`DELETE FROM leli_users WHERE id<>${user.id}`,
+        sql`UPDATE leli_users SET active=true,must_change_password=false,activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,failed_login_count=0,locked_until=NULL,password_reset_requested_at=NULL,updated_at=now() WHERE id=${user.id}`,
+      ]);
+      return json(res,200,{ok:true,keptAdmin:{id:user.id,name:user.name,email:user.email},message:'Sistema zerado. Somente o seu administrador foi mantido.'});
+    }
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
       const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;

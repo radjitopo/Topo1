@@ -402,6 +402,22 @@ $('#reportForm').addEventListener('submit',async e=>{
 });
 $('#downloadReportCsv').addEventListener('click',downloadMonthlyReport);
 $('#printReport').addEventListener('click',printMonthlyReport);
+
+$('#resetSystem').addEventListener('click',async()=>{
+  if(!confirm('Zerar o sistema agora? Todos os funcionários, outros administradores, batidas, escalas, correções, checklists, recados e locais/redes salvos serão apagados. Somente o seu administrador continuará. Esta ação não pode ser desfeita.'))return;
+  const confirmation=prompt('Para confirmar, digite APAGAR TUDO:','');
+  if(confirmation===null)return;
+  if(confirmation.trim()!=='APAGAR TUDO'){alert('Nada foi apagado. A confirmação precisa ser exatamente APAGAR TUDO.');return}
+  const button=$('#resetSystem'),status=$('#resetSystemStatus'),originalLabel=button.textContent;
+  button.disabled=true;button.textContent='ZERANDO...';status.textContent='Apagando os dados com segurança...';
+  try{
+    const result=await api('admin-reset-system','POST',{confirmation:'APAGAR TUDO'});
+    selectedEmployeeId=null;checklistAdminData=null;monthlyReport=null;overview=null;
+    status.textContent='Sistema zerado.';
+    alert(result.message||'Sistema zerado. Somente o seu administrador foi mantido.');
+    location.reload();
+  }catch(err){status.textContent='';alert(err.message);button.disabled=false;button.textContent=originalLabel}
+});
 $('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
 $('#adminLogout').addEventListener('click',()=>endAdminSession());
 $$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else{render();if(b.dataset.tab==='reports')loadAdminChecklist()}}));

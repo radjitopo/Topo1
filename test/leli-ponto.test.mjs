@@ -59,7 +59,7 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
   assert.match(html, /app-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v34/);
+  assert.match(sw, /leli-ponto-v35/);
   assert.match(sw, /app-real\.js\?v=18/);
 });
 
@@ -77,8 +77,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=20/);
-  assert.match(sw, /admin-real\.js\?v=20/);
+  assert.match(html, /admin-real\.js\?v=21/);
+  assert.match(sw, /admin-real\.js\?v=21/);
 });
 
 test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
@@ -246,7 +246,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(adminHtml, /id="missingReports"/);
   assert.match(adminHtml, /id="closingMessages"/);
   assert.match(adminHtml, /id="checklistHistory"/);
-  assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
+  assert.match(adminHtml, /\.checklist-row-actions\{grid-column:auto;justify-content:flex-end\}/);
   assert.match(adminHtml, /\.missing-report-count\{/);
   assert.match(adminHtml, /white-space:nowrap/);
   assert.match(admin, /class="missing-report-count"/);
@@ -256,10 +256,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=18/);
-  assert.match(adminHtml, /admin-real\.js\?v=20/);
-  assert.match(sw, /leli-ponto-v34/);
+  assert.match(adminHtml, /admin-real\.js\?v=21/);
+  assert.match(sw, /leli-ponto-v35/);
   assert.match(sw, /app-real\.js\?v=18/);
-  assert.match(sw, /admin-real\.js\?v=20/);
+  assert.match(sw, /admin-real\.js\?v=21/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
@@ -386,6 +386,43 @@ test('the admin monthly closing can filter employees and export spreadsheet or P
   assert.match(admin, /popup\.print\(\)/);
 });
 
+test('an administrator can reset test data while keeping only their account and current session', async () => {
+  const [api, html, admin, sw] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+    source('pao-da-leli-ponto/sw.js'),
+  ]);
+
+  assert.match(api, /action==='admin-reset-system'/);
+  assert.match(api, /confirmation!=='APAGAR TUDO'/);
+  assert.match(api, /await sql\.transaction\(\[/);
+  assert.match(api, /LOCK TABLE leli_users,leli_sessions/);
+  for (const table of [
+    'leli_checklist_message_reads',
+    'leli_missing_reports',
+    'leli_checklist_submissions',
+    'leli_checklist_items',
+    'leli_checklist_missing_options',
+    'leli_corrections',
+    'leli_schedule_versions',
+    'leli_schedules',
+    'leli_punches',
+    'leli_audit_log',
+    'leli_access_profiles',
+  ]) assert.match(api, new RegExp(`DELETE FROM ${table}`));
+  assert.match(api, /DELETE FROM leli_sessions WHERE token_hash<>\$\{currentSessionHash\}/);
+  assert.match(api, /DELETE FROM leli_users WHERE id<>\$\{user\.id\}/);
+  assert.match(api, /UPDATE leli_access_policy SET mode='free'.*active_profile_id=NULL/);
+  assert.match(api, /UPDATE leli_users SET active=true.*password_reset_requested_at=NULL/);
+  assert.match(html, /id="resetSystem"/);
+  assert.match(html, /somente o administrador que apertar o botão/);
+  assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
+  assert.match(admin, /location\.reload\(\)/);
+  assert.match(html, /admin-real\.js\?v=21/);
+  assert.match(sw, /leli-ponto-v35/);
+  assert.match(sw, /admin-real\.js\?v=21/);
+});
 test('the admin app only references controls that exist in its page', async () => {
   const [html, js] = await Promise.all([
     source('pao-da-leli-ponto/admin.html'),
