@@ -83,7 +83,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
   <section class="list" id="list"></section>
 
   <div class="foot">
-    Dados públicos da NZX. A própria NZX informa que as cotações públicas têm cerca de 20 minutos de atraso e podem usar cache. Esta tela atualiza automaticamente a cada 30 segundos.
+    Dados públicos da NZX. A própria NZX informa que as cotações públicas têm cerca de 20 minutos de atraso e podem usar cache. Esta tela atualiza automaticamente a cada 10 segundos.
   </div>
 </main>
 
@@ -136,23 +136,31 @@ function playMoveSound(direction){
   if(!detailTicker || !state.audioReady || !state.audioCtx) return;
   try{
     const ctx = state.audioCtx;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
     const now = ctx.currentTime;
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(direction === "up" ? 880 : 260, now);
-    if(direction === "up"){
-      osc.frequency.exponentialRampToValueAtTime(1180, now + 0.16);
-    }else{
-      osc.frequency.exponentialRampToValueAtTime(180, now + 0.20);
+
+    function tone(startFreq,endFreq,startAt,duration,volume){
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(startFreq, now + startAt);
+      osc.frequency.exponentialRampToValueAtTime(endFreq, now + startAt + duration);
+      gain.gain.setValueAtTime(0.0001, now + startAt);
+      gain.gain.exponentialRampToValueAtTime(volume, now + startAt + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + startAt + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + startAt);
+      osc.stop(now + startAt + duration + 0.02);
     }
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.28);
+
+    if(direction === "up"){
+      tone(760,1180,0,0.24,0.12);
+    }else if(direction === "down"){
+      tone(300,170,0,0.28,0.13);
+    }else{
+      tone(330,260,0,0.18,0.08);
+      tone(260,215,0.20,0.24,0.07);
+    }
   }catch(e){}
 }
 
@@ -195,9 +203,9 @@ function render(){
           (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>')) +
         '</div>' +
         '<div class="soundHint '+(state.audioReady?"active":"")+'" id="soundHint">' +
-          (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave' : '🔊 Toque aqui uma vez para ativar os sons') +
+          (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave, igual desanimado' : '🔊 Toque aqui uma vez para ativar os sons') +
         '</div>' +
-        '<div class="detailMeta">Atualização automática a cada 30 segundos.<br>Fonte pública NZX, com cerca de 20 minutos de atraso.</div>' +
+        '<div class="detailMeta">Atualização automática a cada 10 segundos.<br>Fonte pública NZX, com cerca de 20 minutos de atraso.</div>' +
       '</div>';
 
     const back = document.getElementById("detailBack");
@@ -276,6 +284,7 @@ async function refresh(){
         if(detailTicker === q.ticker && q.ok && typeof q.price === "number"){
           if(q.price > current.price) playMoveSound("up");
           else if(q.price < current.price) playMoveSound("down");
+          else playMoveSound("flat");
         }
       }
       state.quotes[q.ticker] = q;
@@ -302,7 +311,7 @@ document.querySelectorAll(".nav button").forEach(function(btn){
     btn.classList.add("active");
     state.tab = btn.getAttribute("data-tab");
     if(state.tab === "config"){
-      showToast("Atualização automática a cada 30s");
+      showToast("Atualização automática a cada 10s");
       state.tab = "inicio";
       document.querySelector('[data-tab="inicio"]').classList.add("active");
       btn.classList.remove("active");
@@ -319,7 +328,7 @@ if(detailTicker){
     document.removeEventListener("pointerdown",firstAudioGesture);
   },{once:true});
 }
-setInterval(refresh,30000);
+setInterval(refresh,10000);
 </script>
 </body>
 </html>
