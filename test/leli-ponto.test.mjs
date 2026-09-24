@@ -52,8 +52,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=12/);
-  assert.match(sw, /admin-real\.js\?v=12/);
+  assert.match(html, /admin-real\.js\?v=13/);
+  assert.match(sw, /admin-real\.js\?v=13/);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -152,7 +152,7 @@ test('admins can open an employee record with full history and a weekly schedule
   assert.match(admin, /Segunda-feira/);
 });
 
-test('checkout requires the area checklist and delivers individual messages', async () => {
+test('checkout requires the area checklist, tracks missing items and delivers team or individual messages', async () => {
   const [api, employeeHtml, employee, adminHtml, admin, sw] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/index.html'),
@@ -163,18 +163,27 @@ test('checkout requires the area checklist and delivers individual messages', as
   ]);
 
   assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_items/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_missing_options/);
   assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_submissions/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_checklist_message_reads/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_missing_reports/);
   assert.match(api, /WHERE unit=\$\{user\.unit\} AND active=true/);
   assert.match(api, /needsChecklist:true/);
   assert.match(api, /action==='checkout'/);
   assert.match(api, /if\(!items\.length\)return json\(res,409/);
   assert.match(api, /typeof answer\?\.answer!=='boolean'/);
   assert.match(api, /checkout_with_checklist/);
+  assert.match(api, /missingItemIds/);
+  assert.match(api, /messageAudience/);
+  assert.match(api, /message_audience='team'/);
   assert.match(api, /action==='messages-read'/);
   assert.match(api, /action==='admin-checklist'/);
   assert.match(api, /action==='admin-save-checklist'/);
+  assert.match(api, /action==='admin-resolve-missing'/);
   assert.match(employeeHtml, /id="checklistForm"/);
+  assert.match(employeeHtml, /id="missingOptions"/);
   assert.match(employeeHtml, /id="messageRecipient"/);
+  assert.match(employeeHtml, /Toda a equipe/);
   assert.match(employeeHtml, /id="unreadMessages"/);
   assert.match(employee, /before==='afterbreak'/);
   assert.match(employee, /if\(p\.kind==='breakIn'\)\{await openChecklist\(\);return\}/);
@@ -183,15 +192,19 @@ test('checkout requires the area checklist and delivers individual messages', as
   assert.match(employee, /api\('messages-read','POST'/);
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
   assert.match(adminHtml, /id="checklistFormAdmin"/);
+  assert.match(adminHtml, /id="missingOptionsAdmin"/);
+  assert.match(adminHtml, /id="missingReports"/);
+  assert.match(adminHtml, /id="closingMessages"/);
   assert.match(adminHtml, /id="checklistHistory"/);
   assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=11/);
-  assert.match(adminHtml, /admin-real\.js\?v=12/);
-  assert.match(sw, /leli-ponto-v19/);
-  assert.match(sw, /app-real\.js\?v=11/);
-  assert.match(sw, /admin-real\.js\?v=12/);
+  assert.match(admin, /api\('admin-resolve-missing','POST'/);
+  assert.match(employeeHtml, /app-real\.js\?v=12/);
+  assert.match(adminHtml, /admin-real\.js\?v=13/);
+  assert.match(sw, /leli-ponto-v20/);
+  assert.match(sw, /app-real\.js\?v=12/);
+  assert.match(sw, /admin-real\.js\?v=13/);
 });
 
 test('monthly closing calculates hours, absences and approved corrections from schedule history', () => {

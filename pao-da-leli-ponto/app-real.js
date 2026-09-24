@@ -56,7 +56,7 @@ function statusBadge(date,corr){
 async function loadChecklistData(){checklistData=await api('checklist');return checklistData}
 function renderMessages(){
   const messages=checklistData?.unreadMessages||[];
-  $('#unreadMessages').innerHTML=messages.map(message=>'<article class="message-item"><div class="message-meta">De '+esc(message.sender_name)+' · '+dateTime(message.created_at)+'</div><p>'+esc(message.message)+'</p><div class="message-meta">'+esc(message.sender_unit||'')+'</div></article>').join('')||'<div class="empty">Nenhum recado novo.</div>';
+  $('#unreadMessages').innerHTML=messages.map(message=>'<article class="message-item"><div class="message-meta">De '+esc(message.sender_name)+' · '+dateTime(message.created_at)+'</div><p>'+esc(message.message)+'</p><div class="message-meta">'+esc(message.sender_unit||'')+(message.message_audience==='team'?' · Para toda a equipe':'')+'</div></article>').join('')||'<div class="empty">Nenhum recado novo.</div>';
 }
 async function openChecklist(){
   try{
@@ -64,9 +64,13 @@ async function openChecklist(){
     $('#checklistUnitLabel').textContent=checklistData.unit||currentUser.unit||'Pão da Leli';
     const hasQuestions=checklistData.items.length>0;
     $('#checklistQuestions').innerHTML=hasQuestions?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">O checklist desta área ainda não foi configurado. Avise o administrador.</div>';
+    const missingOptions=checklistData.missingOptions||[];
+    $('#missingOptions').innerHTML=missingOptions.length?missingOptions.map(item=>'<label class="missing-choice"><input type="checkbox" data-missing-id="'+item.id+'"> '+esc(item.label)+'</label>').join('')+'<label class="missing-choice nothing"><input id="nothingMissing" type="checkbox"> Nada está faltando</label>':'<div class="empty" style="grid-column:1/-1">A lista desta área ainda não foi configurada.</div>';
+    $$('#missingOptions [data-missing-id]').forEach(input=>input.addEventListener('change',()=>{if(input.checked)document.getElementById('nothingMissing').checked=false}));
+    document.getElementById('nothingMissing')?.addEventListener('change',event=>{if(event.target.checked)$$('#missingOptions [data-missing-id]').forEach(input=>{input.checked=false})});
     $('#checklistSubmit').disabled=!hasQuestions;
-    $('#messageRecipient').innerHTML='<option value="">Escolha o destinatário</option>'+checklistData.recipients.map(person=>'<option value="'+person.id+'">'+esc(person.name)+' · '+esc(person.unit)+'</option>').join('');
-    $('#checklistMessage').value='';$('#messageRecipient').value='';show('checklist');
+    $('#messageRecipient').innerHTML='<option value="team">Toda a equipe</option>'+checklistData.recipients.map(person=>'<option value="'+person.id+'">'+esc(person.name)+' · '+esc(person.unit)+'</option>').join('');
+    $('#checklistMessage').value='';$('#messageRecipient').value='team';show('checklist');
   }catch(e){alert(e.message)}
 }
 async function loadToday(){
@@ -153,11 +157,12 @@ $('#checklistForm').addEventListener('submit',async e=>{
     if(!selected){alert('Responda todas as perguntas com Sim ou Não.');return}
     answers.push({id:item.id,answer:selected.value==='yes'});
   }
-  const message=$('#checklistMessage').value.trim(),recipientId=$('#messageRecipient').value;
-  if(message&&!recipientId){alert('Escolha quem deve receber o recado.');return}
+  const missingItemIds=$$('#missingOptions [data-missing-id]:checked').map(input=>input.dataset.missingId),nothingMissing=Boolean(document.getElementById('nothingMissing')?.checked);
+  if((checklistData?.missingOptions||[]).length&&!missingItemIds.length&&!nothingMissing){alert('Marque o que está faltando ou escolha “Nada está faltando”.');return}
+  const message=$('#checklistMessage').value.trim(),recipientChoice=$('#messageRecipient').value,messageAudience=recipientChoice==='team'?'team':'individual',recipientId=messageAudience==='individual'?recipientChoice:null;
   const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;button.textContent='REGISTRANDO...';
   try{
-    await api('checkout','POST',{answers,message,recipientId});
+    await api('checkout','POST',{answers,missingItemIds,nothingMissing,message,messageAudience,recipientId});
     todayData=await api('today');show('review');
   }catch(err){
     if(err.data?.checklistChanged){alert(err.message);await openChecklist()}else alert(err.message)

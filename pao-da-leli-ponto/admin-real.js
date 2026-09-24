@@ -47,12 +47,20 @@ function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
-function renderChecklistEditor(values){
+function editorMissingItems(){return $$('#missingOptionsAdmin input').map(input=>input.value)}
+function renderQuestionEditor(values){
   const unit=$('#checklistUnit').value;
   const questions=values??(checklistAdminData?.items||[]).filter(item=>item.unit===unit).map(item=>item.question);
   const rows=questions.length?questions:[''];
   $('#checklistQuestionsAdmin').innerHTML=rows.map((question,index)=>'<div class="checklist-question-row"><span class="checklist-number">'+(index+1)+'</span><input value="'+esc(question)+'" maxlength="220" placeholder="Digite uma pergunta" aria-label="Pergunta '+(index+1)+'"><div class="checklist-row-actions"><button type="button" title="Subir pergunta" aria-label="Subir pergunta" onclick="moveChecklistQuestion('+index+',-1)" '+(index===0?'disabled':'')+'>↑</button><button type="button" title="Descer pergunta" aria-label="Descer pergunta" onclick="moveChecklistQuestion('+index+',1)" '+(index===rows.length-1?'disabled':'')+'>↓</button><button type="button" title="Remover pergunta" aria-label="Remover pergunta" onclick="removeChecklistQuestion('+index+')">×</button></div></div>').join('');
 }
+function renderMissingEditor(values){
+  const unit=$('#checklistUnit').value;
+  const missingItems=values??(checklistAdminData?.missingOptions||[]).filter(item=>item.unit===unit).map(item=>item.label);
+  const rows=missingItems.length?missingItems:[''];
+  $('#missingOptionsAdmin').innerHTML=rows.map((label,index)=>'<div class="checklist-question-row"><span class="checklist-number">'+(index+1)+'</span><input value="'+esc(label)+'" maxlength="120" placeholder="Ex.: leite, embalagens, detergente" aria-label="Item que pode faltar '+(index+1)+'"><div class="checklist-row-actions"><button type="button" title="Subir item" aria-label="Subir item" onclick="moveMissingItem('+index+',-1)" '+(index===0?'disabled':'')+'>↑</button><button type="button" title="Descer item" aria-label="Descer item" onclick="moveMissingItem('+index+',1)" '+(index===rows.length-1?'disabled':'')+'>↓</button><button type="button" title="Remover item" aria-label="Remover item" onclick="removeMissingItem('+index+')">×</button></div></div>').join('');
+}
+function renderChecklistEditors(){renderQuestionEditor();renderMissingEditor()}
 function checklistAnswers(value){
   if(Array.isArray(value))return value;
   try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[]}catch{return[]}
@@ -61,18 +69,34 @@ function renderChecklistHistory(){
   const submissions=checklistAdminData?.submissions||[];
   $('#checklistHistory').innerHTML=submissions.map(row=>{
     const answers=checklistAnswers(row.answers);
+    const missingItems=checklistAnswers(row.missing_items);
     const answerHtml=answers.length?'<div class="checklist-answers">'+answers.map(answer=>'<div class="checklist-answer '+(answer.answer?'yes':'no')+'"><span>'+esc(answer.question)+'</span><b>'+(answer.answer?'Sim':'Não')+'</b></div>').join('')+'</div>':'<div class="sub" style="margin-top:9px">Nenhuma pergunta estava configurada para esta área.</div>';
-    const messageHtml=row.message?'<div class="message-box"><div class="sub">Recado para '+esc(row.recipient_name||'destinatário removido')+' · '+(row.read_at?'lido pelo destinatário':'ainda não lido')+'</div><p>'+esc(row.message)+'</p></div>':'';
-    return '<article class="checklist-entry"><div class="checklist-entry-head"><div><strong>'+esc(row.employee_name)+'</strong><div class="sub">'+esc(row.unit)+' · '+dateTime(row.created_at)+'</div></div><span class="badge approved">'+esc(fullDateLabel(row.work_date))+'</span></div>'+answerHtml+messageHtml+'</article>';
+    const missingHtml=missingItems.length?'<div class="missing-tags">'+missingItems.map(item=>'<span class="missing-tag">Faltando: '+esc(item.label)+'</span>').join('')+'</div>':'<div class="sub" style="margin-top:9px">Nada informado como faltando.</div>';
+    const target=row.message_audience==='team'?'toda a equipe':(row.recipient_name||'destinatário removido');
+    const readStatus=row.message_audience==='team'?(Number(row.recipient_count)?Number(row.read_count)+' de '+Number(row.recipient_count)+' leram':'sem destinatários ativos'):(Number(row.read_count)?'lido pelo destinatário':'ainda não lido');
+    const messageHtml=row.message?'<div class="message-box"><div class="sub">Recado para '+esc(target)+' · '+esc(readStatus)+'</div><p>'+esc(row.message)+'</p></div>':'';
+    return '<article class="checklist-entry"><div class="checklist-entry-head"><div><strong>'+esc(row.employee_name)+'</strong><div class="sub">'+esc(row.unit)+' · '+dateTime(row.created_at)+'</div></div><span class="badge approved">'+esc(fullDateLabel(row.work_date))+'</span></div>'+answerHtml+missingHtml+messageHtml+'</article>';
   }).join('')||'<div class="empty">Nenhum checklist concluído ainda.</div>';
+}
+function renderClosingMessages(){
+  const messages=(checklistAdminData?.submissions||[]).filter(row=>row.message).slice(0,30);
+  $('#closingMessages').innerHTML=messages.map(row=>{const target=row.message_audience==='team'?'toda a equipe':(row.recipient_name||'destinatário removido');return '<article class="message-box" style="margin-top:0"><div class="sub">De '+esc(row.employee_name)+' para '+esc(target)+' · '+dateTime(row.created_at)+'</div><p>'+esc(row.message)+'</p></article>'}).join('')||'<div class="empty">Nenhum recado enviado ainda.</div>';
+}
+function renderMissingReports(){
+  const reports=checklistAdminData?.missingReports||[];
+  $('#missingReports').innerHTML=reports.map(row=>{const names=Array.isArray(row.reporter_names)?row.reporter_names.join(', '):String(row.reporter_names||'');return '<article class="missing-report"><div class="missing-report-head"><div><strong>'+esc(row.item_name)+'</strong><div class="sub">'+esc(row.unit)+' · último aviso '+dateTime(row.last_reported_at)+'</div></div><span class="badge rejected">'+Number(row.report_count)+' '+(Number(row.report_count)===1?'aviso':'avisos')+'</span></div><div class="sub">Informado por: '+esc(names||'equipe')+'</div><div class="missing-report-actions"><button class="btn small" type="button" data-resolve-missing data-status="purchased" data-unit="'+esc(row.unit)+'" data-item-key="'+esc(row.item_key)+'">Comprado</button><button class="btn small secondary" type="button" data-resolve-missing data-status="resolved" data-unit="'+esc(row.unit)+'" data-item-key="'+esc(row.item_key)+'">Resolvido</button></div></article>'}).join('')||'<div class="empty">Nenhum item está faltando.</div>';
+  $$('#missingReports [data-resolve-missing]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{await api('admin-resolve-missing','POST',{unit:button.dataset.unit,itemKey:button.dataset.itemKey,status:button.dataset.status});await loadAdminChecklist()}catch(err){alert(err.message);button.disabled=false}}));
 }
 async function loadAdminChecklist(){
   $('#checklistHistory').innerHTML='<div class="empty">Carregando...</div>';
-  try{checklistAdminData=await api('admin-checklist');renderChecklistEditor();renderChecklistHistory()}
+  $('#missingReports').innerHTML='<div class="empty">Carregando...</div>';$('#closingMessages').innerHTML='<div class="empty">Carregando...</div>';
+  try{checklistAdminData=await api('admin-checklist');renderChecklistEditors();renderChecklistHistory();renderClosingMessages();renderMissingReports()}
   catch(e){if(e.status===401)showOnly('adminLogin');else alert(e.message)}
 }
-window.removeChecklistQuestion=index=>{const questions=editorQuestions();questions.splice(index,1);renderChecklistEditor(questions)};
-window.moveChecklistQuestion=(index,direction)=>{const questions=editorQuestions(),target=index+direction;if(target<0||target>=questions.length)return;[questions[index],questions[target]]=[questions[target],questions[index]];renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input')[target]?.focus()};
+window.removeChecklistQuestion=index=>{const questions=editorQuestions();questions.splice(index,1);renderQuestionEditor(questions)};
+window.moveChecklistQuestion=(index,direction)=>{const questions=editorQuestions(),target=index+direction;if(target<0||target>=questions.length)return;[questions[index],questions[target]]=[questions[target],questions[index]];renderQuestionEditor(questions);$$('#checklistQuestionsAdmin input')[target]?.focus()};
+window.removeMissingItem=index=>{const items=editorMissingItems();items.splice(index,1);renderMissingEditor(items)};
+window.moveMissingItem=(index,direction)=>{const items=editorMissingItems(),target=index+direction;if(target<0||target>=items.length)return;[items[index],items[target]]=[items[target],items[index]];renderMissingEditor(items);$$('#missingOptionsAdmin input')[target]?.focus()};
 function correctionGroups(rows){
   const groups=new Map();
   for(const row of rows){
@@ -275,11 +299,12 @@ $('#scheduleForm').addEventListener('submit',async e=>{
   catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
-$('#checklistUnit').addEventListener('change',()=>{renderChecklistEditor();$('#checklistSaveStatus').textContent=''});
-$('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderChecklistEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
+$('#checklistUnit').addEventListener('change',()=>{renderChecklistEditors();$('#checklistSaveStatus').textContent=''});
+$('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderQuestionEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
+$('#addMissingItem').addEventListener('click',()=>{const items=editorMissingItems();if(items.length>=60){alert('O limite é de 60 itens por área.');return}items.push('');renderMissingEditor(items);$$('#missingOptionsAdmin input').at(-1)?.focus()});
 $('#checklistFormAdmin').addEventListener('submit',async e=>{
-  e.preventDefault();const button=$('#saveChecklist'),questions=editorQuestions().map(value=>value.trim()).filter(Boolean);button.disabled=true;$('#checklistSaveStatus').textContent='Salvando...';
-  try{await api('admin-save-checklist','POST',{unit:$('#checklistUnit').value,questions});await loadAdminChecklist();$('#checklistSaveStatus').textContent=questions.length?'Checklist salvo.':'Checklist removido.'}
+  e.preventDefault();const button=$('#saveChecklist'),questions=editorQuestions().map(value=>value.trim()).filter(Boolean),missingItems=editorMissingItems().map(value=>value.trim()).filter(Boolean);button.disabled=true;$('#checklistSaveStatus').textContent='Salvando...';
+  try{await api('admin-save-checklist','POST',{unit:$('#checklistUnit').value,questions,missingItems});await loadAdminChecklist();$('#checklistSaveStatus').textContent='Configuração salva.'}
   catch(err){$('#checklistSaveStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
@@ -293,7 +318,7 @@ $('#downloadReportCsv').addEventListener('click',downloadMonthlyReport);
 $('#printReport').addEventListener('click',printMonthlyReport);
 $('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
 $('#adminLogout').addEventListener('click',()=>endAdminSession());
-$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else render()}));
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else{render();if(b.dataset.tab==='reports')loadAdminChecklist()}}));
 initPasswordToggles();
 $('#reportMonth').value=currentMonth();
 $('#reportMonth').max=currentMonth();
