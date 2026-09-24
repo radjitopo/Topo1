@@ -52,8 +52,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=13/);
-  assert.match(sw, /admin-real\.js\?v=13/);
+  assert.match(html, /admin-real\.js\?v=14/);
+  assert.match(sw, /admin-real\.js\?v=14/);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -197,14 +197,17 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(adminHtml, /id="closingMessages"/);
   assert.match(adminHtml, /id="checklistHistory"/);
   assert.match(adminHtml, /\.checklist-row-actions\{grid-column:2;justify-content:flex-end\}/);
+  assert.match(adminHtml, /\.missing-report-count\{/);
+  assert.match(adminHtml, /white-space:nowrap/);
+  assert.match(admin, /class="missing-report-count"/);
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=12/);
-  assert.match(adminHtml, /admin-real\.js\?v=13/);
-  assert.match(sw, /leli-ponto-v20/);
+  assert.match(adminHtml, /admin-real\.js\?v=14/);
+  assert.match(sw, /leli-ponto-v21/);
   assert.match(sw, /app-real\.js\?v=12/);
-  assert.match(sw, /admin-real\.js\?v=13/);
+  assert.match(sw, /admin-real\.js\?v=14/);
 });
 
 test('monthly closing calculates hours, absences and approved corrections from schedule history', () => {
