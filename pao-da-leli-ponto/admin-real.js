@@ -64,7 +64,16 @@ function renderAccessPolicy(policy){
   $('#accessPolicyTitle').textContent=restricted?'Local + rede ativos':'Ponto livre';
   $('#accessPolicyText').textContent=restricted?'O ponto só é aceito na rede da padaria e dentro de um raio de 100 metros.':'Funcionários podem registrar o ponto de qualquer lugar.';
   const changed=policy?.updatedAt?'Alterado'+(policy.updatedByName?' por '+policy.updatedByName:'')+' em '+dateTime(policy.updatedAt):'';
-  $('#accessPolicyMeta').textContent=(restricted?'Local e rede configurados. ':'')+changed;
+  $('#accessPolicyMeta').textContent=changed;
+  const details=$('#accessPolicyDetails'),latitude=Number(policy?.latitude),longitude=Number(policy?.longitude),configured=Boolean(policy?.configured&&Number.isFinite(latitude)&&Number.isFinite(longitude)&&policy?.networkCode);
+  details.classList.toggle('hidden',!configured);
+  if(configured){
+    const coordinates=latitude.toFixed(5)+', '+longitude.toFixed(5),map=$('#accessPolicyMap');
+    $('#accessPolicyLocation').textContent=coordinates;
+    $('#accessPolicyRadius').textContent='Até '+(Number(policy.radiusMeters)||100)+' metros';
+    $('#accessPolicyNetwork').textContent='Código '+String(policy.networkCode).replace(/(.{4})/,'$1-');
+    map.href='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
+  }
   $('#restrictPunches').textContent=restricted?'Atualizar local + rede':'Ativar local + rede';
   $('#restrictPunches').disabled=false;$('#freePunches').disabled=!restricted;
 }

@@ -63,7 +63,14 @@ async function accessPolicy(){
 }
 function accessPolicyView(policy,admin=false){
   const view={mode:policy?.mode==='restricted'?'restricted':'free',radiusMeters:Number(policy?.radius_m)||100,updatedAt:policy?.updated_at||null};
-  if(admin){view.updatedByName=policy?.updated_by_name||null;view.configured=Boolean(policy?.latitude!==null&&policy?.latitude!==undefined&&policy?.longitude!==null&&policy?.longitude!==undefined&&policy?.network_fingerprint)}
+  if(admin){
+    const hasLocation=policy?.latitude!==null&&policy?.latitude!==undefined&&policy?.longitude!==null&&policy?.longitude!==undefined;
+    view.updatedByName=policy?.updated_by_name||null;
+    view.configured=Boolean(hasLocation&&policy?.network_fingerprint);
+    view.latitude=hasLocation?Number(policy.latitude):null;
+    view.longitude=hasLocation?Number(policy.longitude):null;
+    view.networkCode=policy?.network_fingerprint?String(policy.network_fingerprint).slice(0,8).toUpperCase():null;
+  }
   return view;
 }
 async function validatePunchAccess(req,payload){
