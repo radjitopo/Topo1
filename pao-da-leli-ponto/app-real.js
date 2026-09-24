@@ -121,7 +121,6 @@ async function punch(){
     await api('punch','POST',access);
     todayData=await api('today');
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
-    if(p.kind==='breakIn'){await openChecklist();return}
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
     lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
   }catch(e){if(e.data?.needsChecklist)openChecklist();else{alert(e.message);loadToday()}}

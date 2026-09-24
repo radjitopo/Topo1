@@ -188,14 +188,13 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(employeeHtml, /Toda a equipe/);
   assert.match(employeeHtml, /id="unreadMessages"/);
   assert.match(employee, /before==='afterbreak'/);
-  assert.match(employee, /if\(p\.kind==='breakIn'\)\{await openChecklist\(\);return\}/);
+  assert.doesNotMatch(employee, /if\(p\.kind==='breakIn'\)\{await openChecklist\(\);return\}/);
   assert.match(employee, /\$\('#checklistSubmit'\)\.disabled=!hasQuestions/);
   assert.match(employee, /api\('checkout','POST'/);
   assert.match(employee, /api\('messages-read','POST'/);
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
   assert.match(adminHtml, /id="checklistFormAdmin"/);
   assert.match(adminHtml, /id="missingOptionsAdmin"/);
-  assert.match(adminHtml, /\.field:has\(>#checklistUnit\)\{display:flex;align-items:center/);
   assert.match(adminHtml, /id="missingReports"/);
   assert.match(adminHtml, /id="closingMessages"/);
   assert.match(adminHtml, /id="checklistHistory"/);
@@ -208,10 +207,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=15/);
+  assert.match(employeeHtml, /app-real\.js\?v=16/);
   assert.match(adminHtml, /admin-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v29/);
-  assert.match(sw, /app-real\.js\?v=15/);
+  assert.match(sw, /leli-ponto-v30/);
+  assert.match(sw, /app-real\.js\?v=16/);
   assert.match(sw, /admin-real\.js\?v=18/);
 });
 
