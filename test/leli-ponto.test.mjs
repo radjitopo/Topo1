@@ -58,9 +58,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=17/);
-  assert.match(sw, /leli-ponto-v33/);
-  assert.match(sw, /app-real\.js\?v=17/);
+  assert.match(html, /app-real\.js\?v=18/);
+  assert.match(sw, /leli-ponto-v34/);
+  assert.match(sw, /app-real\.js\?v=18/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -77,8 +77,33 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=19/);
-  assert.match(sw, /admin-real\.js\?v=19/);
+  assert.match(html, /admin-real\.js\?v=20/);
+  assert.match(sw, /admin-real\.js\?v=20/);
+});
+
+test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
+  const [api, employeeHtml, employee, adminHtml, admin] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/index.html'),
+    source('pao-da-leli-ponto/app-real.js'),
+    source('pao-da-leli-ponto/admin.html'),
+    source('pao-da-leli-ponto/admin-real.js'),
+  ]);
+
+  assert.match(api, /password_reset_requested_at timestamptz/);
+  assert.match(api, /action==='request-password-reset'/);
+  assert.match(api, /Se o e-mail estiver cadastrado/);
+  assert.match(api, /password_reset_requested_at=NULL/);
+  assert.match(api, /action==='admin-reset-activation'/);
+  assert.match(api, /reset_password_code/);
+  assert.match(api, /DELETE FROM leli_sessions WHERE user_id=\$\{id\}/);
+  assert.match(employeeHtml, /id="goForgotPassword"/);
+  assert.match(employeeHtml, /id="forgotPasswordForm"/);
+  assert.match(employee, /api\('request-password-reset','POST'/);
+  assert.match(adminHtml, /id="adminForgotPassword"/);
+  assert.match(admin, /pediu nova senha/);
+  assert.match(admin, /Gerar novo código/);
+  assert.match(admin, /Novo código de senha/);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -132,7 +157,7 @@ test('sessions reach the API and activation codes remain visible to admins', asy
 
   assert.match(api, /Path=\/; HttpOnly; Secure; SameSite=Lax/);
   assert.match(api, /activation_code text/);
-  assert.match(api, /activation_code,created_at/);
+  assert.match(api, /activation_code,password_reset_requested_at,created_at/);
   assert.match(admin, /Código de ativação:/);
   assert.match(admin, /Copiar código/);
 });
@@ -230,11 +255,11 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=17/);
-  assert.match(adminHtml, /admin-real\.js\?v=19/);
-  assert.match(sw, /leli-ponto-v33/);
-  assert.match(sw, /app-real\.js\?v=17/);
-  assert.match(sw, /admin-real\.js\?v=19/);
+  assert.match(employeeHtml, /app-real\.js\?v=18/);
+  assert.match(adminHtml, /admin-real\.js\?v=20/);
+  assert.match(sw, /leli-ponto-v34/);
+  assert.match(sw, /app-real\.js\?v=18/);
+  assert.match(sw, /admin-real\.js\?v=20/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);

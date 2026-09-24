@@ -121,6 +121,7 @@ async function ensureSchema(){
     activation_expires_at timestamptz,
     failed_login_count integer NOT NULL DEFAULT 0,
     locked_until timestamptz,
+    password_reset_requested_at timestamptz,
     photo_data text,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
@@ -287,6 +288,7 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
+  await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS password_reset_requested_at timestamptz`;
   await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS access_mode text NOT NULL DEFAULT 'free'`;
   await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS location_lat double precision`;
   await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS location_lng double precision`;
@@ -358,7 +360,7 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='health'){
       const a=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin'`;
-      const s=await sql`SELECT count(*)::int AS users, count(*) FILTER (WHERE password_hash IS NOT NULL)::int AS password_users, count(*) FILTER (WHERE activation_hash IS NOT NULL)::int AS pending_activation, count(*) FILTER (WHERE locked_until IS NOT NULL AND locked_until>now())::int AS locked_users FROM leli_users`;
+      const s=await sql`SELECT count(*)::int AS users, count(*) FILTER (WHERE password_hash IS NOT NULL)::int AS password_users, count(*) FILTER (WHERE activation_hash IS NOT NULL)::int AS pending_activation, count(*) FILTER (WHERE password_reset_requested_at IS NOT NULL)::int AS password_reset_requests, count(*) FILTER (WHERE locked_until IS NOT NULL AND locked_until>now())::int AS locked_users FROM leli_users`;
       return json(res,200,{ok:true,hasAdmin:a[0].n>0,authStats:s[0]});
     }
 
@@ -395,13 +397,23 @@ export default async function handler(req,res){
       return json(res,200,{ok:true,user:{id:u.id,email:u.email,name:u.name,role:u.role,position:u.position,unit:u.unit,mustChangePassword:u.must_change_password,photo_data:u.photo_data}});
     }
 
+    if(req.method==='POST'&&action==='request-password-reset'){
+      const email=normEmail(body(req).email);
+      if(!email||!email.includes('@'))return json(res,400,{error:'Informe um e-mail válido.'});
+      const rows=await sql`UPDATE leli_users SET password_reset_requested_at=now(),updated_at=now()
+        WHERE email=${email} AND active=true AND password_hash IS NOT NULL
+        RETURNING id`;
+      if(rows[0])await audit(null,'request_password_reset','user',rows[0].id);
+      return json(res,200,{ok:true,message:'Se o e-mail estiver cadastrado, o pedido aparecerá para o administrador.'});
+    }
+
     if(req.method==='POST'&&action==='activate'){
       const b=body(req),email=normEmail(b.email),code=String(b.code||'').trim(),password=String(b.password||'');
       if(!validPassword(password))return json(res,400,{error:'A senha precisa ter pelo menos 8 caracteres.'});
       const rows=await sql`SELECT * FROM leli_users WHERE email=${email} AND active=true LIMIT 1`;const u=rows[0];
       if(!u||!u.activation_hash||!safeEqualHex(sha(code),u.activation_hash)||(u.activation_expires_at&&new Date(u.activation_expires_at)<new Date()))return json(res,400,{error:'Código de ativação inválido.'});
       const ph=newPasswordHash(password);
-      await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,must_change_password=false,updated_at=now() WHERE id=${u.id}`;
+      await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,must_change_password=false,password_reset_requested_at=NULL,failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${u.id}`;
       await audit(u.id,'activate_account','user',u.id);return json(res,200,{ok:true});
     }
 
@@ -590,7 +602,7 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
-      const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,created_at FROM leli_users ORDER BY role DESC,name ASC`;
+      const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
       const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
@@ -778,7 +790,11 @@ export default async function handler(req,res){
       await audit(user.id,'toggle_user','user',id,{active:rows[0].active});return json(res,200,{user:rows[0]});
     }
     if(req.method==='POST'&&action==='admin-reset-activation'){
-      const b=body(req),id=String(b.id||''),code=activationCode();const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL WHERE id=${id} RETURNING id,email`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});await sql`DELETE FROM leli_sessions WHERE user_id=${id}`;await audit(user.id,'reset_activation','user',id);return json(res,200,{activationCode:code});
+      const b=body(req),id=String(b.id||''),code=activationCode();
+      if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Usuário inválido.'});
+      const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL,password_reset_requested_at=COALESCE(password_reset_requested_at,now()),failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${id} RETURNING id,email`;
+      if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});
+      await sql`DELETE FROM leli_sessions WHERE user_id=${id}`;await audit(user.id,'reset_password_code','user',id);return json(res,200,{activationCode:code});
     }
     if(req.method==='POST'&&action==='admin-decide-correction-group'){
       const b=body(req),groupId=String(b.groupId||''),status=String(b.status||''),note=String(b.note||'').trim();

@@ -87,6 +87,22 @@ function renderAccessProfiles(profiles,policy){
   }).join('');
   $$('[data-activate-access-profile]').forEach(button=>button.addEventListener('click',()=>activateAccessProfile(button.dataset.activateAccessProfile,button)));
 }
+function accountStatus(u){
+  const resetRequested=Boolean(u.password_reset_requested_at);
+  if(!u.active)return '<span class="badge rejected">desativado</span>';
+  if(u.pending_activation){
+    const label=resetRequested?'nova senha pendente':'aguardando ativação';
+    return '<span class="badge pending">'+label+'</span>'+(u.activation_code?'<div class="activation-code">Código: <strong>'+esc(u.activation_code)+'</strong></div>':'');
+  }
+  if(resetRequested)return '<span class="badge pending">pediu nova senha</span>';
+  return '<span class="badge approved">ativo</span>';
+}
+function passwordActions(u,allowReset=true){
+  if(!u.active||!allowReset)return'';
+  const copy=u.pending_activation&&u.activation_code?'<button class="btn small secondary" onclick="copyActivation(\''+esc(u.activation_code)+'\')">Copiar código</button>':'';
+  const label=u.pending_activation?'Trocar código':u.password_reset_requested_at?'Gerar novo código':'Redefinir senha';
+  return copy+'<button class="btn small secondary" onclick="regenActivation(\''+u.id+'\')">'+label+'</button>';
+}
 async function activateAccessProfile(profileId,button){
   const profile=(overview?.accessProfiles||[]).find(item=>String(item.id)===String(profileId));
   if(!profile||!confirm('Ativar o local e a rede “'+profile.networkName+'” para registrar o ponto?'))return;
@@ -310,7 +326,7 @@ async function render(){
     const todayBy={};for(const p of punches){todayBy[p.user_id]??={};todayBy[p.user_id][p.kind]=p}
     $('#todayList').innerHTML=empUsers.map(u=>{const r=todayBy[u.id]||{};let st='<span class="badge">sem jornada</span>';if(r.in&&!r.out)st='<span class="badge pending">em andamento</span>';if(r.out)st='<span class="badge approved">jornada encerrada</span>';return '<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">Entrada '+time(r.in?.occurred_at)+' · Intervalo '+time(r.breakOut?.occurred_at)+' / '+time(r.breakIn?.occurred_at)+' · Saída '+time(r.out?.occurred_at)+'</div></div><div>'+st+'</div></div>'}).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
 
-    $('#employeeList').innerHTML=empUsers.map(u=>'<div class="item employee-item" role="button" tabindex="0" data-employee-id="'+esc(u.id)+'"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+' · '+esc(u.unit)+'</div><div style="margin-top:6px">'+(u.pending_activation?'<span class="badge pending">aguardando ativação</span><div class="activation-code">Código de ativação: <strong>'+esc(u.activation_code||'—')+'</strong></div>':u.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>')+'</div></div><div class="actions"><button class="btn small" onclick="openEmployee(\''+u.id+'\')">Ver ficha</button>'+(u.pending_activation&&u.activation_code?'<button class="btn small secondary" onclick="copyActivation(\''+esc(u.activation_code)+'\')">Copiar código</button>':'')+(u.pending_activation?'<button class="btn small secondary" onclick="regenActivation(\''+u.id+'\')">Trocar código</button>':'')+'<button class="btn small secondary" onclick="toggleUser(\''+u.id+'\')">'+(u.active?'Desativar':'Reativar')+'</button></div></div>').join('')||'<p class="muted">Nenhum funcionário.</p>';
+    $('#employeeList').innerHTML=empUsers.map(u=>'<div class="item employee-item" role="button" tabindex="0" data-employee-id="'+esc(u.id)+'"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+' · '+esc(u.unit)+'</div><div style="margin-top:6px">'+accountStatus(u)+'</div></div><div class="actions"><button class="btn small" onclick="openEmployee(\''+u.id+'\')">Ver ficha</button>'+passwordActions(u)+'<button class="btn small secondary" onclick="toggleUser(\''+u.id+'\')">'+(u.active?'Desativar':'Reativar')+'</button></div></div>').join('')||'<p class="muted">Nenhum funcionário.</p>';
     $$('#employeeList .employee-item').forEach(item=>{
       item.addEventListener('click',event=>{if(!event.target.closest('button'))openEmployee(item.dataset.employeeId)});
       item.addEventListener('keydown',event=>{if(event.target.closest('button'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();openEmployee(item.dataset.employeeId)}});
@@ -320,13 +336,13 @@ async function render(){
     $('#correctionList').innerHTML=correctionRequests.map(c=>{const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span><span>Decisão</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+time(x.original_at)+'</b><b>'+time(x.requested_at)+'</b>'+correctionDecision(x)+'</div>').join('')+'</div>';return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div>'+correctionRequestSummary(items)+'</div></div>'}).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
 
     const admins=users.filter(u=>u.role==='admin');
-    $('#adminList').innerHTML=admins.map(u=>'<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+'</div><div style="margin-top:6px">'+(u.pending_activation?'<span class="badge pending">aguardando ativação</span>':u.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>')+'</div></div></div>').join('');
+    $('#adminList').innerHTML=admins.map(u=>'<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(u.email)+'</div><div style="margin-top:6px">'+accountStatus(u)+'</div></div><div class="actions">'+passwordActions(u,u.id!==currentUser?.id)+'</div></div>').join('');
     $('#addAdminForm').querySelector('button').disabled=admins.filter(u=>u.active).length>=2;
   }catch(e){if(e.status===401){showOnly('adminLogin')}else alert(e.message)}
 }
 window.copyActivation=async code=>{if(!code)return;try{await navigator.clipboard.writeText(code);alert('Código copiado.')}catch{prompt('Copie o código:',code)}}
 window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
-window.regenActivation=async id=>{const email=overview?.users?.find(u=>u.id===id)?.email||'esta pessoa';if(!confirm('Trocar o código de ativação de '+email+'? O código anterior deixará de funcionar.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código: '+r.activationCode)}catch(e){alert(e.message)}}
+window.regenActivation=async id=>{const person=overview?.users?.find(u=>u.id===id),email=person?.email||'esta pessoa',alreadyPending=Boolean(person?.pending_activation);if(!confirm(alreadyPending?'Trocar o código de '+email+'? O código anterior deixará de funcionar.':'Gerar um código para '+email+' criar outra senha? A senha atual será invalidada e as sessões abertas serão encerradas.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código de senha: '+r.activationCode)}catch(e){alert(e.message)}}
 window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 
@@ -351,6 +367,7 @@ $('#freePunches').addEventListener('click',async()=>{
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
+$('#adminForgotPassword').addEventListener('click',async()=>{const email=prompt('Informe o e-mail do administrador:',$('#adminEmail').value.trim());if(email===null)return;try{await api('request-password-reset','POST',{email:email.trim()});alert('Pedido enviado. Outro administrador deve gerar o novo código. Depois use “Primeiro acesso / ativar conta” na tela do ponto para criar outra senha.')}catch(err){alert(err.message)}});
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),email:$('#empEmail').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),email:$('#newAdminEmail').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px">Código do novo administrador: <strong>'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até o administrador ativar a conta.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#closeEmployeeDetail').addEventListener('click',closeEmployeeDetail);

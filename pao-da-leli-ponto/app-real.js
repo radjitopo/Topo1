@@ -28,7 +28,7 @@ async function api(action,method='GET',data){
 function show(id){
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
   $$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id)?.classList.add('active');
-  $('#bottom')?.classList.toggle('show',!['login','activate','confirm','review','correction','checklist','messages'].includes(id));
+  $('#bottom')?.classList.toggle('show',!['login','activate','forgot','confirm','review','correction','checklist','messages'].includes(id));
   $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
   if(id==='ponto')loadToday();
   if(id==='history')loadHistory();
@@ -179,6 +179,8 @@ async function enterEmployeeApp(user){
 }
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#email').value.trim(),password:$('#password').value});await enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateEmail').value=$('#email').value.trim();show('activate')}else alert(err.message)}});
 $('#goActivate').addEventListener('click',()=>{$('#activateEmail').value=$('#email').value.trim();show('activate')});$('#backToLogin').addEventListener('click',()=>show('login'));
+$('#goForgotPassword').addEventListener('click',()=>{$('#forgotEmail').value=$('#email').value.trim();show('forgot')});$('#backFromForgot').addEventListener('click',()=>show('login'));
+$('#forgotPasswordForm').addEventListener('submit',async e=>{e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('request-password-reset','POST',{email:$('#forgotEmail').value.trim()});alert('Pedido enviado. Peça ao administrador o novo código e use “Primeiro acesso / ativar conta” para criar outra senha.');$('#email').value=$('#forgotEmail').value.trim();show('login')}catch(err){alert(err.message)}finally{button.disabled=false}});
 $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('activate','POST',{email:$('#activateEmail').value.trim(),code:$('#activateCode').value.trim(),password:$('#activatePassword').value});alert('Conta ativada. Agora você já pode entrar.');$('#email').value=$('#activateEmail').value.trim();$('#password').value='';show('login')}catch(err){alert(err.message)}});
 $('#mainAction').addEventListener('click',punch);
 $('#cancelChecklist').addEventListener('click',()=>show('ponto'));
