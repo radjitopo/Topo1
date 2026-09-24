@@ -14,6 +14,39 @@ function initPasswordToggles(){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto',currentHistoryMonth=currentMonth();
+let deferredInstallPrompt=null;
+
+function isInstalledApp(){
+  return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+}
+function isIosDevice(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+}
+function initInstallApp(){
+  const button=$('#installApp'),help=$('#installHelp');
+  if(!button||!help)return;
+  const hideInstall=()=>{button.hidden=true;help.hidden=true};
+  if(isInstalledApp()){hideInstall();return}
+  if(isIosDevice())button.hidden=false;
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();deferredInstallPrompt=event;button.hidden=false;help.hidden=true;
+  });
+  window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;hideInstall()});
+  button.addEventListener('click',async()=>{
+    if(deferredInstallPrompt){
+      const prompt=deferredInstallPrompt;deferredInstallPrompt=null;
+      prompt.prompt();
+      const choice=await prompt.userChoice;
+      if(choice.outcome==='accepted')hideInstall();
+      else button.hidden=false;
+      return;
+    }
+    help.textContent=isIosDevice()
+      ?'No iPhone, toque em Compartilhar e depois em “Adicionar à Tela de Início”.'
+      :'Abra o menu do navegador e escolha “Instalar aplicativo” ou “Adicionar à tela inicial”.';
+    help.hidden=false;
+  });
+}
 
 async function api(action,method='GET',data){
   const params=new URLSearchParams({action});
@@ -164,8 +197,8 @@ function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})
 }
 async function boot(){
-  try{const m=await api('me');if(!(await enterEmployeeApp(m.user)))return}catch{show('login')}
   if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  try{const m=await api('me');if(!(await enterEmployeeApp(m.user)))return}catch{show('login')}
 }
 async function enterEmployeeApp(user){
   if(user?.role!=='employee'){
@@ -260,4 +293,5 @@ $('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoI
 $('#logoutBtn').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;show('login')});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));setInterval(()=>{if($('#ponto')?.classList.contains('active'))$('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())},1000);
 initPasswordToggles();
+initInstallApp();
 boot();
