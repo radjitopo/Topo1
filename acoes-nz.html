@@ -27,7 +27,11 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .row:last-child{border-bottom:0}
 .name{font-size:22px;letter-spacing:-.2px}
 .ticker{font-size:12px;color:var(--muted);margin-top:4px}
-.price{font-size:22px;letter-spacing:-.2px;text-align:right;white-space:nowrap}
+.price{font-size:22px;letter-spacing:-.2px;text-align:right;white-space:nowrap;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.move{font-size:16px;font-weight:700;min-width:16px;text-align:center}
+.move.up{color:#22b35f}
+.move.down{color:#d94b4b}
+.move.flat{color:#9aa0a6}
 .loading{color:#9aa0a6}
 .error{color:#b24a4a}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
@@ -93,7 +97,7 @@ const stocks = [
   {ticker:"MCY",name:"Mercury"}
 ];
 
-const state = { quotes:{}, tab:"inicio", filter:"" };
+const state = { quotes:{}, previous:{}, tab:"inicio", filter:"" };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
@@ -129,9 +133,20 @@ function render(){
     const q = state.quotes[s.ticker];
     const row = document.createElement("div");
     row.className = "row";
+    let move = "flat";
+    let symbol = "–";
+    if(q && q.ok){
+      const previous = state.previous[s.ticker];
+      if(typeof previous === "number"){
+        if(q.price > previous){ move = "up"; symbol = "▲"; }
+        else if(q.price < previous){ move = "down"; symbol = "▼"; }
+      }
+    }
     row.innerHTML =
       '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+'</div></div>' +
-      '<div class="price '+(!q?"loading":(!q.ok?"error":""))+'">'+(!q?"…":(!q.ok?"indisponível":money(q.price)))+'</div>';
+      '<div class="price '+(!q?"loading":(!q.ok?"error":""))+'">'+
+        (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
+      '</div>';
     row.addEventListener("click",function(){
       if(state.tab === "favoritos"){
         toggleFav(s.ticker);
@@ -164,7 +179,13 @@ async function refresh(){
     const res = await fetch("/acoes-nz-api",{cache:"no-store"});
     const data = await res.json();
     if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
-    data.quotes.forEach(function(q){ state.quotes[q.ticker] = q; });
+    data.quotes.forEach(function(q){
+      const current = state.quotes[q.ticker];
+      if(current && current.ok && typeof current.price === "number"){
+        state.previous[q.ticker] = current.price;
+      }
+      state.quotes[q.ticker] = q;
+    });
     const now = new Date(data.fetchedAt || Date.now());
     updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   }catch(e){
