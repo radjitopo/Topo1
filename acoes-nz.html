@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Ações NZ</title>
+<style>
+:root{--bg:#fff;--text:#111;--muted:#8b8f96;--line:#eceef1;--green:#22b35f;--soft:#f7f8fa}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{min-height:100vh}
+.app{max-width:680px;margin:0 auto;min-height:100vh;padding:calc(28px + env(safe-area-inset-top)) 22px calc(96px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
+.profile{width:34px;height:34px;border:1.7px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.status{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:15px;color:#333;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,179,95,.08)}
+.muted{color:var(--muted)}
+.sep{color:#c8cbd0}
+.search{margin-top:26px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
+.search span{font-size:22px;color:#7d8289}
+.search input{border:0;outline:0;background:transparent;width:100%;font-size:18px;color:#111}
+.search input::placeholder{color:#a1a5ab}
+.list{margin-top:30px}
+.row{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;min-height:84px;border-bottom:1px solid var(--line);cursor:pointer}
+.row:last-child{border-bottom:0}
+.name{font-size:22px;letter-spacing:-.2px}
+.ticker{font-size:12px;color:var(--muted);margin-top:4px}
+.price{font-size:22px;letter-spacing:-.2px;text-align:right;white-space:nowrap}
+.loading{color:#9aa0a6}
+.error{color:#b24a4a}
+.foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
+.refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center}
+.navin{width:min(680px,100%);display:grid;grid-template-columns:repeat(3,1fr)}
+.nav button{border:0;background:transparent;padding:7px 4px;color:#9a9ea4;font-size:12px}
+.nav button b{display:block;font-size:21px;line-height:1.1;margin-bottom:4px;font-weight:500}
+.nav button.active{color:#111}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(10px);background:#111;color:white;border-radius:999px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (min-width:700px){
+  .app{padding-top:48px}
+  h1{font-size:48px}
+  .row{min-height:90px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="top">
+    <div>
+      <h1>Ações NZ</h1>
+      <div class="status">
+        <span class="dot"></span>
+        <strong>Atualização automática</strong>
+        <span class="sep">|</span>
+        <span class="muted" id="updated">carregando...</span>
+        <button class="refresh" id="refresh">Atualizar</button>
+      </div>
+    </div>
+    <div class="profile" aria-label="perfil">○</div>
+  </div>
+
+  <label class="search">
+    <span>⌕</span>
+    <input id="search" placeholder="Buscar ações..." autocomplete="off">
+  </label>
+
+  <section class="list" id="list"></section>
+
+  <div class="foot">
+    Dados públicos da NZX. A própria NZX informa que as cotações públicas têm cerca de 20 minutos de atraso e podem usar cache. Esta tela atualiza automaticamente a cada 30 segundos.
+  </div>
+</main>
+
+<nav class="nav">
+  <div class="navin">
+    <button class="active" data-tab="inicio"><b>⌂</b>Início</button>
+    <button data-tab="favoritos"><b>☆</b>Favoritos</button>
+    <button data-tab="config"><b>⚙</b>Configurações</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const stocks = [
+  {ticker:"FPH",name:"Fisher & Paykel"},
+  {ticker:"MEL",name:"Meridian"},
+  {ticker:"IFT",name:"Infratil"},
+  {ticker:"AIA",name:"Auckland Airport"},
+  {ticker:"MCY",name:"Mercury"}
+];
+
+const state = { quotes:{}, tab:"inicio", filter:"" };
+const list = document.getElementById("list");
+const updated = document.getElementById("updated");
+const toast = document.getElementById("toast");
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(function(){toast.classList.remove("show")},1600);
+}
+
+function money(v){
+  if(v == null || isNaN(v)) return "—";
+  return "NZ$ " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
+}
+
+function render(){
+  const f = state.filter.trim().toLowerCase();
+  const visible = stocks.filter(function(s){
+    if(state.tab === "favoritos"){
+      const fav = JSON.parse(localStorage.getItem("nz-favs") || "[]");
+      if(fav.indexOf(s.ticker) === -1) return false;
+    }
+    return !f || s.name.toLowerCase().includes(f) || s.ticker.toLowerCase().includes(f);
+  });
+
+  list.innerHTML = "";
+  if(!visible.length){
+    list.innerHTML = '<div style="padding:42px 0;color:#8b8f96;text-align:center">Nenhuma ação aqui.</div>';
+    return;
+  }
+
+  visible.forEach(function(s){
+    const q = state.quotes[s.ticker];
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+'</div></div>' +
+      '<div class="price '+(!q?"loading":(q.error?"error":""))+'">'+(!q?"…":(q.error?"indisponível":money(q.price)))+'</div>';
+    row.addEventListener("click",function(){
+      if(state.tab === "favoritos"){
+        toggleFav(s.ticker);
+      }else{
+        window.open("https://www.nzx.com/instruments/"+s.ticker,"_blank","noopener");
+      }
+    });
+    row.addEventListener("contextmenu",function(e){
+      e.preventDefault();
+      toggleFav(s.ticker);
+    });
+    list.appendChild(row);
+  });
+}
+
+function toggleFav(ticker){
+  let fav = JSON.parse(localStorage.getItem("nz-favs") || "[]");
+  const i = fav.indexOf(ticker);
+  if(i >= 0){ fav.splice(i,1); showToast("Removido dos favoritos"); }
+  else { fav.push(ticker); showToast("Adicionado aos favoritos"); }
+  localStorage.setItem("nz-favs",JSON.stringify(fav));
+  render();
+}
+
+function parseNZX(html){
+  const text = html.replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<style[\s\S]*?<\/style>/gi," ").replace(/<[^>]+>/g," ").replace(/&nbsp;/g," ").replace(/\s+/g," ");
+  const priceMatch = text.match(/\$([0-9]+(?:\.[0-9]{1,4})?)\s*NZD/i);
+  const timeMatch = text.match(/Last Updated:\s*([^$]{0,50}?)(?:\$|Fisher|Meridian|Infratil|Auckland|Mercury|Issued By:)/i);
+  return {
+    price: priceMatch ? Number(priceMatch[1]) : null,
+    sourceTime: timeMatch ? timeMatch[1].trim() : null
+  };
+}
+
+async function fetchOne(s){
+  const target = "https://www.nzx.com/instruments/" + s.ticker;
+  const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(target);
+  try{
+    const res = await fetch(proxy,{cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const html = await res.text();
+    const parsed = parseNZX(html);
+    if(parsed.price == null) throw new Error("Preço não encontrado");
+    return {ticker:s.ticker,price:parsed.price,sourceTime:parsed.sourceTime,error:false};
+  }catch(e){
+    return {ticker:s.ticker,error:true,message:String(e)};
+  }
+}
+
+async function refresh(){
+  updated.textContent = "atualizando...";
+  document.getElementById("refresh").disabled = true;
+  const results = await Promise.all(stocks.map(fetchOne));
+  results.forEach(function(q){ state.quotes[q.ticker] = q; });
+  const ok = results.filter(function(q){return !q.error});
+  const now = new Date();
+  if(ok.length){
+    updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  }else{
+    updated.textContent = "fonte temporariamente indisponível";
+  }
+  document.getElementById("refresh").disabled = false;
+  render();
+}
+
+document.getElementById("search").addEventListener("input",function(e){
+  state.filter = e.target.value;
+  render();
+});
+document.getElementById("refresh").addEventListener("click",refresh);
+
+document.querySelectorAll(".nav button").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll(".nav button").forEach(function(b){b.classList.remove("active")});
+    btn.classList.add("active");
+    state.tab = btn.getAttribute("data-tab");
+    if(state.tab === "config"){
+      showToast("Atualização automática a cada 30s");
+      state.tab = "inicio";
+      document.querySelector('[data-tab="inicio"]').classList.add("active");
+      btn.classList.remove("active");
+    }
+    render();
+  });
+});
+
+render();
+refresh();
+setInterval(refresh,30000);
+</script>
+</body>
+</html>
