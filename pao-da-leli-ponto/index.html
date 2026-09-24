@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Pão da Leli — Ponto</title>
 <link rel="manifest" href="./manifest.webmanifest?v=4">
-<link rel="icon" href="./logo-leli-oficial.jpg">
-<link rel="apple-touch-icon" href="./logo-leli-oficial.jpg">
+<link rel="icon" href="./logo-leli-oficial.jpg?v=2">
+<link rel="apple-touch-icon" href="./logo-leli-oficial.jpg?v=2">
 <style>
 :root{--cream:#fbf2df;--paper:#fffaf0;--wine:#a71831;--wine2:#8d1329;--ink:#31251f;--muted:#7d6d63;--line:#dbcdbd;--green:#2f7d32;--yellow:#f2b51d;--red:#b93636;--shadow:0 12px 36px rgba(69,42,26,.09)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--cream);color:var(--ink);font-family:Arial,sans-serif}body{background:radial-gradient(circle at top right,rgba(255,255,255,.7),transparent 35%),var(--cream)}
@@ -33,7 +33,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 <body>
 <main class="app">
 <section id="login" class="screen active">
-  <div class="brand"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"><div class="brand-name">Pão da Leli</div><div class="brand-sub">PONTO</div></div>
+  <div class="brand"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"><div class="brand-name">Pão da Leli</div><div class="brand-sub">PONTO</div></div>
   <div style="margin-top:20px"><h1>Bem-vindo.</h1><p class="lead">Entre para registrar seu ponto.</p></div>
   <form id="loginForm">
     <label class="field"><span>✉</span><input id="email" type="email" placeholder="Seu e-mail" required></label>
@@ -46,7 +46,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="activate" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2>Primeiro acesso</h2><p class="lead">Use o código entregue pela empresa e escolha sua senha.</p>
   <form id="activateForm">
     <label class="field"><span>✉</span><input id="activateEmail" type="email" placeholder="Seu e-mail" required></label>
@@ -58,7 +58,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="ponto" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <div class="hero"><h1 id="greeting">Bom dia,<br>Leslie Araújo.</h1><p class="lead">Seu dia começa por aqui.</p><div id="dateLine" class="date"></div><div id="clock" class="clock"></div></div>
   <div id="accessNotice" class="notice free"><div id="accessIcon" style="font-size:18px">✓</div><div><b id="accessTitle">Ponto livre</b><small id="accessText">Liberado pelo administrador.</small></div></div>
   <div id="workCard" class="card"></div>
@@ -67,14 +67,14 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="messages" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2>Recados para você</h2><p class="lead">Confira os recados deixados pela equipe.</p>
   <div id="unreadMessages" class="inbox-list"></div>
   <button id="messagesOk" class="btn" type="button">LI OS RECADOS</button>
 </section>
 
 <section id="checklist" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2>Checklist de saída</h2><p class="lead">Responda tudo antes de encerrar sua jornada.</p>
   <div class="card"><div class="label">Área</div><div id="checklistUnitLabel" class="big"></div></div>
 	  <form id="checklistForm">
@@ -92,14 +92,14 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="confirm" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+	  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <div class="confirmIcon">✓</div><h1 id="confirmTitle" style="text-align:center">Ponto registrado!</h1><p id="confirmText" class="lead" style="text-align:center"></p>
   <div id="confirmDetails" class="card details"></div>
   <button id="confirmOk" class="btn">OK</button>
 </section>
 
 <section id="review" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2 class="review-title">Confira sua jornada.</h2><p class="micro" style="margin:7px 0 12px">Antes de finalizar, veja se os horários estão corretos.</p>
   <div id="reviewGrid" class="journey-grid"></div>
   <button id="reviewOk" class="btn">ESTÁ TUDO CERTO</button>
@@ -107,7 +107,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="correction" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2>Solicitar correção</h2><p class="lead">Confira a jornada inteira. O registro original fica preservado até um administrador aprovar.</p>
   <form id="correctionForm">
     <div class="correction-table">
@@ -125,12 +125,12 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 </section>
 
 <section id="history" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div><h2>Meu ponto</h2><p style="color:var(--muted);margin:6px 0 0">Acompanhe seus registros e correções.</p>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div><h2>Meu ponto</h2><p style="color:var(--muted);margin:6px 0 0">Acompanhe seus registros e correções.</p>
   <div class="month"><button id="previousMonth" class="month-nav" type="button" aria-label="Mês anterior">‹</button><b id="monthLabel"></b><button id="nextMonth" class="month-nav" type="button" aria-label="Próximo mês">›</button></div><div id="historyTable" class="history"></div>
 </section>
 
 <section id="profile" class="screen">
-  <div class="top"><img src="./logo-leli-oficial.jpg" alt="Pão da Leli"></div><h2>Meu perfil</h2>
+  <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div><h2>Meu perfil</h2>
   <div class="profile-head"><div id="avatar" class="avatar"><span>LA</span></div><div id="profileName" class="profile-name">Leslie Araújo</div><div id="profileRole" class="profile-role">Colaborador</div><button id="photoBtn" class="photoBtn" type="button">Trocar foto</button><input id="photoInput" type="file" accept="image/*" hidden></div>
   <div class="profile-grid"><div class="card"><div class="label">Área</div><div id="profileUnit" class="big">Pão da Leli</div></div><div class="card"><div class="label">Liberação do ponto</div><div id="profileAccessMode" class="big">Controlada pelo administrador</div></div></div>
   <button id="logoutBtn" class="btn secondary">Sair da conta</button>

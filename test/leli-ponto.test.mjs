@@ -59,7 +59,7 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
   assert.match(html, /app-real\.js\?v=17/);
-  assert.match(sw, /leli-ponto-v31/);
+  assert.match(sw, /leli-ponto-v32/);
   assert.match(sw, /app-real\.js\?v=17/);
 });
 
@@ -232,9 +232,12 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=17/);
   assert.match(adminHtml, /admin-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v31/);
+  assert.match(sw, /leli-ponto-v32/);
   assert.match(sw, /app-real\.js\?v=17/);
   assert.match(sw, /admin-real\.js\?v=18/);
+  assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
+  assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
+  assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
 });
 
 test('admins can require the bakery network and location or temporarily leave punches free', async () => {
