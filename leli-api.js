@@ -21,6 +21,62 @@ function setSessionCookie(res,token){res.setHeader('Set-Cookie',`${SESSION_COOKI
 function clearSessionCookie(res){res.setHeader('Set-Cookie',[`${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,`${SESSION_COOKIE}=; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=0`])}
 function validPassword(p){return typeof p==='string'&&p.length>=8&&p.length<=100}
 function localDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function requestIp(req){
+  let value=String(req.headers['x-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();
+  if(value.startsWith('[')&&value.includes(']'))value=value.slice(1,value.indexOf(']'));
+  if(/^\d{1,3}(?:\.\d{1,3}){3}:\d+$/.test(value))value=value.replace(/:\d+$/,'');
+  return value.replace(/^::ffff:/i,'').split('%')[0].toLowerCase();
+}
+function ipv6Prefix64(value){
+  const halves=String(value).split('::');
+  if(halves.length>2)return'';
+  const left=halves[0]?halves[0].split(':'):[],right=halves[1]?halves[1].split(':'):[];
+  const missing=8-left.length-right.length;
+  if(missing<0||(halves.length===1&&missing!==0))return'';
+  const parts=[...left,...Array(missing).fill('0'),...right];
+  if(parts.length!==8||parts.some(part=>!/^[0-9a-f]{0,4}$/i.test(part)))return'';
+  return parts.slice(0,4).map(part=>(part||'0').padStart(4,'0')).join(':');
+}
+function networkIdentity(req){
+  const ip=requestIp(req);
+  if(/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip))return`ipv4:${ip}`;
+  if(ip.includes(':')){const prefix=ipv6Prefix64(ip);if(prefix)return`ipv6:${prefix}`}
+  return'';
+}
+function networkFingerprint(req){const identity=networkIdentity(req);return identity?sha(`leli-network:${identity}`):''}
+function parseLocation(payload){
+  const location=payload?.location||{},latitude=Number(location.latitude),longitude=Number(location.longitude),accuracy=Number(location.accuracy),capturedAt=Number(location.capturedAt);
+  if(!Number.isFinite(latitude)||latitude<-90||latitude>90||!Number.isFinite(longitude)||longitude<-180||longitude>180)return{ok:false,error:'Ative a localização do celular para registrar o ponto.'};
+  if(!Number.isFinite(accuracy)||accuracy<=0||accuracy>100)return{ok:false,error:'Não foi possível confirmar sua localização. Ative a localização precisa e tente novamente.'};
+  if(!Number.isFinite(capturedAt)||Math.abs(Date.now()-capturedAt)>120000)return{ok:false,error:'A localização ficou desatualizada. Tente registrar o ponto novamente.'};
+  return{ok:true,latitude,longitude,accuracy,capturedAt};
+}
+function distanceMeters(lat1,lon1,lat2,lon2){
+  const toRad=value=>value*Math.PI/180,dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+async function accessPolicy(){
+  const rows=await sql`SELECT p.mode,p.latitude,p.longitude,p.radius_m,p.network_fingerprint,p.updated_at,u.name AS updated_by_name
+    FROM leli_access_policy p LEFT JOIN leli_users u ON u.id=p.updated_by WHERE p.id=1 LIMIT 1`;
+  return rows[0]||{mode:'free',radius_m:100};
+}
+function accessPolicyView(policy,admin=false){
+  const view={mode:policy?.mode==='restricted'?'restricted':'free',radiusMeters:Number(policy?.radius_m)||100,updatedAt:policy?.updated_at||null};
+  if(admin){view.updatedByName=policy?.updated_by_name||null;view.configured=Boolean(policy?.latitude!==null&&policy?.latitude!==undefined&&policy?.longitude!==null&&policy?.longitude!==undefined&&policy?.network_fingerprint)}
+  return view;
+}
+async function validatePunchAccess(req,payload){
+  const policy=await accessPolicy();
+  if(policy.mode!=='restricted')return{ok:true,mode:'free',latitude:null,longitude:null,accuracy:null,distance:null,networkFingerprint:null};
+  const fingerprint=networkFingerprint(req);
+  if(!fingerprint||fingerprint!==policy.network_fingerprint)return{ok:false,status:403,error:'Conecte-se à rede do Pão da Leli para registrar o ponto.',reason:'network'};
+  const location=parseLocation(payload);
+  if(!location.ok)return{ok:false,status:403,error:location.error,reason:'location'};
+  const distance=distanceMeters(Number(policy.latitude),Number(policy.longitude),location.latitude,location.longitude);
+  if(distance>Number(policy.radius_m||100))return{ok:false,status:403,error:'Você precisa estar no Pão da Leli para registrar o ponto.',reason:'distance'};
+  return{ok:true,mode:'restricted',latitude:location.latitude,longitude:location.longitude,accuracy:location.accuracy,distance:Math.round(distance),networkFingerprint:fingerprint};
+}
 
 async function ensureSchema(){
   await sql`CREATE TABLE IF NOT EXISTS leli_users (
@@ -60,6 +116,17 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now(),
     UNIQUE(user_id, work_date, kind)
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_access_policy (
+    id smallint PRIMARY KEY CHECK (id=1),
+    mode text NOT NULL DEFAULT 'free' CHECK (mode IN ('free','restricted')),
+    latitude double precision,
+    longitude double precision,
+    radius_m integer NOT NULL DEFAULT 100 CHECK (radius_m BETWEEN 30 AND 500),
+    network_fingerprint text,
+    updated_by uuid REFERENCES leli_users(id),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`;
+  await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',100) ON CONFLICT(id) DO NOTHING`;
   await sql`CREATE TABLE IF NOT EXISTS leli_corrections (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES leli_users(id),
@@ -160,6 +227,12 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS access_mode text NOT NULL DEFAULT 'free'`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS location_lat double precision`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS location_lng double precision`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS location_accuracy double precision`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS distance_m integer`;
+  await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS network_fingerprint text`;
   await sql`UPDATE leli_users SET position='Colaborador',updated_at=now() WHERE role='employee' AND position IN ('Funcionária','Funcionário')`;
   await sql`UPDATE leli_users SET unit='Pão da Leli Café',updated_at=now()
     WHERE role='employee' AND unit IN ('Pão da Leli','Pão da Leli atendimento')`;
@@ -296,7 +369,8 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='today'){
       const date=localDate(),punches=await effectivePunches(user.id,date);
       const pending=await sql`SELECT id,kind,status,reason,requested_at,created_at FROM leli_corrections WHERE user_id=${user.id} AND work_date=${date} ORDER BY created_at DESC`;
-      return json(res,200,{date,state:stateFrom(punches),punches,corrections:pending});
+      const policy=await accessPolicy();
+      return json(res,200,{date,state:stateFrom(punches),punches,corrections:pending,accessPolicy:accessPolicyView(policy)});
     }
     if(req.method==='GET'&&action==='history'){
       const rows=await sql`SELECT work_date::text AS work_date,kind,occurred_at FROM leli_punches WHERE user_id=${user.id} ORDER BY work_date DESC,occurred_at ASC LIMIT 240`;
@@ -339,9 +413,13 @@ export default async function handler(req,res){
       const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current),kind=expectedKind(state);
       if(!kind)return json(res,409,{error:'A jornada de hoje já foi encerrada.'});
       if(kind==='out')return json(res,428,{error:'Preencha o checklist antes de registrar a saída.',needsChecklist:true});
+      const access=await validatePunchAccess(req,body(req));
+      if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
-        const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent) VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)}) RETURNING id,kind,occurred_at,work_date`;
-        await audit(user.id,'punch','punch',rows[0].id,{kind,date});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
+        const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m,network_fingerprint)
+          VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance},${access.networkFingerprint})
+          RETURNING id,kind,occurred_at,work_date`;
+        await audit(user.id,'punch','punch',rows[0].id,{kind,date,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
     }
     if(req.method==='POST'&&action==='checkout'){
@@ -379,10 +457,12 @@ export default async function handler(req,res){
           if(!recipient[0])return json(res,400,{error:'O destinatário do recado não está disponível.'});
         }
       }else{recipientId=null;messageAudience='individual'}
+      const access=await validatePunchAccess(req,b);
+      if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
         const rows=await sql`WITH new_punch AS (
-            INSERT INTO leli_punches(user_id,kind,work_date,user_agent)
-            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)})
+            INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m,network_fingerprint)
+            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance},${access.networkFingerprint})
             RETURNING id,kind,occurred_at,work_date
           ), saved AS (
             INSERT INTO leli_checklist_submissions(user_id,work_date,unit,answers,missing_items,message,message_audience,recipient_user_id,punch_id)
@@ -397,7 +477,7 @@ export default async function handler(req,res){
               (SELECT count(*)::int FROM missing) AS missing_count
             FROM new_punch p JOIN saved s ON s.punch_id=p.id`;
         if(!rows[0])return json(res,409,{error:'Não foi possível registrar a saída.'});
-        await audit(user.id,'checkout_with_checklist','checklist_submission',rows[0].submission_id,{date,unit:user.unit,answers:snapshot.length,missingItems:missingSnapshot.length,hasMessage:Boolean(message),messageAudience:message?messageAudience:null});
+        await audit(user.id,'checkout_with_checklist','checklist_submission',rows[0].submission_id,{date,unit:user.unit,answers:snapshot.length,missingItems:missingSnapshot.length,hasMessage:Boolean(message),messageAudience:message?messageAudience:null,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});
         return json(res,201,{punch:rows[0],submissionId:rows[0].submission_id,state:'out'});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'A saída ou o checklist de hoje já foi registrado.'});throw e}
     }
@@ -447,7 +527,25 @@ export default async function handler(req,res){
       const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
-      return json(res,200,{date,users,punches,corrections});
+      const policy=await accessPolicy();
+      return json(res,200,{date,users,punches,corrections,accessPolicy:accessPolicyView(policy,true)});
+    }
+    if(req.method==='POST'&&action==='admin-access-policy'){
+      const b=body(req),mode=String(b.mode||'');
+      if(!['free','restricted'].includes(mode))return json(res,400,{error:'Escolha se o ponto ficará livre ou restrito.'});
+      if(mode==='free'){
+        await sql`UPDATE leli_access_policy SET mode='free',updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'change_access_policy','access_policy','1',{mode:'free'});
+      }else{
+        const location=parseLocation(b);
+        if(!location.ok)return json(res,400,{error:location.error});
+        const fingerprint=networkFingerprint(req);
+        if(!fingerprint)return json(res,400,{error:'Não foi possível identificar esta rede. Conecte-se ao Wi-Fi do Pão da Leli e tente novamente.'});
+        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${location.latitude},longitude=${location.longitude},radius_m=100,network_fingerprint=${fingerprint},updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'change_access_policy','access_policy','1',{mode:'restricted',radiusMeters:100,accuracyMeters:location.accuracy});
+      }
+      const policy=await accessPolicy();
+      return json(res,200,{ok:true,accessPolicy:accessPolicyView(policy,true)});
     }
     if(req.method==='GET'&&action==='admin-checklist'){
       const items=await sql`SELECT id,unit,question,sort_order,active,updated_at FROM leli_checklist_items WHERE active=true ORDER BY unit,sort_order,id`;

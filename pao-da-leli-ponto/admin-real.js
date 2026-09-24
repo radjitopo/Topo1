@@ -46,6 +46,28 @@ async function endAdminSession(destination){
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
+function captureAccessLocation(){
+  if(!navigator.geolocation)return Promise.reject(new Error('Este aparelho não permite confirmar a localização.'));
+  return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(position=>resolve({
+    latitude:position.coords.latitude,
+    longitude:position.coords.longitude,
+    accuracy:position.coords.accuracy,
+    capturedAt:position.timestamp
+  }),error=>{
+    const messages={1:'Permita o acesso à localização para ativar esta proteção.',2:'Não foi possível confirmar sua localização. Ative a localização precisa e tente novamente.',3:'A localização demorou para responder. Tente novamente.'};
+    reject(new Error(messages[error.code]||'Não foi possível confirmar sua localização.'));
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0}));
+}
+function renderAccessPolicy(policy){
+  const restricted=policy?.mode==='restricted',status=$('#accessPolicyStatus');
+  status.classList.toggle('free',!restricted);
+  $('#accessPolicyTitle').textContent=restricted?'Local + rede ativos':'Ponto livre';
+  $('#accessPolicyText').textContent=restricted?'O ponto só é aceito na rede da padaria e dentro de um raio de 100 metros.':'Funcionários podem registrar o ponto de qualquer lugar.';
+  const changed=policy?.updatedAt?'Alterado'+(policy.updatedByName?' por '+policy.updatedByName:'')+' em '+dateTime(policy.updatedAt):'';
+  $('#accessPolicyMeta').textContent=(restricted?'Local e rede configurados. ':'')+changed;
+  $('#restrictPunches').textContent=restricted?'Atualizar local + rede':'Ativar local + rede';
+  $('#restrictPunches').disabled=false;$('#freePunches').disabled=!restricted;
+}
 function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
 function editorMissingItems(){return $$('#missingOptionsAdmin input').map(input=>input.value)}
 function renderQuestionEditor(values){
@@ -254,6 +276,7 @@ async function render(){
     $('#correctionCount').setAttribute('aria-hidden',pendingCorrectionRequests===0?'true':'false');
     $('[data-tab="corrections"]').setAttribute('aria-label',pendingCorrectionRequests?'Correções, '+pendingCorrectionRequests+' '+(pendingCorrectionRequests===1?'pedido pendente':'pedidos pendentes'):'Correções');
     $('#funcionarios').textContent=users.filter(u=>u.role==='employee'&&u.active).length;
+    renderAccessPolicy(overview.accessPolicy);
 
     const empUsers=users.filter(u=>u.role==='employee');
     populateReportEmployees(empUsers);
@@ -279,6 +302,22 @@ window.toggleUser=async id=>{try{await api('admin-toggle-user','POST',{id});inva
 window.regenActivation=async id=>{const email=overview?.users?.find(u=>u.id===id)?.email||'esta pessoa';if(!confirm('Trocar o código de ativação de '+email+'? O código anterior deixará de funcionar.'))return;try{const r=await api('admin-reset-activation','POST',{id});await render();alert('Novo código: '+r.activationCode)}catch(e){alert(e.message)}}
 window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'?'Observação opcional da aprovação:':'Motivo opcional da recusa:','');if(note===null)return;try{await api('admin-decide-correction','POST',{id,status,note});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
+
+$('#restrictPunches').addEventListener('click',async()=>{
+  if(!confirm('Faça esta ativação dentro do Pão da Leli e conectado ao Wi-Fi da padaria. Continuar?'))return;
+  const button=$('#restrictPunches'),free=$('#freePunches');button.disabled=true;free.disabled=true;button.textContent='CONFIRMANDO LOCAL...';
+  try{
+    const location=await captureAccessLocation();
+    await api('admin-access-policy','POST',{mode:'restricted',location});
+    await render();alert('Restrição ativada. Agora o ponto exige o local e a rede da padaria.');
+  }catch(err){alert(err.message);renderAccessPolicy(overview?.accessPolicy)}
+});
+$('#freePunches').addEventListener('click',async()=>{
+  if(!confirm('Deixar o ponto livre? Enquanto estiver assim, funcionários poderão registrar de qualquer lugar.'))return;
+  const button=$('#freePunches'),restrict=$('#restrictPunches');button.disabled=true;restrict.disabled=true;
+  try{await api('admin-access-policy','POST',{mode:'free'});await render();alert('Ponto livre ativado.');}
+  catch(err){alert(err.message);renderAccessPolicy(overview?.accessPolicy)}
+});
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
 $('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});

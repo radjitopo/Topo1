@@ -37,6 +37,26 @@ function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao
 function dateLabel(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}
 function fullDateLabel(v){if(!v)return'—';return new Date(v+'T12:00:00').toLocaleDateString('pt-BR')}
 function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(v)):'—'}
+function renderAccessPolicy(policy){
+  const restricted=policy?.mode==='restricted',notice=$('#accessNotice');
+  notice.classList.toggle('restricted',restricted);notice.classList.toggle('free',!restricted);
+  $('#accessIcon').textContent=restricted?'⌖':'✓';
+  $('#accessTitle').textContent=restricted?'Local e rede obrigatórios':'Ponto livre';
+  $('#accessText').textContent=restricted?'Use a rede da padaria e permita a localização.':'Liberado pelo administrador.';
+}
+function captureLocation(){
+  if(!navigator.geolocation)return Promise.reject(new Error('Este aparelho não permite confirmar a localização.'));
+  return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(position=>resolve({
+    latitude:position.coords.latitude,
+    longitude:position.coords.longitude,
+    accuracy:position.coords.accuracy,
+    capturedAt:position.timestamp
+  }),error=>{
+    const messages={1:'Permita o acesso à localização para registrar o ponto.',2:'Não foi possível confirmar sua localização. Ative a localização precisa e tente novamente.',3:'A localização demorou para responder. Tente novamente.'};
+    reject(new Error(messages[error.code]||'Não foi possível confirmar sua localização.'));
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0}));
+}
+async function punchAccessPayload(){return todayData?.accessPolicy?.mode==='restricted'?{location:await captureLocation()}:{}}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function showConfirmation(title,text,rows){
   $('#confirmTitle').textContent=title;$('#confirmText').textContent=text;
@@ -81,6 +101,7 @@ async function loadToday(){
     $('#greeting').innerHTML=greeting()+',<br>'+currentUser.name+'.';
     $('#dateLine').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',weekday:'long',day:'2-digit',month:'long'}).format(d);
     $('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
+    renderAccessPolicy(todayData.accessPolicy);
     const state=todayData.state;let html='',label='INICIAR JORNADA',disabled=false;
     if(state==='idle')html='<div class="label">Hoje</div><div class="big">Você ainda não iniciou sua jornada.</div>';
     if(state==='working'){html='<div class="statusline"><span class="dot"></span><b>Você está trabalhando</b></div><div class="big">Entrada '+effective('in')+'</div>';label='SAIR PARA INTERVALO'}
@@ -92,9 +113,12 @@ async function loadToday(){
 }
 async function punch(){
   try{
+    todayData=await api('today');
     const before=todayData?.state;
     if(before==='afterbreak'){await openChecklist();return}
-    await api('punch','POST',{});
+    const button=$('#mainAction');button.disabled=true;button.textContent='VERIFICANDO...';
+    const access=await punchAccessPayload();
+    await api('punch','POST',access);
     todayData=await api('today');
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
     if(p.kind==='breakIn'){await openChecklist();return}
@@ -126,7 +150,8 @@ function renderAvatar(){
 }
 function renderProfile(){
   if(!currentUser)return;
-  $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Colaborador';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';renderAvatar();
+  $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Colaborador';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';
+  $('#profileAccessMode').textContent=todayData?.accessPolicy?.mode==='restricted'?'Local + rede obrigatórios':'Ponto livre';renderAvatar();
 }
 function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})
@@ -163,7 +188,9 @@ $('#checklistForm').addEventListener('submit',async e=>{
   const message=$('#checklistMessage').value.trim(),recipientChoice=$('#messageRecipient').value,messageAudience=recipientChoice==='team'?'team':'individual',recipientId=messageAudience==='individual'?recipientChoice:null;
   const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;button.textContent='REGISTRANDO...';
   try{
-    await api('checkout','POST',{answers,missingItemIds,nothingMissing,message,messageAudience,recipientId});
+    todayData=await api('today');
+    const access=await punchAccessPayload();
+    await api('checkout','POST',{answers,missingItemIds,nothingMissing,message,messageAudience,recipientId,...access});
     todayData=await api('today');show('review');
   }catch(err){
     if(err.data?.checklistChanged){alert(err.message);await openChecklist()}else alert(err.message)
