@@ -131,7 +131,7 @@ function render(){
     row.className = "row";
     row.innerHTML =
       '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+'</div></div>' +
-      '<div class="price '+(!q?"loading":(q.error?"error":""))+'">'+(!q?"…":(q.error?"indisponível":money(q.price)))+'</div>';
+      '<div class="price '+(!q?"loading":(!q.ok?"error":""))+'">'+(!q?"…":(!q.ok?"indisponível":money(q.price)))+'</div>';
     row.addEventListener("click",function(){
       if(state.tab === "favoritos"){
         toggleFav(s.ticker);
@@ -156,45 +156,23 @@ function toggleFav(ticker){
   render();
 }
 
-function parseNZX(html){
-  const text = html.replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<style[\s\S]*?<\/style>/gi," ").replace(/<[^>]+>/g," ").replace(/&nbsp;/g," ").replace(/\s+/g," ");
-  const priceMatch = text.match(/\$([0-9]+(?:\.[0-9]{1,4})?)\s*NZD/i);
-  const timeMatch = text.match(/Last Updated:\s*([^$]{0,50}?)(?:\$|Fisher|Meridian|Infratil|Auckland|Mercury|Issued By:)/i);
-  return {
-    price: priceMatch ? Number(priceMatch[1]) : null,
-    sourceTime: timeMatch ? timeMatch[1].trim() : null
-  };
-}
-
-async function fetchOne(s){
-  const target = "https://www.nzx.com/instruments/" + s.ticker;
-  const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(target);
-  try{
-    const res = await fetch(proxy,{cache:"no-store"});
-    if(!res.ok) throw new Error("HTTP "+res.status);
-    const html = await res.text();
-    const parsed = parseNZX(html);
-    if(parsed.price == null) throw new Error("Preço não encontrado");
-    return {ticker:s.ticker,price:parsed.price,sourceTime:parsed.sourceTime,error:false};
-  }catch(e){
-    return {ticker:s.ticker,error:true,message:String(e)};
-  }
-}
-
 async function refresh(){
   updated.textContent = "atualizando...";
-  document.getElementById("refresh").disabled = true;
-  const results = await Promise.all(stocks.map(fetchOne));
-  results.forEach(function(q){ state.quotes[q.ticker] = q; });
-  const ok = results.filter(function(q){return !q.error});
-  const now = new Date();
-  if(ok.length){
+  const button = document.getElementById("refresh");
+  button.disabled = true;
+  try{
+    const res = await fetch("/acoes-nz-api",{cache:"no-store"});
+    const data = await res.json();
+    if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
+    data.quotes.forEach(function(q){ state.quotes[q.ticker] = q; });
+    const now = new Date(data.fetchedAt || Date.now());
     updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  }else{
+  }catch(e){
     updated.textContent = "fonte temporariamente indisponível";
+  }finally{
+    button.disabled = false;
+    render();
   }
-  document.getElementById("refresh").disabled = false;
-  render();
 }
 
 document.getElementById("search").addEventListener("input",function(e){
