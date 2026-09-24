@@ -34,6 +34,15 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .move.flat{color:#9aa0a6}
 .loading{color:#9aa0a6}
 .error{color:#b24a4a}
+.detailBack{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:0;margin:6px 0 28px;font-size:15px;color:#555;cursor:pointer}
+.detailCard{padding:26px 0 10px}
+.detailName{font-size:34px;line-height:1.05;letter-spacing:-1px;font-weight:700}
+.detailTicker{font-size:14px;color:var(--muted);margin-top:8px}
+.detailPrice{font-size:54px;line-height:1;letter-spacing:-2px;margin-top:34px;display:flex;align-items:center;gap:14px}
+.detailPrice .move{font-size:26px}
+.soundHint{margin-top:28px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;font-size:14px;color:#555;cursor:pointer;background:#fafafa}
+.soundHint.active{color:#1b7f48;background:#f4fbf7}
+.detailMeta{margin-top:18px;font-size:13px;line-height:1.6;color:var(--muted)}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
 .refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
 .nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center}
@@ -97,7 +106,9 @@ const stocks = [
   {ticker:"MCY",name:"Mercury"}
 ];
 
-const state = { quotes:{}, previous:{}, tab:"inicio", filter:"" };
+const pathParts = location.pathname.split("/").filter(Boolean);
+const detailTicker = pathParts[0] === "acoes-nz" && pathParts[1] ? pathParts[1].toUpperCase() : null;
+const state = { quotes:{}, previous:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
@@ -108,12 +119,96 @@ function showToast(msg){
   setTimeout(function(){toast.classList.remove("show")},1600);
 }
 
+function unlockAudio(){
+  if(!detailTicker || state.audioReady) return;
+  try{
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if(!Ctx) return;
+    state.audioCtx = state.audioCtx || new Ctx();
+    if(state.audioCtx.state === "suspended") state.audioCtx.resume();
+    state.audioReady = true;
+    render();
+    showToast("Som ativado");
+  }catch(e){}
+}
+
+function playMoveSound(direction){
+  if(!detailTicker || !state.audioReady || !state.audioCtx) return;
+  try{
+    const ctx = state.audioCtx;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(direction === "up" ? 880 : 260, now);
+    if(direction === "up"){
+      osc.frequency.exponentialRampToValueAtTime(1180, now + 0.16);
+    }else{
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.20);
+    }
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.28);
+  }catch(e){}
+}
+
 function money(v){
   if(v == null || isNaN(v)) return "—";
   return "NZ$ " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
 }
 
 function render(){
+  const searchBox = document.querySelector(".search");
+  const nav = document.querySelector(".nav");
+
+  if(detailTicker){
+    const s = stocks.find(function(item){ return item.ticker === detailTicker; });
+    if(!s){
+      list.innerHTML = '<div style="padding:42px 0;color:#8b8f96">Ação não encontrada.</div>';
+      if(searchBox) searchBox.style.display = "none";
+      return;
+    }
+
+    if(searchBox) searchBox.style.display = "none";
+    if(nav) nav.style.display = "none";
+
+    const q = state.quotes[s.ticker];
+    let move = "flat";
+    let symbol = "–";
+    const previous = state.previous[s.ticker];
+    if(q && q.ok && typeof previous === "number"){
+      if(q.price > previous){ move = "up"; symbol = "▲"; }
+      else if(q.price < previous){ move = "down"; symbol = "▼"; }
+    }
+
+    document.title = s.name + " — Ações NZ";
+    list.innerHTML =
+      '<button class="detailBack" id="detailBack">← Voltar para ações</button>' +
+      '<div class="detailCard">' +
+        '<div class="detailName">'+s.name+'</div>' +
+        '<div class="detailTicker">'+s.ticker+' · NZX</div>' +
+        '<div class="detailPrice '+(!q?"loading":(!q.ok?"error":""))+'">' +
+          (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>')) +
+        '</div>' +
+        '<div class="soundHint '+(state.audioReady?"active":"")+'" id="soundHint">' +
+          (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave' : '🔊 Toque aqui uma vez para ativar os sons') +
+        '</div>' +
+        '<div class="detailMeta">Atualização automática a cada 30 segundos.<br>Fonte pública NZX, com cerca de 20 minutos de atraso.</div>' +
+      '</div>';
+
+    const back = document.getElementById("detailBack");
+    if(back) back.addEventListener("click",function(){ location.href="/acoes-nz"; });
+    const hint = document.getElementById("soundHint");
+    if(hint) hint.addEventListener("click",unlockAudio);
+    return;
+  }
+
+  if(searchBox) searchBox.style.display = "";
+  if(nav) nav.style.display = "";
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){
     if(state.tab === "favoritos"){
@@ -148,11 +243,7 @@ function render(){
         (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';
     row.addEventListener("click",function(){
-      if(state.tab === "favoritos"){
-        toggleFav(s.ticker);
-      }else{
-        window.open("https://www.nzx.com/instruments/"+s.ticker,"_blank","noopener");
-      }
+      location.href="/acoes-nz/"+s.ticker;
     });
     row.addEventListener("contextmenu",function(e){
       e.preventDefault();
@@ -161,7 +252,6 @@ function render(){
     list.appendChild(row);
   });
 }
-
 function toggleFav(ticker){
   let fav = JSON.parse(localStorage.getItem("nz-favs") || "[]");
   const i = fav.indexOf(ticker);
@@ -183,6 +273,10 @@ async function refresh(){
       const current = state.quotes[q.ticker];
       if(current && current.ok && typeof current.price === "number"){
         state.previous[q.ticker] = current.price;
+        if(detailTicker === q.ticker && q.ok && typeof q.price === "number"){
+          if(q.price > current.price) playMoveSound("up");
+          else if(q.price < current.price) playMoveSound("down");
+        }
       }
       state.quotes[q.ticker] = q;
     });
@@ -219,6 +313,12 @@ document.querySelectorAll(".nav button").forEach(function(btn){
 
 render();
 refresh();
+if(detailTicker){
+  document.addEventListener("pointerdown",function firstAudioGesture(){
+    unlockAudio();
+    document.removeEventListener("pointerdown",firstAudioGesture);
+  },{once:true});
+}
 setInterval(refresh,30000);
 </script>
 </body>
