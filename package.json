@@ -6,7 +6,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check api.js && node --check affinity.js && node --check discover-rankings.js && node --check discover-rankings-speed.js && node --check duel-bottom-api.js && node --check moderator-option-delete.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js && node --check leli-report.js && node --check leli-api.js && node --check pao-da-leli-ponto/app-real.js && node --check pao-da-leli-ponto/admin-real.js && node --check pao-da-leli-ponto/sw.js",
+    "check": "node --check api.js && node --check affinity.js && node --check discover-rankings.js && node --check discover-rankings-speed.js && node --check duel-bottom-api.js && node --check moderator-option-delete.js && node --check participation-score.js && node --check app.js && node --check page.js && node --check sitemap.js && node --check seo-taxonomy.js && node --check topo-local.js && node --check institutional.js && node --check leli-report.js && node --check leli-recipes-data.js && node --check leli-api.js && node --check pao-da-leli-ponto/app-real.js && node --check pao-da-leli-ponto/admin-real.js && node --check pao-da-leli-ponto/receitas-real.js && node --check pao-da-leli-ponto/sw.js",
     "test": "node --test test/*.test.mjs",
     "validate": "npm run check && npm test && npm run format:check",
     "format": "prettier --write .",

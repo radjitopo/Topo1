@@ -34,6 +34,14 @@
       "dest": "/pao-da-leli-ponto/admin.html"
     },
     {
+      "src": "/receitas/?",
+      "dest": "/pao-da-leli-ponto/receitas.html"
+    },
+    {
+      "src": "/receitas.html",
+      "dest": "/pao-da-leli-ponto/receitas.html"
+    },
+    {
       "src": "/$",
       "dest": "/pao-da-leli-ponto/index.html"
     },

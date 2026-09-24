@@ -23,7 +23,7 @@ const scheduleDays=[
   {weekday:6,label:'Sábado'},
   {weekday:0,label:'Domingo'}
 ];
-let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,monthlyReport=null;
+let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,monthlyReport=null,recipeAdminData=[],selectedRecipeAdminId=null;
 async function api(action,method='GET',data){
   const params=new URLSearchParams({action});
   const opt={method,headers:{'Content-Type':'application/json'}};
@@ -46,6 +46,31 @@ async function endAdminSession(destination){
 function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(v)):'—'}
+function normalizedRecipeSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
+function recipeIngredientRow(ingredient={}){
+  return '<div class="recipe-ingredient-row"><input class="ingredient-name" value="'+esc(ingredient.name||'')+'" placeholder="Ingrediente" aria-label="Nome do ingrediente" required><input class="ingredient-amount" type="number" min="0.01" step="0.01" value="'+esc(ingredient.amount||'')+'" placeholder="Qtd." aria-label="Quantidade" required><select class="ingredient-unit" aria-label="Unidade"><option value="g" '+(ingredient.unit==='g'?'selected':'')+'>g</option><option value="ml" '+(ingredient.unit==='ml'?'selected':'')+'>ml</option><option value="un." '+(ingredient.unit==='un.'?'selected':'')+'>un.</option></select><input class="ingredient-group-input" value="'+esc(ingredient.group||'')+'" placeholder="Grupo opcional" aria-label="Grupo do ingrediente"><button class="remove-ingredient" type="button" aria-label="Remover ingrediente">×</button></div>';
+}
+function renderRecipeIngredients(ingredients=[{}]){
+  $('#recipeIngredients').innerHTML=(ingredients.length?ingredients:[{}]).map(recipeIngredientRow).join('');
+}
+function clearRecipeForm(){
+  selectedRecipeAdminId=null;$('#recipeForm').reset();$('#recipeId').value='';$('#recipeCategory').value='Pães';$('#recipeMeasureUnit').value='g';$('#recipeReferenceUnit').value='g';$('#recipeServiceLabel').value='Forno';$('#recipeFormTitle').textContent='Nova receita';$('#recipeSaveStatus').textContent='';$('#recipeForm').classList.add('is-new');renderRecipeIngredients();renderAdminRecipeList();
+}
+function fillRecipeForm(recipe){
+  selectedRecipeAdminId=recipe.id;$('#recipeId').value=recipe.id;$('#recipeName').value=recipe.name;$('#recipeCategory').value=recipe.category;$('#recipeDescription').value=recipe.description||'';$('#recipeYieldAmount').value=recipe.yieldAmount;$('#recipeYieldUnit').value=recipe.yieldUnit;$('#recipeMeasureAmount').value=recipe.yieldMeasure.amount;$('#recipeMeasureUnit').value=recipe.yieldMeasure.unit;$('#recipeReferenceLabel').value=recipe.reference.label;$('#recipeReferenceAmount').value=recipe.reference.amount;$('#recipeReferenceUnit').value=recipe.reference.unit;$('#recipePrepTime').value=recipe.prepTime;$('#recipeTotalTime').value=recipe.totalTime;$('#recipeServiceLabel').value=recipe.heatLabel||'Forno';$('#recipeServiceValue').value=recipe.oven;$('#recipeSteps').value=(recipe.steps||[]).join('\n');$('#recipeNotes').value=recipe.notes||'';$('#recipeFormTitle').textContent='Editar '+recipe.name;$('#recipeSaveStatus').textContent='';$('#recipeForm').classList.remove('is-new');renderRecipeIngredients(recipe.ingredients);renderAdminRecipeList();
+}
+function renderAdminRecipeList(){
+  const search=normalizedRecipeSearch($('#adminRecipeSearch')?.value),visible=recipeAdminData.filter(recipe=>!search||normalizedRecipeSearch(recipe.name+' '+recipe.category).includes(search));
+  $('#adminRecipeList').innerHTML=visible.map(recipe=>'<button class="admin-recipe-item '+(recipe.id===selectedRecipeAdminId?'active':'')+'" type="button" data-admin-recipe="'+esc(recipe.id)+'"><span>'+esc(recipe.category)+'</span><strong>'+esc(recipe.name)+'</strong></button>').join('')||'<div class="recipe-list-empty">Nenhuma receita encontrada.</div>';
+  $$('[data-admin-recipe]').forEach(button=>button.addEventListener('click',()=>{const recipe=recipeAdminData.find(item=>item.id===button.dataset.adminRecipe);if(recipe){fillRecipeForm(recipe);$('#recipeForm').scrollIntoView({behavior:'smooth',block:'start'})}}));
+}
+async function loadAdminRecipes(preferredId){
+  try{const result=await api('admin-recipes');recipeAdminData=result.recipes||[];renderAdminRecipeList();const id=preferredId||selectedRecipeAdminId;if(id){const recipe=recipeAdminData.find(item=>item.id===id);if(recipe)fillRecipeForm(recipe)}}catch(err){alert(err.message)}
+}
+function recipeFromForm(){
+  const ingredients=$$('#recipeIngredients .recipe-ingredient-row').map(row=>({name:row.querySelector('.ingredient-name').value.trim(),amount:Number(row.querySelector('.ingredient-amount').value),unit:row.querySelector('.ingredient-unit').value,...(row.querySelector('.ingredient-group-input').value.trim()?{group:row.querySelector('.ingredient-group-input').value.trim()}: {})}));
+  return{id:$('#recipeId').value||undefined,name:$('#recipeName').value.trim(),category:$('#recipeCategory').value,description:$('#recipeDescription').value.trim(),yieldAmount:Number($('#recipeYieldAmount').value),yieldUnit:$('#recipeYieldUnit').value.trim(),yieldMeasure:{amount:Number($('#recipeMeasureAmount').value),unit:$('#recipeMeasureUnit').value},reference:{label:$('#recipeReferenceLabel').value.trim(),amount:Number($('#recipeReferenceAmount').value),unit:$('#recipeReferenceUnit').value},prepTime:$('#recipePrepTime').value.trim(),totalTime:$('#recipeTotalTime').value.trim(),heatLabel:$('#recipeServiceLabel').value.trim(),oven:$('#recipeServiceValue').value.trim(),ingredients,steps:$('#recipeSteps').value.split(/\n+/).map(step=>step.trim()).filter(Boolean),notes:$('#recipeNotes').value.trim()};
+}
 function captureAccessLocation(){
   if(!navigator.geolocation)return Promise.reject(new Error('Este aparelho não permite confirmar a localização.'));
   return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(position=>resolve({
@@ -295,12 +320,22 @@ window.openEmployee=async id=>{
   }catch(e){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');alert(e.message)}
 };
 function closeEmployeeDetail(){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');$('#scheduleStatus').textContent=''}
+async function activateAdminTab(name){
+  const button=$('[data-tab="'+name+'"]'),panel=$('#'+name);if(!button||!panel)return;
+  $$('.tab').forEach(item=>item.classList.remove('active'));$$('.panel').forEach(item=>item.classList.remove('active'));button.classList.add('active');panel.classList.add('active');
+  if(name==='checklistAdmin')await loadAdminChecklist();
+  else if(name==='recipesAdmin')await loadAdminRecipes();
+  else{await render();if(name==='reports')await loadAdminChecklist()}
+}
+async function activateRequestedAdminTab(){
+  const name=location.hash.replace(/^#/,'');if(name&&name!=='today'&&$('#'+name)?.classList.contains('panel'))await activateAdminTab(name);
+}
 async function boot(){
   try{
     const health=await api('health');
     if(!health.hasAdmin){showOnly('setup');return}
     try{
-      const m=await api('me');if(m.user?.role!=='admin')throw new Error('not admin');currentUser=m.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();
+      const m=await api('me');if(m.user?.role!=='admin')throw new Error('not admin');currentUser=m.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab();
     }catch{showOnly('adminLogin')}
   }catch(e){alert('Não foi possível conectar ao banco de dados. '+e.message);showOnly('adminLogin')}
 }
@@ -366,7 +401,7 @@ $('#freePunches').addEventListener('click',async()=>{
 });
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),email:$('#setupEmail').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminEmail').value=$('#setupEmail').value.trim()}catch(err){alert(err.message)}});
-$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render()}catch(err){alert(err.message)}});
+$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('login','POST',{email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(r.user.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}currentUser=r.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab()}catch(err){alert(err.message)}});
 $('#adminForgotPassword').addEventListener('click',async()=>{const email=prompt('Informe o e-mail do administrador:',$('#adminEmail').value.trim());if(email===null)return;try{await api('request-password-reset','POST',{email:email.trim()});alert('Pedido enviado. Outro administrador deve gerar o novo código. Depois use “Primeiro acesso / ativar conta” na tela do ponto para criar outra senha.')}catch(err){alert(err.message)}});
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),email:$('#empEmail').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),email:$('#newAdminEmail').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px">Código do novo administrador: <strong>'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até o administrador ativar a conta.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
@@ -394,6 +429,26 @@ $('#checklistFormAdmin').addEventListener('submit',async e=>{
   catch(err){$('#checklistSaveStatus').textContent='';alert(err.message)}
   finally{button.disabled=false}
 });
+$('#newRecipe').addEventListener('click',()=>{clearRecipeForm();$('#recipeForm').scrollIntoView({behavior:'smooth',block:'start'});$('#recipeName').focus()});
+$('#cancelRecipeEdit').addEventListener('click',clearRecipeForm);
+$('#adminRecipeSearch').addEventListener('input',renderAdminRecipeList);
+$('#addRecipeIngredient').addEventListener('click',()=>{$('#recipeIngredients').insertAdjacentHTML('beforeend',recipeIngredientRow());$$('#recipeIngredients .ingredient-name').at(-1)?.focus()});
+$('#recipeIngredients').addEventListener('click',event=>{
+  const button=event.target.closest('.remove-ingredient');if(!button)return;
+  const rows=$$('#recipeIngredients .recipe-ingredient-row');if(rows.length===1){rows[0].querySelectorAll('input').forEach(input=>input.value='');return}button.closest('.recipe-ingredient-row').remove();
+});
+$('#recipeForm').addEventListener('submit',async event=>{
+  event.preventDefault();const button=$('#saveRecipe'),recipe=recipeFromForm();button.disabled=true;$('#recipeSaveStatus').textContent='Salvando...';
+  try{const result=await api('admin-save-recipe','POST',{id:recipe.id,recipe});$('#recipeSaveStatus').textContent='Receita salva.';await loadAdminRecipes(result.recipe.id);}
+  catch(err){$('#recipeSaveStatus').textContent='';alert(err.message)}finally{button.disabled=false}
+});
+$('#deleteRecipe').addEventListener('click',async()=>{
+  const recipe=recipeAdminData.find(item=>item.id===selectedRecipeAdminId);if(!recipe)return;
+  if(!confirm('Excluir “'+recipe.name+'” do caderno de receitas?'))return;
+  const button=$('#deleteRecipe');button.disabled=true;
+  try{await api('admin-delete-recipe','POST',{id:recipe.id});clearRecipeForm();await loadAdminRecipes();}
+  catch(err){alert(err.message)}finally{button.disabled=false}
+});
 $('#reportForm').addEventListener('submit',async e=>{
   e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#reportStatus').textContent='Calculando o fechamento...';$('#reportContent').classList.add('hidden');
   try{const report=await api('admin-monthly-report','GET',{month:$('#reportMonth').value,employeeId:$('#reportEmployee').value});renderMonthlyReport(report)}
@@ -420,8 +475,9 @@ $('#resetSystem').addEventListener('click',async()=>{
 });
 $('#leaveAdmin').addEventListener('click',e=>{e.preventDefault();endAdminSession('./')});
 $('#adminLogout').addEventListener('click',()=>endAdminSession());
-$$('.tab').forEach(b=>b.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='checklistAdmin')loadAdminChecklist();else{render();if(b.dataset.tab==='reports')loadAdminChecklist()}}));
+$$('.tab').forEach(button=>button.addEventListener('click',()=>activateAdminTab(button.dataset.tab)));
 initPasswordToggles();
+clearRecipeForm();
 $('#reportMonth').value=currentMonth();
 $('#reportMonth').max=currentMonth();
 boot();

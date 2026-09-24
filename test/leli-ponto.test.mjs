@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { buildMonthlyReport } from '../leli-report.js';
+import { demoRecipes } from '../leli-recipes-data.js';
 
 const root = new URL('../', import.meta.url);
 
@@ -58,9 +59,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v35/);
-  assert.match(sw, /app-real\.js\?v=18/);
+  assert.match(html, /app-real\.js\?v=19/);
+  assert.match(sw, /leli-ponto-v37/);
+  assert.match(sw, /app-real\.js\?v=19/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -255,10 +256,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=18/);
+  assert.match(employeeHtml, /app-real\.js\?v=19/);
   assert.match(adminHtml, /admin-real\.js\?v=21/);
-  assert.match(sw, /leli-ponto-v35/);
-  assert.match(sw, /app-real\.js\?v=18/);
+  assert.match(sw, /leli-ponto-v37/);
+  assert.match(sw, /app-real\.js\?v=19/);
   assert.match(sw, /admin-real\.js\?v=21/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
@@ -420,9 +421,41 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
   assert.match(html, /admin-real\.js\?v=21/);
-  assert.match(sw, /leli-ponto-v35/);
+  assert.match(sw, /leli-ponto-v37/);
   assert.match(sw, /admin-real\.js\?v=21/);
 });
+test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
+  const [api, employeeHtml, recipeHtml, recipeApp, adminHtml, admin, sw, vercel] =
+    await Promise.all([
+      source('leli-api.js'),
+      source('pao-da-leli-ponto/index.html'),
+      source('pao-da-leli-ponto/receitas.html'),
+      source('pao-da-leli-ponto/receitas-real.js'),
+      source('pao-da-leli-ponto/admin.html'),
+      source('pao-da-leli-ponto/admin-real.js'),
+      source('pao-da-leli-ponto/sw.js'),
+      source('vercel.json'),
+    ]);
+
+  assert.equal(demoRecipes.length, 28);
+  assert.equal(new Set(demoRecipes.map((recipe) => recipe.id)).size, 28);
+  assert.ok(demoRecipes.some((recipe) => recipe.category === 'Bebidas'));
+  assert.match(employeeHtml, /href="\.\/receitas\.html"/);
+  assert.match(recipeHtml, /id="recipeApp"/);
+  assert.match(recipeApp, /const batchOptions=\[1,1\.5,2,3\]/);
+  assert.match(recipeApp, /api\('admin-recipes'\)/);
+  assert.match(adminHtml, /data-tab="recipesAdmin"/);
+  assert.match(adminHtml, /id="recipeForm"/);
+  assert.match(admin, /admin-save-recipe/);
+  assert.match(admin, /admin-delete-recipe/);
+  assert.match(api, /CREATE TABLE IF NOT EXISTS leli_recipes/);
+  assert.match(api, /action==='admin-recipes'/);
+  assert.match(api, /action==='admin-save-recipe'/);
+  assert.match(api, /action==='admin-delete-recipe'/);
+  assert.match(sw, /receitas-real\.js\?v=1/);
+  assert.match(vercel, /"src": "\/receitas\/\?"/);
+});
+
 test('the admin app only references controls that exist in its page', async () => {
   const [html, js] = await Promise.all([
     source('pao-da-leli-ponto/admin.html'),

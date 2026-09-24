@@ -1,6 +1,7 @@
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
 import { buildMonthlyReport, getMonthBounds } from './leli-report.js';
+import { demoRecipes as defaultRecipes } from './leli-recipes-data.js';
 
 const sql = neon(process.env.DATABASE_URL);
 const SESSION_COOKIE = 'leli_session';
@@ -8,6 +9,8 @@ const BOOTSTRAP_HASH = '01258930c8e560ff164c8b6d29170d573a61327f4df7ec5facc15e39
 const TZ = 'America/Sao_Paulo';
 const EMPLOYEE_UNITS = new Set(['Pão da Leli Café','Pão da Leli Produção']);
 const ACCESS_RADIUS_METERS = 20;
+const RECIPE_CATEGORIES = new Set(['Pães','Doces','Salgados','Bebidas']);
+const RECIPE_UNITS = new Set(['g','ml','un.']);
 
 function json(res,status,body){res.setHeader('Cache-Control','no-store');return res.status(status).json(body)}
 function body(req){if(typeof req.body==='string'){try{return JSON.parse(req.body||'{}')}catch{return{}}}return req.body||{}}
@@ -21,6 +24,48 @@ function activationCode(){return randomBytes(7).toString('base64url')}
 function setSessionCookie(res,token){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`)}
 function clearSessionCookie(res){res.setHeader('Set-Cookie',[`${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,`${SESSION_COOKIE}=; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=0`])}
 function validPassword(p){return typeof p==='string'&&p.length>=8&&p.length<=100}
+function recipeId(name){
+  const base=String(name||'receita').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,54)||'receita';
+  return `${base}-${randomBytes(3).toString('hex')}`;
+}
+function recipeView(row){
+  return{
+    id:row.id,
+    name:row.name,
+    category:row.category,
+    description:row.description,
+    yieldAmount:Number(row.yield_amount),
+    yieldUnit:row.yield_unit,
+    yieldMeasure:{amount:Number(row.yield_measure_amount),unit:row.yield_measure_unit},
+    reference:{label:row.reference_label,amount:Number(row.reference_amount),unit:row.reference_unit},
+    prepTime:row.prep_time,
+    totalTime:row.total_time,
+    oven:row.service_value,
+    heatLabel:row.service_label,
+    ingredients:Array.isArray(row.ingredients)?row.ingredients:[],
+    steps:Array.isArray(row.steps)?row.steps:[],
+    notes:row.notes||'',
+    updatedAt:row.updated_at
+  };
+}
+function normalizeRecipe(payload){
+  const name=String(payload?.name||'').trim(),category=String(payload?.category||'').trim(),description=String(payload?.description||'').trim();
+  const yieldAmount=Number(payload?.yieldAmount),yieldUnit=String(payload?.yieldUnit||'').trim();
+  const yieldMeasureAmount=Number(payload?.yieldMeasure?.amount),yieldMeasureUnit=String(payload?.yieldMeasure?.unit||'').trim();
+  const referenceLabel=String(payload?.reference?.label||'').trim(),referenceAmount=Number(payload?.reference?.amount),referenceUnit=String(payload?.reference?.unit||'').trim();
+  const prepTime=String(payload?.prepTime||'').trim(),totalTime=String(payload?.totalTime||'').trim(),serviceLabel=String(payload?.heatLabel||'Forno').trim(),serviceValue=String(payload?.oven||'').trim(),notes=String(payload?.notes||'').trim();
+  const rawIngredients=Array.isArray(payload?.ingredients)?payload.ingredients:[],rawSteps=Array.isArray(payload?.steps)?payload.steps:[];
+  const ingredients=rawIngredients.map(item=>({name:String(item?.name||'').trim(),amount:Number(item?.amount),unit:String(item?.unit||'').trim(),...(String(item?.group||'').trim()?{group:String(item.group).trim()}: {})}));
+  const steps=rawSteps.map(step=>String(step||'').trim()).filter(Boolean);
+  if(name.length<2||name.length>120||!RECIPE_CATEGORIES.has(category))return{ok:false,error:'Informe o nome e a categoria da receita.'};
+  if(description.length>500||!Number.isFinite(yieldAmount)||yieldAmount<=0||!yieldUnit||yieldUnit.length>40)return{ok:false,error:'Revise a descrição e o rendimento em unidades.'};
+  if(!Number.isFinite(yieldMeasureAmount)||yieldMeasureAmount<=0||!['g','ml'].includes(yieldMeasureUnit))return{ok:false,error:'Informe o peso ou volume aproximado da receita.'};
+  if(!referenceLabel||referenceLabel.length>80||!Number.isFinite(referenceAmount)||referenceAmount<=0||!['g','ml'].includes(referenceUnit))return{ok:false,error:'Informe o ingrediente usado como referência.'};
+  if(!prepTime||prepTime.length>40||!totalTime||totalTime.length>40||!serviceLabel||serviceLabel.length>40||!serviceValue||serviceValue.length>40)return{ok:false,error:'Revise os tempos e a informação de forno ou serviço.'};
+  if(!ingredients.length||ingredients.length>80||ingredients.some(item=>item.name.length<1||item.name.length>120||!Number.isFinite(item.amount)||item.amount<=0||!RECIPE_UNITS.has(item.unit)||(item.group&&item.group.length>80)))return{ok:false,error:'Revise os ingredientes e suas quantidades.'};
+  if(!steps.length||steps.length>40||steps.some(step=>step.length>500)||notes.length>1500)return{ok:false,error:'Revise o modo de preparo e as observações.'};
+  return{ok:true,recipe:{name,category,description,yieldAmount,yieldUnit,yieldMeasureAmount,yieldMeasureUnit,referenceLabel,referenceAmount,referenceUnit,prepTime,totalTime,serviceLabel,serviceValue,ingredients,steps,notes}};
+}
 function localDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
 function requestIp(req){
   let value=String(req.headers['x-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();
@@ -287,6 +332,32 @@ async function ensureSchema(){
     resolved_at timestamptz,
     created_at timestamptz NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_recipes (
+    id text PRIMARY KEY,
+    name text NOT NULL,
+    category text NOT NULL,
+    description text NOT NULL DEFAULT '',
+    yield_amount numeric NOT NULL,
+    yield_unit text NOT NULL,
+    yield_measure_amount numeric NOT NULL,
+    yield_measure_unit text NOT NULL,
+    reference_label text NOT NULL,
+    reference_amount numeric NOT NULL,
+    reference_unit text NOT NULL,
+    prep_time text NOT NULL,
+    total_time text NOT NULL,
+    service_label text NOT NULL DEFAULT 'Forno',
+    service_value text NOT NULL,
+    ingredients jsonb NOT NULL DEFAULT '[]'::jsonb,
+    steps jsonb NOT NULL DEFAULT '[]'::jsonb,
+    notes text NOT NULL DEFAULT '',
+    sort_order integer NOT NULL DEFAULT 0,
+    active boolean NOT NULL DEFAULT true,
+    created_by uuid REFERENCES leli_users(id) ON DELETE SET NULL,
+    updated_by uuid REFERENCES leli_users(id) ON DELETE SET NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS activation_code text`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS password_reset_requested_at timestamptz`;
   await sql`ALTER TABLE leli_punches ADD COLUMN IF NOT EXISTS access_mode text NOT NULL DEFAULT 'free'`;
@@ -314,6 +385,42 @@ async function ensureSchema(){
   await sql`CREATE INDEX IF NOT EXISTS leli_checklist_message_reads_user_idx ON leli_checklist_message_reads(user_id,read_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_missing_reports_open_idx ON leli_missing_reports(status,unit,created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_schedule_versions_user_date_idx ON leli_schedule_versions(user_id,effective_from)`;
+  await sql`CREATE INDEX IF NOT EXISTS leli_recipes_active_category_idx ON leli_recipes(active,category,sort_order,name)`;
+  const recipeSeedState=await sql`SELECT count(*)::int AS count FROM leli_recipes`;
+  if(recipeSeedState[0].count===0){
+    const recipeSeeds=defaultRecipes.map((recipe,sortOrder)=>({
+      id:recipe.id,
+      name:recipe.name,
+      category:recipe.category,
+      description:recipe.description||'',
+      yield_amount:Number(recipe.yieldAmount),
+      yield_unit:recipe.yieldUnit,
+      yield_measure_amount:Number(recipe.yieldMeasure?.amount??recipe.ingredients.reduce((total,item)=>item.unit==='un.'?total:total+Number(item.amount||0),0)),
+      yield_measure_unit:recipe.yieldMeasure?.unit||'g',
+      reference_label:recipe.reference.label,
+      reference_amount:Number(recipe.reference.amount),
+      reference_unit:recipe.reference.unit,
+      prep_time:recipe.prepTime,
+      total_time:recipe.totalTime,
+      service_label:recipe.heatLabel||'Forno',
+      service_value:recipe.oven,
+      ingredients:recipe.ingredients,
+      steps:recipe.steps,
+      notes:recipe.notes||'',
+      sort_order:sortOrder
+    }));
+    await sql`WITH seed_rows AS (
+        SELECT * FROM jsonb_to_recordset(${JSON.stringify(recipeSeeds)}::jsonb) AS x(
+          id text,name text,category text,description text,yield_amount numeric,yield_unit text,
+          yield_measure_amount numeric,yield_measure_unit text,reference_label text,reference_amount numeric,
+          reference_unit text,prep_time text,total_time text,service_label text,service_value text,
+          ingredients jsonb,steps jsonb,notes text,sort_order integer
+        )
+      )
+      INSERT INTO leli_recipes(id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,ingredients,steps,notes,sort_order)
+      SELECT id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,ingredients,steps,notes,sort_order FROM seed_rows
+      ON CONFLICT(id) DO NOTHING`;
+  }
   await sql`INSERT INTO leli_schedule_versions(user_id,effective_from,schedule)
     SELECT s.user_id,
       min((s.updated_at AT TIME ZONE ${TZ})::date),
@@ -625,6 +732,44 @@ export default async function handler(req,res){
       ]);
       return json(res,200,{ok:true,keptAdmin:{id:user.id,name:user.name,email:user.email},message:'Sistema zerado. Somente o seu administrador foi mantido.'});
     }
+    if(req.method==='GET'&&action==='admin-recipes'){
+      const rows=await sql`SELECT id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,
+          reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,
+          ingredients,steps,notes,updated_at
+        FROM leli_recipes WHERE active=true ORDER BY sort_order,name`;
+      return json(res,200,{recipes:rows.map(recipeView)});
+    }
+    if(req.method==='POST'&&action==='admin-save-recipe'){
+      const b=body(req),parsed=normalizeRecipe(b.recipe||b);
+      if(!parsed.ok)return json(res,400,{error:parsed.error});
+      const r=parsed.recipe,requestedId=String(b.id||b.recipe?.id||'').trim();
+      let rows;
+      if(requestedId){
+        if(!/^[a-z0-9-]{2,100}$/i.test(requestedId))return json(res,400,{error:'Receita inválida.'});
+        rows=await sql`UPDATE leli_recipes SET name=${r.name},category=${r.category},description=${r.description},yield_amount=${r.yieldAmount},yield_unit=${r.yieldUnit},
+            yield_measure_amount=${r.yieldMeasureAmount},yield_measure_unit=${r.yieldMeasureUnit},reference_label=${r.referenceLabel},reference_amount=${r.referenceAmount},reference_unit=${r.referenceUnit},
+            prep_time=${r.prepTime},total_time=${r.totalTime},service_label=${r.serviceLabel},service_value=${r.serviceValue},ingredients=${JSON.stringify(r.ingredients)}::jsonb,
+            steps=${JSON.stringify(r.steps)}::jsonb,notes=${r.notes},active=true,updated_by=${user.id},updated_at=now()
+          WHERE id=${requestedId} RETURNING id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,ingredients,steps,notes,updated_at`;
+        if(!rows[0])return json(res,404,{error:'Receita não encontrada.'});
+      }else{
+        const id=recipeId(r.name);
+        rows=await sql`INSERT INTO leli_recipes(id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,ingredients,steps,notes,sort_order,created_by,updated_by)
+          VALUES(${id},${r.name},${r.category},${r.description},${r.yieldAmount},${r.yieldUnit},${r.yieldMeasureAmount},${r.yieldMeasureUnit},${r.referenceLabel},${r.referenceAmount},${r.referenceUnit},${r.prepTime},${r.totalTime},${r.serviceLabel},${r.serviceValue},${JSON.stringify(r.ingredients)}::jsonb,${JSON.stringify(r.steps)}::jsonb,${r.notes},COALESCE((SELECT max(sort_order)+1 FROM leli_recipes),0),${user.id},${user.id})
+          RETURNING id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,reference_label,reference_amount,reference_unit,prep_time,total_time,service_label,service_value,ingredients,steps,notes,updated_at`;
+      }
+      await audit(user.id,requestedId?'update_recipe':'create_recipe','recipe',rows[0].id,{name:r.name,category:r.category});
+      return json(res,200,{ok:true,recipe:recipeView(rows[0])});
+    }
+    if(req.method==='POST'&&action==='admin-delete-recipe'){
+      const id=String(body(req).id||'').trim();
+      if(!/^[a-z0-9-]{2,100}$/i.test(id))return json(res,400,{error:'Receita inválida.'});
+      const rows=await sql`UPDATE leli_recipes SET active=false,updated_by=${user.id},updated_at=now() WHERE id=${id} AND active=true RETURNING id,name`;
+      if(!rows[0])return json(res,404,{error:'Receita não encontrada.'});
+      await audit(user.id,'delete_recipe','recipe',id,{name:rows[0].name});
+      return json(res,200,{ok:true});
+    }
+
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
       const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
