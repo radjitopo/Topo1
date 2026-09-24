@@ -199,6 +199,10 @@
       "dest": "/sitemap.js"
     },
     {
+      "src": "/acoes-nz/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
