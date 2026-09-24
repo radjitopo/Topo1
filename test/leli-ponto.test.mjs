@@ -195,6 +195,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
   assert.match(adminHtml, /id="checklistFormAdmin"/);
   assert.match(adminHtml, /id="missingOptionsAdmin"/);
+  assert.match(adminHtml, /\.field:has\(>#checklistUnit\)\{display:flex;align-items:center/);
   assert.match(adminHtml, /id="missingReports"/);
   assert.match(adminHtml, /id="closingMessages"/);
   assert.match(adminHtml, /id="checklistHistory"/);
@@ -209,7 +210,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=15/);
   assert.match(adminHtml, /admin-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v28/);
+  assert.match(sw, /leli-ponto-v29/);
   assert.match(sw, /app-real\.js\?v=15/);
   assert.match(sw, /admin-real\.js\?v=18/);
 });
