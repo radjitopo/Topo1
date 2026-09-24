@@ -40,6 +40,29 @@ test('administrators cannot use the employee app or employee-only API actions', 
   assert.match(api, /Esta área é exclusiva para colaboradores/);
 });
 
+test('employees can browse point history month by month', async () => {
+  const [api, html, employee, sw] = await Promise.all([
+    source('leli-api.js'),
+    source('pao-da-leli-ponto/index.html'),
+    source('pao-da-leli-ponto/app-real.js'),
+    source('pao-da-leli-ponto/sw.js'),
+  ]);
+
+  assert.match(html, /id="previousMonth"/);
+  assert.match(html, /id="nextMonth"/);
+  assert.match(html, /aria-label="Mês anterior"/);
+  assert.match(html, /aria-label="Próximo mês"/);
+  assert.match(employee, /api\('history','GET',\{month\}\)/);
+  assert.match(employee, /currentHistoryMonth=shiftMonth\(currentHistoryMonth,-1\)/);
+  assert.match(employee, /if\(next>currentMonth\(\)\)return/);
+  assert.match(api, /action==='history'/);
+  assert.match(api, /getMonthBounds\(month\)/);
+  assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
+  assert.match(html, /app-real\.js\?v=17/);
+  assert.match(sw, /leli-ponto-v31/);
+  assert.match(sw, /app-real\.js\?v=17/);
+});
+
 test('leaving the admin area ends the session before opening the employee login', async () => {
   const [html, admin, sw] = await Promise.all([
     source('pao-da-leli-ponto/admin.html'),
@@ -207,10 +230,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=16/);
+  assert.match(employeeHtml, /app-real\.js\?v=17/);
   assert.match(adminHtml, /admin-real\.js\?v=18/);
-  assert.match(sw, /leli-ponto-v30/);
-  assert.match(sw, /app-real\.js\?v=16/);
+  assert.match(sw, /leli-ponto-v31/);
+  assert.match(sw, /app-real\.js\?v=17/);
   assert.match(sw, /admin-real\.js\?v=18/);
 });
 

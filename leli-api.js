@@ -394,9 +394,16 @@ export default async function handler(req,res){
       return json(res,200,{date,state:stateFrom(punches),punches,corrections:pending,accessPolicy:accessPolicyView(policy)});
     }
     if(req.method==='GET'&&action==='history'){
-      const rows=await sql`SELECT work_date::text AS work_date,kind,occurred_at FROM leli_punches WHERE user_id=${user.id} ORDER BY work_date DESC,occurred_at ASC LIMIT 240`;
-      const corr=await sql`SELECT work_date::text AS work_date,kind,status,requested_at,decided_at FROM leli_corrections WHERE user_id=${user.id} ORDER BY created_at DESC LIMIT 120`;
-      return json(res,200,{punches:rows,corrections:corr});
+      const month=String(req.query?.month||localDate().slice(0,7)).trim();let bounds;
+      try{bounds=getMonthBounds(month)}catch{return json(res,400,{error:'Escolha um mês válido.'})}
+      if(month>localDate().slice(0,7))return json(res,400,{error:'Escolha o mês atual ou um mês anterior.'});
+      const rows=await sql`SELECT work_date::text AS work_date,kind,occurred_at FROM leli_punches
+        WHERE user_id=${user.id} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
+        ORDER BY work_date DESC,occurred_at ASC`;
+      const corr=await sql`SELECT work_date::text AS work_date,kind,status,requested_at,decided_at FROM leli_corrections
+        WHERE user_id=${user.id} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
+        ORDER BY created_at DESC`;
+      return json(res,200,{month,punches:rows,corrections:corr});
     }
     if(req.method==='GET'&&action==='checklist'){
       const items=await sql`SELECT id,question,sort_order FROM leli_checklist_items WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;

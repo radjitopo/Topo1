@@ -13,12 +13,14 @@ function initPasswordToggles(){
 }
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
-let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto';
+let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto',currentHistoryMonth=currentMonth();
 
 async function api(action,method='GET',data){
+  const params=new URLSearchParams({action});
   const opt={method,headers:{'Content-Type':'application/json'}};
-  if(data!==undefined)opt.body=JSON.stringify(data);
-  const r=await fetch(API+'?action='+encodeURIComponent(action),opt);
+  if(method==='GET'&&data){for(const [key,value] of Object.entries(data))params.set(key,String(value))}
+  else if(data!==undefined)opt.body=JSON.stringify(data);
+  const r=await fetch(API+'?'+params.toString(),opt);
   const j=await r.json().catch(()=>({error:'Resposta inválida do servidor.'}));
   if(!r.ok){const e=new Error(j.error||'Erro no sistema.');e.status=r.status;e.data=j;throw e}
   return j;
@@ -37,6 +39,9 @@ function time(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao
 function dateLabel(v){if(!v)return'';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}
 function fullDateLabel(v){if(!v)return'—';return new Date(v+'T12:00:00').toLocaleDateString('pt-BR')}
 function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(v)):'—'}
+function currentMonth(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).format(new Date())}
+function monthLabel(value){const label=new Date(value+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return label.charAt(0).toUpperCase()+label.slice(1)}
+function shiftMonth(value,amount){const [year,month]=value.split('-').map(Number),date=new Date(Date.UTC(year,month-1+amount,1));return date.getUTCFullYear()+'-'+String(date.getUTCMonth()+1).padStart(2,'0')}
 function renderAccessPolicy(policy){
   const restricted=policy?.mode==='restricted',notice=$('#accessNotice');
   notice.classList.toggle('restricted',restricted);notice.classList.toggle('free',!restricted);
@@ -130,17 +135,20 @@ function renderReview(){
   $('#reviewGrid').innerHTML=[['Entrada','in'],['Saída intervalo','breakOut'],['Volta intervalo','breakIn'],['Saída','out']].map(([l,k])=>'<div class="mini"><span>'+l+'</span><b>'+effective(k)+'</b></div>').join('');
 }
 async function loadHistory(){
+  const month=currentHistoryMonth,previous=$('#previousMonth'),next=$('#nextMonth');
+  $('#monthLabel').textContent=monthLabel(month);$('#historyTable').innerHTML='<div class="empty">Carregando...</div>';previous.disabled=true;next.disabled=true;
   try{
-    const h=await api('history');
-    $('#monthLabel').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',month:'long',year:'numeric'}).format(new Date());
+    const h=await api('history','GET',{month});
+    if(month!==currentHistoryMonth)return;
     const map={};for(const p of h.punches){map[p.work_date]??={};map[p.work_date][p.kind]=p.occurred_at}
     for(const c of h.corrections){if(c.status==='approved'){map[c.work_date]??={};map[c.work_date][c.kind]=c.requested_at}}
     const dates=Object.keys(map).sort().reverse();
     let html='<div class="hrow head"><div>Data</div><div>Entrada</div><div>Intervalo</div><div>Saída</div></div>';
-    if(!dates.length)html+='<div class="empty">Nenhum registro ainda.</div>';
+    if(!dates.length)html+='<div class="empty">Nenhum registro neste mês.</div>';
     for(const d of dates){const r=map[d],bo=time(r.breakOut),bi=time(r.breakIn);html+='<div class="hrow"><div><b>'+dateLabel(d)+'</b><br>'+statusBadge(d,h.corrections)+'</div><div>'+time(r.in)+'</div><div>'+(bo==='—'?'—':bo+(bi!=='—'?'–'+bi:''))+'</div><div>'+time(r.out)+'</div></div>'}
     $('#historyTable').innerHTML=html;
   }catch(e){if(e.status===401)show('login');else alert(e.message)}
+  finally{if(month===currentHistoryMonth){previous.disabled=false;next.disabled=currentHistoryMonth>=currentMonth()}}
 }
 function renderAvatar(){
   const a=$('#avatar');if(!a)return;
@@ -204,6 +212,8 @@ $('#reviewOk').addEventListener('click',()=>{
   lastConfirmReturn='ponto';
   showConfirmation('Jornada encerrada.','Tudo certo por hoje.',[['Horário',effective('out')],['Data',new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
 });
+$('#previousMonth').addEventListener('click',()=>{currentHistoryMonth=shiftMonth(currentHistoryMonth,-1);loadHistory()});
+$('#nextMonth').addEventListener('click',()=>{const next=shiftMonth(currentHistoryMonth,1);if(next>currentMonth())return;currentHistoryMonth=next;loadHistory()});
 
 function fillCorrectionForm(){
   const map={in:['origIn','corrIn'],breakOut:['origBreakOut','corrBreakOut'],breakIn:['origBreakIn','corrBreakIn'],out:['origOut','corrOut']};
