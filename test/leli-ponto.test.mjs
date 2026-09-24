@@ -19,6 +19,8 @@ test('the employee app only references controls that exist in its page', async (
 
   assert.deepEqual([...new Set(selectors.filter((id) => !ids.has(id)))], []);
   assert.doesNotMatch(js, /corrType|corrTime/);
+  assert.match(html, /href="\.\/admin\.html">Entrar como administrador<\/a>/);
+  assert.match(html, /\.admin-login-link\{/);
 });
 
 test('administrators cannot use the employee app or employee-only API actions', async () => {
@@ -203,10 +205,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=12/);
+  assert.match(employeeHtml, /app-real\.js\?v=14/);
   assert.match(adminHtml, /admin-real\.js\?v=14/);
-  assert.match(sw, /leli-ponto-v21/);
-  assert.match(sw, /app-real\.js\?v=12/);
+  assert.match(sw, /leli-ponto-v24/);
+  assert.match(sw, /app-real\.js\?v=14/);
   assert.match(sw, /admin-real\.js\?v=14/);
 });
 
