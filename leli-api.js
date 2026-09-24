@@ -58,9 +58,25 @@ function distanceMeters(lat1,lon1,lat2,lon2){
   return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 async function accessPolicy(){
-  const rows=await sql`SELECT p.mode,p.latitude,p.longitude,p.radius_m,p.network_fingerprint,p.network_name,p.updated_at,u.name AS updated_by_name
+  const rows=await sql`SELECT p.mode,p.latitude,p.longitude,p.radius_m,p.network_fingerprint,p.network_name,p.active_profile_id,p.updated_at,u.name AS updated_by_name
     FROM leli_access_policy p LEFT JOIN leli_users u ON u.id=p.updated_by WHERE p.id=1 LIMIT 1`;
   return rows[0]||{mode:'free',radius_m:ACCESS_RADIUS_METERS};
+}
+async function accessProfiles(){
+  return sql`SELECT id,network_name,latitude,longitude,radius_m,network_fingerprint,created_at,updated_at
+    FROM leli_access_profiles ORDER BY updated_at DESC,created_at DESC`;
+}
+function accessProfileView(profile){
+  return{
+    id:profile.id,
+    networkName:profile.network_name,
+    latitude:Number(profile.latitude),
+    longitude:Number(profile.longitude),
+    radiusMeters:Number(profile.radius_m)||ACCESS_RADIUS_METERS,
+    networkCode:String(profile.network_fingerprint).slice(0,8).toUpperCase(),
+    createdAt:profile.created_at,
+    updatedAt:profile.updated_at
+  };
 }
 function accessPolicyView(policy,admin=false){
   const view={mode:policy?.mode==='restricted'?'restricted':'free',radiusMeters:Number(policy?.radius_m)||ACCESS_RADIUS_METERS,updatedAt:policy?.updated_at||null};
@@ -72,6 +88,7 @@ function accessPolicyView(policy,admin=false){
     view.longitude=hasLocation?Number(policy.longitude):null;
     view.networkCode=policy?.network_fingerprint?String(policy.network_fingerprint).slice(0,8).toUpperCase():null;
     view.networkName=policy?.network_name||null;
+    view.activeProfileId=policy?.active_profile_id||null;
   }
   return view;
 }
@@ -136,7 +153,20 @@ async function ensureSchema(){
     updated_by uuid REFERENCES leli_users(id),
     updated_at timestamptz NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS leli_access_profiles (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    network_name text NOT NULL,
+    latitude double precision NOT NULL,
+    longitude double precision NOT NULL,
+    radius_m integer NOT NULL DEFAULT 20 CHECK (radius_m BETWEEN 10 AND 500),
+    network_fingerprint text UNIQUE NOT NULL,
+    created_by uuid REFERENCES leli_users(id),
+    updated_by uuid REFERENCES leli_users(id),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`;
   await sql`ALTER TABLE leli_access_policy ADD COLUMN IF NOT EXISTS network_name text`;
+  await sql`ALTER TABLE leli_access_policy ADD COLUMN IF NOT EXISTS active_profile_id uuid REFERENCES leli_access_profiles(id) ON DELETE SET NULL`;
   await sql`ALTER TABLE leli_access_policy ALTER COLUMN radius_m SET DEFAULT 20`;
   await sql`ALTER TABLE leli_access_policy DROP CONSTRAINT IF EXISTS leli_access_policy_radius_m_check`;
   await sql`DO $$ BEGIN
@@ -148,6 +178,15 @@ async function ensureSchema(){
   await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',20) ON CONFLICT(id) DO NOTHING`;
   await sql`UPDATE leli_access_policy SET radius_m=20 WHERE radius_m<>20`;
   await sql`UPDATE leli_access_policy SET network_name='Wi-Fi Pão da Leli' WHERE network_fingerprint IS NOT NULL AND (network_name IS NULL OR btrim(network_name)='')`;
+  await sql`INSERT INTO leli_access_profiles(network_name,latitude,longitude,radius_m,network_fingerprint,created_by,updated_by,created_at,updated_at)
+    SELECT network_name,latitude,longitude,radius_m,network_fingerprint,updated_by,updated_by,updated_at,updated_at
+    FROM leli_access_policy p
+    WHERE p.id=1 AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL AND p.network_fingerprint IS NOT NULL
+      AND NOT EXISTS (SELECT 1 FROM leli_access_profiles saved WHERE saved.network_fingerprint=p.network_fingerprint)
+    ON CONFLICT(network_fingerprint) DO NOTHING`;
+  await sql`UPDATE leli_access_policy p SET active_profile_id=saved.id
+    FROM leli_access_profiles saved
+    WHERE p.id=1 AND p.active_profile_id IS NULL AND p.network_fingerprint=saved.network_fingerprint`;
   await sql`CREATE TABLE IF NOT EXISTS leli_corrections (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES leli_users(id),
@@ -555,8 +594,8 @@ export default async function handler(req,res){
       const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
-      const policy=await accessPolicy();
-      return json(res,200,{date,users,punches,corrections,accessPolicy:accessPolicyView(policy,true)});
+      const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
+      return json(res,200,{date,users,punches,corrections,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});
     }
     if(req.method==='POST'&&action==='admin-access-policy'){
       const b=body(req),mode=String(b.mode||'');
@@ -564,17 +603,29 @@ export default async function handler(req,res){
       if(mode==='free'){
         await sql`UPDATE leli_access_policy SET mode='free',updated_by=${user.id},updated_at=now() WHERE id=1`;
         await audit(user.id,'change_access_policy','access_policy','1',{mode:'free'});
+      }else if(b.profileId){
+        const profileId=String(b.profileId||'');
+        if(!/^[0-9a-f-]{36}$/i.test(profileId))return json(res,400,{error:'Configuração salva inválida.'});
+        const profiles=await sql`SELECT id,network_name,latitude,longitude,radius_m,network_fingerprint FROM leli_access_profiles WHERE id=${profileId} LIMIT 1`;
+        const profile=profiles[0];
+        if(!profile)return json(res,404,{error:'Esta configuração salva não foi encontrada.'});
+        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${profile.latitude},longitude=${profile.longitude},radius_m=${profile.radius_m},network_fingerprint=${profile.network_fingerprint},network_name=${profile.network_name},active_profile_id=${profile.id},updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'activate_access_profile','access_profile',profile.id,{networkName:profile.network_name,radiusMeters:profile.radius_m});
       }else{
         const location=parseLocation(b),networkName=String(b.networkName||'').trim().slice(0,80);
         if(!location.ok)return json(res,400,{error:location.error});
         if(!networkName)return json(res,400,{error:'Digite um nome para identificar esta rede.'});
         const fingerprint=networkFingerprint(req);
         if(!fingerprint)return json(res,400,{error:'Não foi possível identificar esta rede. Conecte-se ao Wi-Fi do Pão da Leli e tente novamente.'});
-        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${location.latitude},longitude=${location.longitude},radius_m=${ACCESS_RADIUS_METERS},network_fingerprint=${fingerprint},network_name=${networkName},updated_by=${user.id},updated_at=now() WHERE id=1`;
-        await audit(user.id,'change_access_policy','access_policy','1',{mode:'restricted',radiusMeters:ACCESS_RADIUS_METERS,networkName,accuracyMeters:location.accuracy});
+        const profiles=await sql`INSERT INTO leli_access_profiles(network_name,latitude,longitude,radius_m,network_fingerprint,created_by,updated_by)
+          VALUES(${networkName},${location.latitude},${location.longitude},${ACCESS_RADIUS_METERS},${fingerprint},${user.id},${user.id})
+          ON CONFLICT(network_fingerprint) DO UPDATE SET network_name=excluded.network_name,latitude=excluded.latitude,longitude=excluded.longitude,radius_m=excluded.radius_m,updated_by=excluded.updated_by,updated_at=now()
+          RETURNING id`;
+        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${location.latitude},longitude=${location.longitude},radius_m=${ACCESS_RADIUS_METERS},network_fingerprint=${fingerprint},network_name=${networkName},active_profile_id=${profiles[0].id},updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'save_access_profile','access_profile',profiles[0].id,{networkName,radiusMeters:ACCESS_RADIUS_METERS,accuracyMeters:location.accuracy});
       }
-      const policy=await accessPolicy();
-      return json(res,200,{ok:true,accessPolicy:accessPolicyView(policy,true)});
+      const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
+      return json(res,200,{ok:true,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});
     }
     if(req.method==='GET'&&action==='admin-checklist'){
       const items=await sql`SELECT id,unit,question,sort_order,active,updated_at FROM leli_checklist_items WHERE active=true ORDER BY unit,sort_order,id`;

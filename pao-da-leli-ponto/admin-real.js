@@ -74,8 +74,25 @@ function renderAccessPolicy(policy){
     $('#accessPolicyNetwork').textContent=policy.networkName||'Wi-Fi Pão da Leli';
     map.href='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
   }
-  $('#restrictPunches').textContent=restricted?'Atualizar local + rede':'Ativar local + rede';
+  $('#restrictPunches').textContent=policy?.configured?'Atualizar local + rede atuais':'Salvar local + rede atuais';
   $('#restrictPunches').disabled=false;$('#freePunches').disabled=!restricted;
+}
+function renderAccessProfiles(profiles,policy){
+  const list=$('#accessProfileList'),rows=Array.isArray(profiles)?profiles:[],restricted=policy?.mode==='restricted';
+  if(!rows.length){list.innerHTML='<div class="empty">Nenhum local e rede foram salvos ainda.</div>';return}
+  list.innerHTML=rows.map(profile=>{
+    const latitude=Number(profile.latitude),longitude=Number(profile.longitude),coordinates=Number.isFinite(latitude)&&Number.isFinite(longitude)?latitude.toFixed(5)+', '+longitude.toFixed(5):'Local não informado';
+    const active=restricted&&String(policy?.activeProfileId||'')===String(profile.id),mapUrl='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
+    return '<article class="access-profile"><div class="access-profile-main"><div class="access-profile-title"><strong>'+esc(profile.networkName||'Rede salva')+'</strong>'+(active?'<span class="badge approved">em uso</span>':'<span class="badge">salva</span>')+'</div><div class="access-profile-info">Local: '+esc(coordinates)+' · Área: até '+(Number(profile.radiusMeters)||20)+' metros<br><a href="'+mapUrl+'" target="_blank" rel="noopener">Abrir local no mapa</a></div></div><button class="btn small '+(active?'secondary':'')+'" type="button" data-activate-access-profile="'+esc(profile.id)+'" '+(active?'disabled':'')+'>'+(active?'Configuração ativa':'Ativar esta configuração')+'</button></article>';
+  }).join('');
+  $$('[data-activate-access-profile]').forEach(button=>button.addEventListener('click',()=>activateAccessProfile(button.dataset.activateAccessProfile,button)));
+}
+async function activateAccessProfile(profileId,button){
+  const profile=(overview?.accessProfiles||[]).find(item=>String(item.id)===String(profileId));
+  if(!profile||!confirm('Ativar o local e a rede “'+profile.networkName+'” para registrar o ponto?'))return;
+  button.disabled=true;button.textContent='ATIVANDO...';
+  try{await api('admin-access-policy','POST',{mode:'restricted',profileId});await render();alert('Configuração “'+profile.networkName+'” ativada.');}
+  catch(err){alert(err.message);button.disabled=false;button.textContent='Ativar esta configuração'}
 }
 function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
 function editorMissingItems(){return $$('#missingOptionsAdmin input').map(input=>input.value)}
@@ -286,6 +303,7 @@ async function render(){
     $('[data-tab="corrections"]').setAttribute('aria-label',pendingCorrectionRequests?'Correções, '+pendingCorrectionRequests+' '+(pendingCorrectionRequests===1?'pedido pendente':'pedidos pendentes'):'Correções');
     $('#funcionarios').textContent=users.filter(u=>u.role==='employee'&&u.active).length;
     renderAccessPolicy(overview.accessPolicy);
+    renderAccessProfiles(overview.accessProfiles,overview.accessPolicy);
 
     const empUsers=users.filter(u=>u.role==='employee');
     populateReportEmployees(empUsers);
@@ -313,7 +331,7 @@ window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'
 window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 
 $('#restrictPunches').addEventListener('click',async()=>{
-  if(!confirm('Faça esta ativação dentro do Pão da Leli e conectado ao Wi-Fi da padaria. Continuar?'))return;
+  if(!confirm('Para salvar, esteja dentro do Pão da Leli e conectado ao Wi-Fi da padaria. O local e a rede ficarão disponíveis para ativar depois. Continuar?'))return;
   const networkName=prompt('Qual nome você quer mostrar para esta rede?',overview?.accessPolicy?.networkName||'Wi-Fi Pão da Leli');
   if(networkName===null)return;
   if(!networkName.trim()){alert('Digite um nome para identificar esta rede.');return}
@@ -321,7 +339,7 @@ $('#restrictPunches').addEventListener('click',async()=>{
   try{
     const location=await captureAccessLocation();
     await api('admin-access-policy','POST',{mode:'restricted',location,networkName:networkName.trim()});
-    await render();alert('Restrição ativada. Agora o ponto exige o local e a rede da padaria.');
+    await render();alert('Local e rede salvos e ativados. Depois você poderá reativar esta configuração mesmo estando longe.');
   }catch(err){alert(err.message);renderAccessPolicy(overview?.accessPolicy)}
 });
 $('#freePunches').addEventListener('click',async()=>{
