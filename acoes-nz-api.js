@@ -3,7 +3,12 @@ const STOCKS = [
   { ticker: "MEL", name: "Meridian" },
   { ticker: "IFT", name: "Infratil" },
   { ticker: "AIA", name: "Auckland Airport" },
-  { ticker: "MCY", name: "Mercury" }
+  { ticker: "MCY", name: "Mercury" },
+  { ticker: "CEN", name: "Contact Energy" },
+  { ticker: "EBO", name: "EBOS" },
+  { ticker: "SPK", name: "Spark" },
+  { ticker: "MFT", name: "Mainfreight" },
+  { ticker: "SUM", name: "Summerset" }
 ];
 
 function decodeHtml(text) {
