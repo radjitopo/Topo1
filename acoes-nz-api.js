@@ -64,6 +64,72 @@ const BOVESPA_STOCKS = [
   { ticker: 'ITSA4', symbol: 'ITSA4.SA', name: 'Itaúsa' },
 ];
 
+const FRANKFURT_STOCKS = [
+  { ticker: 'SAP', symbol: 'SAP.DE', name: 'SAP' },
+  { ticker: 'SIE', symbol: 'SIE.DE', name: 'Siemens' },
+  { ticker: 'ALV', symbol: 'ALV.DE', name: 'Allianz' },
+  { ticker: 'MBG', symbol: 'MBG.DE', name: 'Mercedes-Benz' },
+  { ticker: 'DBK', symbol: 'DBK.DE', name: 'Deutsche Bank' },
+  { ticker: 'AIR', symbol: 'AIR.DE', name: 'Airbus' },
+  { ticker: 'ENR', symbol: 'ENR.DE', name: 'Siemens Energy' },
+  { ticker: 'RHM', symbol: 'RHM.DE', name: 'Rheinmetall' },
+  { ticker: 'BAS', symbol: 'BAS.DE', name: 'BASF' },
+  { ticker: 'IFX', symbol: 'IFX.DE', name: 'Infineon' },
+  { ticker: 'CBK', symbol: 'CBK.DE', name: 'Commerzbank' },
+  { ticker: 'DTE', symbol: 'DTE.DE', name: 'Deutsche Telekom' },
+  { ticker: 'MUV2', symbol: 'MUV2.DE', name: 'Munich Re' },
+  { ticker: 'BMW', symbol: 'BMW.DE', name: 'BMW' },
+  { ticker: 'BAYN', symbol: 'BAYN.DE', name: 'Bayer' },
+  { ticker: 'EOAN', symbol: 'EOAN.DE', name: 'E.ON' },
+  { ticker: 'FRE', symbol: 'FRE.DE', name: 'Fresenius' },
+  { ticker: 'VOW3', symbol: 'VOW3.DE', name: 'Volkswagen' },
+  { ticker: 'VNA', symbol: 'VNA.DE', name: 'Vonovia' },
+  { ticker: 'DB1', symbol: 'DB1.DE', name: 'Deutsche Börse' },
+  { ticker: 'DHL', symbol: 'DHL.DE', name: 'DHL Group' },
+  { ticker: 'SHL', symbol: 'SHL.DE', name: 'Siemens Healthineers' },
+  { ticker: 'DTG', symbol: 'DTG.DE', name: 'Daimler Truck' },
+  { ticker: 'ADS', symbol: 'ADS.DE', name: 'Adidas' },
+  { ticker: 'RWE', symbol: 'RWE.DE', name: 'RWE' },
+  { ticker: 'SY1', symbol: 'SY1.DE', name: 'Symrise' },
+  { ticker: 'HEN3', symbol: 'HEN3.DE', name: 'Henkel' },
+  { ticker: 'BEI', symbol: 'BEI.DE', name: 'Beiersdorf' },
+  { ticker: 'HEI', symbol: 'HEI.DE', name: 'Heidelberg Materials' },
+  { ticker: 'MTX', symbol: 'MTX.DE', name: 'MTU Aero Engines' },
+];
+
+const MADRID_STOCKS = [
+  { ticker: 'SAN', symbol: 'SAN.MC', name: 'Banco Santander' },
+  { ticker: 'BBVA', symbol: 'BBVA.MC', name: 'BBVA' },
+  { ticker: 'IBE', symbol: 'IBE.MC', name: 'Iberdrola' },
+  { ticker: 'ITX', symbol: 'ITX.MC', name: 'Inditex' },
+  { ticker: 'CABK', symbol: 'CABK.MC', name: 'CaixaBank' },
+  { ticker: 'SAB', symbol: 'SAB.MC', name: 'Banco Sabadell' },
+  { ticker: 'REP', symbol: 'REP.MC', name: 'Repsol' },
+  { ticker: 'TEF', symbol: 'TEF.MC', name: 'Telefónica' },
+  { ticker: 'IAG', symbol: 'IAG.MC', name: 'IAG' },
+  { ticker: 'FER', symbol: 'FER.MC', name: 'Ferrovial' },
+  { ticker: 'ACS', symbol: 'ACS.MC', name: 'ACS' },
+  { ticker: 'AENA', symbol: 'AENA.MC', name: 'Aena' },
+  { ticker: 'AMS', symbol: 'AMS.MC', name: 'Amadeus' },
+  { ticker: 'CLNX', symbol: 'CLNX.MC', name: 'Cellnex' },
+  { ticker: 'BKT', symbol: 'BKT.MC', name: 'Bankinter' },
+  { ticker: 'MAP', symbol: 'MAP.MC', name: 'Mapfre' },
+  { ticker: 'ELE', symbol: 'ELE.MC', name: 'Endesa' },
+  { ticker: 'MTS', symbol: 'MTS.MC', name: 'ArcelorMittal' },
+  { ticker: 'NTGY', symbol: 'NTGY.MC', name: 'Naturgy' },
+  { ticker: 'IDR', symbol: 'IDR.MC', name: 'Indra' },
+  { ticker: 'ANA', symbol: 'ANA.MC', name: 'Acciona' },
+  { ticker: 'RED', symbol: 'RED.MC', name: 'Redeia' },
+  { ticker: 'GRF', symbol: 'GRF.MC', name: 'Grifols' },
+  { ticker: 'UNI', symbol: 'UNI.MC', name: 'Unicaja Banco' },
+  { ticker: 'ACX', symbol: 'ACX.MC', name: 'Acerinox' },
+  { ticker: 'PUIG', symbol: 'PUIG.MC', name: 'Puig' },
+  { ticker: 'SCYR', symbol: 'SCYR.MC', name: 'Sacyr' },
+  { ticker: 'SLR', symbol: 'SLR.MC', name: 'Solaria' },
+  { ticker: 'ENG', symbol: 'ENG.MC', name: 'Enagás' },
+  { ticker: 'MRL', symbol: 'MRL.MC', name: 'Merlin Properties' },
+];
+
 const MARKETS = {
   tokyo: {
     key: 'tokyo',
@@ -79,11 +145,25 @@ const MARKETS = {
     source: 'Yahoo Finance / B3',
     stocks: BOVESPA_STOCKS,
   },
+  frankfurt: {
+    key: 'frankfurt',
+    name: 'Frankfurt Stock Exchange / Xetra',
+    currency: 'EUR',
+    source: 'Yahoo Finance / Xetra',
+    stocks: FRANKFURT_STOCKS,
+  },
+  madrid: {
+    key: 'madrid',
+    name: 'Bolsa de Madrid / BME',
+    currency: 'EUR',
+    source: 'Yahoo Finance / BME',
+    stocks: MADRID_STOCKS,
+  },
 };
 
 function marketFromRequest(req) {
   const queryMarket = Array.isArray(req.query?.market) ? req.query.market[0] : req.query?.market;
-  return queryMarket === 'bovespa' ? MARKETS.bovespa : MARKETS.tokyo;
+  return MARKETS[queryMarket] || MARKETS.tokyo;
 }
 
 function lastNumber(values) {

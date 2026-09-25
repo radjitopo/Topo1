@@ -18,8 +18,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,179,95,.08)}
 .muted{color:var(--muted)}
 .sep{color:#c8cbd0}
-.marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
-.marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:15px;font-weight:600;cursor:pointer}
+.marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
+.marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 5px}
 .marketTabs button.active{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .search{margin-top:14px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
 .search span{font-size:22px;color:#7d8289}
@@ -62,6 +62,9 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
   h1{font-size:48px}
   .row{min-height:90px}
 }
+@media (max-width:430px){
+  .marketTabs button{font-size:12px;padding:0 2px}
+}
 </style>
 </head>
 <body>
@@ -83,6 +86,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
   <div class="marketTabs" id="marketTabs" role="tablist" aria-label="Bolsa">
     <button class="active" type="button" role="tab" aria-selected="true" data-market="tokyo">Tóquio</button>
     <button type="button" role="tab" aria-selected="false" data-market="bovespa">Bovespa</button>
+    <button type="button" role="tab" aria-selected="false" data-market="frankfurt">Frankfurt</button>
+    <button type="button" role="tab" aria-selected="false" data-market="madrid">Madrid</button>
   </div>
 
   <label class="search">
@@ -175,6 +180,72 @@ const BOVESPA_STOCKS = [
   {ticker:"ITSA4",name:"Itaúsa"}
 ];
 
+const FRANKFURT_STOCKS = [
+  {ticker:"SAP",name:"SAP"},
+  {ticker:"SIE",name:"Siemens"},
+  {ticker:"ALV",name:"Allianz"},
+  {ticker:"MBG",name:"Mercedes-Benz"},
+  {ticker:"DBK",name:"Deutsche Bank"},
+  {ticker:"AIR",name:"Airbus"},
+  {ticker:"ENR",name:"Siemens Energy"},
+  {ticker:"RHM",name:"Rheinmetall"},
+  {ticker:"BAS",name:"BASF"},
+  {ticker:"IFX",name:"Infineon"},
+  {ticker:"CBK",name:"Commerzbank"},
+  {ticker:"DTE",name:"Deutsche Telekom"},
+  {ticker:"MUV2",name:"Munich Re"},
+  {ticker:"BMW",name:"BMW"},
+  {ticker:"BAYN",name:"Bayer"},
+  {ticker:"EOAN",name:"E.ON"},
+  {ticker:"FRE",name:"Fresenius"},
+  {ticker:"VOW3",name:"Volkswagen"},
+  {ticker:"VNA",name:"Vonovia"},
+  {ticker:"DB1",name:"Deutsche Börse"},
+  {ticker:"DHL",name:"DHL Group"},
+  {ticker:"SHL",name:"Siemens Healthineers"},
+  {ticker:"DTG",name:"Daimler Truck"},
+  {ticker:"ADS",name:"Adidas"},
+  {ticker:"RWE",name:"RWE"},
+  {ticker:"SY1",name:"Symrise"},
+  {ticker:"HEN3",name:"Henkel"},
+  {ticker:"BEI",name:"Beiersdorf"},
+  {ticker:"HEI",name:"Heidelberg Materials"},
+  {ticker:"MTX",name:"MTU Aero Engines"}
+];
+
+const MADRID_STOCKS = [
+  {ticker:"SAN",name:"Banco Santander"},
+  {ticker:"BBVA",name:"BBVA"},
+  {ticker:"IBE",name:"Iberdrola"},
+  {ticker:"ITX",name:"Inditex"},
+  {ticker:"CABK",name:"CaixaBank"},
+  {ticker:"SAB",name:"Banco Sabadell"},
+  {ticker:"REP",name:"Repsol"},
+  {ticker:"TEF",name:"Telefónica"},
+  {ticker:"IAG",name:"IAG"},
+  {ticker:"FER",name:"Ferrovial"},
+  {ticker:"ACS",name:"ACS"},
+  {ticker:"AENA",name:"Aena"},
+  {ticker:"AMS",name:"Amadeus"},
+  {ticker:"CLNX",name:"Cellnex"},
+  {ticker:"BKT",name:"Bankinter"},
+  {ticker:"MAP",name:"Mapfre"},
+  {ticker:"ELE",name:"Endesa"},
+  {ticker:"MTS",name:"ArcelorMittal"},
+  {ticker:"NTGY",name:"Naturgy"},
+  {ticker:"IDR",name:"Indra"},
+  {ticker:"ANA",name:"Acciona"},
+  {ticker:"RED",name:"Redeia"},
+  {ticker:"GRF",name:"Grifols"},
+  {ticker:"UNI",name:"Unicaja Banco"},
+  {ticker:"ACX",name:"Acerinox"},
+  {ticker:"PUIG",name:"Puig"},
+  {ticker:"SCYR",name:"Sacyr"},
+  {ticker:"SLR",name:"Solaria"},
+  {ticker:"ENG",name:"Enagás"},
+  {ticker:"MRL",name:"Merlin Properties"}
+];
+
 const MARKETS = {
   tokyo:{
     label:"Tóquio",
@@ -195,6 +266,26 @@ const MARKETS = {
     api:"/acoes-bovespa-api",
     basePath:"/acoes-bovespa",
     stocks:BOVESPA_STOCKS
+  },
+  frankfurt:{
+    label:"Frankfurt",
+    title:"Ações Frankfurt",
+    exchange:"XETRA",
+    description:"Bolsa de Frankfurt (Xetra)",
+    currencySymbol:"€",
+    api:"/acoes-frankfurt-api",
+    basePath:"/acoes-frankfurt",
+    stocks:FRANKFURT_STOCKS
+  },
+  madrid:{
+    label:"Madrid",
+    title:"Ações Madrid",
+    exchange:"BME",
+    description:"Bolsa de Madrid",
+    currencySymbol:"€",
+    api:"/acoes-madrid-api",
+    basePath:"/acoes-madrid",
+    stocks:MADRID_STOCKS
   }
 };
 
@@ -202,8 +293,15 @@ const SOUND_CYCLE_MS = 10000;
 const SOUNDS_PER_SECOND = 3;
 const SOUND_SPACING_MS = 1000 / SOUNDS_PER_SECOND;
 const pathParts = location.pathname.split("/").filter(Boolean);
-const initialMarket = pathParts[0] === "acoes-bovespa" ? "bovespa" : "tokyo";
-const detailTicker = ["acoes-tokyo","acoes-bovespa","acoes-nz"].includes(pathParts[0]) && pathParts[1] ? pathParts[1].toUpperCase() : null;
+const PATH_MARKETS = {
+  "acoes-nz":"tokyo",
+  "acoes-tokyo":"tokyo",
+  "acoes-bovespa":"bovespa",
+  "acoes-frankfurt":"frankfurt",
+  "acoes-madrid":"madrid"
+};
+const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
+const detailTicker = PATH_MARKETS[pathParts[0]] && pathParts[1] ? pathParts[1].toUpperCase() : null;
 const state = { market:initialMarket, quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[], soundCycleTimer:null, requestSerial:0 };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
@@ -417,7 +515,9 @@ function render(){
   });
 }
 function favoriteKey(){
-  return state.market === "tokyo" ? "nz-favs" : "bovespa-favs";
+  if(state.market === "tokyo") return "nz-favs";
+  if(state.market === "bovespa") return "bovespa-favs";
+  return state.market + "-favs";
 }
 function toggleFav(ticker){
   const key = favoriteKey();
@@ -506,7 +606,8 @@ document.querySelectorAll("[data-market]").forEach(function(btn){
 });
 
 window.addEventListener("popstate",function(){
-  const key = location.pathname.split("/").filter(Boolean)[0] === "acoes-bovespa" ? "bovespa" : "tokyo";
+  const path = location.pathname.split("/").filter(Boolean)[0];
+  const key = PATH_MARKETS[path] || "tokyo";
   switchMarket(key,false);
 });
 
@@ -534,6 +635,6 @@ document.addEventListener("pointerdown",function firstAudioGesture(event){
 });
 setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- tokyo-bovespa-30-three-per-second-live -->
+<!-- tokyo-bovespa-frankfurt-madrid-30-three-per-second-live -->
 </body>
 </html>

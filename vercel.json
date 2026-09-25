@@ -191,6 +191,14 @@
       "dest": "/acoes-nz-api.js?market=bovespa"
     },
     {
+      "src": "/acoes-frankfurt-api",
+      "dest": "/acoes-nz-api.js?market=frankfurt"
+    },
+    {
+      "src": "/acoes-madrid-api",
+      "dest": "/acoes-nz-api.js?market=madrid"
+    },
+    {
       "src": "/moderator-option-delete",
       "dest": "/moderator-option-delete.js"
     },
@@ -215,6 +223,14 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-frankfurt/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-madrid/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
@@ -224,6 +240,14 @@
     },
     {
       "src": "/acoes-bovespa/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-frankfurt/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-madrid/?",
       "dest": "/acoes-nz.html"
     },
     {
