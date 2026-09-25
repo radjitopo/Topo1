@@ -20,6 +20,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .sep{color:#c8cbd0}
 .marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
 .marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 5px}
+.marketTabs button[data-market="indices"]{grid-column:1/-1}
 .marketTabs button.active{background:#111;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.14)}
 .marketTabs button.active::before{content:"✓";margin-right:5px}
 .marketTabs button.market-open{color:#168447}
@@ -122,11 +123,12 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" aria-pressed="false" data-market="china">China</button>
     <button type="button" aria-pressed="false" data-market="mexico">México</button>
     <button type="button" aria-pressed="false" data-market="currencies">Moedas</button>
+    <button type="button" aria-pressed="false" data-market="indices">Índices</button>
   </div>
 
   <label class="search">
     <span>⌕</span>
-    <input id="search" placeholder="Buscar ações ou moedas..." autocomplete="off">
+    <input id="search" placeholder="Buscar ações, moedas ou índices..." autocomplete="off">
   </label>
   <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons dos 30 instrumentos</div>
   <section class="soundPicker" id="soundPicker" aria-label="Tipo de som">
@@ -138,6 +140,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="theremin"><span>Theremin</span><small>vibrato no ar</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Animais: subida com rugido e latido, queda com miau, neutro com bufada" data-sound-preset="animals"><span>Animais</span><small>rugido, miau e pfff</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Samba: subida com tamborim, queda com surdo, neutro com agogô" data-sound-preset="samba"><span>Samba</span><small>tamborim, surdo e agogô</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" aria-label="Estado de espírito: subida com depressão, queda com alegria, neutro sem emoção marcada" data-sound-preset="mood"><span>Estado de espírito</span><small>alegria, neutro e depressão</small></button>
     </div>
     <div class="soundVolume">
       <div class="soundVolumeHead"><label for="soundVolume">Volume dos sons</label><output id="soundVolumeValue" for="soundVolume">150%</output></div>
@@ -559,6 +562,20 @@ const CURRENCY_STOCKS = [
   {ticker:"MYR",name:"Ringgit malaio"}
 ];
 
+const INDEX_STOCKS = [
+  {ticker:"N225",name:"Nikkei 225 (Japão)"},
+  {ticker:"IBOV",name:"Ibovespa (Brasil)"},
+  {ticker:"DAX",name:"DAX (Alemanha)"},
+  {ticker:"IBEX",name:"IBEX 35 (Espanha)"},
+  {ticker:"CAC40",name:"CAC 40 (França)"},
+  {ticker:"FTSE100",name:"FTSE 100 (Reino Unido)"},
+  {ticker:"DJI",name:"Dow Jones (Estados Unidos)"},
+  {ticker:"ASX200",name:"S&P/ASX 200 (Austrália)"},
+  {ticker:"KOSPI",name:"KOSPI (Coreia do Sul)"},
+  {ticker:"SSE",name:"SSE Composite (China)"},
+  {ticker:"IPC",name:"S&P/BMV IPC (México)"}
+];
+
 const MARKETS = {
   tokyo:{
     label:"Tóquio",
@@ -679,6 +696,16 @@ const MARKETS = {
     api:"/acoes-moedas-api",
     basePath:"/acoes-moedas",
     stocks:CURRENCY_STOCKS
+  },
+  indices:{
+    label:"Índices",
+    title:"Índices das bolsas",
+    exchange:"Índices globais",
+    description:"consolidação dos principais índices das bolsas selecionadas",
+    currencySymbol:"pts",
+    api:"/indices-bolsas-api",
+    basePath:"/indices-bolsas",
+    stocks:INDEX_STOCKS
   }
 };
 
@@ -694,7 +721,8 @@ const SOUND_PRESETS = {
   moog:{label:"Moog"},
   theremin:{label:"Theremin"},
   animals:{label:"Animais"},
-  samba:{label:"Samba"}
+  samba:{label:"Samba"},
+  mood:{label:"Estado de espírito"}
 };
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
@@ -711,7 +739,8 @@ const PATH_MARKETS = {
   "acoes-coreia":"korea",
   "acoes-china":"china",
   "acoes-mexico":"mexico",
-  "acoes-moedas":"currencies"
+  "acoes-moedas":"currencies",
+  "indices-bolsas":"indices"
 };
 const MARKET_KEYS = Object.keys(MARKETS);
 const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
@@ -721,6 +750,7 @@ function selectionFromUrl(fallbackMarket){
   const params = new URLSearchParams(location.search);
   if(!params.has("bolsas")) return [fallbackMarket];
   const requested = (params.get("bolsas") || "").split(",").filter(function(key){ return MARKETS[key]; });
+  if(requested.indexOf("indices") !== -1) return ["indices"];
   return MARKET_KEYS.filter(function(key){ return requested.indexOf(key) !== -1; });
 }
 
@@ -1151,6 +1181,102 @@ function playSambaSound(ctx,direction,maxDuration){
   agogoGain.connect(sambaBus);
 }
 
+function playMoodSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const scale = densityScale(maxDuration);
+  const moodBus = ctx.createGain();
+  moodBus.gain.setValueAtTime(0.88,now);
+  moodBus.connect(setupAudioOutput(ctx));
+
+  if(direction === "down"){
+    const baseDuration = 0.5;
+    const duration = typeof maxDuration === "number"
+      ? Math.max(0.075,Math.min(baseDuration,maxDuration * 1.12))
+      : baseDuration;
+    const notes = [523.25,659.25,783.99,1046.5];
+    const step = duration * 0.19;
+    const noteDuration = Math.max(0.045,duration * 0.43);
+
+    notes.forEach(function(frequency,index){
+      const start = now + index * step;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = index % 2 === 0 ? "triangle" : "sine";
+      osc.frequency.setValueAtTime(frequency,start);
+      osc.frequency.exponentialRampToValueAtTime(frequency * 1.035,start + noteDuration);
+      gain.gain.setValueAtTime(0.0001,start);
+      gain.gain.exponentialRampToValueAtTime(0.12 * scale,start + Math.min(0.01,noteDuration * 0.2));
+      gain.gain.exponentialRampToValueAtTime(0.0001,start + noteDuration);
+      osc.connect(gain);
+      gain.connect(moodBus);
+      osc.start(start);
+      osc.stop(start + noteDuration + 0.01);
+    });
+    return;
+  }
+
+  if(direction === "up"){
+    const baseDuration = 0.68;
+    const duration = typeof maxDuration === "number"
+      ? Math.max(0.085,Math.min(baseDuration,maxDuration * 1.16))
+      : baseDuration;
+    const filter = ctx.createBiquadFilter();
+    const sadGain = ctx.createGain();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(980,now);
+    filter.frequency.exponentialRampToValueAtTime(340,now + duration);
+    filter.Q.setValueAtTime(1.1,now);
+    sadGain.gain.setValueAtTime(0.0001,now);
+    sadGain.gain.linearRampToValueAtTime(0.085 * scale,now + duration * 0.2);
+    sadGain.gain.setValueAtTime(0.072 * scale,now + duration * 0.58);
+    sadGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+    [
+      {type:"triangle",frequency:293.66,level:1},
+      {type:"sine",frequency:349.23,level:0.72},
+      {type:"sine",frequency:440,level:0.38}
+    ].forEach(function(voice){
+      const osc = ctx.createOscillator();
+      const voiceGain = ctx.createGain();
+      osc.type = voice.type;
+      osc.frequency.setValueAtTime(voice.frequency,now);
+      osc.frequency.exponentialRampToValueAtTime(voice.frequency * 0.68,now + duration);
+      voiceGain.gain.setValueAtTime(voice.level,now);
+      osc.connect(voiceGain);
+      voiceGain.connect(filter);
+      osc.start(now);
+      osc.stop(now + duration + 0.01);
+    });
+    filter.connect(sadGain);
+    sadGain.connect(moodBus);
+    return;
+  }
+
+  const baseDuration = 0.2;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.055,Math.min(baseDuration,maxDuration))
+    : baseDuration;
+  const neutralGain = ctx.createGain();
+  neutralGain.gain.setValueAtTime(0.0001,now);
+  neutralGain.gain.exponentialRampToValueAtTime(0.1 * scale,now + Math.min(0.008,duration * 0.18));
+  neutralGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+  [
+    {frequency:410,level:1},
+    {frequency:615,level:0.22}
+  ].forEach(function(voice){
+    const osc = ctx.createOscillator();
+    const voiceGain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(voice.frequency,now);
+    voiceGain.gain.setValueAtTime(voice.level,now);
+    osc.connect(voiceGain);
+    voiceGain.connect(neutralGain);
+    osc.start(now);
+    osc.stop(now + duration + 0.01);
+  });
+  neutralGain.connect(moodBus);
+}
+
 function playAnimalSound(ctx,direction,maxDuration){
   const now = ctx.currentTime;
   const baseDuration = direction === "up" ? 0.56 : direction === "down" ? 0.52 : 0.3;
@@ -1288,6 +1414,7 @@ function playMoveSound(direction,maxDuration){
     else if(state.soundPreset === "theremin") playThereminSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "animals") playAnimalSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "samba") playSambaSound(state.audioCtx,direction,maxDuration);
+    else if(state.soundPreset === "mood") playMoodSound(state.audioCtx,direction,maxDuration);
     else playClassicSound(state.audioCtx,direction,maxDuration);
   }catch(e){}
 }
@@ -1361,6 +1488,7 @@ function restartMainSoundCycle(){
 
 function money(v,marketKey){
   if(v == null || isNaN(v)) return "—";
+  if(marketKey === "indices") return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " pts";
   const maximumFractionDigits = marketKey === "currencies" ? 6 : 4;
   return MARKETS[marketKey].currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:maximumFractionDigits});
 }
@@ -1407,12 +1535,16 @@ function render(){
     const marketKey = btn.getAttribute("data-market");
     const active = selectedKeys.indexOf(marketKey) !== -1;
     const isOpen = state.marketStatus[marketKey];
+    const isAggregate = marketKey === "indices";
     btn.classList.toggle("active",active);
-    btn.classList.toggle("market-open",isOpen === true);
-    btn.classList.toggle("market-closed",isOpen === false);
-    btn.classList.toggle("market-unknown",typeof isOpen !== "boolean");
+    btn.classList.toggle("market-open",!isAggregate && isOpen === true);
+    btn.classList.toggle("market-closed",!isAggregate && isOpen === false);
+    btn.classList.toggle("market-unknown",!isAggregate && typeof isOpen !== "boolean");
     btn.setAttribute("aria-pressed",active ? "true" : "false");
-    if(typeof isOpen === "boolean"){
+    if(isAggregate){
+      btn.setAttribute("aria-label","Índices das bolsas — visão consolidada");
+      btn.title = "Visão consolidada dos índices";
+    }else if(typeof isOpen === "boolean"){
       const marketType = marketKey === "currencies" ? "mercado" : "bolsa";
       const statusLabel = marketKey === "currencies"
         ? (isOpen ? "aberto" : "fechado")
@@ -1554,10 +1686,15 @@ function toggleFav(marketKey,ticker){
 function toggleMarket(key,updateUrl){
   if(!MARKETS[key] || detailTicker) return;
   const selected = selectedMarketKeys();
-  const index = selected.indexOf(key);
-  if(index === -1) selected.push(key);
-  else selected.splice(index,1);
-  state.selectedMarkets = MARKET_KEYS.filter(function(marketKey){ return selected.indexOf(marketKey) !== -1; });
+  if(key === "indices"){
+    state.selectedMarkets = selected.indexOf("indices") === -1 ? ["indices"] : [];
+  }else{
+    const regularSelected = selected.filter(function(marketKey){ return marketKey !== "indices"; });
+    const index = regularSelected.indexOf(key);
+    if(index === -1) regularSelected.push(key);
+    else regularSelected.splice(index,1);
+    state.selectedMarkets = MARKET_KEYS.filter(function(marketKey){ return regularSelected.indexOf(marketKey) !== -1; });
+  }
   state.market = state.selectedMarkets[0] || key;
   state.requestSerial += 1;
   if(updateUrl !== false) updateSelectionUrl();

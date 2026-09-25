@@ -394,6 +394,20 @@ const CURRENCY_STOCKS = [
   { ticker: 'MYR', symbol: 'USDMYR=X', name: 'Ringgit malaio', invert: true },
 ];
 
+const INDEX_STOCKS = [
+  { ticker: 'N225', symbol: '^N225', name: 'Nikkei 225 (Japan)' },
+  { ticker: 'IBOV', symbol: '^BVSP', name: 'Ibovespa (Brazil)' },
+  { ticker: 'DAX', symbol: '^GDAXI', name: 'DAX (Germany)' },
+  { ticker: 'IBEX', symbol: '^IBEX', name: 'IBEX 35 (Spain)' },
+  { ticker: 'CAC40', symbol: '^FCHI', name: 'CAC 40 (France)' },
+  { ticker: 'FTSE100', symbol: '^FTSE', name: 'FTSE 100 (United Kingdom)' },
+  { ticker: 'DJI', symbol: '^DJI', name: 'Dow Jones (United States)' },
+  { ticker: 'ASX200', symbol: '^AXJO', name: 'S&P/ASX 200 (Australia)' },
+  { ticker: 'KOSPI', symbol: '^KS11', name: 'KOSPI (South Korea)' },
+  { ticker: 'SSE', symbol: '000001.SS', name: 'SSE Composite (China)' },
+  { ticker: 'IPC', symbol: '^MXX', name: 'S&P/BMV IPC (Mexico)' },
+];
+
 const MARKETS = {
   tokyo: {
     key: 'tokyo',
@@ -478,6 +492,14 @@ const MARKETS = {
     currency: 'USD',
     source: 'Yahoo Finance / FX',
     stocks: CURRENCY_STOCKS,
+  },
+  indices: {
+    key: 'indices',
+    name: 'Global headline stock indexes',
+    currency: 'PTS',
+    source: 'Yahoo Finance / world indexes',
+    stocks: INDEX_STOCKS,
+    status: false,
   },
 };
 
@@ -643,7 +665,7 @@ export default async function handler(req, res) {
 
   if (isStatusRequest(req)) {
     res.setHeader('Cache-Control', 'public, s-maxage=20, stale-while-revalidate=40');
-    const marketEntries = Object.values(MARKETS);
+    const marketEntries = Object.values(MARKETS).filter((market) => market.status !== false);
     const settled = await Promise.allSettled(
       marketEntries.map((market) => fetchQuote(market.stocks[0], market)),
     );

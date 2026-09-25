@@ -123,7 +123,24 @@ test('currency board and API expose the same 30 USD-normalized currencies', () =
   assert.equal((block.match(/invert: true/g) || []).length, 30);
 });
 
-test('API selects the requested market and returns all 30 quotes', async () => {
+test('index board and API expose the 11 headline indexes for the selected exchanges', () => {
+  const apiItems = apiStocks('INDEX_STOCKS');
+  const uiTickers = pageTickers('INDEX_STOCKS');
+
+  assert.equal(apiItems.length, 11);
+  assert.equal(uiTickers.length, 11);
+  assert.equal(new Set(uiTickers).size, 11);
+  assert.deepEqual(
+    apiItems.map((index) => index.ticker),
+    uiTickers,
+  );
+  assert.deepEqual(
+    apiItems.map((index) => index.symbol),
+    ['^N225', '^BVSP', '^GDAXI', '^IBEX', '^FCHI', '^FTSE', '^DJI', '^AXJO', '^KS11', '000001.SS', '^MXX'],
+  );
+});
+
+test('API selects the requested market and returns its complete quote list', async () => {
   const originalFetch = globalThis.fetch;
   let fetchCount = 0;
 
@@ -289,7 +306,15 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(currencies.result.body.okCount, 30);
     assert.equal(currencies.result.body.quotes[0].ticker, 'EUR');
     assert.equal(currencies.result.body.quotes[0].price, 0.5);
-    assert.equal(fetchCount, 36);
+
+    const indices = responseRecorder();
+    await quoteHandler({ query: { market: 'indices' } }, indices.response);
+    assert.equal(indices.result.status, 200);
+    assert.equal(indices.result.body.marketKey, 'indices');
+    assert.equal(indices.result.body.currency, 'PTS');
+    assert.equal(indices.result.body.okCount, 11);
+    assert.equal(indices.result.body.quotes[0].ticker, 'N225');
+    assert.equal(fetchCount, 38);
 
     const statuses = responseRecorder();
     await quoteHandler({ query: { status: 'all' } }, statuses.response);
@@ -305,7 +330,7 @@ test('API selects the requested market and returns all 30 quotes', async () => {
       statuses.result.body.statuses.find((status) => status.marketKey === 'tokyo').isOpen,
       false,
     );
-    assert.equal(fetchCount, 48);
+    assert.equal(fetchCount, 50);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -324,6 +349,7 @@ test('market tabs have dedicated pages and API routes', () => {
   assert.match(pageSource, /data-market="china">China<\/button>/);
   assert.match(pageSource, /data-market="mexico">México<\/button>/);
   assert.match(pageSource, /data-market="currencies">Moedas<\/button>/);
+  assert.match(pageSource, /data-market="indices">Índices<\/button>/);
   assert.ok(
     vercel.routes.some(
       (route) =>
@@ -361,6 +387,17 @@ test('market tabs have dedicated pages and API routes', () => {
   }
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-nova-york/?'));
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-nova-york/([^/]+)/?'));
+  assert.ok(
+    vercel.routes.some(
+      (route) =>
+        route.src === '/indices-bolsas-api' && route.dest === '/acoes-nz-api.js?market=indices',
+    ),
+  );
+  assert.ok(vercel.routes.some((route) => route.src === '/indices-bolsas/?'));
+  assert.ok(vercel.routes.some((route) => route.src === '/indices-bolsas/([^/]+)/?'));
+  assert.match(pageSource, /if\(requested\.indexOf\("indices"\) !== -1\) return \["indices"\];/);
+  assert.match(pageSource, /if\(key === "indices"\)/);
+  assert.match(pageSource, /marketKey !== "indices"/);
 });
 
 test('selected markets share one ten-second cycle at three sounds per market per second', () => {
@@ -384,13 +421,14 @@ test('selected markets share one ten-second cycle at three sounds per market per
   assert.match(pageSource, /state\.movements\[stockKey\(stock\.marketKey,stock\.ticker\)\]/);
 });
 
-test('board offers six persistent sound presets with an audible preview', () => {
+test('board offers seven persistent sound presets with an audible preview', () => {
   assert.match(pageSource, /data-sound-preset="classic"/);
   assert.match(pageSource, /data-sound-preset="waves"/);
   assert.match(pageSource, /data-sound-preset="moog"/);
   assert.match(pageSource, /data-sound-preset="theremin"/);
   assert.match(pageSource, /data-sound-preset="animals"/);
   assert.match(pageSource, /data-sound-preset="samba"/);
+  assert.match(pageSource, /data-sound-preset="mood"/);
   assert.match(pageSource, /const SOUND_STORAGE_KEY = "acoes-sound-preset";/);
   assert.match(pageSource, /soundPreset:storedSoundPreset\(\)/);
   assert.match(pageSource, /function playClassicSound\(ctx,direction,maxDuration\)/);
@@ -399,10 +437,13 @@ test('board offers six persistent sound presets with an audible preview', () => 
   assert.match(pageSource, /function playThereminSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playAnimalSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playSambaSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /function playMoodSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function getAnimalNoiseBuffer\(ctx\)/);
   assert.match(pageSource, /function getSambaNoiseBuffer\(ctx\)/);
   assert.match(pageSource, /state\.soundPreset === "animals"/);
   assert.match(pageSource, /state\.soundPreset === "samba"/);
+  assert.match(pageSource, /state\.soundPreset === "mood"/);
+  assert.match(pageSource, /Estado de espírito: subida com depressão, queda com alegria/);
   assert.match(pageSource, /vibratoDepth\.connect\(osc\.frequency\)/);
   assert.match(pageSource, /ctx\.createBiquadFilter\(\)/);
   assert.match(pageSource, /\["down","flat","up"\]/);
@@ -430,7 +471,7 @@ test('market tabs remain clickable and show live open or closed colors', () => {
   assert.match(pageSource, /const MARKET_STATUS_REFRESH_MS = 60000;/);
   assert.match(pageSource, /const MARKET_STATUS_API = "\/acoes-status-api";/);
   assert.match(pageSource, /function refreshMarketStatuses\(\)/);
-  assert.match(pageSource, /btn\.classList\.toggle\("market-open",isOpen === true\)/);
-  assert.match(pageSource, /btn\.classList\.toggle\("market-closed",isOpen === false\)/);
+  assert.match(pageSource, /btn\.classList\.toggle\("market-open",!isAggregate && isOpen === true\)/);
+  assert.match(pageSource, /btn\.classList\.toggle\("market-closed",!isAggregate && isOpen === false\)/);
   assert.match(pageSource, /btn\.addEventListener\("click"/);
 });
