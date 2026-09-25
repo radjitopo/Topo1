@@ -22,7 +22,6 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 5px}
 .marketTabs button.active{background:#111;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.14)}
 .marketTabs button.active::before{content:"✓";margin-right:5px}
-.marketTabs button:nth-child(7){grid-column:2}
 .search{margin-top:14px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
 .search span{font-size:22px;color:#7d8289}
 .search input{border:0;outline:0;background:transparent;width:100%;font-size:18px;color:#111}
@@ -99,21 +98,25 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <div class="profile" aria-label="perfil">○</div>
   </div>
 
-  <div class="marketTabs" id="marketTabs" role="group" aria-label="Bolsas; escolha uma ou mais">
+  <div class="marketTabs" id="marketTabs" role="group" aria-label="Mercados; escolha um ou mais">
     <button class="active" type="button" aria-pressed="true" data-market="tokyo">Tóquio</button>
     <button type="button" aria-pressed="false" data-market="bovespa">Bovespa</button>
     <button type="button" aria-pressed="false" data-market="frankfurt">Frankfurt</button>
     <button type="button" aria-pressed="false" data-market="madrid">Madrid</button>
     <button type="button" aria-pressed="false" data-market="paris">Paris</button>
     <button type="button" aria-pressed="false" data-market="london">Londres</button>
-    <button type="button" aria-pressed="false" data-market="newyork">Nova York</button>
+    <button type="button" aria-pressed="false" data-market="newyork">Dow Jones</button>
+    <button type="button" aria-pressed="false" data-market="australia">Austrália</button>
+    <button type="button" aria-pressed="false" data-market="korea">Coreia</button>
+    <button type="button" aria-pressed="false" data-market="china">China</button>
+    <button type="button" aria-pressed="false" data-market="currencies">Moedas</button>
   </div>
 
   <label class="search">
     <span>⌕</span>
-    <input id="search" placeholder="Buscar ações..." autocomplete="off">
+    <input id="search" placeholder="Buscar ações ou moedas..." autocomplete="off">
   </label>
-  <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons das 30 ações</div>
+  <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons dos 30 instrumentos</div>
   <section class="soundPicker" id="soundPicker" aria-label="Tipo de som">
     <div class="soundPickerHead"><strong>Tipo de som</strong><span>Toque para ouvir</span></div>
     <div class="soundOptions" role="group" aria-label="Escolha o tipo de som">
@@ -185,16 +188,16 @@ const BOVESPA_STOCKS = [
   {ticker:"B3SA3",name:"B3"},
   {ticker:"RENT3",name:"Localiza"},
   {ticker:"SUZB3",name:"Suzano"},
-  {ticker:"ELET3",name:"Eletrobras"},
+  {ticker:"AXIA3",name:"Axia Energia"},
   {ticker:"EQTL3",name:"Equatorial"},
   {ticker:"PRIO3",name:"PRIO"},
   {ticker:"RAIL3",name:"Rumo"},
-  {ticker:"JBSS3",name:"JBS"},
-  {ticker:"EMBR3",name:"Embraer"},
+  {ticker:"JBSS32",name:"JBS"},
+  {ticker:"EMBJ3",name:"Embraer"},
   {ticker:"GGBR4",name:"Gerdau"},
   {ticker:"CSNA3",name:"CSN"},
   {ticker:"CMIG4",name:"Cemig"},
-  {ticker:"CPLE6",name:"Copel"},
+  {ticker:"CPLE3",name:"Copel"},
   {ticker:"RADL3",name:"Raia Drogasil"},
   {ticker:"VIVT3",name:"Telefônica Brasil"},
   {ticker:"TIMS3",name:"TIM Brasil"},
@@ -372,6 +375,138 @@ const NEW_YORK_STOCKS = [
   {ticker:"SHW",name:"Sherwin-Williams"}
 ];
 
+const AUSTRALIA_STOCKS = [
+  {ticker:"CBA",name:"Commonwealth Bank"},
+  {ticker:"BHP",name:"BHP Group"},
+  {ticker:"CSL",name:"CSL"},
+  {ticker:"NAB",name:"National Australia Bank"},
+  {ticker:"WBC",name:"Westpac"},
+  {ticker:"ANZ",name:"ANZ Group"},
+  {ticker:"WES",name:"Wesfarmers"},
+  {ticker:"MQG",name:"Macquarie Group"},
+  {ticker:"GMG",name:"Goodman Group"},
+  {ticker:"RIO",name:"Rio Tinto"},
+  {ticker:"WDS",name:"Woodside Energy"},
+  {ticker:"FMG",name:"Fortescue"},
+  {ticker:"WOW",name:"Woolworths"},
+  {ticker:"TLS",name:"Telstra"},
+  {ticker:"TCL",name:"Transurban"},
+  {ticker:"ALL",name:"Aristocrat Leisure"},
+  {ticker:"QBE",name:"QBE Insurance"},
+  {ticker:"RMD",name:"ResMed"},
+  {ticker:"COL",name:"Coles Group"},
+  {ticker:"REA",name:"REA Group"},
+  {ticker:"JHX",name:"James Hardie"},
+  {ticker:"STO",name:"Santos"},
+  {ticker:"XRO",name:"Xero"},
+  {ticker:"BXB",name:"Brambles"},
+  {ticker:"SUN",name:"Suncorp"},
+  {ticker:"IAG",name:"Insurance Australia Group"},
+  {ticker:"AMC",name:"Amcor"},
+  {ticker:"CPU",name:"Computershare"},
+  {ticker:"ORG",name:"Origin Energy"},
+  {ticker:"S32",name:"South32"}
+];
+
+const KOREA_STOCKS = [
+  {ticker:"005930",name:"Samsung Electronics"},
+  {ticker:"000660",name:"SK Hynix"},
+  {ticker:"402340",name:"SK Square"},
+  {ticker:"005380",name:"Hyundai Motor"},
+  {ticker:"373220",name:"LG Energy Solution"},
+  {ticker:"207940",name:"Samsung Biologics"},
+  {ticker:"028260",name:"Samsung C&T"},
+  {ticker:"105560",name:"KB Financial"},
+  {ticker:"032830",name:"Samsung Life Insurance"},
+  {ticker:"012450",name:"Hanwha Aerospace"},
+  {ticker:"034020",name:"Doosan Enerbility"},
+  {ticker:"055550",name:"Shinhan Financial"},
+  {ticker:"329180",name:"HD Hyundai Heavy Industries"},
+  {ticker:"000270",name:"Kia"},
+  {ticker:"068270",name:"Celltrion"},
+  {ticker:"009150",name:"Samsung Electro-Mechanics"},
+  {ticker:"066570",name:"LG Electronics"},
+  {ticker:"086790",name:"Hana Financial"},
+  {ticker:"034730",name:"SK Inc."},
+  {ticker:"012330",name:"Hyundai Mobis"},
+  {ticker:"010120",name:"LS Electric"},
+  {ticker:"035420",name:"NAVER"},
+  {ticker:"000810",name:"Samsung Fire & Marine"},
+  {ticker:"298040",name:"Hyosung Heavy Industries"},
+  {ticker:"000150",name:"Doosan Corp."},
+  {ticker:"267260",name:"HD Hyundai Electric"},
+  {ticker:"316140",name:"Woori Financial"},
+  {ticker:"096770",name:"SK Innovation"},
+  {ticker:"042660",name:"Hanwha Ocean"},
+  {ticker:"009540",name:"HD Korea Shipbuilding & Offshore"}
+];
+
+const CHINA_STOCKS = [
+  {ticker:"600519",name:"Kweichow Moutai"},
+  {ticker:"601398",name:"ICBC"},
+  {ticker:"601288",name:"Agricultural Bank of China"},
+  {ticker:"601988",name:"Bank of China"},
+  {ticker:"601857",name:"PetroChina"},
+  {ticker:"601088",name:"China Shenhua Energy"},
+  {ticker:"601318",name:"Ping An Insurance"},
+  {ticker:"600036",name:"China Merchants Bank"},
+  {ticker:"600900",name:"China Yangtze Power"},
+  {ticker:"601628",name:"China Life Insurance"},
+  {ticker:"601166",name:"Industrial Bank"},
+  {ticker:"601601",name:"China Pacific Insurance"},
+  {ticker:"601668",name:"China State Construction"},
+  {ticker:"600030",name:"CITIC Securities"},
+  {ticker:"600276",name:"Jiangsu Hengrui Pharmaceuticals"},
+  {ticker:"600887",name:"Inner Mongolia Yili"},
+  {ticker:"600309",name:"Wanhua Chemical"},
+  {ticker:"601899",name:"Zijin Mining"},
+  {ticker:"601728",name:"China Telecom"},
+  {ticker:"601919",name:"COSCO Shipping Holdings"},
+  {ticker:"600050",name:"China United Network"},
+  {ticker:"600031",name:"Sany Heavy Industry"},
+  {ticker:"600406",name:"NARI Technology"},
+  {ticker:"600809",name:"Shanxi Fen Wine"},
+  {ticker:"600150",name:"China CSSC"},
+  {ticker:"603986",name:"GigaDevice"},
+  {ticker:"688981",name:"SMIC"},
+  {ticker:"688041",name:"Hygon Information"},
+  {ticker:"688111",name:"Kingsoft Office"},
+  {ticker:"688521",name:"VeriSilicon"}
+];
+
+const CURRENCY_STOCKS = [
+  {ticker:"EUR",name:"Euro"},
+  {ticker:"JPY",name:"Yen japonês"},
+  {ticker:"GBP",name:"Libra esterlina"},
+  {ticker:"CNY",name:"Yuan chinês"},
+  {ticker:"CHF",name:"Franco suíço"},
+  {ticker:"AUD",name:"Dólar australiano"},
+  {ticker:"CAD",name:"Dólar canadense"},
+  {ticker:"HKD",name:"Dólar de Hong Kong"},
+  {ticker:"SGD",name:"Dólar de Singapura"},
+  {ticker:"INR",name:"Rupia indiana"},
+  {ticker:"KRW",name:"Won sul-coreano"},
+  {ticker:"SEK",name:"Coroa sueca"},
+  {ticker:"MXN",name:"Peso mexicano"},
+  {ticker:"NZD",name:"Dólar neozelandês"},
+  {ticker:"NOK",name:"Coroa norueguesa"},
+  {ticker:"TWD",name:"Dólar taiwanês"},
+  {ticker:"BRL",name:"Real brasileiro"},
+  {ticker:"ZAR",name:"Rand sul-africano"},
+  {ticker:"PLN",name:"Zlóti polonês"},
+  {ticker:"DKK",name:"Coroa dinamarquesa"},
+  {ticker:"IDR",name:"Rupia indonésia"},
+  {ticker:"TRY",name:"Lira turca"},
+  {ticker:"THB",name:"Baht tailandês"},
+  {ticker:"ILS",name:"Shekel israelense"},
+  {ticker:"HUF",name:"Florim húngaro"},
+  {ticker:"CZK",name:"Coroa tcheca"},
+  {ticker:"CLP",name:"Peso chileno"},
+  {ticker:"PHP",name:"Peso filipino"},
+  {ticker:"COP",name:"Peso colombiano"},
+  {ticker:"MYR",name:"Ringgit malaio"}
+];
+
 const MARKETS = {
   tokyo:{
     label:"Tóquio",
@@ -434,14 +569,54 @@ const MARKETS = {
     stocks:LONDON_STOCKS
   },
   newyork:{
-    label:"Nova York",
-    title:"Ações Nova York",
-    exchange:"NYSE / Nasdaq",
-    description:"Nova York — Dow 30",
+    label:"Dow Jones",
+    title:"Ações Dow Jones",
+    exchange:"DJIA",
+    description:"bolsa americana no índice Dow Jones Industrial Average",
     currencySymbol:"US$",
-    api:"/acoes-nova-york-api",
-    basePath:"/acoes-nova-york",
+    api:"/acoes-dow-jones-api",
+    basePath:"/acoes-dow-jones",
     stocks:NEW_YORK_STOCKS
+  },
+  australia:{
+    label:"Austrália",
+    title:"Ações Austrália",
+    exchange:"ASX",
+    description:"Bolsa da Austrália (ASX)",
+    currencySymbol:"A$",
+    api:"/acoes-australia-api",
+    basePath:"/acoes-australia",
+    stocks:AUSTRALIA_STOCKS
+  },
+  korea:{
+    label:"Coreia",
+    title:"Ações Coreia",
+    exchange:"KRX",
+    description:"Bolsa da Coreia (KRX/KOSPI)",
+    currencySymbol:"₩",
+    api:"/acoes-coreia-api",
+    basePath:"/acoes-coreia",
+    stocks:KOREA_STOCKS
+  },
+  china:{
+    label:"China",
+    title:"Ações China",
+    exchange:"SSE",
+    description:"Bolsa de Xangai",
+    currencySymbol:"¥",
+    api:"/acoes-china-api",
+    basePath:"/acoes-china",
+    stocks:CHINA_STOCKS
+  },
+  currencies:{
+    label:"Moedas",
+    title:"30 maiores moedas",
+    exchange:"FX",
+    description:"rede global de câmbio",
+    currencySymbol:"US$",
+    api:"/acoes-moedas-api",
+    basePath:"/acoes-moedas",
+    stocks:CURRENCY_STOCKS
   }
 };
 
@@ -461,7 +636,12 @@ const PATH_MARKETS = {
   "acoes-madrid":"madrid",
   "acoes-paris":"paris",
   "acoes-londres":"london",
-  "acoes-nova-york":"newyork"
+  "acoes-nova-york":"newyork",
+  "acoes-dow-jones":"newyork",
+  "acoes-australia":"australia",
+  "acoes-coreia":"korea",
+  "acoes-china":"china",
+  "acoes-moedas":"currencies"
 };
 const MARKET_KEYS = Object.keys(MARKETS);
 const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
@@ -742,7 +922,8 @@ function restartMainSoundCycle(){
 
 function money(v,marketKey){
   if(v == null || isNaN(v)) return "—";
-  return MARKETS[marketKey].currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
+  const maximumFractionDigits = marketKey === "currencies" ? 6 : 4;
+  return MARKETS[marketKey].currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:maximumFractionDigits});
 }
 
 function render(){
@@ -773,13 +954,13 @@ function render(){
     document.title = onlyMarket.title;
     if(foot) foot.textContent = "Dados públicos de mercado da " + onlyMarket.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
   }else if(selectedKeys.length > 1){
-    pageTitle.textContent = "Ações — " + selectedKeys.length + " bolsas";
-    document.title = selectedKeys.length + " bolsas — ações misturadas";
+    pageTitle.textContent = "Mercados — " + selectedKeys.length + " selecionados";
+    document.title = selectedKeys.length + " mercados — instrumentos misturados";
     if(foot) foot.textContent = "Dados públicos de " + selectedKeys.map(function(key){ return MARKETS[key].label; }).join(", ") + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
   }else{
-    pageTitle.textContent = "Escolha as bolsas";
-    document.title = "Escolha as bolsas";
-    if(foot) foot.textContent = "Selecione uma ou mais bolsas para misturar as ações e os sons.";
+    pageTitle.textContent = "Escolha os mercados";
+    document.title = "Escolha os mercados";
+    if(foot) foot.textContent = "Selecione um ou mais mercados para misturar os instrumentos e os sons.";
   }
 
   document.querySelectorAll("[data-market]").forEach(function(btn){
@@ -791,7 +972,7 @@ function render(){
   if(detailTicker){
     const s = market.stocks.find(function(item){ return item.ticker === detailTicker; });
     if(!s){
-      list.innerHTML = '<div style="padding:42px 0;color:#8b8f96">Ação não encontrada.</div>';
+      list.innerHTML = '<div style="padding:42px 0;color:#8b8f96">Instrumento não encontrado.</div>';
       if(searchBox) searchBox.style.display = "none";
       return;
     }
@@ -813,7 +994,7 @@ function render(){
 
     document.title = s.name + " — " + market.title;
     list.innerHTML =
-      '<button class="detailBack" id="detailBack">← Voltar para ações</button>' +
+      '<button class="detailBack" id="detailBack">← Voltar para a lista</button>' +
       '<div class="detailCard">' +
         '<div class="detailName">'+s.name+'</div>' +
         '<div class="detailTicker">'+s.ticker+' · '+market.exchange+'</div>' +
@@ -846,13 +1027,13 @@ function render(){
     const totalStocks = stocks.length;
     const soundsPerSecond = totalStocks / (SOUND_CYCLE_MS / 1000);
     if(!selectedKeys.length){
-      mainSoundHint.textContent = "Escolha uma ou mais bolsas acima";
+      mainSoundHint.textContent = "Escolha um ou mais mercados acima";
     }else if(state.audioReady && selectedKeys.length === 1){
-      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " instrumentos, " + soundsPerSecond + " por segundo, ciclo de 10s";
     }else if(state.audioReady){
-      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + selectedKeys.length + " bolsas, " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + selectedKeys.length + " mercados, " + totalStocks + " instrumentos, " + soundsPerSecond + " por segundo, ciclo de 10s";
     }else{
-      mainSoundHint.textContent = "🔊 Toque aqui uma vez para ativar os sons das " + totalStocks + " ações";
+      mainSoundHint.textContent = "🔊 Toque aqui uma vez para ativar os sons dos " + totalStocks + " instrumentos";
     }
   }
   const f = state.filter.trim().toLowerCase();
@@ -866,7 +1047,7 @@ function render(){
 
   list.innerHTML = "";
   if(!visible.length){
-    list.innerHTML = '<div style="padding:42px 0;color:#8b8f96;text-align:center">'+(selectedKeys.length ? 'Nenhuma ação aqui.' : 'Selecione uma ou mais bolsas acima.')+'</div>';
+    list.innerHTML = '<div style="padding:42px 0;color:#8b8f96;text-align:center">'+(selectedKeys.length ? 'Nenhum instrumento aqui.' : 'Selecione um ou mais mercados acima.')+'</div>';
     return;
   }
 
@@ -936,7 +1117,7 @@ async function refresh(){
   const marketKeys = detailTicker ? [state.market] : selectedMarketKeys();
   const requestId = ++state.requestSerial;
   if(!marketKeys.length){
-    updated.textContent = "nenhuma bolsa selecionada";
+    updated.textContent = "nenhum mercado selecionado";
     document.getElementById("refresh").disabled = false;
     render();
     return;
@@ -988,7 +1169,7 @@ async function refresh(){
     const time = now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     updated.textContent = successfulMarkets === marketKeys.length
       ? "consultado às " + time
-      : successfulMarkets + " de " + marketKeys.length + " bolsas consultadas às " + time;
+      : successfulMarkets + " de " + marketKeys.length + " mercados consultados às " + time;
   }catch(e){
     if(requestId === state.requestSerial){
       updated.textContent = "fonte temporariamente indisponível";

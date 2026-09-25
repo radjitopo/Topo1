@@ -209,6 +209,26 @@
       "dest": "/acoes-nz-api.js?market=newyork"
     },
     {
+      "src": "/acoes-dow-jones-api",
+      "dest": "/acoes-nz-api.js?market=newyork"
+    },
+    {
+      "src": "/acoes-australia-api",
+      "dest": "/acoes-nz-api.js?market=australia"
+    },
+    {
+      "src": "/acoes-coreia-api",
+      "dest": "/acoes-nz-api.js?market=korea"
+    },
+    {
+      "src": "/acoes-china-api",
+      "dest": "/acoes-nz-api.js?market=china"
+    },
+    {
+      "src": "/acoes-moedas-api",
+      "dest": "/acoes-nz-api.js?market=currencies"
+    },
+    {
       "src": "/moderator-option-delete",
       "dest": "/moderator-option-delete.js"
     },
@@ -253,6 +273,26 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-dow-jones/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-australia/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-coreia/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-china/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-moedas/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
@@ -282,6 +322,26 @@
     },
     {
       "src": "/acoes-nova-york/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-dow-jones/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-australia/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-coreia/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-china/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-moedas/?",
       "dest": "/acoes-nz.html"
     },
     {

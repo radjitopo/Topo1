@@ -42,16 +42,16 @@ const BOVESPA_STOCKS = [
   { ticker: 'B3SA3', symbol: 'B3SA3.SA', name: 'B3' },
   { ticker: 'RENT3', symbol: 'RENT3.SA', name: 'Localiza' },
   { ticker: 'SUZB3', symbol: 'SUZB3.SA', name: 'Suzano' },
-  { ticker: 'ELET3', symbol: 'ELET3.SA', name: 'Eletrobras' },
+  { ticker: 'AXIA3', symbol: 'AXIA3.SA', name: 'Axia Energia' },
   { ticker: 'EQTL3', symbol: 'EQTL3.SA', name: 'Equatorial' },
   { ticker: 'PRIO3', symbol: 'PRIO3.SA', name: 'PRIO' },
   { ticker: 'RAIL3', symbol: 'RAIL3.SA', name: 'Rumo' },
-  { ticker: 'JBSS3', symbol: 'JBSS3.SA', name: 'JBS' },
-  { ticker: 'EMBR3', symbol: 'EMBR3.SA', name: 'Embraer' },
+  { ticker: 'JBSS32', symbol: 'JBSS32.SA', name: 'JBS' },
+  { ticker: 'EMBJ3', symbol: 'EMBJ3.SA', name: 'Embraer' },
   { ticker: 'GGBR4', symbol: 'GGBR4.SA', name: 'Gerdau' },
   { ticker: 'CSNA3', symbol: 'CSNA3.SA', name: 'CSN' },
   { ticker: 'CMIG4', symbol: 'CMIG4.SA', name: 'Cemig' },
-  { ticker: 'CPLE6', symbol: 'CPLE6.SA', name: 'Copel' },
+  { ticker: 'CPLE3', symbol: 'CPLE3.SA', name: 'Copel' },
   { ticker: 'RADL3', symbol: 'RADL3.SA', name: 'Raia Drogasil' },
   { ticker: 'VIVT3', symbol: 'VIVT3.SA', name: 'Telefônica Brasil' },
   { ticker: 'TIMS3', symbol: 'TIMS3.SA', name: 'TIM Brasil' },
@@ -229,6 +229,138 @@ const NEW_YORK_STOCKS = [
   { ticker: 'SHW', symbol: 'SHW', name: 'Sherwin-Williams' },
 ];
 
+const AUSTRALIA_STOCKS = [
+  { ticker: 'CBA', symbol: 'CBA.AX', name: 'Commonwealth Bank' },
+  { ticker: 'BHP', symbol: 'BHP.AX', name: 'BHP Group' },
+  { ticker: 'CSL', symbol: 'CSL.AX', name: 'CSL' },
+  { ticker: 'NAB', symbol: 'NAB.AX', name: 'National Australia Bank' },
+  { ticker: 'WBC', symbol: 'WBC.AX', name: 'Westpac' },
+  { ticker: 'ANZ', symbol: 'ANZ.AX', name: 'ANZ Group' },
+  { ticker: 'WES', symbol: 'WES.AX', name: 'Wesfarmers' },
+  { ticker: 'MQG', symbol: 'MQG.AX', name: 'Macquarie Group' },
+  { ticker: 'GMG', symbol: 'GMG.AX', name: 'Goodman Group' },
+  { ticker: 'RIO', symbol: 'RIO.AX', name: 'Rio Tinto' },
+  { ticker: 'WDS', symbol: 'WDS.AX', name: 'Woodside Energy' },
+  { ticker: 'FMG', symbol: 'FMG.AX', name: 'Fortescue' },
+  { ticker: 'WOW', symbol: 'WOW.AX', name: 'Woolworths' },
+  { ticker: 'TLS', symbol: 'TLS.AX', name: 'Telstra' },
+  { ticker: 'TCL', symbol: 'TCL.AX', name: 'Transurban' },
+  { ticker: 'ALL', symbol: 'ALL.AX', name: 'Aristocrat Leisure' },
+  { ticker: 'QBE', symbol: 'QBE.AX', name: 'QBE Insurance' },
+  { ticker: 'RMD', symbol: 'RMD.AX', name: 'ResMed' },
+  { ticker: 'COL', symbol: 'COL.AX', name: 'Coles Group' },
+  { ticker: 'REA', symbol: 'REA.AX', name: 'REA Group' },
+  { ticker: 'JHX', symbol: 'JHX.AX', name: 'James Hardie' },
+  { ticker: 'STO', symbol: 'STO.AX', name: 'Santos' },
+  { ticker: 'XRO', symbol: 'XRO.AX', name: 'Xero' },
+  { ticker: 'BXB', symbol: 'BXB.AX', name: 'Brambles' },
+  { ticker: 'SUN', symbol: 'SUN.AX', name: 'Suncorp' },
+  { ticker: 'IAG', symbol: 'IAG.AX', name: 'Insurance Australia Group' },
+  { ticker: 'AMC', symbol: 'AMC.AX', name: 'Amcor' },
+  { ticker: 'CPU', symbol: 'CPU.AX', name: 'Computershare' },
+  { ticker: 'ORG', symbol: 'ORG.AX', name: 'Origin Energy' },
+  { ticker: 'S32', symbol: 'S32.AX', name: 'South32' },
+];
+
+const KOREA_STOCKS = [
+  { ticker: '005930', symbol: '005930.KS', name: 'Samsung Electronics' },
+  { ticker: '000660', symbol: '000660.KS', name: 'SK Hynix' },
+  { ticker: '402340', symbol: '402340.KS', name: 'SK Square' },
+  { ticker: '005380', symbol: '005380.KS', name: 'Hyundai Motor' },
+  { ticker: '373220', symbol: '373220.KS', name: 'LG Energy Solution' },
+  { ticker: '207940', symbol: '207940.KS', name: 'Samsung Biologics' },
+  { ticker: '028260', symbol: '028260.KS', name: 'Samsung C&T' },
+  { ticker: '105560', symbol: '105560.KS', name: 'KB Financial' },
+  { ticker: '032830', symbol: '032830.KS', name: 'Samsung Life Insurance' },
+  { ticker: '012450', symbol: '012450.KS', name: 'Hanwha Aerospace' },
+  { ticker: '034020', symbol: '034020.KS', name: 'Doosan Enerbility' },
+  { ticker: '055550', symbol: '055550.KS', name: 'Shinhan Financial' },
+  { ticker: '329180', symbol: '329180.KS', name: 'HD Hyundai Heavy Industries' },
+  { ticker: '000270', symbol: '000270.KS', name: 'Kia' },
+  { ticker: '068270', symbol: '068270.KS', name: 'Celltrion' },
+  { ticker: '009150', symbol: '009150.KS', name: 'Samsung Electro-Mechanics' },
+  { ticker: '066570', symbol: '066570.KS', name: 'LG Electronics' },
+  { ticker: '086790', symbol: '086790.KS', name: 'Hana Financial' },
+  { ticker: '034730', symbol: '034730.KS', name: 'SK Inc.' },
+  { ticker: '012330', symbol: '012330.KS', name: 'Hyundai Mobis' },
+  { ticker: '010120', symbol: '010120.KS', name: 'LS Electric' },
+  { ticker: '035420', symbol: '035420.KS', name: 'NAVER' },
+  { ticker: '000810', symbol: '000810.KS', name: 'Samsung Fire & Marine' },
+  { ticker: '298040', symbol: '298040.KS', name: 'Hyosung Heavy Industries' },
+  { ticker: '000150', symbol: '000150.KS', name: 'Doosan Corp.' },
+  { ticker: '267260', symbol: '267260.KS', name: 'HD Hyundai Electric' },
+  { ticker: '316140', symbol: '316140.KS', name: 'Woori Financial' },
+  { ticker: '096770', symbol: '096770.KS', name: 'SK Innovation' },
+  { ticker: '042660', symbol: '042660.KS', name: 'Hanwha Ocean' },
+  { ticker: '009540', symbol: '009540.KS', name: 'HD Korea Shipbuilding & Offshore' },
+];
+
+const CHINA_STOCKS = [
+  { ticker: '600519', symbol: '600519.SS', name: 'Kweichow Moutai' },
+  { ticker: '601398', symbol: '601398.SS', name: 'ICBC' },
+  { ticker: '601288', symbol: '601288.SS', name: 'Agricultural Bank of China' },
+  { ticker: '601988', symbol: '601988.SS', name: 'Bank of China' },
+  { ticker: '601857', symbol: '601857.SS', name: 'PetroChina' },
+  { ticker: '601088', symbol: '601088.SS', name: 'China Shenhua Energy' },
+  { ticker: '601318', symbol: '601318.SS', name: 'Ping An Insurance' },
+  { ticker: '600036', symbol: '600036.SS', name: 'China Merchants Bank' },
+  { ticker: '600900', symbol: '600900.SS', name: 'China Yangtze Power' },
+  { ticker: '601628', symbol: '601628.SS', name: 'China Life Insurance' },
+  { ticker: '601166', symbol: '601166.SS', name: 'Industrial Bank' },
+  { ticker: '601601', symbol: '601601.SS', name: 'China Pacific Insurance' },
+  { ticker: '601668', symbol: '601668.SS', name: 'China State Construction' },
+  { ticker: '600030', symbol: '600030.SS', name: 'CITIC Securities' },
+  { ticker: '600276', symbol: '600276.SS', name: 'Jiangsu Hengrui Pharmaceuticals' },
+  { ticker: '600887', symbol: '600887.SS', name: 'Inner Mongolia Yili' },
+  { ticker: '600309', symbol: '600309.SS', name: 'Wanhua Chemical' },
+  { ticker: '601899', symbol: '601899.SS', name: 'Zijin Mining' },
+  { ticker: '601728', symbol: '601728.SS', name: 'China Telecom' },
+  { ticker: '601919', symbol: '601919.SS', name: 'COSCO Shipping Holdings' },
+  { ticker: '600050', symbol: '600050.SS', name: 'China United Network' },
+  { ticker: '600031', symbol: '600031.SS', name: 'Sany Heavy Industry' },
+  { ticker: '600406', symbol: '600406.SS', name: 'NARI Technology' },
+  { ticker: '600809', symbol: '600809.SS', name: 'Shanxi Fen Wine' },
+  { ticker: '600150', symbol: '600150.SS', name: 'China CSSC' },
+  { ticker: '603986', symbol: '603986.SS', name: 'GigaDevice' },
+  { ticker: '688981', symbol: '688981.SS', name: 'SMIC' },
+  { ticker: '688041', symbol: '688041.SS', name: 'Hygon Information' },
+  { ticker: '688111', symbol: '688111.SS', name: 'Kingsoft Office' },
+  { ticker: '688521', symbol: '688521.SS', name: 'VeriSilicon' },
+];
+
+const CURRENCY_STOCKS = [
+  { ticker: 'EUR', symbol: 'USDEUR=X', name: 'Euro', invert: true },
+  { ticker: 'JPY', symbol: 'USDJPY=X', name: 'Yen japonês', invert: true },
+  { ticker: 'GBP', symbol: 'USDGBP=X', name: 'Libra esterlina', invert: true },
+  { ticker: 'CNY', symbol: 'USDCNY=X', name: 'Yuan chinês', invert: true },
+  { ticker: 'CHF', symbol: 'USDCHF=X', name: 'Franco suíço', invert: true },
+  { ticker: 'AUD', symbol: 'USDAUD=X', name: 'Dólar australiano', invert: true },
+  { ticker: 'CAD', symbol: 'USDCAD=X', name: 'Dólar canadense', invert: true },
+  { ticker: 'HKD', symbol: 'USDHKD=X', name: 'Dólar de Hong Kong', invert: true },
+  { ticker: 'SGD', symbol: 'USDSGD=X', name: 'Dólar de Singapura', invert: true },
+  { ticker: 'INR', symbol: 'USDINR=X', name: 'Rupia indiana', invert: true },
+  { ticker: 'KRW', symbol: 'USDKRW=X', name: 'Won sul-coreano', invert: true },
+  { ticker: 'SEK', symbol: 'USDSEK=X', name: 'Coroa sueca', invert: true },
+  { ticker: 'MXN', symbol: 'USDMXN=X', name: 'Peso mexicano', invert: true },
+  { ticker: 'NZD', symbol: 'USDNZD=X', name: 'Dólar neozelandês', invert: true },
+  { ticker: 'NOK', symbol: 'USDNOK=X', name: 'Coroa norueguesa', invert: true },
+  { ticker: 'TWD', symbol: 'USDTWD=X', name: 'Dólar taiwanês', invert: true },
+  { ticker: 'BRL', symbol: 'USDBRL=X', name: 'Real brasileiro', invert: true },
+  { ticker: 'ZAR', symbol: 'USDZAR=X', name: 'Rand sul-africano', invert: true },
+  { ticker: 'PLN', symbol: 'USDPLN=X', name: 'Zlóti polonês', invert: true },
+  { ticker: 'DKK', symbol: 'USDDKK=X', name: 'Coroa dinamarquesa', invert: true },
+  { ticker: 'IDR', symbol: 'USDIDR=X', name: 'Rupia indonésia', invert: true },
+  { ticker: 'TRY', symbol: 'USDTRY=X', name: 'Lira turca', invert: true },
+  { ticker: 'THB', symbol: 'USDTHB=X', name: 'Baht tailandês', invert: true },
+  { ticker: 'ILS', symbol: 'USDILS=X', name: 'Shekel israelense', invert: true },
+  { ticker: 'HUF', symbol: 'USDHUF=X', name: 'Florim húngaro', invert: true },
+  { ticker: 'CZK', symbol: 'USDCZK=X', name: 'Coroa tcheca', invert: true },
+  { ticker: 'CLP', symbol: 'USDCLP=X', name: 'Peso chileno', invert: true },
+  { ticker: 'PHP', symbol: 'USDPHP=X', name: 'Peso filipino', invert: true },
+  { ticker: 'COP', symbol: 'USDCOP=X', name: 'Peso colombiano', invert: true },
+  { ticker: 'MYR', symbol: 'USDMYR=X', name: 'Ringgit malaio', invert: true },
+];
+
 const MARKETS = {
   tokyo: {
     key: 'tokyo',
@@ -274,10 +406,38 @@ const MARKETS = {
   },
   newyork: {
     key: 'newyork',
-    name: 'New York / Dow 30',
+    name: 'Dow Jones Industrial Average',
     currency: 'USD',
     source: 'Yahoo Finance / NYSE & Nasdaq',
     stocks: NEW_YORK_STOCKS,
+  },
+  australia: {
+    key: 'australia',
+    name: 'Australian Securities Exchange',
+    currency: 'AUD',
+    source: 'Yahoo Finance / ASX',
+    stocks: AUSTRALIA_STOCKS,
+  },
+  korea: {
+    key: 'korea',
+    name: 'Korea Exchange / KOSPI',
+    currency: 'KRW',
+    source: 'Yahoo Finance / KRX',
+    stocks: KOREA_STOCKS,
+  },
+  china: {
+    key: 'china',
+    name: 'Shanghai Stock Exchange',
+    currency: 'CNY',
+    source: 'Yahoo Finance / SSE',
+    stocks: CHINA_STOCKS,
+  },
+  currencies: {
+    key: 'currencies',
+    name: 'Global foreign exchange market',
+    currency: 'USD',
+    source: 'Yahoo Finance / FX',
+    stocks: CURRENCY_STOCKS,
   },
 };
 
@@ -307,7 +467,7 @@ async function requestQuote(stock, host, market) {
       'user-agent': 'Mozilla/5.0 AcoesSoundBoard/2.0',
     },
     cache: 'no-store',
-    signal: AbortSignal.timeout(6000),
+    signal: AbortSignal.timeout(12000),
   });
 
   if (!response.ok) {
@@ -321,29 +481,52 @@ async function requestQuote(stock, host, market) {
   return result;
 }
 
-async function fetchQuote(stock, market) {
-  let result;
-  let lastError;
+async function requestQuoteBatch(stocks, host, market) {
+  const symbols = stocks.map((stock) => stock.symbol).join(',');
+  const url =
+    'https://' +
+    host +
+    '/v7/finance/spark?symbols=' +
+    encodeURIComponent(symbols) +
+    '&interval=1d&range=1d';
 
-  for (const host of ['query1.finance.yahoo.com', 'query2.finance.yahoo.com']) {
-    try {
-      result = await requestQuote(stock, host, market);
-      break;
-    } catch (error) {
-      lastError = error;
-    }
+  const response = await fetch(url, {
+    headers: {
+      accept: 'application/json,text/plain,*/*',
+      'user-agent': 'Mozilla/5.0 AcoesSoundBoard/2.0',
+    },
+    cache: 'no-store',
+    signal: AbortSignal.timeout(12000),
+  });
+
+  if (!response.ok) {
+    throw new Error(market.name + ' quote batch returned ' + response.status);
   }
 
-  if (!result) throw lastError || new Error('No market data for ' + stock.ticker);
+  const data = await response.json();
+  const results = data?.spark?.result;
+  if (!Array.isArray(results)) throw new Error('No batch market data for ' + market.name);
 
+  return new Map(
+    results
+      .filter((item) => item && item.symbol && item.response?.[0])
+      .map((item) => [item.symbol, item.response[0]]),
+  );
+}
+
+function quoteFromResult(stock, market, result) {
   const meta = result.meta || {};
   const closes = result?.indicators?.quote?.[0]?.close || [];
   const rawPrice =
     typeof meta.regularMarketPrice === 'number' ? meta.regularMarketPrice : lastNumber(closes);
 
-  if (rawPrice == null) throw new Error('Price not found for ' + stock.ticker);
+  if (rawPrice == null || rawPrice === 0) throw new Error('Price not found for ' + stock.ticker);
 
-  const price = market.key === 'london' && meta.currency === 'GBp' ? rawPrice / 100 : rawPrice;
+  const price = stock.invert
+    ? 1 / rawPrice
+    : market.key === 'london' && meta.currency === 'GBp'
+      ? rawPrice / 100
+      : rawPrice;
 
   return {
     ticker: stock.ticker,
@@ -360,6 +543,44 @@ async function fetchQuote(stock, market) {
   };
 }
 
+async function fetchQuote(stock, market) {
+  let result;
+  let lastError;
+
+  for (const host of ['query2.finance.yahoo.com', 'query1.finance.yahoo.com']) {
+    try {
+      result = await requestQuote(stock, host, market);
+      break;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (!result) throw lastError || new Error('No market data for ' + stock.ticker);
+
+  return quoteFromResult(stock, market, result);
+}
+
+async function fetchQuoteGroup(stocks, market) {
+  let resultMap;
+
+  for (const host of ['query2.finance.yahoo.com', 'query1.finance.yahoo.com']) {
+    try {
+      resultMap = await requestQuoteBatch(stocks, host, market);
+      break;
+    } catch (error) {
+      resultMap = null;
+    }
+  }
+
+  return Promise.allSettled(
+    stocks.map((stock) => {
+      const result = resultMap?.get(stock.symbol);
+      return result ? Promise.resolve(quoteFromResult(stock, market, result)) : fetchQuote(stock, market);
+    }),
+  );
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -368,7 +589,11 @@ export default async function handler(req, res) {
   const stocks = market.stocks;
 
   try {
-    const settled = await Promise.allSettled(stocks.map((stock) => fetchQuote(stock, market)));
+    const groups = [];
+    for (let index = 0; index < stocks.length; index += 10) {
+      groups.push(stocks.slice(index, index + 10));
+    }
+    const settled = (await Promise.all(groups.map((group) => fetchQuoteGroup(group, market)))).flat();
     const quotes = settled.map((item, index) => {
       if (item.status === 'fulfilled') return { ...item.value, ok: true };
       return {
