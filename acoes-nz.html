@@ -228,7 +228,7 @@ function render(){
       '</div>';
 
     const back = document.getElementById("detailBack");
-    if(back) back.addEventListener("click",function(){ location.href="/acoes-tokyo"; });
+    if(back) back.addEventListener("click",function(){ location.href="/acoes-nz"; });
     const hint = document.getElementById("soundHint");
     if(hint) hint.addEventListener("click",unlockAudio);
     return;
@@ -277,7 +277,7 @@ function render(){
         (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';
     row.addEventListener("click",function(){
-      location.href="/acoes-tokyo/"+s.ticker;
+      location.href="/acoes-nz/"+s.ticker;
     });
     row.addEventListener("contextmenu",function(e){
       e.preventDefault();
@@ -300,7 +300,7 @@ async function refresh(){
   const button = document.getElementById("refresh");
   button.disabled = true;
   try{
-    const res = await fetch("/acoes-tokyo-api",{cache:"no-store"});
+    const res = await fetch("/acoes-nz-api",{cache:"no-store"});
     const data = await res.json();
     if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
     data.quotes.forEach(function(q){
