@@ -140,30 +140,23 @@ function playMoveSound(direction){
   try{
     const ctx = state.audioCtx;
     const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-    function tone(startFreq,endFreq,startAt,duration,volume){
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(startFreq, now + startAt);
-      osc.frequency.exponentialRampToValueAtTime(endFreq, now + startAt + duration);
-      gain.gain.setValueAtTime(0.0001, now + startAt);
-      gain.gain.exponentialRampToValueAtTime(volume, now + startAt + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + startAt + duration);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now + startAt);
-      osc.stop(now + startAt + duration + 0.02);
-    }
+    osc.type = "sine";
+    const frequency = direction === "up" ? 980 : direction === "down" ? 220 : 430;
+    const duration = direction === "down" ? 0.16 : 0.12;
+    const volume = direction === "up" ? 0.24 : direction === "down" ? 0.26 : 0.20;
 
-    if(direction === "up"){
-      tone(760,1180,0,0.24,0.22);
-    }else if(direction === "down"){
-      tone(300,170,0,0.28,0.24);
-    }else{
-      tone(330,260,0,0.18,0.16);
-      tone(260,215,0.20,0.24,0.14);
-    }
+    osc.frequency.setValueAtTime(frequency, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.01);
   }catch(e){}
 }
 
