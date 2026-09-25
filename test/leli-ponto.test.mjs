@@ -20,8 +20,11 @@ test('the employee app only references controls that exist in its page', async (
 
   assert.deepEqual([...new Set(selectors.filter((id) => !ids.has(id)))], []);
   assert.doesNotMatch(js, /corrType|corrTime/);
-  assert.match(html, /href="\.\/admin\.html">Entrar como administrador<\/a>/);
+  assert.match(html, /href="\.\/admin\.html">ADM<\/a>/);
   assert.match(html, /\.admin-login-link\{/);
+  assert.match(html, /class="login-help-links"/);
+  assert.match(html, /id="goActivate" class="login-text-link" type="button">Primeiro acesso<\/button>/);
+  assert.doesNotMatch(html, /href="\.\/receitas\.html">Caderno de receitas<\/a>/);
 });
 
 test('administrators cannot use the employee app or employee-only API actions', async () => {
@@ -60,7 +63,7 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
   assert.match(html, /app-real\.js\?v=20/);
-  assert.match(sw, /leli-ponto-v39/);
+  assert.match(sw, /leli-ponto-v40/);
   assert.match(sw, /app-real\.js\?v=20/);
 });
 
@@ -292,7 +295,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=20/);
   assert.match(adminHtml, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v39/);
+  assert.match(sw, /leli-ponto-v40/);
   assert.match(sw, /app-real\.js\?v=20/);
   assert.match(sw, /admin-real\.js\?v=22/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
@@ -455,7 +458,7 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
   assert.match(html, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v39/);
+  assert.match(sw, /leli-ponto-v40/);
   assert.match(sw, /admin-real\.js\?v=22/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
@@ -474,11 +477,12 @@ test('the recipe book scales demo recipes and keeps management in the point admi
   assert.equal(demoRecipes.length, 28);
   assert.equal(new Set(demoRecipes.map((recipe) => recipe.id)).size, 28);
   assert.ok(demoRecipes.some((recipe) => recipe.category === 'Bebidas'));
-  assert.match(employeeHtml, /href="\.\/receitas\.html"/);
+  assert.doesNotMatch(employeeHtml, /href="\.\/receitas\.html"/);
   assert.match(recipeHtml, /id="recipeApp"/);
   assert.match(recipeApp, /const batchOptions=\[1,1\.5,2,3\]/);
   assert.match(recipeApp, /api\('admin-recipes'\)/);
   assert.match(adminHtml, /data-tab="recipesAdmin"/);
+  assert.match(adminHtml, /href="\.\/receitas\.html">Abrir caderno<\/a>/);
   assert.match(adminHtml, /id="recipeForm"/);
   assert.match(admin, /admin-save-recipe/);
   assert.match(admin, /admin-delete-recipe/);
