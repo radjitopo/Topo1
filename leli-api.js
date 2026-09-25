@@ -17,6 +17,22 @@ function body(req){if(typeof req.body==='string'){try{return JSON.parse(req.body
 function cookie(req,name){const raw=String(req.headers.cookie||'');for(const p of raw.split(';')){const [k,...v]=p.trim().split('=');if(k===name)return decodeURIComponent(v.join('='))}return''}
 function sha(v){return createHash('sha256').update(String(v)).digest('hex')}
 function normEmail(v){return String(v||'').trim().toLowerCase()}
+function normPhone(v){
+  const raw=String(v||'').trim();
+  if(!raw||!/^[+\d\s().-]+$/.test(raw))return'';
+  let digits=raw.replace(/\D/g,'');
+  if((digits.length===12||digits.length===13)&&digits.startsWith('55'))digits=digits.slice(2);
+  return digits;
+}
+function validPhone(v){return /^\d{10,11}$/.test(String(v||''))}
+function identifierFrom(payload){return String(payload?.identifier||payload?.phone||payload?.email||'').trim()}
+function validIdentifier(v){const raw=String(v||'').trim();return raw.includes('@')?Boolean(normEmail(raw)):validPhone(normPhone(raw))}
+async function userByIdentifier(value){
+  const raw=String(value||'').trim();
+  if(raw.includes('@')){const rows=await sql`SELECT * FROM leli_users WHERE email=${normEmail(raw)} LIMIT 1`;return rows[0]||null}
+  const phone=normPhone(raw);if(!validPhone(phone))return null;
+  const rows=await sql`SELECT * FROM leli_users WHERE phone=${phone} LIMIT 1`;return rows[0]||null;
+}
 function hashPassword(password,saltHex){return scryptSync(String(password),Buffer.from(saltHex,'hex'),64).toString('hex')}
 function safeEqualHex(a,b){try{const A=Buffer.from(a,'hex'),B=Buffer.from(b,'hex');return A.length===B.length&&timingSafeEqual(A,B)}catch{return false}}
 function newPasswordHash(password){const salt=randomBytes(16).toString('hex');return{salt,hash:hashPassword(password,salt)}}
@@ -152,7 +168,8 @@ async function validatePunchAccess(req,payload){
 async function ensureSchema(){
   await sql`CREATE TABLE IF NOT EXISTS leli_users (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    email text UNIQUE NOT NULL,
+    email text UNIQUE,
+    phone text,
     name text NOT NULL,
     role text NOT NULL CHECK (role IN ('employee','admin')),
     position text NOT NULL DEFAULT 'Colaborador',
@@ -171,6 +188,15 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
   )`;
+  await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS phone text`;
+  await sql`ALTER TABLE leli_users ALTER COLUMN email DROP NOT NULL`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS leli_users_phone_unique ON leli_users(phone) WHERE phone IS NOT NULL`;
+  await sql`DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='leli_users_contact_required') THEN
+      ALTER TABLE leli_users ADD CONSTRAINT leli_users_contact_required CHECK (email IS NOT NULL OR phone IS NOT NULL);
+    END IF;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END $$`;
   await sql`CREATE TABLE IF NOT EXISTS leli_sessions (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES leli_users(id) ON DELETE CASCADE,
@@ -438,7 +464,7 @@ async function ensureSchema(){
 
 async function sessionUser(req){
   const tok=cookie(req,SESSION_COOKIE);if(!tok)return null;
-  const rows=await sql`SELECT u.id,u.email,u.name,u.role,u.position,u.unit,u.active,u.must_change_password,u.photo_data
+  const rows=await sql`SELECT u.id,u.email,u.phone,u.name,u.role,u.position,u.unit,u.active,u.must_change_password,u.photo_data
     FROM leli_sessions s JOIN leli_users u ON u.id=s.user_id
     WHERE s.token_hash=${sha(tok)} AND s.expires_at>now() AND u.active=true LIMIT 1`;
   return rows[0]||null;
@@ -472,53 +498,54 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&action==='bootstrap'){
-      const b=body(req),token=String(b.token||''),email=normEmail(b.email),name=String(b.name||'').trim(),password=String(b.password||'');
+      const b=body(req),token=String(b.token||''),phone=normPhone(b.phone),legacyEmail=normEmail(b.email),email=phone?null:(legacyEmail||null),name=String(b.name||'').trim(),password=String(b.password||'');
       const cnt=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin'`;
       if(cnt[0].n>0)return json(res,409,{error:'O administrador inicial já foi criado.'});
       if(sha(token)!==BOOTSTRAP_HASH)return json(res,403,{error:'Código de configuração inválido.'});
-      if(!email||!name||!validPassword(password))return json(res,400,{error:'Informe nome, e-mail e uma senha de pelo menos 8 caracteres.'});
+      if(!name||(!validPhone(phone)&&!email)||!validPassword(password))return json(res,400,{error:'Informe nome, telefone e uma senha de pelo menos 8 caracteres.'});
       const ph=newPasswordHash(password);
-      const rows=await sql`INSERT INTO leli_users(email,name,role,position,password_salt,password_hash,must_change_password)
-        VALUES(${email},${name},'admin','Administrador',${ph.salt},${ph.hash},false)
-        RETURNING id,email,name,role`;
-      await audit(rows[0].id,'bootstrap_admin','user',rows[0].id,{email});
+      const rows=await sql`INSERT INTO leli_users(email,phone,name,role,position,password_salt,password_hash,must_change_password)
+        VALUES(${email},${phone||null},${name},'admin','Administrador',${ph.salt},${ph.hash},false)
+        RETURNING id,email,phone,name,role`;
+      await audit(rows[0].id,'bootstrap_admin','user',rows[0].id,{phone:phone||null,email});
       return json(res,201,{ok:true});
     }
 
     if(req.method==='POST'&&action==='login'){
-      const b=body(req),email=normEmail(b.email),password=String(b.password||'');
-      const rows=await sql`SELECT * FROM leli_users WHERE email=${email} LIMIT 1`;const u=rows[0];
-      if(!u||!u.active)return json(res,401,{error:'E-mail ou senha inválidos.'});
+      const b=body(req),identifier=identifierFrom(b),password=String(b.password||''),u=await userByIdentifier(identifier);
+      if(!u||!u.active)return json(res,401,{error:'Telefone/e-mail ou senha inválidos.'});
       if(u.activation_hash&&!u.password_hash)return json(res,428,{error:'Conta ainda não ativada.',needsActivation:true});
       if(u.locked_until&&new Date(u.locked_until)>new Date())return json(res,429,{error:'Muitas tentativas. Tente novamente mais tarde.'});
       const ok=u.password_salt&&u.password_hash&&safeEqualHex(hashPassword(password,u.password_salt),u.password_hash);
       if(!ok){
         const next=(u.failed_login_count||0)+1;
         await sql`UPDATE leli_users SET failed_login_count=${next}, locked_until=CASE WHEN ${next}>=5 THEN now()+interval '15 minutes' ELSE locked_until END WHERE id=${u.id}`;
-        return json(res,401,{error:'E-mail ou senha inválidos.'});
+        return json(res,401,{error:'Telefone/e-mail ou senha inválidos.'});
       }
       await sql`UPDATE leli_users SET failed_login_count=0,locked_until=NULL WHERE id=${u.id}`;
       const tok=randomBytes(32).toString('base64url');
       await sql`INSERT INTO leli_sessions(user_id,token_hash,expires_at) VALUES(${u.id},${sha(tok)},now()+interval '30 days')`;
       setSessionCookie(res,tok);await audit(u.id,'login','user',u.id);
-      return json(res,200,{ok:true,user:{id:u.id,email:u.email,name:u.name,role:u.role,position:u.position,unit:u.unit,mustChangePassword:u.must_change_password,photo_data:u.photo_data}});
+      return json(res,200,{ok:true,user:{id:u.id,email:u.email,phone:u.phone,name:u.name,role:u.role,position:u.position,unit:u.unit,mustChangePassword:u.must_change_password,photo_data:u.photo_data}});
     }
 
     if(req.method==='POST'&&action==='request-password-reset'){
-      const email=normEmail(body(req).email);
-      if(!email||!email.includes('@'))return json(res,400,{error:'Informe um e-mail válido.'});
+      const identifier=identifierFrom(body(req));
+      if(!validIdentifier(identifier))return json(res,400,{error:'Informe um telefone ou e-mail válido.'});
+      const account=await userByIdentifier(identifier);
       const rows=await sql`UPDATE leli_users SET password_reset_requested_at=now(),updated_at=now()
-        WHERE email=${email} AND active=true AND password_hash IS NOT NULL
+        WHERE id=${account?.id||null} AND active=true AND password_hash IS NOT NULL
         RETURNING id`;
       if(rows[0])await audit(null,'request_password_reset','user',rows[0].id);
-      return json(res,200,{ok:true,message:'Se o e-mail estiver cadastrado, o pedido aparecerá para o administrador.'});
+      return json(res,200,{ok:true,message:'Se o telefone ou e-mail estiver cadastrado, o pedido aparecerá para o administrador.'});
     }
 
     if(req.method==='POST'&&action==='activate'){
-      const b=body(req),email=normEmail(b.email),code=String(b.code||'').trim(),password=String(b.password||'');
+      const b=body(req),identifier=identifierFrom(b),code=String(b.code||'').trim(),password=String(b.password||'');
       if(!validPassword(password))return json(res,400,{error:'A senha precisa ter pelo menos 8 caracteres.'});
-      const rows=await sql`SELECT * FROM leli_users WHERE email=${email} AND active=true LIMIT 1`;const u=rows[0];
+      const u=await userByIdentifier(identifier);
       if(!u||!u.activation_hash||!safeEqualHex(sha(code),u.activation_hash)||(u.activation_expires_at&&new Date(u.activation_expires_at)<new Date()))return json(res,400,{error:'Código de ativação inválido.'});
+      if(!u.active)return json(res,400,{error:'Código de ativação inválido.'});
       const ph=newPasswordHash(password);
       await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,must_change_password=false,password_reset_requested_at=NULL,failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${u.id}`;
       await audit(u.id,'activate_account','user',u.id);return json(res,200,{ok:true});
@@ -730,7 +757,7 @@ export default async function handler(req,res){
         sql`DELETE FROM leli_users WHERE id<>${user.id}`,
         sql`UPDATE leli_users SET active=true,must_change_password=false,activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,failed_login_count=0,locked_until=NULL,password_reset_requested_at=NULL,updated_at=now() WHERE id=${user.id}`,
       ]);
-      return json(res,200,{ok:true,keptAdmin:{id:user.id,name:user.name,email:user.email},message:'Sistema zerado. Somente o seu administrador foi mantido.'});
+      return json(res,200,{ok:true,keptAdmin:{id:user.id,name:user.name,phone:user.phone,email:user.email},message:'Sistema zerado. Somente o seu administrador foi mantido.'});
     }
     if(req.method==='GET'&&action==='admin-recipes'){
       const rows=await sql`SELECT id,name,category,description,yield_amount,yield_unit,yield_measure_amount,yield_measure_unit,
@@ -772,9 +799,9 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
-      const users=await sql`SELECT id,email,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
-      const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
-      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,d.name AS decided_by_name
+      const users=await sql`SELECT id,email,phone,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
+      const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email,u.phone FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
+      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,u.phone,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
       const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
       return json(res,200,{date,users,punches,corrections,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});
@@ -865,7 +892,7 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='admin-employee-detail'){
       const id=String(req.query?.id||'');
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
-      const employees=await sql`SELECT id,email,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at
+      const employees=await sql`SELECT id,email,phone,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at
         FROM leli_users WHERE id=${id} AND role='employee' LIMIT 1`;
       if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
       const schedule=await sql`SELECT weekday,
@@ -888,7 +915,7 @@ export default async function handler(req,res){
       try{bounds=getMonthBounds(month)}catch{return json(res,400,{error:'Escolha um mês válido.'})}
       if(month>localDate().slice(0,7))return json(res,400,{error:'Escolha o mês atual ou um mês anterior.'});
       const employeeFilter=employeeId||null;
-      const employees=await sql`SELECT id,name,email,unit,active,created_at
+      const employees=await sql`SELECT id,name,email,phone,unit,active,created_at
         FROM leli_users
         WHERE role='employee' AND (${employeeFilter}::uuid IS NULL OR id=${employeeFilter}::uuid)
         ORDER BY name`;
@@ -941,28 +968,28 @@ export default async function handler(req,res){
       return json(res,200,{ok:true,schedule:normalized});
     }
     if(req.method==='POST'&&action==='admin-create-user'){
-      const b=body(req),email=normEmail(b.email),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=role==='admin'?'Administrador':'Colaborador',unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
-      if(!email||!name)return json(res,400,{error:'Informe nome e e-mail.'});
+      const b=body(req),phone=normPhone(b.phone),legacyEmail=normEmail(b.email),email=phone?null:(legacyEmail||null),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=role==='admin'?'Administrador':'Colaborador',unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
+      if(!name||(!validPhone(phone)&&!email))return json(res,400,{error:'Informe nome e um telefone válido.'});
       if(role==='employee'&&!EMPLOYEE_UNITS.has(unit))return json(res,400,{error:'Escolha Pão da Leli Café ou Pão da Leli Produção.'});
       if(role==='admin'){const c=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin' AND active=true`;if(c[0].n>=2)return json(res,409,{error:'O limite é de 2 administradores.'})}
       const code=activationCode(),codeHash=sha(code);
       try{
-        const rows=await sql`INSERT INTO leli_users(email,name,role,position,unit,activation_hash,activation_code,activation_expires_at)
-          VALUES(${email},${name},${role},${position},${unit},${codeHash},${code},NULL)
-          RETURNING id,email,name,role`;
-        await audit(user.id,'create_user','user',rows[0].id,{email,role});return json(res,201,{user:rows[0],activationCode:code});
-      }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Este e-mail já está cadastrado.'});throw e}
+        const rows=await sql`INSERT INTO leli_users(email,phone,name,role,position,unit,activation_hash,activation_code,activation_expires_at)
+          VALUES(${email},${phone||null},${name},${role},${position},${unit},${codeHash},${code},NULL)
+          RETURNING id,email,phone,name,role`;
+        await audit(user.id,'create_user','user',rows[0].id,{phone:phone||null,email,role});return json(res,201,{user:rows[0],activationCode:code});
+      }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:phone?'Este telefone já está cadastrado.':'Este e-mail já está cadastrado.'});throw e}
     }
     if(req.method==='POST'&&action==='admin-toggle-user'){
       const b=body(req),id=String(b.id||'');if(id===user.id)return json(res,400,{error:'Você não pode desativar a própria conta.'});
-      const rows=await sql`UPDATE leli_users SET active=NOT active,updated_at=now() WHERE id=${id} RETURNING id,email,active`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});
+      const rows=await sql`UPDATE leli_users SET active=NOT active,updated_at=now() WHERE id=${id} RETURNING id,email,phone,active`;if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});
       if(!rows[0].active)await sql`DELETE FROM leli_sessions WHERE user_id=${id}`;
       await audit(user.id,'toggle_user','user',id,{active:rows[0].active});return json(res,200,{user:rows[0]});
     }
     if(req.method==='POST'&&action==='admin-reset-activation'){
       const b=body(req),id=String(b.id||''),code=activationCode();
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Usuário inválido.'});
-      const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL,password_reset_requested_at=COALESCE(password_reset_requested_at,now()),failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${id} RETURNING id,email`;
+      const rows=await sql`UPDATE leli_users SET activation_hash=${sha(code)},activation_code=${code},activation_expires_at=NULL,password_hash=NULL,password_salt=NULL,password_reset_requested_at=COALESCE(password_reset_requested_at,now()),failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${id} RETURNING id,email,phone`;
       if(!rows[0])return json(res,404,{error:'Usuário não encontrado.'});
       await sql`DELETE FROM leli_sessions WHERE user_id=${id}`;await audit(user.id,'reset_password_code','user',id);return json(res,200,{activationCode:code});
     }

@@ -100,7 +100,7 @@ $('#recipeSelect').addEventListener('change',event=>selectRecipe(event.target.va
 $('.password-toggle').addEventListener('click',event=>{const input=$('#recipePassword'),showing=input.type==='text';input.type=showing?'password':'text';event.currentTarget.textContent=showing?'◉':'◎';event.currentTarget.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha')});
 $('#recipeLoginForm').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.submitter;button.disabled=true;$('#loginError').textContent='';
-  try{const result=await api('login','POST',{email:$('#recipeEmail').value.trim(),password:$('#recipePassword').value});if(result.user?.role!=='admin'){await api('logout','POST',{});throw new Error('Este caderno está liberado apenas para administradores.')}await loadRecipes()}
+  try{const result=await api('login','POST',{identifier:$('#recipeIdentifier').value.trim(),password:$('#recipePassword').value});if(result.user?.role!=='admin'){await api('logout','POST',{});throw new Error('Este caderno está liberado apenas para administradores.')}await loadRecipes()}
   catch(error){showAuth(error.message)}finally{button.disabled=false}
 });
 boot();
