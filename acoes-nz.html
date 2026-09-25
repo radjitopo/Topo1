@@ -20,7 +20,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .sep{color:#c8cbd0}
 .marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
 .marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 5px}
-.marketTabs button.active{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.marketTabs button.active{background:#111;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.marketTabs button.active::before{content:"✓";margin-right:5px}
 .marketTabs button:nth-child(7){grid-column:2}
 .search{margin-top:14px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
 .search span{font-size:22px;color:#7d8289}
@@ -84,14 +85,14 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <div class="profile" aria-label="perfil">○</div>
   </div>
 
-  <div class="marketTabs" id="marketTabs" role="tablist" aria-label="Bolsa">
-    <button class="active" type="button" role="tab" aria-selected="true" data-market="tokyo">Tóquio</button>
-    <button type="button" role="tab" aria-selected="false" data-market="bovespa">Bovespa</button>
-    <button type="button" role="tab" aria-selected="false" data-market="frankfurt">Frankfurt</button>
-    <button type="button" role="tab" aria-selected="false" data-market="madrid">Madrid</button>
-    <button type="button" role="tab" aria-selected="false" data-market="paris">Paris</button>
-    <button type="button" role="tab" aria-selected="false" data-market="london">Londres</button>
-    <button type="button" role="tab" aria-selected="false" data-market="newyork">Nova York</button>
+  <div class="marketTabs" id="marketTabs" role="group" aria-label="Bolsas; escolha uma ou mais">
+    <button class="active" type="button" aria-pressed="true" data-market="tokyo">Tóquio</button>
+    <button type="button" aria-pressed="false" data-market="bovespa">Bovespa</button>
+    <button type="button" aria-pressed="false" data-market="frankfurt">Frankfurt</button>
+    <button type="button" aria-pressed="false" data-market="madrid">Madrid</button>
+    <button type="button" aria-pressed="false" data-market="paris">Paris</button>
+    <button type="button" aria-pressed="false" data-market="london">Londres</button>
+    <button type="button" aria-pressed="false" data-market="newyork">Nova York</button>
   </div>
 
   <label class="search">
@@ -423,8 +424,6 @@ const MARKETS = {
 };
 
 const SOUND_CYCLE_MS = 10000;
-const SOUNDS_PER_SECOND = 3;
-const SOUND_SPACING_MS = 1000 / SOUNDS_PER_SECOND;
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
   "acoes-nz":"tokyo",
@@ -436,9 +435,32 @@ const PATH_MARKETS = {
   "acoes-londres":"london",
   "acoes-nova-york":"newyork"
 };
+const MARKET_KEYS = Object.keys(MARKETS);
 const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
 const detailTicker = PATH_MARKETS[pathParts[0]] && pathParts[1] ? pathParts[1].toUpperCase() : null;
-const state = { market:initialMarket, quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[], soundCycleTimer:null, requestSerial:0 };
+
+function selectionFromUrl(fallbackMarket){
+  const params = new URLSearchParams(location.search);
+  if(!params.has("bolsas")) return [fallbackMarket];
+  const requested = (params.get("bolsas") || "").split(",").filter(function(key){ return MARKETS[key]; });
+  return MARKET_KEYS.filter(function(key){ return requested.indexOf(key) !== -1; });
+}
+
+const state = {
+  market:initialMarket,
+  selectedMarkets:selectionFromUrl(initialMarket),
+  quotes:{},
+  previous:{},
+  movements:{},
+  tab:"inicio",
+  filter:"",
+  audioReady:false,
+  audioCtx:null,
+  soundTimers:[],
+  soundCycleTimer:null,
+  requestSerial:0
+};
+if(!detailTicker && state.selectedMarkets.length) state.market = state.selectedMarkets[0];
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
@@ -447,8 +469,42 @@ function currentMarket(){
   return MARKETS[state.market];
 }
 
-function currentStocks(){
-  return currentMarket().stocks;
+function selectedMarketKeys(){
+  return MARKET_KEYS.filter(function(key){ return state.selectedMarkets.indexOf(key) !== -1; });
+}
+
+function mixedStocks(keys){
+  const marketKeys = (keys || selectedMarketKeys()).filter(function(key){ return MARKETS[key]; });
+  const maxStocks = marketKeys.reduce(function(max,key){
+    return Math.max(max,MARKETS[key].stocks.length);
+  },0);
+  const mixed = [];
+  for(let index=0;index<maxStocks;index += 1){
+    marketKeys.forEach(function(marketKey){
+      const stock = MARKETS[marketKey].stocks[index];
+      if(stock) mixed.push({ticker:stock.ticker,name:stock.name,marketKey:marketKey});
+    });
+  }
+  return mixed;
+}
+
+function stockKey(marketKey,ticker){
+  return marketKey + ":" + ticker;
+}
+
+function soundSpacingMs(stockCount){
+  return stockCount > 0 ? SOUND_CYCLE_MS / stockCount : 0;
+}
+
+function selectionSuffix(keys){
+  if(keys.length === 1) return "";
+  return "?bolsas=" + encodeURIComponent(keys.join(","));
+}
+
+function updateSelectionUrl(){
+  const keys = selectedMarketKeys();
+  const anchor = keys[0] || state.market || "tokyo";
+  history.pushState(null,"",MARKETS[anchor].basePath + selectionSuffix(keys));
 }
 
 function showToast(msg){
@@ -471,7 +527,7 @@ function unlockAudio(){
   }catch(e){}
 }
 
-function playMoveSound(direction){
+function playMoveSound(direction,maxDuration){
   if(!state.audioReady || !state.audioCtx) return;
   try{
     const ctx = state.audioCtx;
@@ -481,7 +537,10 @@ function playMoveSound(direction){
 
     osc.type = "sine";
     const frequency = direction === "up" ? 980 : direction === "down" ? 220 : 430;
-    const duration = direction === "down" ? 0.16 : 0.12;
+    const baseDuration = direction === "down" ? 0.16 : 0.12;
+    const duration = typeof maxDuration === "number"
+      ? Math.max(0.025,Math.min(baseDuration,maxDuration))
+      : baseDuration;
     const volume = direction === "up" ? 0.24 : direction === "down" ? 0.26 : 0.20;
 
     osc.frequency.setValueAtTime(frequency, now);
@@ -510,16 +569,19 @@ function stopMainSoundCycle(){
 function scheduleMainSounds(){
   if(detailTicker || !state.audioReady) return;
   clearSoundTimers();
-  currentStocks().forEach(function(stock,index){
+  const stocks = mixedStocks();
+  if(!stocks.length) return;
+  const spacingMs = soundSpacingMs(stocks.length);
+  stocks.forEach(function(stock,index){
     const timer = setTimeout(function(){
-      playMoveSound(state.movements[stock.ticker] || "flat");
-    }, index * SOUND_SPACING_MS);
+      playMoveSound(state.movements[stockKey(stock.marketKey,stock.ticker)] || "flat",spacingMs / 1000 * 0.78);
+    }, index * spacingMs);
     state.soundTimers.push(timer);
   });
 }
 
 function startMainSoundCycle(){
-  if(detailTicker || !state.audioReady || state.soundCycleTimer) return;
+  if(detailTicker || !state.audioReady || state.soundCycleTimer || !selectedMarketKeys().length) return;
   scheduleMainSounds();
   state.soundCycleTimer = setInterval(scheduleMainSounds,SOUND_CYCLE_MS);
 }
@@ -529,9 +591,9 @@ function restartMainSoundCycle(){
   startMainSoundCycle();
 }
 
-function money(v){
+function money(v,marketKey){
   if(v == null || isNaN(v)) return "—";
-  return currentMarket().currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
+  return MARKETS[marketKey].currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
 }
 
 function render(){
@@ -542,19 +604,37 @@ function render(){
   const pageTitle = document.getElementById("pageTitle");
   const foot = document.getElementById("foot");
   const market = currentMarket();
-  const stocks = currentStocks();
+  const selectedKeys = selectedMarketKeys();
+  const stocks = detailTicker
+    ? market.stocks.map(function(stock){ return {ticker:stock.ticker,name:stock.name,marketKey:state.market}; })
+    : mixedStocks(selectedKeys);
 
-  pageTitle.textContent = market.title;
-  if(!detailTicker) document.title = market.title;
-  if(foot) foot.textContent = "Dados públicos de mercado da " + market.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
+  if(detailTicker){
+    pageTitle.textContent = market.title;
+    if(foot) foot.textContent = "Dados públicos de mercado da " + market.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
+  }else if(selectedKeys.length === 1){
+    const onlyMarket = MARKETS[selectedKeys[0]];
+    pageTitle.textContent = onlyMarket.title;
+    document.title = onlyMarket.title;
+    if(foot) foot.textContent = "Dados públicos de mercado da " + onlyMarket.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
+  }else if(selectedKeys.length > 1){
+    pageTitle.textContent = "Ações — " + selectedKeys.length + " bolsas";
+    document.title = selectedKeys.length + " bolsas — ações misturadas";
+    if(foot) foot.textContent = "Dados públicos de " + selectedKeys.map(function(key){ return MARKETS[key].label; }).join(", ") + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
+  }else{
+    pageTitle.textContent = "Escolha as bolsas";
+    document.title = "Escolha as bolsas";
+    if(foot) foot.textContent = "Selecione uma ou mais bolsas para misturar as ações e os sons.";
+  }
+
   document.querySelectorAll("[data-market]").forEach(function(btn){
-    const active = btn.getAttribute("data-market") === state.market;
+    const active = selectedKeys.indexOf(btn.getAttribute("data-market")) !== -1;
     btn.classList.toggle("active",active);
-    btn.setAttribute("aria-selected",active ? "true" : "false");
+    btn.setAttribute("aria-pressed",active ? "true" : "false");
   });
 
   if(detailTicker){
-    const s = stocks.find(function(item){ return item.ticker === detailTicker; });
+    const s = market.stocks.find(function(item){ return item.ticker === detailTicker; });
     if(!s){
       list.innerHTML = '<div style="padding:42px 0;color:#8b8f96">Ação não encontrada.</div>';
       if(searchBox) searchBox.style.display = "none";
@@ -566,10 +646,11 @@ function render(){
     if(mainSoundHint) mainSoundHint.style.display = "none";
     if(marketTabs) marketTabs.style.display = "none";
 
-    const q = state.quotes[s.ticker];
+    const key = stockKey(state.market,s.ticker);
+    const q = state.quotes[key];
     let move = "flat";
     let symbol = "–";
-    const previous = state.previous[s.ticker];
+    const previous = state.previous[key];
     if(q && q.ok && typeof previous === "number"){
       if(q.price > previous){ move = "up"; symbol = "▲"; }
       else if(q.price < previous){ move = "down"; symbol = "▼"; }
@@ -582,7 +663,7 @@ function render(){
         '<div class="detailName">'+s.name+'</div>' +
         '<div class="detailTicker">'+s.ticker+' · '+market.exchange+'</div>' +
         '<div class="detailPrice '+(!q?"loading":(!q.ok?"error":""))+'">' +
-          (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>')) +
+          (!q?"…":(!q.ok?"indisponível":money(q.price,state.market)+' <span class="move '+move+'">'+symbol+'</span>')) +
         '</div>' +
         '<div class="soundHint '+(state.audioReady?"active":"")+'" id="soundHint">' +
           (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave, igual desanimado' : '🔊 Toque aqui uma vez para ativar os sons') +
@@ -591,7 +672,11 @@ function render(){
       '</div>';
 
     const back = document.getElementById("detailBack");
-    if(back) back.addEventListener("click",function(){ location.href=market.basePath; });
+    if(back) back.addEventListener("click",function(){
+      const backKeys = selectedMarketKeys();
+      const anchor = backKeys[0] || state.market;
+      location.href = MARKETS[anchor].basePath + selectionSuffix(backKeys);
+    });
     const hint = document.getElementById("soundHint");
     if(hint) hint.addEventListener("click",unlockAudio);
     return;
@@ -603,60 +688,72 @@ function render(){
   if(mainSoundHint){
     mainSoundHint.style.display = "";
     mainSoundHint.className = "mainSoundHint" + (state.audioReady ? " active" : "");
-    mainSoundHint.textContent = state.audioReady
-      ? "🔊 Sons ativados — " + market.label + ": 30 ações, 3 por segundo, ciclo de 10s"
-      : "🔊 Toque aqui uma vez para ativar os sons das 30 ações";
+    const totalStocks = stocks.length;
+    const soundsPerSecond = totalStocks / (SOUND_CYCLE_MS / 1000);
+    if(!selectedKeys.length){
+      mainSoundHint.textContent = "Escolha uma ou mais bolsas acima";
+    }else if(state.audioReady && selectedKeys.length === 1){
+      mainSoundHint.textContent = "🔊 Sons ativados — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+    }else if(state.audioReady){
+      mainSoundHint.textContent = "🔊 Sons ativados — " + selectedKeys.length + " bolsas, " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+    }else{
+      mainSoundHint.textContent = "🔊 Toque aqui uma vez para ativar os sons das " + totalStocks + " ações";
+    }
   }
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){
     if(state.tab === "favoritos"){
-      const fav = JSON.parse(localStorage.getItem(favoriteKey()) || "[]");
+      const fav = JSON.parse(localStorage.getItem(favoriteKey(s.marketKey)) || "[]");
       if(fav.indexOf(s.ticker) === -1) return false;
     }
-    return !f || s.name.toLowerCase().includes(f) || s.ticker.toLowerCase().includes(f);
+    return !f || s.name.toLowerCase().includes(f) || s.ticker.toLowerCase().includes(f) || MARKETS[s.marketKey].label.toLowerCase().includes(f);
   });
 
   list.innerHTML = "";
   if(!visible.length){
-    list.innerHTML = '<div style="padding:42px 0;color:#8b8f96;text-align:center">Nenhuma ação aqui.</div>';
+    list.innerHTML = '<div style="padding:42px 0;color:#8b8f96;text-align:center">'+(selectedKeys.length ? 'Nenhuma ação aqui.' : 'Selecione uma ou mais bolsas acima.')+'</div>';
     return;
   }
 
   visible.forEach(function(s){
-    const q = state.quotes[s.ticker];
+    const marketForStock = MARKETS[s.marketKey];
+    const key = stockKey(s.marketKey,s.ticker);
+    const q = state.quotes[key];
     const row = document.createElement("div");
     row.className = "row";
+    row.dataset.marketKey = s.marketKey;
+    row.dataset.ticker = s.ticker;
     let move = "flat";
     let symbol = "–";
     if(q && q.ok){
-      const previous = state.previous[s.ticker];
+      const previous = state.previous[key];
       if(typeof previous === "number"){
         if(q.price > previous){ move = "up"; symbol = "▲"; }
         else if(q.price < previous){ move = "down"; symbol = "▼"; }
       }
     }
     row.innerHTML =
-      '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+'</div></div>' +
+      '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+' · '+marketForStock.label+'</div></div>' +
       '<div class="price '+(!q?"loading":(!q.ok?"error":""))+'">'+
-        (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
+        (!q?"…":(!q.ok?"indisponível":money(q.price,s.marketKey)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';
     row.addEventListener("click",function(){
-      location.href=market.basePath+"/"+s.ticker;
+      location.href = marketForStock.basePath + "/" + s.ticker + selectionSuffix(selectedKeys);
     });
     row.addEventListener("contextmenu",function(e){
       e.preventDefault();
-      toggleFav(s.ticker);
+      toggleFav(s.marketKey,s.ticker);
     });
     list.appendChild(row);
   });
 }
-function favoriteKey(){
-  if(state.market === "tokyo") return "nz-favs";
-  if(state.market === "bovespa") return "bovespa-favs";
-  return state.market + "-favs";
+function favoriteKey(marketKey){
+  if(marketKey === "tokyo") return "nz-favs";
+  if(marketKey === "bovespa") return "bovespa-favs";
+  return marketKey + "-favs";
 }
-function toggleFav(ticker){
-  const key = favoriteKey();
+function toggleFav(marketKey,ticker){
+  const key = favoriteKey(marketKey);
   let fav = JSON.parse(localStorage.getItem(key) || "[]");
   const i = fav.indexOf(ticker);
   if(i >= 0){ fav.splice(i,1); showToast("Removido dos favoritos"); }
@@ -665,62 +762,84 @@ function toggleFav(ticker){
   render();
 }
 
-function switchMarket(key,updateUrl){
-  if(!MARKETS[key] || key === state.market) return;
-  state.market = key;
-  state.quotes = {};
-  state.previous = {};
-  state.movements = {};
-  state.filter = "";
-  state.tab = "inicio";
+function toggleMarket(key,updateUrl){
+  if(!MARKETS[key] || detailTicker) return;
+  const selected = selectedMarketKeys();
+  const index = selected.indexOf(key);
+  if(index === -1) selected.push(key);
+  else selected.splice(index,1);
+  state.selectedMarkets = MARKET_KEYS.filter(function(marketKey){ return selected.indexOf(marketKey) !== -1; });
+  state.market = state.selectedMarkets[0] || key;
   state.requestSerial += 1;
-  document.getElementById("search").value = "";
-  document.querySelectorAll(".nav button").forEach(function(btn){
-    btn.classList.toggle("active",btn.getAttribute("data-tab") === "inicio");
-  });
-  if(updateUrl !== false) history.pushState(null,"",currentMarket().basePath);
+  if(updateUrl !== false) updateSelectionUrl();
   restartMainSoundCycle();
   render();
   refresh();
 }
 
 async function refresh(){
-  const marketKey = state.market;
-  const market = currentMarket();
+  const marketKeys = detailTicker ? [state.market] : selectedMarketKeys();
   const requestId = ++state.requestSerial;
+  if(!marketKeys.length){
+    updated.textContent = "nenhuma bolsa selecionada";
+    document.getElementById("refresh").disabled = false;
+    render();
+    return;
+  }
   updated.textContent = "atualizando...";
   const button = document.getElementById("refresh");
   button.disabled = true;
   try{
-    const res = await fetch(market.api,{cache:"no-store"});
-    const data = await res.json();
-    if(state.market !== marketKey || requestId !== state.requestSerial) return;
-    if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
-    if(data.marketKey && data.marketKey !== marketKey) throw new Error("Mercado incorreto");
-    data.quotes.forEach(function(q){
-      const current = state.quotes[q.ticker];
-      let movement = "flat";
-      if(current && current.ok && typeof current.price === "number"){
-        state.previous[q.ticker] = current.price;
-        if(q.ok && typeof q.price === "number"){
-          if(q.price > current.price) movement = "up";
-          else if(q.price < current.price) movement = "down";
+    const results = await Promise.all(marketKeys.map(async function(marketKey){
+      try{
+        const res = await fetch(MARKETS[marketKey].api,{cache:"no-store"});
+        if(!res.ok) throw new Error("Falha na fonte");
+        const data = await res.json();
+        if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
+        if(data.marketKey && data.marketKey !== marketKey) throw new Error("Mercado incorreto");
+        return {ok:true,marketKey:marketKey,data:data};
+      }catch(error){
+        return {ok:false,marketKey:marketKey,error:error};
+      }
+    }));
+    if(requestId !== state.requestSerial) return;
+
+    let successfulMarkets = 0;
+    let latestFetchedAt = 0;
+    results.forEach(function(result){
+      if(!result.ok) return;
+      successfulMarkets += 1;
+      latestFetchedAt = Math.max(latestFetchedAt,new Date(result.data.fetchedAt || Date.now()).getTime());
+      result.data.quotes.forEach(function(q){
+        const key = stockKey(result.marketKey,q.ticker);
+        const current = state.quotes[key];
+        let movement = "flat";
+        if(current && current.ok && typeof current.price === "number"){
+          state.previous[key] = current.price;
+          if(q.ok && typeof q.price === "number"){
+            if(q.price > current.price) movement = "up";
+            else if(q.price < current.price) movement = "down";
+          }
         }
-      }
-      state.movements[q.ticker] = movement;
-      if(detailTicker === q.ticker && current && current.ok && q.ok && typeof q.price === "number"){
-        playMoveSound(movement);
-      }
-      state.quotes[q.ticker] = q;
+        state.movements[key] = movement;
+        if(detailTicker === q.ticker && state.market === result.marketKey && current && current.ok && q.ok && typeof q.price === "number"){
+          playMoveSound(movement);
+        }
+        state.quotes[key] = q;
+      });
     });
-    const now = new Date(data.fetchedAt || Date.now());
-    updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    if(!successfulMarkets) throw new Error("Fontes indisponíveis");
+    const now = new Date(latestFetchedAt || Date.now());
+    const time = now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    updated.textContent = successfulMarkets === marketKeys.length
+      ? "consultado às " + time
+      : successfulMarkets + " de " + marketKeys.length + " bolsas consultadas às " + time;
   }catch(e){
-    if(state.market === marketKey && requestId === state.requestSerial){
+    if(requestId === state.requestSerial){
       updated.textContent = "fonte temporariamente indisponível";
     }
   }finally{
-    if(state.market === marketKey && requestId === state.requestSerial){
+    if(requestId === state.requestSerial){
       button.disabled = false;
       render();
     }
@@ -737,14 +856,20 @@ if(mainSoundHint) mainSoundHint.addEventListener("click",unlockAudio);
 
 document.querySelectorAll("[data-market]").forEach(function(btn){
   btn.addEventListener("click",function(){
-    switchMarket(btn.getAttribute("data-market"),true);
+    toggleMarket(btn.getAttribute("data-market"),true);
   });
 });
 
 window.addEventListener("popstate",function(){
   const path = location.pathname.split("/").filter(Boolean)[0];
   const key = PATH_MARKETS[path] || "tokyo";
-  switchMarket(key,false);
+  state.market = key;
+  state.selectedMarkets = selectionFromUrl(key);
+  if(state.selectedMarkets.length) state.market = state.selectedMarkets[0];
+  state.requestSerial += 1;
+  restartMainSoundCycle();
+  render();
+  refresh();
 });
 
 document.querySelectorAll(".nav button").forEach(function(btn){
@@ -771,6 +896,6 @@ document.addEventListener("pointerdown",function firstAudioGesture(event){
 });
 setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- seven-markets-30-three-per-second-live -->
+<!-- multi-market-round-robin-ten-second-sound-cycle -->
 </body>
 </html>

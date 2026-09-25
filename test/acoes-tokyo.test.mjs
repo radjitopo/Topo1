@@ -221,16 +221,23 @@ test('market tabs have dedicated pages and API routes', () => {
   }
 });
 
-test('30 sounds fill one ten-second cycle at three sounds per second', () => {
-  const soundCount = 30;
+test('selected markets share one ten-second cycle at three sounds per market per second', () => {
   const cycleMs = 10000;
-  const soundsPerSecond = 3;
-  const spacingMs = 1000 / soundsPerSecond;
+  for (let marketCount = 1; marketCount <= 7; marketCount += 1) {
+    const soundCount = marketCount * 30;
+    const soundsPerSecond = marketCount * 3;
+    const spacingMs = cycleMs / soundCount;
 
-  assert.equal(soundCount / soundsPerSecond, cycleMs / 1000);
-  assert.ok((soundCount - 1) * spacingMs < cycleMs);
+    assert.equal(soundCount / soundsPerSecond, cycleMs / 1000);
+    assert.ok((soundCount - 1) * spacingMs < cycleMs);
+  }
+
   assert.match(pageSource, /const SOUND_CYCLE_MS = 10000;/);
-  assert.match(pageSource, /const SOUNDS_PER_SECOND = 3;/);
-  assert.match(pageSource, /index \* SOUND_SPACING_MS/);
+  assert.match(pageSource, /function mixedStocks\(keys\)/);
+  assert.match(pageSource, /marketKeys\.forEach\(function\(marketKey\)/);
+  assert.match(pageSource, /return stockCount > 0 \? SOUND_CYCLE_MS \/ stockCount : 0;/);
+  assert.match(pageSource, /index \* spacingMs/);
   assert.match(pageSource, /setInterval\(scheduleMainSounds,SOUND_CYCLE_MS\)/);
+  assert.match(pageSource, /aria-pressed="true" data-market="tokyo"/);
+  assert.match(pageSource, /state\.movements\[stockKey\(stock\.marketKey,stock\.ticker\)\]/);
 });

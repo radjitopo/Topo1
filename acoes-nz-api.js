@@ -285,7 +285,6 @@ function marketFromRequest(req) {
   const queryMarket = Array.isArray(req.query?.market) ? req.query.market[0] : req.query?.market;
   return MARKETS[queryMarket] || MARKETS.tokyo;
 }
-
 function lastNumber(values) {
   if (!Array.isArray(values)) return null;
   for (let i = values.length - 1; i >= 0; i--) {
