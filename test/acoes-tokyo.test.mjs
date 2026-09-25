@@ -16,7 +16,7 @@ function arrayBlock(source, constantName) {
 function apiStocks(constantName) {
   return [
     ...arrayBlock(apiSource, constantName).matchAll(
-      /ticker:\s*['"]([A-Z0-9]+)['"],\s*symbol:\s*['"]([A-Z0-9]+\.(?:T|SA|DE|MC|PA|L))['"]/g,
+      /ticker:\s*['"]([A-Z0-9]+)['"],\s*symbol:\s*['"]([A-Z0-9]+(?:\.(?:T|SA|DE|MC|PA|L))?)['"]/g,
     ),
   ].map((match) => ({ ticker: match[1], symbol: match[2] }));
 }
@@ -27,7 +27,7 @@ function pageTickers(constantName) {
   );
 }
 
-function assertMarket(constantName, suffix) {
+function assertMarket(constantName, suffix = '') {
   const apiItems = apiStocks(constantName);
   const uiTickers = pageTickers(constantName);
 
@@ -38,7 +38,9 @@ function assertMarket(constantName, suffix) {
     apiItems.map((stock) => stock.ticker),
     uiTickers,
   );
-  apiItems.forEach((stock) => assert.equal(stock.symbol, `${stock.ticker}.${suffix}`));
+  apiItems.forEach((stock) =>
+    assert.equal(stock.symbol, suffix ? `${stock.ticker}.${suffix}` : stock.ticker),
+  );
 }
 
 function responseRecorder() {
@@ -83,6 +85,10 @@ test('Paris board and API expose the same 30 unique stocks', () => {
 
 test('London board and API expose the same 30 unique stocks', () => {
   assertMarket('LONDON_STOCKS', 'L');
+});
+
+test('New York board and API expose the same 30 unique stocks', () => {
+  assertMarket('NEW_YORK_STOCKS');
 });
 
 test('API selects the requested market and returns all 30 quotes', async () => {
@@ -167,6 +173,14 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(london.result.body.okCount, 30);
     assert.equal(london.result.body.quotes[0].ticker, 'AZN');
     assert.equal(london.result.body.quotes[0].price, 125.04);
+
+    const newYork = responseRecorder();
+    await quoteHandler({ query: { market: 'newyork' } }, newYork.response);
+    assert.equal(newYork.result.status, 200);
+    assert.equal(newYork.result.body.marketKey, 'newyork');
+    assert.equal(newYork.result.body.currency, 'USD');
+    assert.equal(newYork.result.body.okCount, 30);
+    assert.equal(newYork.result.body.quotes[0].ticker, 'AAPL');
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -179,6 +193,7 @@ test('market tabs have dedicated pages and API routes', () => {
   assert.match(pageSource, /data-market="madrid">Madrid<\/button>/);
   assert.match(pageSource, /data-market="paris">Paris<\/button>/);
   assert.match(pageSource, /data-market="london">Londres<\/button>/);
+  assert.match(pageSource, /data-market="newyork">Nova York<\/button>/);
   assert.ok(
     vercel.routes.some(
       (route) =>
@@ -192,6 +207,7 @@ test('market tabs have dedicated pages and API routes', () => {
     ['madrid', 'madrid'],
     ['paris', 'paris'],
     ['london', 'londres'],
+    ['newyork', 'nova-york'],
   ]) {
     assert.ok(
       vercel.routes.some(

@@ -196,6 +196,39 @@ const LONDON_STOCKS = [
   { ticker: 'MNG', symbol: 'MNG.L', name: 'M&G' },
 ];
 
+const NEW_YORK_STOCKS = [
+  { ticker: 'AAPL', symbol: 'AAPL', name: 'Apple' },
+  { ticker: 'MSFT', symbol: 'MSFT', name: 'Microsoft' },
+  { ticker: 'NVDA', symbol: 'NVDA', name: 'NVIDIA' },
+  { ticker: 'GOOGL', symbol: 'GOOGL', name: 'Alphabet' },
+  { ticker: 'AMZN', symbol: 'AMZN', name: 'Amazon' },
+  { ticker: 'CRM', symbol: 'CRM', name: 'Salesforce' },
+  { ticker: 'CSCO', symbol: 'CSCO', name: 'Cisco' },
+  { ticker: 'IBM', symbol: 'IBM', name: 'IBM' },
+  { ticker: 'JPM', symbol: 'JPM', name: 'JPMorgan Chase' },
+  { ticker: 'GS', symbol: 'GS', name: 'Goldman Sachs' },
+  { ticker: 'AXP', symbol: 'AXP', name: 'American Express' },
+  { ticker: 'V', symbol: 'V', name: 'Visa' },
+  { ticker: 'TRV', symbol: 'TRV', name: 'Travelers' },
+  { ticker: 'UNH', symbol: 'UNH', name: 'UnitedHealth' },
+  { ticker: 'JNJ', symbol: 'JNJ', name: 'Johnson & Johnson' },
+  { ticker: 'MRK', symbol: 'MRK', name: 'Merck' },
+  { ticker: 'AMGN', symbol: 'AMGN', name: 'Amgen' },
+  { ticker: 'BA', symbol: 'BA', name: 'Boeing' },
+  { ticker: 'CAT', symbol: 'CAT', name: 'Caterpillar' },
+  { ticker: 'HON', symbol: 'HON', name: 'Honeywell' },
+  { ticker: 'MMM', symbol: 'MMM', name: '3M' },
+  { ticker: 'WMT', symbol: 'WMT', name: 'Walmart' },
+  { ticker: 'PG', symbol: 'PG', name: 'Procter & Gamble' },
+  { ticker: 'KO', symbol: 'KO', name: 'Coca-Cola' },
+  { ticker: 'MCD', symbol: 'MCD', name: 'McDonald’s' },
+  { ticker: 'NKE', symbol: 'NKE', name: 'Nike' },
+  { ticker: 'DIS', symbol: 'DIS', name: 'Disney' },
+  { ticker: 'HD', symbol: 'HD', name: 'Home Depot' },
+  { ticker: 'CVX', symbol: 'CVX', name: 'Chevron' },
+  { ticker: 'SHW', symbol: 'SHW', name: 'Sherwin-Williams' },
+];
+
 const MARKETS = {
   tokyo: {
     key: 'tokyo',
@@ -238,6 +271,13 @@ const MARKETS = {
     currency: 'GBP',
     source: 'Yahoo Finance / LSE',
     stocks: LONDON_STOCKS,
+  },
+  newyork: {
+    key: 'newyork',
+    name: 'New York / Dow 30',
+    currency: 'USD',
+    source: 'Yahoo Finance / NYSE & Nasdaq',
+    stocks: NEW_YORK_STOCKS,
   },
 };
 

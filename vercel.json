@@ -205,6 +205,10 @@
       "dest": "/acoes-nz-api.js?market=london"
     },
     {
+      "src": "/acoes-nova-york-api",
+      "dest": "/acoes-nz-api.js?market=newyork"
+    },
+    {
       "src": "/moderator-option-delete",
       "dest": "/moderator-option-delete.js"
     },
@@ -245,6 +249,10 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-nova-york/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
@@ -270,6 +278,10 @@
     },
     {
       "src": "/acoes-londres/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-nova-york/?",
       "dest": "/acoes-nz.html"
     },
     {

@@ -90,6 +90,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" role="tab" aria-selected="false" data-market="madrid">Madrid</button>
     <button type="button" role="tab" aria-selected="false" data-market="paris">Paris</button>
     <button type="button" role="tab" aria-selected="false" data-market="london">Londres</button>
+    <button type="button" role="tab" aria-selected="false" data-market="newyork">Nova York</button>
   </div>
 
   <label class="search">
@@ -314,6 +315,39 @@ const LONDON_STOCKS = [
   {ticker:"MNG",name:"M&G"}
 ];
 
+const NEW_YORK_STOCKS = [
+  {ticker:"AAPL",name:"Apple"},
+  {ticker:"MSFT",name:"Microsoft"},
+  {ticker:"NVDA",name:"NVIDIA"},
+  {ticker:"GOOGL",name:"Alphabet"},
+  {ticker:"AMZN",name:"Amazon"},
+  {ticker:"CRM",name:"Salesforce"},
+  {ticker:"CSCO",name:"Cisco"},
+  {ticker:"IBM",name:"IBM"},
+  {ticker:"JPM",name:"JPMorgan Chase"},
+  {ticker:"GS",name:"Goldman Sachs"},
+  {ticker:"AXP",name:"American Express"},
+  {ticker:"V",name:"Visa"},
+  {ticker:"TRV",name:"Travelers"},
+  {ticker:"UNH",name:"UnitedHealth"},
+  {ticker:"JNJ",name:"Johnson & Johnson"},
+  {ticker:"MRK",name:"Merck"},
+  {ticker:"AMGN",name:"Amgen"},
+  {ticker:"BA",name:"Boeing"},
+  {ticker:"CAT",name:"Caterpillar"},
+  {ticker:"HON",name:"Honeywell"},
+  {ticker:"MMM",name:"3M"},
+  {ticker:"WMT",name:"Walmart"},
+  {ticker:"PG",name:"Procter & Gamble"},
+  {ticker:"KO",name:"Coca-Cola"},
+  {ticker:"MCD",name:"McDonald’s"},
+  {ticker:"NKE",name:"Nike"},
+  {ticker:"DIS",name:"Disney"},
+  {ticker:"HD",name:"Home Depot"},
+  {ticker:"CVX",name:"Chevron"},
+  {ticker:"SHW",name:"Sherwin-Williams"}
+];
+
 const MARKETS = {
   tokyo:{
     label:"Tóquio",
@@ -374,6 +408,16 @@ const MARKETS = {
     api:"/acoes-londres-api",
     basePath:"/acoes-londres",
     stocks:LONDON_STOCKS
+  },
+  newyork:{
+    label:"Nova York",
+    title:"Ações Nova York — Dow 30",
+    exchange:"NYSE / Nasdaq",
+    description:"Nova York — Dow 30",
+    currencySymbol:"US$",
+    api:"/acoes-nova-york-api",
+    basePath:"/acoes-nova-york",
+    stocks:NEW_YORK_STOCKS
   }
 };
 
@@ -388,7 +432,8 @@ const PATH_MARKETS = {
   "acoes-frankfurt":"frankfurt",
   "acoes-madrid":"madrid",
   "acoes-paris":"paris",
-  "acoes-londres":"london"
+  "acoes-londres":"london",
+  "acoes-nova-york":"newyork"
 };
 const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
 const detailTicker = PATH_MARKETS[pathParts[0]] && pathParts[1] ? pathParts[1].toUpperCase() : null;
@@ -725,6 +770,6 @@ document.addEventListener("pointerdown",function firstAudioGesture(event){
 });
 setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- six-markets-30-three-per-second-live -->
+<!-- seven-markets-30-three-per-second-live -->
 </body>
 </html>
