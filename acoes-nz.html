@@ -241,7 +241,7 @@ function render(){
     mainSoundHint.className = "mainSoundHint" + (state.audioReady ? " active" : "");
     mainSoundHint.textContent = state.audioReady
       ? "🔊 Sons ativados — Tóquio: 10 ações, uma por segundo"
-      : "🔊 Toque aqui uma vez para ativar os sons das 5 ações";
+      : "🔊 Toque aqui uma vez para ativar os sons das 10 ações";
   }
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){

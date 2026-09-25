@@ -1,9 +1,5 @@
 {
   "version": 2,
-  "alias": [
-    "somostopo.com.br",
-    "www.somostopo.com.br"
-  ],
   "builds": [
     {
       "src": "api.js",
@@ -220,7 +216,7 @@
     },
     {
       "src": "/",
-      "dest": "/page.js?view=home"
+      "dest": "/acoes-nz.html"
     },
     {
       "src": "/rankings/([^/]+)/?",
