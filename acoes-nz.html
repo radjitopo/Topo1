@@ -42,6 +42,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .detailPrice .move{font-size:26px}
 .soundHint{margin-top:28px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;font-size:14px;color:#555;cursor:pointer;background:#fafafa}
 .soundHint.active{color:#1b7f48;background:#f4fbf7}
+.mainSoundHint{margin-top:14px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:#555;background:#fafafa;cursor:pointer}
+.mainSoundHint.active{color:#1b7f48;background:#f4fbf7}
 .detailMeta{margin-top:18px;font-size:13px;line-height:1.6;color:var(--muted)}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
 .refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
@@ -79,6 +81,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <span>⌕</span>
     <input id="search" placeholder="Buscar ações..." autocomplete="off">
   </label>
+  <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons das 5 ações</div>
 
   <section class="list" id="list"></section>
 
@@ -108,7 +111,7 @@ const stocks = [
 
 const pathParts = location.pathname.split("/").filter(Boolean);
 const detailTicker = pathParts[0] === "acoes-nz" && pathParts[1] ? pathParts[1].toUpperCase() : null;
-const state = { quotes:{}, previous:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null };
+const state = { quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[] };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
@@ -120,7 +123,7 @@ function showToast(msg){
 }
 
 function unlockAudio(){
-  if(!detailTicker || state.audioReady) return;
+  if(state.audioReady) return;
   try{
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if(!Ctx) return;
@@ -133,7 +136,7 @@ function unlockAudio(){
 }
 
 function playMoveSound(direction){
-  if(!detailTicker || !state.audioReady || !state.audioCtx) return;
+  if(!state.audioReady || !state.audioCtx) return;
   try{
     const ctx = state.audioCtx;
     const now = ctx.currentTime;
@@ -164,6 +167,22 @@ function playMoveSound(direction){
   }catch(e){}
 }
 
+function clearSoundTimers(){
+  state.soundTimers.forEach(function(timer){ clearTimeout(timer); });
+  state.soundTimers = [];
+}
+
+function scheduleMainSounds(){
+  if(detailTicker || !state.audioReady) return;
+  clearSoundTimers();
+  stocks.forEach(function(stock,index){
+    const timer = setTimeout(function(){
+      playMoveSound(state.movements[stock.ticker] || "flat");
+    }, index * 2000);
+    state.soundTimers.push(timer);
+  });
+}
+
 function money(v){
   if(v == null || isNaN(v)) return "—";
   return "NZ$ " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
@@ -172,6 +191,7 @@ function money(v){
 function render(){
   const searchBox = document.querySelector(".search");
   const nav = document.querySelector(".nav");
+  const mainSoundHint = document.getElementById("mainSoundHint");
 
   if(detailTicker){
     const s = stocks.find(function(item){ return item.ticker === detailTicker; });
@@ -183,6 +203,7 @@ function render(){
 
     if(searchBox) searchBox.style.display = "none";
     if(nav) nav.style.display = "none";
+    if(mainSoundHint) mainSoundHint.style.display = "none";
 
     const q = state.quotes[s.ticker];
     let move = "flat";
@@ -217,6 +238,13 @@ function render(){
 
   if(searchBox) searchBox.style.display = "";
   if(nav) nav.style.display = "";
+  if(mainSoundHint){
+    mainSoundHint.style.display = "";
+    mainSoundHint.className = "mainSoundHint" + (state.audioReady ? " active" : "");
+    mainSoundHint.textContent = state.audioReady
+      ? "🔊 Sons ativados — FPH 0s · MEL 2s · IFT 4s · AIA 6s · MCY 8s"
+      : "🔊 Toque aqui uma vez para ativar os sons das 5 ações";
+  }
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){
     if(state.tab === "favoritos"){
@@ -279,16 +307,21 @@ async function refresh(){
     if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
     data.quotes.forEach(function(q){
       const current = state.quotes[q.ticker];
+      let movement = "flat";
       if(current && current.ok && typeof current.price === "number"){
         state.previous[q.ticker] = current.price;
-        if(detailTicker === q.ticker && q.ok && typeof q.price === "number"){
-          if(q.price > current.price) playMoveSound("up");
-          else if(q.price < current.price) playMoveSound("down");
-          else playMoveSound("flat");
+        if(q.ok && typeof q.price === "number"){
+          if(q.price > current.price) movement = "up";
+          else if(q.price < current.price) movement = "down";
         }
+      }
+      state.movements[q.ticker] = movement;
+      if(detailTicker === q.ticker && current && current.ok && q.ok && typeof q.price === "number"){
+        playMoveSound(movement);
       }
       state.quotes[q.ticker] = q;
     });
+    if(!detailTicker) scheduleMainSounds();
     const now = new Date(data.fetchedAt || Date.now());
     updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   }catch(e){
@@ -304,6 +337,8 @@ document.getElementById("search").addEventListener("input",function(e){
   render();
 });
 document.getElementById("refresh").addEventListener("click",refresh);
+const mainSoundHint = document.getElementById("mainSoundHint");
+if(mainSoundHint) mainSoundHint.addEventListener("click",unlockAudio);
 
 document.querySelectorAll(".nav button").forEach(function(btn){
   btn.addEventListener("click",function(){
@@ -322,12 +357,10 @@ document.querySelectorAll(".nav button").forEach(function(btn){
 
 render();
 refresh();
-if(detailTicker){
-  document.addEventListener("pointerdown",function firstAudioGesture(){
-    unlockAudio();
-    document.removeEventListener("pointerdown",firstAudioGesture);
-  },{once:true});
-}
+document.addEventListener("pointerdown",function firstAudioGesture(){
+  unlockAudio();
+  document.removeEventListener("pointerdown",firstAudioGesture);
+},{once:true});
 setInterval(refresh,10000);
 </script>
 </body>
