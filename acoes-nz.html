@@ -88,6 +88,21 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .nav button.active{color:#111}
 .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(10px);background:#111;color:white;border-radius:999px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.visualSection{margin-top:74px;padding-top:28px;border-top:1px solid var(--line)}
+.visualHead{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:12px}
+.visualEyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.visualTitle{margin:0;font-size:28px;line-height:1;letter-spacing:-.8px}
+.visualClear{border:0;background:transparent;color:#666;font-size:12px;padding:5px 0;cursor:pointer}
+.visualMeta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:var(--muted)}
+.visualCanvasWrap{width:100%;aspect-ratio:1/1;background:#f2efe8;overflow:hidden}
+#marketCanvas{display:block;width:100%;height:100%;background:#f2efe8;image-rendering:pixelated}
+.visualLegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#777}
+.visualLegend span{display:inline-flex;align-items:center;gap:6px}
+.visualSwatch{width:9px;height:9px;display:inline-block}
+.visualSwatch.up{background:#bccd69}
+.visualSwatch.flat{background:#cec8bd}
+.visualSwatch.down{background:#243447}
+
 @media (min-width:700px){
   .app{padding-top:48px}
   h1{font-size:48px}
@@ -155,6 +170,28 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
   </section>
 
   <section class="list" id="list"></section>
+
+  <section class="visualSection" id="visualSection" aria-label="Imagem gerada pelo mercado">
+    <div class="visualHead">
+      <div>
+        <div class="visualEyebrow">Imagem</div>
+        <h2 class="visualTitle">Desenho do mercado</h2>
+      </div>
+      <button class="visualClear" id="clearVisual" type="button">Limpar desenho</button>
+    </div>
+    <div class="visualMeta">
+      <span id="visualStatus">Pixel · aguardando dados</span>
+      <span>mesmos dados do som</span>
+    </div>
+    <div class="visualCanvasWrap">
+      <canvas id="marketCanvas" width="720" height="720" aria-label="Desenho em pixels criado pelas oscilações dos ativos"></canvas>
+    </div>
+    <div class="visualLegend" aria-hidden="true">
+      <span><i class="visualSwatch up"></i>alta</span>
+      <span><i class="visualSwatch flat"></i>neutro</span>
+      <span><i class="visualSwatch down"></i>queda</span>
+    </div>
+  </section>
 
   <div class="foot" id="foot">
     Dados públicos de mercado da Bolsa de Tóquio; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.
@@ -716,6 +753,8 @@ const MARKETS = {
 };
 
 const SOUND_CYCLE_MS = 10000;
+const VISUAL_GRID_SIZE = 36;
+const VISUAL_TOTAL_CELLS = VISUAL_GRID_SIZE * VISUAL_GRID_SIZE;
 const MARKET_STATUS_REFRESH_MS = 60000;
 const MARKET_STATUS_API = "/acoes-status-api";
 const SOUND_STORAGE_KEY = "acoes-sound-preset";
@@ -805,12 +844,17 @@ const state = {
   soundPreviewTimers:[],
   soundPreviewResumeTimer:null,
   soundCycleTimer:null,
+  visualTimers:[],
+  visualIndex:0,
+  visualHasPainted:false,
   requestSerial:0
 };
 if(!detailTicker && state.selectedMarkets.length) state.market = state.selectedMarkets[0];
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
+const marketCanvas = document.getElementById("marketCanvas");
+const visualStatus = document.getElementById("visualStatus");
 
 function currentMarket(){
   return MARKETS[state.market];
@@ -856,6 +900,71 @@ function stockKey(marketKey,ticker){
 
 function soundSpacingMs(stockCount){
   return stockCount > 0 ? SOUND_CYCLE_MS / stockCount : 0;
+}
+
+function clearVisualTimers(){
+  state.visualTimers.forEach(function(timer){ clearTimeout(timer); });
+  state.visualTimers = [];
+}
+
+function resetVisualCanvas(){
+  if(!marketCanvas) return;
+  const ctx = marketCanvas.getContext("2d");
+  ctx.fillStyle = "#f2efe8";
+  ctx.fillRect(0,0,marketCanvas.width,marketCanvas.height);
+  state.visualIndex = 0;
+  state.visualHasPainted = false;
+}
+
+function visualIntensity(stock){
+  const key = stockKey(stock.marketKey,stock.ticker);
+  const quote = state.quotes[key];
+  const previous = state.previous[key];
+  if(!quote || !quote.ok || typeof quote.price !== "number" || typeof previous !== "number" || previous === 0) return .18;
+  const pct = Math.abs((quote.price - previous) / previous);
+  return Math.max(.12,Math.min(1,pct / .012));
+}
+
+function visualColor(direction,intensity){
+  const t = Math.max(0,Math.min(1,intensity || 0));
+  if(direction === "up"){
+    const light = Math.round(82 - t * 34);
+    return "hsl(70 48% " + light + "%)";
+  }
+  if(direction === "down"){
+    const light = Math.round(42 - t * 24);
+    const sat = Math.round(20 + t * 22);
+    return "hsl(212 " + sat + "% " + light + "%)";
+  }
+  const light = Math.round(82 - t * 8);
+  return "hsl(38 12% " + light + "%)";
+}
+
+function paintVisualStock(stock){
+  if(!marketCanvas || detailTicker) return;
+  if(state.visualIndex === 0 && state.visualHasPainted) resetVisualCanvas();
+  const ctx = marketCanvas.getContext("2d");
+  const cell = marketCanvas.width / VISUAL_GRID_SIZE;
+  const index = state.visualIndex % VISUAL_TOTAL_CELLS;
+  const x = (index % VISUAL_GRID_SIZE) * cell;
+  const y = Math.floor(index / VISUAL_GRID_SIZE) * cell;
+  const direction = state.movements[stockKey(stock.marketKey,stock.ticker)] || "flat";
+  ctx.fillStyle = visualColor(direction,visualIntensity(stock));
+  ctx.fillRect(Math.floor(x),Math.floor(y),Math.ceil(cell)+1,Math.ceil(cell)+1);
+  state.visualIndex = (index + 1) % VISUAL_TOTAL_CELLS;
+  state.visualHasPainted = true;
+}
+
+function scheduleVisualEvents(){
+  if(detailTicker) return;
+  clearVisualTimers();
+  const stocks = mixedStocks();
+  if(!stocks.length) return;
+  const spacingMs = soundSpacingMs(stocks.length);
+  stocks.forEach(function(stock,index){
+    const timer = setTimeout(function(){ paintVisualStock(stock); },index * spacingMs);
+    state.visualTimers.push(timer);
+  });
 }
 
 function selectionSuffix(keys){
@@ -1527,6 +1636,7 @@ function render(){
   const mainSoundHint = document.getElementById("mainSoundHint");
   const marketTabs = document.getElementById("marketTabs");
   const pageTitle = document.getElementById("pageTitle");
+  const visualSection = document.getElementById("visualSection");
   const foot = document.getElementById("foot");
   const market = currentMarket();
   const selectedKeys = selectedMarketKeys();
@@ -1542,6 +1652,7 @@ function render(){
   setSoundVolume(state.soundVolume,false);
 
   if(detailTicker){
+    if(visualSection) visualSection.style.display = "none";
     pageTitle.textContent = market.title;
     if(foot) foot.textContent = "Dados públicos de mercado da " + market.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
   }else if(selectedKeys.length === 1){
@@ -1633,6 +1744,12 @@ function render(){
 
   if(searchBox) searchBox.style.display = "";
   if(nav) nav.style.display = "";
+  if(visualSection) visualSection.style.display = "";
+  if(visualStatus){
+    visualStatus.textContent = selectedKeys.length
+      ? "Pixel · " + stocks.length + " eventos em 10s · " + (state.visualIndex + 1) + "/" + VISUAL_TOTAL_CELLS
+      : "Pixel · escolha um ou mais mercados";
+  }
   if(marketTabs) marketTabs.style.display = "grid";
   if(mainSoundHint){
     mainSoundHint.style.display = "";
@@ -1799,6 +1916,7 @@ async function refresh(){
     if(requestId === state.requestSerial){
       button.disabled = false;
       render();
+      scheduleVisualEvents();
     }
   }
 }
@@ -1816,6 +1934,16 @@ document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
     selectSoundPreset(btn.getAttribute("data-sound-preset"));
   });
 });
+
+const clearVisual = document.getElementById("clearVisual");
+if(clearVisual){
+  clearVisual.addEventListener("click",function(){
+    clearVisualTimers();
+    resetVisualCanvas();
+    scheduleVisualEvents();
+    render();
+  });
+}
 
 const soundVolume = document.getElementById("soundVolume");
 if(soundVolume){
@@ -1862,6 +1990,7 @@ document.querySelectorAll(".nav button").forEach(function(btn){
   });
 });
 
+resetVisualCanvas();
 render();
 refresh();
 refreshMarketStatuses();
