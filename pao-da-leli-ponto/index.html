@@ -36,7 +36,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div class="brand"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"><div class="brand-name">Pão da Leli</div><div class="brand-sub">PONTO</div></div>
   <div style="margin-top:20px"><h1>Bem-vindo.</h1><p class="lead">Entre para registrar seu ponto.</p></div>
   <form id="loginForm">
-    <label class="field"><span>☎</span><input id="identifier" type="text" autocomplete="username" placeholder="Seu telefone ou e-mail antigo" required></label>
+    <label class="field"><span>☎</span><input id="identifier" type="text" autocomplete="username" placeholder="Seu telefone ou e-mail" required></label>
     <label class="field"><span>🔒</span><input id="password" type="password" placeholder="Sua senha" required><button class="password-toggle" type="button" data-password-toggle="password" aria-label="Mostrar senha" title="Mostrar senha">◉</button></label>
     <button class="btn" type="submit">Entrar</button>
   </form>
@@ -51,9 +51,9 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 
 <section id="forgot" class="screen">
   <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
-  <h2>Esqueci minha senha</h2><p class="lead">Informe seu telefone. Cadastros antigos também podem usar o e-mail.</p>
+  <h2>Esqueci minha senha</h2><p class="lead">Informe seu telefone ou e-mail.</p>
   <form id="forgotPasswordForm">
-    <label class="field"><span>☎</span><input id="forgotIdentifier" type="text" autocomplete="username" placeholder="Telefone ou e-mail antigo" required></label>
+    <label class="field"><span>☎</span><input id="forgotIdentifier" type="text" autocomplete="username" placeholder="Telefone ou e-mail" required></label>
     <button class="btn" type="submit">PEDIR NOVO CÓDIGO</button>
     <button id="backFromForgot" class="btn secondary" type="button">Voltar</button>
   </form>
@@ -63,7 +63,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div class="top"><img src="./logo-leli-oficial.jpg?v=2" alt="Pão da Leli"></div>
   <h2>Primeiro acesso</h2><p class="lead">Use o código entregue pela empresa e escolha sua senha.</p>
   <form id="activateForm">
-    <label class="field"><span>☎</span><input id="activateIdentifier" type="text" autocomplete="username" placeholder="Telefone ou e-mail antigo" required></label>
+    <label class="field"><span>☎</span><input id="activateIdentifier" type="text" autocomplete="username" placeholder="Telefone ou e-mail" required></label>
     <label class="field"><span>#</span><input id="activateCode" placeholder="Código de ativação" required></label>
     <label class="field"><span>🔒</span><input id="activatePassword" type="password" placeholder="Crie uma senha (mínimo 8 caracteres)" required minlength="8"><button class="password-toggle" type="button" data-password-toggle="activatePassword" aria-label="Mostrar senha" title="Mostrar senha">◉</button></label>
     <button class="btn" type="submit">ATIVAR MINHA CONTA</button>

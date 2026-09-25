@@ -60,7 +60,7 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
   assert.match(html, /app-real\.js\?v=20/);
-  assert.match(sw, /leli-ponto-v38/);
+  assert.match(sw, /leli-ponto-v39/);
   assert.match(sw, /app-real\.js\?v=20/);
 });
 
@@ -135,6 +135,10 @@ test('new employees and administrators are registered with name and phone', asyn
   assert.match(employee, /identifier:\$\('#identifier'\)\.value\.trim\(\)/);
   assert.match(recipeHtml, /id="recipeIdentifier"/);
   assert.match(recipeApp, /identifier:\$\('#recipeIdentifier'\)\.value\.trim\(\)/);
+  assert.match(employeeHtml, /placeholder="Seu telefone ou e-mail"/);
+  assert.match(adminHtml, /Entre com seu telefone ou e-mail\./);
+  assert.match(recipeHtml, /placeholder="Telefone ou e-mail"/);
+  assert.doesNotMatch(employeeHtml + adminHtml + recipeHtml + admin, /e-mail antigo|cadastros antigos|contas antigas/i);
 });
 
 test('a correction is sent as one journey and each time is decided separately', async () => {
@@ -288,7 +292,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=20/);
   assert.match(adminHtml, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v38/);
+  assert.match(sw, /leli-ponto-v39/);
   assert.match(sw, /app-real\.js\?v=20/);
   assert.match(sw, /admin-real\.js\?v=22/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
@@ -451,7 +455,7 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
   assert.match(html, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v38/);
+  assert.match(sw, /leli-ponto-v39/);
   assert.match(sw, /admin-real\.js\?v=22/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
