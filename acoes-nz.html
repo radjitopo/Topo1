@@ -66,6 +66,11 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .soundOption.active span{color:#fff}
 .soundOption.active small{color:#c9cbd0}
 .soundOption:focus-visible{outline:3px solid rgba(34,179,95,.22);outline-offset:2px}
+.soundVolume{margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+.soundVolumeHead{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#555}
+.soundVolumeHead output{font-weight:700;color:#111;font-variant-numeric:tabular-nums}
+.soundVolume input{display:block;width:100%;height:30px;margin:4px 0 0;accent-color:#111;cursor:pointer}
+.soundVolume input:focus-visible{outline:3px solid rgba(34,179,95,.22);outline-offset:2px}
 .detailMeta{margin-top:18px;font-size:13px;line-height:1.6;color:var(--muted)}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
 .refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
@@ -131,6 +136,10 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="waves"><span>Ondas</span><small>suave e contínuo</small></button>
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="moog"><span>Moog</span><small>tecla eletrônica</small></button>
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="theremin"><span>Theremin</span><small>vibrato no ar</small></button>
+    </div>
+    <div class="soundVolume">
+      <div class="soundVolumeHead"><label for="soundVolume">Volume dos sons</label><output id="soundVolumeValue" for="soundVolume">150%</output></div>
+      <input id="soundVolume" type="range" min="0" max="250" step="10" value="150" aria-label="Volume dos sons">
     </div>
   </section>
 
@@ -675,6 +684,8 @@ const SOUND_CYCLE_MS = 10000;
 const MARKET_STATUS_REFRESH_MS = 60000;
 const MARKET_STATUS_API = "/acoes-status-api";
 const SOUND_STORAGE_KEY = "acoes-sound-preset";
+const SOUND_VOLUME_STORAGE_KEY = "acoes-sound-volume";
+const DEFAULT_SOUND_VOLUME = 150;
 const SOUND_PRESETS = {
   classic:{label:"Clássico"},
   waves:{label:"Ondas"},
@@ -718,6 +729,21 @@ function storedSoundPreset(){
   }
 }
 
+function normalizedSoundVolume(value){
+  const parsed = Number(value);
+  if(!Number.isFinite(parsed)) return DEFAULT_SOUND_VOLUME;
+  return Math.max(0,Math.min(250,Math.round(parsed / 10) * 10));
+}
+
+function storedSoundVolume(){
+  try{
+    const saved = localStorage.getItem(SOUND_VOLUME_STORAGE_KEY);
+    return saved == null ? DEFAULT_SOUND_VOLUME : normalizedSoundVolume(saved);
+  }catch(e){
+    return DEFAULT_SOUND_VOLUME;
+  }
+}
+
 const state = {
   market:initialMarket,
   selectedMarkets:selectionFromUrl(initialMarket),
@@ -729,7 +755,10 @@ const state = {
   filter:"",
   audioReady:false,
   audioCtx:null,
+  audioOutput:null,
+  audioLimiter:null,
   soundPreset:storedSoundPreset(),
+  soundVolume:storedSoundVolume(),
   soundTimers:[],
   soundPreviewTimers:[],
   soundPreviewResumeTimer:null,
@@ -814,6 +843,7 @@ function unlockAudio(){
     if(!Ctx) return;
     state.audioCtx = state.audioCtx || new Ctx();
     if(state.audioCtx.state === "suspended") state.audioCtx.resume();
+    setupAudioOutput(state.audioCtx);
     state.audioReady = true;
     startMainSoundCycle();
     render();
@@ -822,6 +852,38 @@ function unlockAudio(){
   }catch(e){
     return false;
   }
+}
+
+function setupAudioOutput(ctx){
+  if(state.audioOutput) return state.audioOutput;
+  const master = ctx.createGain();
+  const limiter = ctx.createDynamicsCompressor();
+  master.gain.setValueAtTime(state.soundVolume / 100,ctx.currentTime);
+  limiter.threshold.setValueAtTime(-4,ctx.currentTime);
+  limiter.knee.setValueAtTime(5,ctx.currentTime);
+  limiter.ratio.setValueAtTime(18,ctx.currentTime);
+  limiter.attack.setValueAtTime(0.003,ctx.currentTime);
+  limiter.release.setValueAtTime(0.22,ctx.currentTime);
+  master.connect(limiter);
+  limiter.connect(ctx.destination);
+  state.audioOutput = master;
+  state.audioLimiter = limiter;
+  return master;
+}
+
+function setSoundVolume(value,showMessage){
+  state.soundVolume = normalizedSoundVolume(value);
+  try{ localStorage.setItem(SOUND_VOLUME_STORAGE_KEY,String(state.soundVolume)); }catch(e){}
+  if(state.audioCtx && state.audioOutput){
+    const now = state.audioCtx.currentTime;
+    state.audioOutput.gain.cancelScheduledValues(now);
+    state.audioOutput.gain.setTargetAtTime(state.soundVolume / 100,now,0.018);
+  }
+  const input = document.getElementById("soundVolume");
+  const output = document.getElementById("soundVolumeValue");
+  if(input) input.value = String(state.soundVolume);
+  if(output) output.textContent = state.soundVolume + "%";
+  if(showMessage) showToast("Volume em " + state.soundVolume + "%");
 }
 
 function densityScale(maxDuration){
@@ -846,7 +908,7 @@ function playClassicSound(ctx,direction,maxDuration){
   gain.gain.exponentialRampToValueAtTime(volume,now + 0.012);
   gain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(setupAudioOutput(ctx));
   osc.start(now);
   osc.stop(now + duration + 0.01);
 }
@@ -876,7 +938,7 @@ function playWaveSound(ctx,direction,maxDuration){
     osc.start(now);
     osc.stop(now + duration + 0.01);
   });
-  gain.connect(ctx.destination);
+  gain.connect(setupAudioOutput(ctx));
 }
 
 function playMoogSound(ctx,direction,maxDuration){
@@ -912,7 +974,7 @@ function playMoogSound(ctx,direction,maxDuration){
     osc.stop(now + duration + 0.01);
   });
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(setupAudioOutput(ctx));
 }
 
 function playThereminSound(ctx,direction,maxDuration){
@@ -943,7 +1005,7 @@ function playThereminSound(ctx,direction,maxDuration){
   vibrato.connect(vibratoDepth);
   vibratoDepth.connect(osc.frequency);
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(setupAudioOutput(ctx));
   vibrato.start(now);
   osc.start(now);
   vibrato.stop(now + duration + 0.01);
@@ -1051,6 +1113,7 @@ function render(){
     btn.classList.toggle("active",active);
     btn.setAttribute("aria-pressed",active ? "true" : "false");
   });
+  setSoundVolume(state.soundVolume,false);
 
   if(detailTicker){
     pageTitle.textContent = market.title;
@@ -1317,6 +1380,18 @@ document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
     selectSoundPreset(btn.getAttribute("data-sound-preset"));
   });
 });
+
+const soundVolume = document.getElementById("soundVolume");
+if(soundVolume){
+  soundVolume.addEventListener("input",function(e){
+    setSoundVolume(e.target.value,false);
+    unlockAudio();
+  });
+  soundVolume.addEventListener("change",function(){
+    setSoundVolume(soundVolume.value,true);
+    if(state.audioReady) previewSoundPreset();
+  });
+}
 
 document.querySelectorAll("[data-market]").forEach(function(btn){
   btn.addEventListener("click",function(){

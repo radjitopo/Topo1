@@ -400,6 +400,22 @@ test('board offers four persistent sound presets with an audible preview', () =>
   assert.match(pageSource, /\["down","flat","up"\]/);
 });
 
+test('sound volume can be boosted to 250 percent, is persisted and uses a limiter', () => {
+  assert.match(
+    pageSource,
+    /id="soundVolume" type="range" min="0" max="250" step="10" value="150"/,
+  );
+  assert.match(pageSource, /const SOUND_VOLUME_STORAGE_KEY = "acoes-sound-volume";/);
+  assert.match(pageSource, /const DEFAULT_SOUND_VOLUME = 150;/);
+  assert.match(pageSource, /soundVolume:storedSoundVolume\(\)/);
+  assert.match(pageSource, /localStorage\.setItem\(SOUND_VOLUME_STORAGE_KEY,String\(state\.soundVolume\)\)/);
+  assert.match(pageSource, /const limiter = ctx\.createDynamicsCompressor\(\);/);
+  assert.match(pageSource, /master\.connect\(limiter\);/);
+  assert.match(pageSource, /limiter\.connect\(ctx\.destination\);/);
+  assert.match(pageSource, /state\.audioOutput\.gain\.setTargetAtTime\(state\.soundVolume \/ 100,now,0\.018\)/);
+  assert.equal((pageSource.match(/gain\.connect\(setupAudioOutput\(ctx\)\)/g) || []).length, 4);
+});
+
 test('market tabs remain clickable and show live open or closed colors', () => {
   assert.match(pageSource, /\.marketTabs button\.market-open\{color:#168447\}/);
   assert.match(pageSource, /\.marketTabs button\.market-closed\{color:#c64040\}/);
