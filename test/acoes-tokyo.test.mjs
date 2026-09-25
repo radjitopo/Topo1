@@ -16,7 +16,7 @@ function arrayBlock(source, constantName) {
 function apiStocks(constantName) {
   return [
     ...arrayBlock(apiSource, constantName).matchAll(
-      /ticker:\s*['"]([A-Z0-9]+)['"],\s*symbol:\s*['"]([A-Z0-9]+\.(?:T|SA|DE|MC))['"]/g,
+      /ticker:\s*['"]([A-Z0-9]+)['"],\s*symbol:\s*['"]([A-Z0-9]+\.(?:T|SA|DE|MC|PA|L))['"]/g,
     ),
   ].map((match) => ({ ticker: match[1], symbol: match[2] }));
 }
@@ -77,13 +77,25 @@ test('Madrid board and API expose the same 30 unique stocks', () => {
   assertMarket('MADRID_STOCKS', 'MC');
 });
 
+test('Paris board and API expose the same 30 unique stocks', () => {
+  assertMarket('PARIS_STOCKS', 'PA');
+});
+
+test('London board and API expose the same 30 unique stocks', () => {
+  assertMarket('LONDON_STOCKS', 'L');
+});
+
 test('API selects the requested market and returns all 30 quotes', async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     const urlText = String(url);
-    const isBovespa = urlText.includes('.SA');
-    const isEuro = urlText.includes('.DE') || urlText.includes('.MC');
-    const price = isBovespa ? 42.5 : isEuro ? 125.75 : 4200;
+    const quote = urlText.includes('.SA')
+      ? { price: 42.5, currency: 'BRL' }
+      : urlText.includes('.DE') || urlText.includes('.MC') || urlText.includes('.PA')
+        ? { price: 125.75, currency: 'EUR' }
+        : urlText.includes('.L')
+          ? { price: 12504, currency: 'GBp' }
+          : { price: 4200, currency: 'JPY' };
     return {
       ok: true,
       async json() {
@@ -92,12 +104,12 @@ test('API selects the requested market and returns all 30 quotes', async () => {
             result: [
               {
                 meta: {
-                  regularMarketPrice: price,
-                  currency: isBovespa ? 'BRL' : isEuro ? 'EUR' : 'JPY',
+                  regularMarketPrice: quote.price,
+                  currency: quote.currency,
                   marketState: 'CLOSED',
                   regularMarketTime: 1790298000,
                 },
-                indicators: { quote: [{ close: [price] }] },
+                indicators: { quote: [{ close: [quote.price] }] },
               },
             ],
           },
@@ -138,6 +150,23 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(madrid.result.body.currency, 'EUR');
     assert.equal(madrid.result.body.okCount, 30);
     assert.equal(madrid.result.body.quotes[0].ticker, 'SAN');
+
+    const paris = responseRecorder();
+    await quoteHandler({ query: { market: 'paris' } }, paris.response);
+    assert.equal(paris.result.status, 200);
+    assert.equal(paris.result.body.marketKey, 'paris');
+    assert.equal(paris.result.body.currency, 'EUR');
+    assert.equal(paris.result.body.okCount, 30);
+    assert.equal(paris.result.body.quotes[0].ticker, 'AIR');
+
+    const london = responseRecorder();
+    await quoteHandler({ query: { market: 'london' } }, london.response);
+    assert.equal(london.result.status, 200);
+    assert.equal(london.result.body.marketKey, 'london');
+    assert.equal(london.result.body.currency, 'GBP');
+    assert.equal(london.result.body.okCount, 30);
+    assert.equal(london.result.body.quotes[0].ticker, 'AZN');
+    assert.equal(london.result.body.quotes[0].price, 125.04);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -148,6 +177,8 @@ test('market tabs have dedicated pages and API routes', () => {
   assert.match(pageSource, /data-market="bovespa">Bovespa<\/button>/);
   assert.match(pageSource, /data-market="frankfurt">Frankfurt<\/button>/);
   assert.match(pageSource, /data-market="madrid">Madrid<\/button>/);
+  assert.match(pageSource, /data-market="paris">Paris<\/button>/);
+  assert.match(pageSource, /data-market="london">Londres<\/button>/);
   assert.ok(
     vercel.routes.some(
       (route) =>
@@ -156,16 +187,21 @@ test('market tabs have dedicated pages and API routes', () => {
   );
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-bovespa/?'));
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-bovespa/([^/]+)/?'));
-  for (const market of ['frankfurt', 'madrid']) {
+  for (const [market, routeSlug] of [
+    ['frankfurt', 'frankfurt'],
+    ['madrid', 'madrid'],
+    ['paris', 'paris'],
+    ['london', 'londres'],
+  ]) {
     assert.ok(
       vercel.routes.some(
         (route) =>
-          route.src === `/acoes-${market}-api` &&
+          route.src === `/acoes-${routeSlug}-api` &&
           route.dest === `/acoes-nz-api.js?market=${market}`,
       ),
     );
-    assert.ok(vercel.routes.some((route) => route.src === `/acoes-${market}/?`));
-    assert.ok(vercel.routes.some((route) => route.src === `/acoes-${market}/([^/]+)/?`));
+    assert.ok(vercel.routes.some((route) => route.src === `/acoes-${routeSlug}/?`));
+    assert.ok(vercel.routes.some((route) => route.src === `/acoes-${routeSlug}/([^/]+)/?`));
   }
 });
 

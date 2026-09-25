@@ -18,7 +18,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,179,95,.08)}
 .muted{color:var(--muted)}
 .sep{color:#c8cbd0}
-.marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
+.marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
 .marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 5px}
 .marketTabs button.active{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .search{margin-top:14px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
@@ -88,6 +88,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" role="tab" aria-selected="false" data-market="bovespa">Bovespa</button>
     <button type="button" role="tab" aria-selected="false" data-market="frankfurt">Frankfurt</button>
     <button type="button" role="tab" aria-selected="false" data-market="madrid">Madrid</button>
+    <button type="button" role="tab" aria-selected="false" data-market="paris">Paris</button>
+    <button type="button" role="tab" aria-selected="false" data-market="london">Londres</button>
   </div>
 
   <label class="search">
@@ -246,6 +248,72 @@ const MADRID_STOCKS = [
   {ticker:"MRL",name:"Merlin Properties"}
 ];
 
+const PARIS_STOCKS = [
+  {ticker:"AIR",name:"Airbus"},
+  {ticker:"AI",name:"Air Liquide"},
+  {ticker:"CS",name:"AXA"},
+  {ticker:"BNP",name:"BNP Paribas"},
+  {ticker:"EN",name:"Bouygues"},
+  {ticker:"CAP",name:"Capgemini"},
+  {ticker:"CA",name:"Carrefour"},
+  {ticker:"ACA",name:"Crédit Agricole"},
+  {ticker:"BN",name:"Danone"},
+  {ticker:"DSY",name:"Dassault Systèmes"},
+  {ticker:"ENGI",name:"Engie"},
+  {ticker:"EL",name:"EssilorLuxottica"},
+  {ticker:"RMS",name:"Hermès"},
+  {ticker:"KER",name:"Kering"},
+  {ticker:"OR",name:"L’Oréal"},
+  {ticker:"LR",name:"Legrand"},
+  {ticker:"MC",name:"LVMH"},
+  {ticker:"ML",name:"Michelin"},
+  {ticker:"ORA",name:"Orange"},
+  {ticker:"RI",name:"Pernod Ricard"},
+  {ticker:"PUB",name:"Publicis"},
+  {ticker:"RNO",name:"Renault"},
+  {ticker:"SAF",name:"Safran"},
+  {ticker:"SGO",name:"Saint-Gobain"},
+  {ticker:"SAN",name:"Sanofi"},
+  {ticker:"SU",name:"Schneider Electric"},
+  {ticker:"GLE",name:"Société Générale"},
+  {ticker:"HO",name:"Thales"},
+  {ticker:"TTE",name:"TotalEnergies"},
+  {ticker:"DG",name:"Vinci"}
+];
+
+const LONDON_STOCKS = [
+  {ticker:"AZN",name:"AstraZeneca"},
+  {ticker:"SHEL",name:"Shell"},
+  {ticker:"HSBA",name:"HSBC"},
+  {ticker:"ULVR",name:"Unilever"},
+  {ticker:"BP",name:"BP"},
+  {ticker:"RIO",name:"Rio Tinto"},
+  {ticker:"GSK",name:"GSK"},
+  {ticker:"DGE",name:"Diageo"},
+  {ticker:"REL",name:"RELX"},
+  {ticker:"BATS",name:"British American Tobacco"},
+  {ticker:"LSEG",name:"London Stock Exchange Group"},
+  {ticker:"NG",name:"National Grid"},
+  {ticker:"BARC",name:"Barclays"},
+  {ticker:"LLOY",name:"Lloyds Banking Group"},
+  {ticker:"NWG",name:"NatWest Group"},
+  {ticker:"STAN",name:"Standard Chartered"},
+  {ticker:"GLEN",name:"Glencore"},
+  {ticker:"AAL",name:"Anglo American"},
+  {ticker:"BA",name:"BAE Systems"},
+  {ticker:"RR",name:"Rolls-Royce"},
+  {ticker:"VOD",name:"Vodafone"},
+  {ticker:"TSCO",name:"Tesco"},
+  {ticker:"SBRY",name:"Sainsbury’s"},
+  {ticker:"IMB",name:"Imperial Brands"},
+  {ticker:"CPG",name:"Compass Group"},
+  {ticker:"EXPN",name:"Experian"},
+  {ticker:"INF",name:"Informa"},
+  {ticker:"PRU",name:"Prudential"},
+  {ticker:"AV",name:"Aviva"},
+  {ticker:"MNG",name:"M&G"}
+];
+
 const MARKETS = {
   tokyo:{
     label:"Tóquio",
@@ -286,6 +354,26 @@ const MARKETS = {
     api:"/acoes-madrid-api",
     basePath:"/acoes-madrid",
     stocks:MADRID_STOCKS
+  },
+  paris:{
+    label:"Paris",
+    title:"Ações Paris",
+    exchange:"Euronext Paris",
+    description:"Euronext Paris",
+    currencySymbol:"€",
+    api:"/acoes-paris-api",
+    basePath:"/acoes-paris",
+    stocks:PARIS_STOCKS
+  },
+  london:{
+    label:"Londres",
+    title:"Ações Londres",
+    exchange:"LSE",
+    description:"Bolsa de Londres",
+    currencySymbol:"£",
+    api:"/acoes-londres-api",
+    basePath:"/acoes-londres",
+    stocks:LONDON_STOCKS
   }
 };
 
@@ -298,7 +386,9 @@ const PATH_MARKETS = {
   "acoes-tokyo":"tokyo",
   "acoes-bovespa":"bovespa",
   "acoes-frankfurt":"frankfurt",
-  "acoes-madrid":"madrid"
+  "acoes-madrid":"madrid",
+  "acoes-paris":"paris",
+  "acoes-londres":"london"
 };
 const initialMarket = PATH_MARKETS[pathParts[0]] || "tokyo";
 const detailTicker = PATH_MARKETS[pathParts[0]] && pathParts[1] ? pathParts[1].toUpperCase() : null;
@@ -635,6 +725,6 @@ document.addEventListener("pointerdown",function firstAudioGesture(event){
 });
 setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- tokyo-bovespa-frankfurt-madrid-30-three-per-second-live -->
+<!-- six-markets-30-three-per-second-live -->
 </body>
 </html>

@@ -21,9 +21,7 @@
       "src": "page.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": [
-          "index.html"
-        ]
+        "includeFiles": ["index.html"]
       }
     },
     {
@@ -199,6 +197,14 @@
       "dest": "/acoes-nz-api.js?market=madrid"
     },
     {
+      "src": "/acoes-paris-api",
+      "dest": "/acoes-nz-api.js?market=paris"
+    },
+    {
+      "src": "/acoes-londres-api",
+      "dest": "/acoes-nz-api.js?market=london"
+    },
+    {
       "src": "/moderator-option-delete",
       "dest": "/moderator-option-delete.js"
     },
@@ -231,6 +237,14 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-paris/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-londres/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
@@ -248,6 +262,14 @@
     },
     {
       "src": "/acoes-madrid/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-paris/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-londres/?",
       "dest": "/acoes-nz.html"
     },
     {

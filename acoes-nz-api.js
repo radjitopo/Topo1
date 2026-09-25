@@ -130,6 +130,72 @@ const MADRID_STOCKS = [
   { ticker: 'MRL', symbol: 'MRL.MC', name: 'Merlin Properties' },
 ];
 
+const PARIS_STOCKS = [
+  { ticker: 'AIR', symbol: 'AIR.PA', name: 'Airbus' },
+  { ticker: 'AI', symbol: 'AI.PA', name: 'Air Liquide' },
+  { ticker: 'CS', symbol: 'CS.PA', name: 'AXA' },
+  { ticker: 'BNP', symbol: 'BNP.PA', name: 'BNP Paribas' },
+  { ticker: 'EN', symbol: 'EN.PA', name: 'Bouygues' },
+  { ticker: 'CAP', symbol: 'CAP.PA', name: 'Capgemini' },
+  { ticker: 'CA', symbol: 'CA.PA', name: 'Carrefour' },
+  { ticker: 'ACA', symbol: 'ACA.PA', name: 'Crédit Agricole' },
+  { ticker: 'BN', symbol: 'BN.PA', name: 'Danone' },
+  { ticker: 'DSY', symbol: 'DSY.PA', name: 'Dassault Systèmes' },
+  { ticker: 'ENGI', symbol: 'ENGI.PA', name: 'Engie' },
+  { ticker: 'EL', symbol: 'EL.PA', name: 'EssilorLuxottica' },
+  { ticker: 'RMS', symbol: 'RMS.PA', name: 'Hermès' },
+  { ticker: 'KER', symbol: 'KER.PA', name: 'Kering' },
+  { ticker: 'OR', symbol: 'OR.PA', name: 'L’Oréal' },
+  { ticker: 'LR', symbol: 'LR.PA', name: 'Legrand' },
+  { ticker: 'MC', symbol: 'MC.PA', name: 'LVMH' },
+  { ticker: 'ML', symbol: 'ML.PA', name: 'Michelin' },
+  { ticker: 'ORA', symbol: 'ORA.PA', name: 'Orange' },
+  { ticker: 'RI', symbol: 'RI.PA', name: 'Pernod Ricard' },
+  { ticker: 'PUB', symbol: 'PUB.PA', name: 'Publicis' },
+  { ticker: 'RNO', symbol: 'RNO.PA', name: 'Renault' },
+  { ticker: 'SAF', symbol: 'SAF.PA', name: 'Safran' },
+  { ticker: 'SGO', symbol: 'SGO.PA', name: 'Saint-Gobain' },
+  { ticker: 'SAN', symbol: 'SAN.PA', name: 'Sanofi' },
+  { ticker: 'SU', symbol: 'SU.PA', name: 'Schneider Electric' },
+  { ticker: 'GLE', symbol: 'GLE.PA', name: 'Société Générale' },
+  { ticker: 'HO', symbol: 'HO.PA', name: 'Thales' },
+  { ticker: 'TTE', symbol: 'TTE.PA', name: 'TotalEnergies' },
+  { ticker: 'DG', symbol: 'DG.PA', name: 'Vinci' },
+];
+
+const LONDON_STOCKS = [
+  { ticker: 'AZN', symbol: 'AZN.L', name: 'AstraZeneca' },
+  { ticker: 'SHEL', symbol: 'SHEL.L', name: 'Shell' },
+  { ticker: 'HSBA', symbol: 'HSBA.L', name: 'HSBC' },
+  { ticker: 'ULVR', symbol: 'ULVR.L', name: 'Unilever' },
+  { ticker: 'BP', symbol: 'BP.L', name: 'BP' },
+  { ticker: 'RIO', symbol: 'RIO.L', name: 'Rio Tinto' },
+  { ticker: 'GSK', symbol: 'GSK.L', name: 'GSK' },
+  { ticker: 'DGE', symbol: 'DGE.L', name: 'Diageo' },
+  { ticker: 'REL', symbol: 'REL.L', name: 'RELX' },
+  { ticker: 'BATS', symbol: 'BATS.L', name: 'British American Tobacco' },
+  { ticker: 'LSEG', symbol: 'LSEG.L', name: 'London Stock Exchange Group' },
+  { ticker: 'NG', symbol: 'NG.L', name: 'National Grid' },
+  { ticker: 'BARC', symbol: 'BARC.L', name: 'Barclays' },
+  { ticker: 'LLOY', symbol: 'LLOY.L', name: 'Lloyds Banking Group' },
+  { ticker: 'NWG', symbol: 'NWG.L', name: 'NatWest Group' },
+  { ticker: 'STAN', symbol: 'STAN.L', name: 'Standard Chartered' },
+  { ticker: 'GLEN', symbol: 'GLEN.L', name: 'Glencore' },
+  { ticker: 'AAL', symbol: 'AAL.L', name: 'Anglo American' },
+  { ticker: 'BA', symbol: 'BA.L', name: 'BAE Systems' },
+  { ticker: 'RR', symbol: 'RR.L', name: 'Rolls-Royce' },
+  { ticker: 'VOD', symbol: 'VOD.L', name: 'Vodafone' },
+  { ticker: 'TSCO', symbol: 'TSCO.L', name: 'Tesco' },
+  { ticker: 'SBRY', symbol: 'SBRY.L', name: 'Sainsbury’s' },
+  { ticker: 'IMB', symbol: 'IMB.L', name: 'Imperial Brands' },
+  { ticker: 'CPG', symbol: 'CPG.L', name: 'Compass Group' },
+  { ticker: 'EXPN', symbol: 'EXPN.L', name: 'Experian' },
+  { ticker: 'INF', symbol: 'INF.L', name: 'Informa' },
+  { ticker: 'PRU', symbol: 'PRU.L', name: 'Prudential' },
+  { ticker: 'AV', symbol: 'AV.L', name: 'Aviva' },
+  { ticker: 'MNG', symbol: 'MNG.L', name: 'M&G' },
+];
+
 const MARKETS = {
   tokyo: {
     key: 'tokyo',
@@ -158,6 +224,20 @@ const MARKETS = {
     currency: 'EUR',
     source: 'Yahoo Finance / BME',
     stocks: MADRID_STOCKS,
+  },
+  paris: {
+    key: 'paris',
+    name: 'Euronext Paris',
+    currency: 'EUR',
+    source: 'Yahoo Finance / Euronext Paris',
+    stocks: PARIS_STOCKS,
+  },
+  london: {
+    key: 'london',
+    name: 'London Stock Exchange',
+    currency: 'GBP',
+    source: 'Yahoo Finance / LSE',
+    stocks: LONDON_STOCKS,
   },
 };
 
@@ -219,17 +299,19 @@ async function fetchQuote(stock, market) {
 
   const meta = result.meta || {};
   const closes = result?.indicators?.quote?.[0]?.close || [];
-  const price =
+  const rawPrice =
     typeof meta.regularMarketPrice === 'number' ? meta.regularMarketPrice : lastNumber(closes);
 
-  if (price == null) throw new Error('Price not found for ' + stock.ticker);
+  if (rawPrice == null) throw new Error('Price not found for ' + stock.ticker);
+
+  const price = market.key === 'london' && meta.currency === 'GBp' ? rawPrice / 100 : rawPrice;
 
   return {
     ticker: stock.ticker,
     symbol: stock.symbol,
     name: stock.name,
     price,
-    currency: meta.currency || market.currency,
+    currency: market.currency,
     marketState: meta.marketState || null,
     sourceUpdated:
       typeof meta.regularMarketTime === 'number'
