@@ -157,12 +157,12 @@ function playMoveSound(direction){
     }
 
     if(direction === "up"){
-      tone(760,1180,0,0.24,0.12);
+      tone(760,1180,0,0.24,0.22);
     }else if(direction === "down"){
-      tone(300,170,0,0.28,0.13);
+      tone(300,170,0,0.28,0.24);
     }else{
-      tone(330,260,0,0.18,0.08);
-      tone(260,215,0.20,0.24,0.07);
+      tone(330,260,0,0.18,0.16);
+      tone(260,215,0.20,0.24,0.14);
     }
   }catch(e){}
 }
