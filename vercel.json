@@ -187,6 +187,10 @@
       "dest": "/acoes-nz-api.js"
     },
     {
+      "src": "/acoes-tokyo-api",
+      "dest": "/acoes-nz-api.js"
+    },
+    {
       "src": "/moderator-option-delete",
       "dest": "/moderator-option-delete.js"
     },
@@ -203,7 +207,15 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-tokyo/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-tokyo/?",
       "dest": "/acoes-nz.html"
     },
     {
