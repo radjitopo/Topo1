@@ -384,12 +384,13 @@ test('selected markets share one ten-second cycle at three sounds per market per
   assert.match(pageSource, /state\.movements\[stockKey\(stock\.marketKey,stock\.ticker\)\]/);
 });
 
-test('board offers five persistent sound presets with an audible preview', () => {
+test('board offers six persistent sound presets with an audible preview', () => {
   assert.match(pageSource, /data-sound-preset="classic"/);
   assert.match(pageSource, /data-sound-preset="waves"/);
   assert.match(pageSource, /data-sound-preset="moog"/);
   assert.match(pageSource, /data-sound-preset="theremin"/);
   assert.match(pageSource, /data-sound-preset="animals"/);
+  assert.match(pageSource, /data-sound-preset="samba"/);
   assert.match(pageSource, /const SOUND_STORAGE_KEY = "acoes-sound-preset";/);
   assert.match(pageSource, /soundPreset:storedSoundPreset\(\)/);
   assert.match(pageSource, /function playClassicSound\(ctx,direction,maxDuration\)/);
@@ -397,8 +398,11 @@ test('board offers five persistent sound presets with an audible preview', () =>
   assert.match(pageSource, /function playMoogSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playThereminSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playAnimalSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /function playSambaSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function getAnimalNoiseBuffer\(ctx\)/);
+  assert.match(pageSource, /function getSambaNoiseBuffer\(ctx\)/);
   assert.match(pageSource, /state\.soundPreset === "animals"/);
+  assert.match(pageSource, /state\.soundPreset === "samba"/);
   assert.match(pageSource, /vibratoDepth\.connect\(osc\.frequency\)/);
   assert.match(pageSource, /ctx\.createBiquadFilter\(\)/);
   assert.match(pageSource, /\["down","flat","up"\]/);

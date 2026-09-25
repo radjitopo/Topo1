@@ -137,6 +137,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="moog"><span>Moog</span><small>tecla eletrônica</small></button>
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="theremin"><span>Theremin</span><small>vibrato no ar</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Animais: subida com rugido e latido, queda com miau, neutro com bufada" data-sound-preset="animals"><span>Animais</span><small>rugido, miau e pfff</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" aria-label="Samba: subida com tamborim, queda com surdo, neutro com agogô" data-sound-preset="samba"><span>Samba</span><small>tamborim, surdo e agogô</small></button>
     </div>
     <div class="soundVolume">
       <div class="soundVolumeHead"><label for="soundVolume">Volume dos sons</label><output id="soundVolumeValue" for="soundVolume">150%</output></div>
@@ -692,7 +693,8 @@ const SOUND_PRESETS = {
   waves:{label:"Ondas"},
   moog:{label:"Moog"},
   theremin:{label:"Theremin"},
-  animals:{label:"Animais"}
+  animals:{label:"Animais"},
+  samba:{label:"Samba"}
 };
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
@@ -760,6 +762,7 @@ const state = {
   audioOutput:null,
   audioLimiter:null,
   animalNoiseBuffer:null,
+  sambaNoiseBuffer:null,
   soundPreset:storedSoundPreset(),
   soundVolume:storedSoundVolume(),
   soundTimers:[],
@@ -1031,6 +1034,123 @@ function getAnimalNoiseBuffer(ctx){
   return buffer;
 }
 
+function getSambaNoiseBuffer(ctx){
+  if(state.sambaNoiseBuffer && state.sambaNoiseBuffer.sampleRate === ctx.sampleRate){
+    return state.sambaNoiseBuffer;
+  }
+  const buffer = ctx.createBuffer(1,Math.ceil(ctx.sampleRate * 0.5),ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let index=0;index<data.length;index += 1){
+    data[index] = Math.random() * 2 - 1;
+  }
+  state.sambaNoiseBuffer = buffer;
+  return buffer;
+}
+
+function playSambaSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const baseDuration = direction === "up" ? 0.16 : direction === "down" ? 0.42 : 0.25;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.05,Math.min(baseDuration,maxDuration * 1.08))
+    : baseDuration;
+  const scale = densityScale(maxDuration);
+  const sambaBus = ctx.createGain();
+  sambaBus.gain.setValueAtTime(0.92,now);
+  sambaBus.connect(setupAudioOutput(ctx));
+
+  if(direction === "up"){
+    const skin = ctx.createBufferSource();
+    const snap = ctx.createBiquadFilter();
+    const skinGain = ctx.createGain();
+    const shell = ctx.createOscillator();
+    const shellGain = ctx.createGain();
+
+    skin.buffer = getSambaNoiseBuffer(ctx);
+    snap.type = "bandpass";
+    snap.frequency.setValueAtTime(2850,now);
+    snap.Q.setValueAtTime(0.85,now);
+    skinGain.gain.setValueAtTime(0.0001,now);
+    skinGain.gain.exponentialRampToValueAtTime(0.26 * scale,now + Math.min(0.004,duration * 0.15));
+    skinGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+    shell.type = "triangle";
+    shell.frequency.setValueAtTime(980,now);
+    shell.frequency.exponentialRampToValueAtTime(560,now + duration);
+    shellGain.gain.setValueAtTime(0.0001,now);
+    shellGain.gain.exponentialRampToValueAtTime(0.16 * scale,now + Math.min(0.004,duration * 0.15));
+    shellGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+    skin.connect(snap);
+    snap.connect(skinGain);
+    skinGain.connect(sambaBus);
+    shell.connect(shellGain);
+    shellGain.connect(sambaBus);
+    skin.start(now,Math.random() * 0.12,duration);
+    shell.start(now);
+    shell.stop(now + duration + 0.01);
+    return;
+  }
+
+  if(direction === "down"){
+    const surdoGain = ctx.createGain();
+    surdoGain.gain.setValueAtTime(0.0001,now);
+    surdoGain.gain.exponentialRampToValueAtTime(0.32 * scale,now + Math.min(0.012,duration * 0.16));
+    surdoGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+    [
+      {type:"sine",start:112,end:55,level:1},
+      {type:"triangle",start:168,end:74,level:0.42}
+    ].forEach(function(voice){
+      const osc = ctx.createOscillator();
+      const voiceGain = ctx.createGain();
+      osc.type = voice.type;
+      osc.frequency.setValueAtTime(voice.start,now);
+      osc.frequency.exponentialRampToValueAtTime(voice.end,now + duration);
+      voiceGain.gain.setValueAtTime(voice.level,now);
+      osc.connect(voiceGain);
+      voiceGain.connect(surdoGain);
+      osc.start(now);
+      osc.stop(now + duration + 0.01);
+    });
+
+    const beater = ctx.createBufferSource();
+    const beaterFilter = ctx.createBiquadFilter();
+    const beaterGain = ctx.createGain();
+    beater.buffer = getSambaNoiseBuffer(ctx);
+    beaterFilter.type = "lowpass";
+    beaterFilter.frequency.setValueAtTime(820,now);
+    beaterGain.gain.setValueAtTime(0.13 * scale,now);
+    beaterGain.gain.exponentialRampToValueAtTime(0.0001,now + Math.min(0.09,duration));
+    beater.connect(beaterFilter);
+    beaterFilter.connect(beaterGain);
+    beaterGain.connect(sambaBus);
+    surdoGain.connect(sambaBus);
+    beater.start(now,Math.random() * 0.12,Math.min(0.1,duration));
+    return;
+  }
+
+  const agogoGain = ctx.createGain();
+  agogoGain.gain.setValueAtTime(0.0001,now);
+  agogoGain.gain.exponentialRampToValueAtTime(0.17 * scale,now + Math.min(0.004,duration * 0.15));
+  agogoGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+  [
+    {type:"sine",frequency:760,level:1},
+    {type:"triangle",frequency:1135,level:0.58},
+    {type:"sine",frequency:1640,level:0.22}
+  ].forEach(function(voice){
+    const osc = ctx.createOscillator();
+    const voiceGain = ctx.createGain();
+    osc.type = voice.type;
+    osc.frequency.setValueAtTime(voice.frequency,now);
+    voiceGain.gain.setValueAtTime(voice.level,now);
+    osc.connect(voiceGain);
+    voiceGain.connect(agogoGain);
+    osc.start(now);
+    osc.stop(now + duration + 0.01);
+  });
+  agogoGain.connect(sambaBus);
+}
+
 function playAnimalSound(ctx,direction,maxDuration){
   const now = ctx.currentTime;
   const baseDuration = direction === "up" ? 0.56 : direction === "down" ? 0.52 : 0.3;
@@ -1167,6 +1287,7 @@ function playMoveSound(direction,maxDuration){
     else if(state.soundPreset === "moog") playMoogSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "theremin") playThereminSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "animals") playAnimalSound(state.audioCtx,direction,maxDuration);
+    else if(state.soundPreset === "samba") playSambaSound(state.audioCtx,direction,maxDuration);
     else playClassicSound(state.audioCtx,direction,maxDuration);
   }catch(e){}
 }
