@@ -81,7 +81,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <span>⌕</span>
     <input id="search" placeholder="Buscar ações..." autocomplete="off">
   </label>
-  <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons das 10 ações</div>
+  <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons das 30 ações</div>
 
   <section class="list" id="list"></section>
 
@@ -111,12 +111,35 @@ const stocks = [
   {ticker:"8035",name:"Tokyo Electron"},
   {ticker:"7974",name:"Nintendo"},
   {ticker:"9983",name:"Fast Retailing"},
-  {ticker:"6098",name:"Recruit"}
+  {ticker:"6098",name:"Recruit"},
+  {ticker:"9432",name:"NTT"},
+  {ticker:"8316",name:"Sumitomo Mitsui FG"},
+  {ticker:"8411",name:"Mizuho Financial"},
+  {ticker:"8058",name:"Mitsubishi Corp."},
+  {ticker:"8001",name:"Itochu"},
+  {ticker:"8766",name:"Tokio Marine"},
+  {ticker:"7011",name:"Mitsubishi Heavy"},
+  {ticker:"7751",name:"Canon"},
+  {ticker:"7267",name:"Honda"},
+  {ticker:"6902",name:"Denso"},
+  {ticker:"4502",name:"Takeda"},
+  {ticker:"4519",name:"Chugai Pharma"},
+  {ticker:"4568",name:"Daiichi Sankyo"},
+  {ticker:"4063",name:"Shin-Etsu Chemical"},
+  {ticker:"6981",name:"Murata Manufacturing"},
+  {ticker:"6594",name:"Nidec"},
+  {ticker:"6954",name:"FANUC"},
+  {ticker:"7733",name:"Olympus"},
+  {ticker:"4901",name:"Fujifilm"},
+  {ticker:"9433",name:"KDDI"}
 ];
 
+const SOUND_CYCLE_MS = 10000;
+const SOUNDS_PER_SECOND = 3;
+const SOUND_SPACING_MS = 1000 / SOUNDS_PER_SECOND;
 const pathParts = location.pathname.split("/").filter(Boolean);
 const detailTicker = (pathParts[0] === "acoes-tokyo" || pathParts[0] === "acoes-nz") && pathParts[1] ? pathParts[1].toUpperCase() : null;
-const state = { quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[] };
+const state = { quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[], soundCycleTimer:null };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
@@ -135,6 +158,7 @@ function unlockAudio(){
     state.audioCtx = state.audioCtx || new Ctx();
     if(state.audioCtx.state === "suspended") state.audioCtx.resume();
     state.audioReady = true;
+    startMainSoundCycle();
     render();
     showToast("Som ativado");
   }catch(e){}
@@ -176,9 +200,15 @@ function scheduleMainSounds(){
   stocks.forEach(function(stock,index){
     const timer = setTimeout(function(){
       playMoveSound(state.movements[stock.ticker] || "flat");
-    }, index * 1000);
+    }, index * SOUND_SPACING_MS);
     state.soundTimers.push(timer);
   });
+}
+
+function startMainSoundCycle(){
+  if(detailTicker || !state.audioReady || state.soundCycleTimer) return;
+  scheduleMainSounds();
+  state.soundCycleTimer = setInterval(scheduleMainSounds,SOUND_CYCLE_MS);
 }
 
 function money(v){
@@ -228,7 +258,7 @@ function render(){
       '</div>';
 
     const back = document.getElementById("detailBack");
-    if(back) back.addEventListener("click",function(){ location.href="/acoes-nz"; });
+    if(back) back.addEventListener("click",function(){ location.href="/acoes-tokyo"; });
     const hint = document.getElementById("soundHint");
     if(hint) hint.addEventListener("click",unlockAudio);
     return;
@@ -240,8 +270,8 @@ function render(){
     mainSoundHint.style.display = "";
     mainSoundHint.className = "mainSoundHint" + (state.audioReady ? " active" : "");
     mainSoundHint.textContent = state.audioReady
-      ? "🔊 Sons ativados — Tóquio: 10 ações, uma por segundo"
-      : "🔊 Toque aqui uma vez para ativar os sons das 10 ações";
+      ? "🔊 Sons ativados — Tóquio: 30 ações, 3 por segundo, ciclo de 10s"
+      : "🔊 Toque aqui uma vez para ativar os sons das 30 ações";
   }
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){
@@ -277,7 +307,7 @@ function render(){
         (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';
     row.addEventListener("click",function(){
-      location.href="/acoes-nz/"+s.ticker;
+      location.href="/acoes-tokyo/"+s.ticker;
     });
     row.addEventListener("contextmenu",function(e){
       e.preventDefault();
@@ -300,7 +330,7 @@ async function refresh(){
   const button = document.getElementById("refresh");
   button.disabled = true;
   try{
-    const res = await fetch("/acoes-nz-api",{cache:"no-store"});
+    const res = await fetch("/acoes-tokyo-api",{cache:"no-store"});
     const data = await res.json();
     if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
     data.quotes.forEach(function(q){
@@ -319,7 +349,6 @@ async function refresh(){
       }
       state.quotes[q.ticker] = q;
     });
-    if(!detailTicker) scheduleMainSounds();
     const now = new Date(data.fetchedAt || Date.now());
     updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   }catch(e){
@@ -359,8 +388,8 @@ document.addEventListener("pointerdown",function firstAudioGesture(){
   unlockAudio();
   document.removeEventListener("pointerdown",firstAudioGesture);
 },{once:true});
-setInterval(refresh,10000);
+setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- tokyo-10-isolated-live -->
+<!-- tokyo-30-three-per-second-live -->
 </body>
 </html>
