@@ -241,3 +241,16 @@ test('selected markets share one ten-second cycle at three sounds per market per
   assert.match(pageSource, /aria-pressed="true" data-market="tokyo"/);
   assert.match(pageSource, /state\.movements\[stockKey\(stock\.marketKey,stock\.ticker\)\]/);
 });
+
+test('board offers three persistent sound presets with an audible preview', () => {
+  assert.match(pageSource, /data-sound-preset="classic"/);
+  assert.match(pageSource, /data-sound-preset="waves"/);
+  assert.match(pageSource, /data-sound-preset="moog"/);
+  assert.match(pageSource, /const SOUND_STORAGE_KEY = "acoes-sound-preset";/);
+  assert.match(pageSource, /soundPreset:storedSoundPreset\(\)/);
+  assert.match(pageSource, /function playClassicSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /function playWaveSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /function playMoogSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /ctx\.createBiquadFilter\(\)/);
+  assert.match(pageSource, /\["down","flat","up"\]/);
+});

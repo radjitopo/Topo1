@@ -49,6 +49,18 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .soundHint.active{color:#1b7f48;background:#f4fbf7}
 .mainSoundHint{margin-top:14px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:#555;background:#fafafa;cursor:pointer}
 .mainSoundHint.active{color:#1b7f48;background:#f4fbf7}
+.soundPicker{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.soundPickerHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;font-size:12px;color:var(--muted)}
+.soundPickerHead strong{font-size:13px;color:#333}
+.soundOptions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.soundOption{min-height:54px;border:1px solid #e5e7eb;border-radius:10px;background:var(--soft);color:#555;padding:8px 7px;cursor:pointer;text-align:left}
+.soundOption span,.soundOption small{display:block}
+.soundOption span{font-size:13px;font-weight:700;color:#333}
+.soundOption small{margin-top:3px;font-size:10px;line-height:1.2;color:#8b8f96}
+.soundOption.active{border-color:#111;background:#111;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.soundOption.active span{color:#fff}
+.soundOption.active small{color:#c9cbd0}
+.soundOption:focus-visible{outline:3px solid rgba(34,179,95,.22);outline-offset:2px}
 .detailMeta{margin-top:18px;font-size:13px;line-height:1.6;color:var(--muted)}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
 .refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
@@ -66,6 +78,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 }
 @media (max-width:430px){
   .marketTabs button{font-size:12px;padding:0 2px}
+  .soundOption{padding:8px 5px}
+  .soundOption span{font-size:12px}
 }
 </style>
 </head>
@@ -100,6 +114,14 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <input id="search" placeholder="Buscar ações..." autocomplete="off">
   </label>
   <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons das 30 ações</div>
+  <section class="soundPicker" id="soundPicker" aria-label="Tipo de som">
+    <div class="soundPickerHead"><strong>Tipo de som</strong><span>Toque para ouvir</span></div>
+    <div class="soundOptions" role="group" aria-label="Escolha o tipo de som">
+      <button class="soundOption active" type="button" aria-pressed="true" data-sound-preset="classic"><span>Clássico</span><small>queda mais forte</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="waves"><span>Ondas</span><small>suave e contínuo</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="moog"><span>Moog</span><small>tecla eletrônica</small></button>
+    </div>
+  </section>
 
   <section class="list" id="list"></section>
 
@@ -424,6 +446,12 @@ const MARKETS = {
 };
 
 const SOUND_CYCLE_MS = 10000;
+const SOUND_STORAGE_KEY = "acoes-sound-preset";
+const SOUND_PRESETS = {
+  classic:{label:"Clássico"},
+  waves:{label:"Ondas"},
+  moog:{label:"Moog"}
+};
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
   "acoes-nz":"tokyo",
@@ -446,6 +474,15 @@ function selectionFromUrl(fallbackMarket){
   return MARKET_KEYS.filter(function(key){ return requested.indexOf(key) !== -1; });
 }
 
+function storedSoundPreset(){
+  try{
+    const saved = localStorage.getItem(SOUND_STORAGE_KEY);
+    return SOUND_PRESETS[saved] ? saved : "classic";
+  }catch(e){
+    return "classic";
+  }
+}
+
 const state = {
   market:initialMarket,
   selectedMarkets:selectionFromUrl(initialMarket),
@@ -456,7 +493,10 @@ const state = {
   filter:"",
   audioReady:false,
   audioCtx:null,
+  soundPreset:storedSoundPreset(),
   soundTimers:[],
+  soundPreviewTimers:[],
+  soundPreviewResumeTimer:null,
   soundCycleTimer:null,
   requestSerial:0
 };
@@ -514,7 +554,10 @@ function showToast(msg){
 }
 
 function unlockAudio(){
-  if(state.audioReady) return;
+  if(state.audioReady){
+    if(state.audioCtx && state.audioCtx.state === "suspended") state.audioCtx.resume();
+    return true;
+  }
   try{
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if(!Ctx) return;
@@ -524,35 +567,141 @@ function unlockAudio(){
     startMainSoundCycle();
     render();
     showToast("Som ativado");
-  }catch(e){}
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function densityScale(maxDuration){
+  if(typeof maxDuration !== "number") return 1;
+  return Math.max(0.34,Math.min(1,maxDuration / 0.24));
+}
+
+function playClassicSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const frequency = direction === "up" ? 980 : direction === "down" ? 165 : 430;
+  const baseDuration = direction === "down" ? 0.23 : 0.12;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.025,Math.min(baseDuration,maxDuration))
+    : baseDuration;
+  const volume = (direction === "up" ? 0.22 : direction === "down" ? 0.36 : 0.18) * densityScale(maxDuration);
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(frequency,now);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(volume,now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + duration + 0.01);
+}
+
+function playWaveSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.38,Math.min(0.82,maxDuration * 3.2))
+    : 0.82;
+  const startFrequency = direction === "up" ? 270 : direction === "down" ? 470 : 350;
+  const endFrequency = direction === "up" ? 660 : direction === "down" ? 175 : 390;
+  const volume = 0.055 * densityScale(maxDuration);
+  const gain = ctx.createGain();
+
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.linearRampToValueAtTime(volume,now + duration * 0.24);
+  gain.gain.linearRampToValueAtTime(volume * 0.82,now + duration * 0.65);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+  [-4,4].forEach(function(detune){
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.detune.setValueAtTime(detune,now);
+    osc.frequency.setValueAtTime(startFrequency,now);
+    osc.frequency.exponentialRampToValueAtTime(endFrequency,now + duration);
+    osc.connect(gain);
+    osc.start(now);
+    osc.stop(now + duration + 0.01);
+  });
+  gain.connect(ctx.destination);
+}
+
+function playMoogSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const baseFrequency = direction === "up" ? 440 : direction === "down" ? 130.81 : 261.63;
+  const baseDuration = direction === "down" ? 0.42 : 0.34;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.08,Math.min(baseDuration,maxDuration * 1.35))
+    : baseDuration;
+  const volume = 0.105 * densityScale(maxDuration);
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  filter.type = "lowpass";
+  filter.Q.setValueAtTime(7.5,now);
+  filter.frequency.setValueAtTime(direction === "down" ? 1150 : 2100,now);
+  filter.frequency.exponentialRampToValueAtTime(direction === "down" ? 190 : 330,now + duration);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(volume,now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(volume * 0.38,now + duration * 0.34);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+  [{type:"sawtooth",detune:-7,level:1},{type:"triangle",detune:7,level:0.72}].forEach(function(voice){
+    const osc = ctx.createOscillator();
+    const voiceGain = ctx.createGain();
+    osc.type = voice.type;
+    osc.frequency.setValueAtTime(baseFrequency,now);
+    osc.detune.setValueAtTime(voice.detune,now);
+    voiceGain.gain.setValueAtTime(voice.level,now);
+    osc.connect(voiceGain);
+    voiceGain.connect(filter);
+    osc.start(now);
+    osc.stop(now + duration + 0.01);
+  });
+  filter.connect(gain);
+  gain.connect(ctx.destination);
 }
 
 function playMoveSound(direction,maxDuration){
   if(!state.audioReady || !state.audioCtx) return;
   try{
-    const ctx = state.audioCtx;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "sine";
-    const frequency = direction === "up" ? 980 : direction === "down" ? 220 : 430;
-    const baseDuration = direction === "down" ? 0.16 : 0.12;
-    const duration = typeof maxDuration === "number"
-      ? Math.max(0.025,Math.min(baseDuration,maxDuration))
-      : baseDuration;
-    const volume = direction === "up" ? 0.24 : direction === "down" ? 0.26 : 0.20;
-
-    osc.frequency.setValueAtTime(frequency, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + duration + 0.01);
+    if(state.soundPreset === "waves") playWaveSound(state.audioCtx,direction,maxDuration);
+    else if(state.soundPreset === "moog") playMoogSound(state.audioCtx,direction,maxDuration);
+    else playClassicSound(state.audioCtx,direction,maxDuration);
   }catch(e){}
+}
+
+function clearSoundPreview(){
+  state.soundPreviewTimers.forEach(function(timer){ clearTimeout(timer); });
+  state.soundPreviewTimers = [];
+  if(state.soundPreviewResumeTimer) clearTimeout(state.soundPreviewResumeTimer);
+  state.soundPreviewResumeTimer = null;
+}
+
+function previewSoundPreset(){
+  clearSoundPreview();
+  stopMainSoundCycle();
+  ["down","flat","up"].forEach(function(direction,index){
+    const timer = setTimeout(function(){ playMoveSound(direction); },index * 290);
+    state.soundPreviewTimers.push(timer);
+  });
+  state.soundPreviewResumeTimer = setTimeout(function(){
+    state.soundPreviewTimers = [];
+    state.soundPreviewResumeTimer = null;
+    startMainSoundCycle();
+  },1120);
+}
+
+function selectSoundPreset(preset){
+  if(!SOUND_PRESETS[preset]) return;
+  state.soundPreset = preset;
+  try{ localStorage.setItem(SOUND_STORAGE_KEY,preset); }catch(e){}
+  const audioAvailable = unlockAudio();
+  render();
+  if(audioAvailable) previewSoundPreset();
+  showToast("Som " + SOUND_PRESETS[preset].label + " selecionado");
 }
 
 function clearSoundTimers(){
@@ -608,6 +757,12 @@ function render(){
   const stocks = detailTicker
     ? market.stocks.map(function(stock){ return {ticker:stock.ticker,name:stock.name,marketKey:state.market}; })
     : mixedStocks(selectedKeys);
+
+  document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
+    const active = btn.getAttribute("data-sound-preset") === state.soundPreset;
+    btn.classList.toggle("active",active);
+    btn.setAttribute("aria-pressed",active ? "true" : "false");
+  });
 
   if(detailTicker){
     pageTitle.textContent = market.title;
@@ -666,7 +821,7 @@ function render(){
           (!q?"…":(!q.ok?"indisponível":money(q.price,state.market)+' <span class="move '+move+'">'+symbol+'</span>')) +
         '</div>' +
         '<div class="soundHint '+(state.audioReady?"active":"")+'" id="soundHint">' +
-          (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave, igual desanimado' : '🔊 Toque aqui uma vez para ativar os sons') +
+          (state.audioReady ? '🔊 Som '+SOUND_PRESETS[state.soundPreset].label+' ativado' : '🔊 Toque aqui uma vez para ativar os sons') +
         '</div>' +
         '<div class="detailMeta">Atualização automática a cada 10 segundos.<br>Dados públicos de mercado da '+market.exchange+'; podem ter atraso.</div>' +
       '</div>';
@@ -693,9 +848,9 @@ function render(){
     if(!selectedKeys.length){
       mainSoundHint.textContent = "Escolha uma ou mais bolsas acima";
     }else if(state.audioReady && selectedKeys.length === 1){
-      mainSoundHint.textContent = "🔊 Sons ativados — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
     }else if(state.audioReady){
-      mainSoundHint.textContent = "🔊 Sons ativados — " + selectedKeys.length + " bolsas, " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
+      mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + selectedKeys.length + " bolsas, " + totalStocks + " ações, " + soundsPerSecond + " por segundo, ciclo de 10s";
     }else{
       mainSoundHint.textContent = "🔊 Toque aqui uma vez para ativar os sons das " + totalStocks + " ações";
     }
@@ -854,6 +1009,12 @@ document.getElementById("refresh").addEventListener("click",refresh);
 const mainSoundHint = document.getElementById("mainSoundHint");
 if(mainSoundHint) mainSoundHint.addEventListener("click",unlockAudio);
 
+document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    selectSoundPreset(btn.getAttribute("data-sound-preset"));
+  });
+});
+
 document.querySelectorAll("[data-market]").forEach(function(btn){
   btn.addEventListener("click",function(){
     toggleMarket(btn.getAttribute("data-market"),true);
@@ -890,7 +1051,7 @@ document.querySelectorAll(".nav button").forEach(function(btn){
 render();
 refresh();
 document.addEventListener("pointerdown",function firstAudioGesture(event){
-  if(event.target.closest("[data-market]")) return;
+  if(event.target.closest("[data-market],[data-sound-preset]")) return;
   unlockAudio();
   document.removeEventListener("pointerdown",firstAudioGesture);
 });
