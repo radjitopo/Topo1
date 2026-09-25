@@ -38,6 +38,12 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .row:last-child{border-bottom:0}
 .name{font-size:22px;letter-spacing:-.2px}
 .ticker{font-size:12px;color:var(--muted);margin-top:4px}
+.ticker.indexTrend{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.trendArrows{display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+.trendArrow{display:inline-block;min-width:11px;font-size:15px;font-weight:800;line-height:1;text-align:center}
+.trendArrow.up{color:#22a85b}
+.trendArrow.down{color:#d94b4b}
+.trendArrow.flat{color:#9aa0a6}
 .price{font-size:22px;letter-spacing:-.2px;text-align:right;white-space:nowrap;display:flex;align-items:center;justify-content:flex-end;gap:8px}
 .move{font-size:16px;font-weight:700;min-width:16px;text-align:center}
 .move.up{color:#22b35f}
@@ -1493,6 +1499,28 @@ function money(v,marketKey){
   return MARKETS[marketKey].currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:maximumFractionDigits});
 }
 
+function trendDateLabel(value){
+  const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? match[3] + "/" + match[2] : "pregão";
+}
+
+function fiveDayTrendHtml(quote){
+  if(!quote || !quote.ok || !Array.isArray(quote.fiveDayMoves)) return "";
+  const moves = quote.fiveDayMoves.slice(-5).map(function(item){
+    const direction = item && (item.direction === "up" || item.direction === "down") ? item.direction : "flat";
+    return {direction:direction,date:trendDateLabel(item && item.date)};
+  });
+  if(!moves.length) return "";
+  const directionLabel = {up:"alta",down:"queda",flat:"sem mudança"};
+  const arrows = {up:"↑",down:"↓",flat:"→"};
+  const ariaLabel = "Últimos cinco pregões, do mais antigo ao mais recente: " + moves.map(function(item){
+    return item.date + " " + directionLabel[item.direction];
+  }).join(", ");
+  return '<span class="trendArrows" role="img" aria-label="'+ariaLabel+'">' + moves.map(function(item){
+    return '<span class="trendArrow '+item.direction+'" aria-hidden="true" title="'+item.date+': '+directionLabel[item.direction]+'">'+arrows[item.direction]+'</span>';
+  }).join("") + '</span>';
+}
+
 function render(){
   const searchBox = document.querySelector(".search");
   const nav = document.querySelector(".nav");
@@ -1653,8 +1681,9 @@ function render(){
         else if(q.price < previous){ move = "down"; symbol = "▼"; }
       }
     }
+    const fiveDayTrend = s.marketKey === "indices" ? fiveDayTrendHtml(q) : "";
     row.innerHTML =
-      '<div><div class="name">'+s.name+'</div><div class="ticker">'+s.ticker+' · '+marketForStock.label+'</div></div>' +
+      '<div><div class="name">'+s.name+'</div><div class="ticker'+(fiveDayTrend?' indexTrend':'')+'">'+fiveDayTrend+'<span>'+s.ticker+' · '+marketForStock.label+'</span></div></div>' +
       '<div class="price '+(!q?"loading":(!q.ok?"error":""))+'">'+
         (!q?"…":(!q.ok?"indisponível":money(q.price,s.marketKey)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';

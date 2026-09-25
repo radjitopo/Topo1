@@ -167,6 +167,8 @@ test('API selects the requested market and returns its complete quote list', asy
   function resultForSymbol(symbol) {
     const quote = quoteForSymbol(symbol);
     const openByTradingPeriod = symbol === 'SAP.DE';
+    const day = 24 * 60 * 60;
+    const firstDay = 1789862400;
     return {
       meta: {
         regularMarketPrice: quote.price,
@@ -182,7 +184,21 @@ test('API selects the requested market and returns its complete quote list', asy
           : undefined,
         regularMarketTime: 1790298000,
       },
-      indicators: { quote: [{ close: [quote.price] }] },
+      timestamp: Array.from({ length: 6 }, (_, index) => firstDay + index * day),
+      indicators: {
+        quote: [
+          {
+            close: [
+              quote.price * 0.96,
+              quote.price * 0.98,
+              quote.price * 0.97,
+              quote.price * 0.97,
+              quote.price * 1.01,
+              quote.price,
+            ],
+          },
+        ],
+      },
     };
   }
 
@@ -314,6 +330,10 @@ test('API selects the requested market and returns its complete quote list', asy
     assert.equal(indices.result.body.currency, 'PTS');
     assert.equal(indices.result.body.okCount, 11);
     assert.equal(indices.result.body.quotes[0].ticker, 'N225');
+    assert.deepEqual(
+      indices.result.body.quotes[0].fiveDayMoves.map((day) => day.direction),
+      ['up', 'down', 'flat', 'up', 'down'],
+    );
     assert.equal(fetchCount, 38);
 
     const statuses = responseRecorder();
@@ -474,4 +494,15 @@ test('market tabs remain clickable and show live open or closed colors', () => {
   assert.match(pageSource, /btn\.classList\.toggle\("market-open",!isAggregate && isOpen === true\)/);
   assert.match(pageSource, /btn\.classList\.toggle\("market-closed",!isAggregate && isOpen === false\)/);
   assert.match(pageSource, /btn\.addEventListener\("click"/);
+});
+
+test('index rows show the last five trading sessions as colored arrows', () => {
+  assert.match(apiSource, /function fiveDayMovesFromResult\(result\)/);
+  assert.match(apiSource, /market\.key === 'indices' \? '1mo' : '1d'/);
+  assert.match(apiSource, /fiveDayMoves: market\.key === 'indices'/);
+  assert.match(pageSource, /function fiveDayTrendHtml\(quote\)/);
+  assert.match(pageSource, /const arrows = \{up:"↑",down:"↓",flat:"→"\};/);
+  assert.match(pageSource, /\.trendArrow\.up\{color:#22a85b\}/);
+  assert.match(pageSource, /\.trendArrow\.down\{color:#d94b4b\}/);
+  assert.match(pageSource, /s\.marketKey === "indices" \? fiveDayTrendHtml\(q\) : ""/);
 });

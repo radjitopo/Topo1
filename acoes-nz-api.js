@@ -521,6 +521,35 @@ function lastNumber(values) {
   return null;
 }
 
+function fiveDayMovesFromResult(result) {
+  const timestamps = Array.isArray(result?.timestamp) ? result.timestamp : [];
+  const closes = result?.indicators?.quote?.[0]?.close || [];
+  const observations = [];
+
+  for (let index = 0; index < closes.length; index += 1) {
+    const close = closes[index];
+    const timestamp = timestamps[index];
+    if (typeof close === 'number' && Number.isFinite(close) && Number.isFinite(timestamp)) {
+      observations.push({ close, timestamp });
+    }
+  }
+
+  const recent = observations.slice(-6);
+  return recent.slice(1).map((observation, index) => {
+    const previousClose = recent[index].close;
+    const direction =
+      observation.close > previousClose
+        ? 'up'
+        : observation.close < previousClose
+          ? 'down'
+          : 'flat';
+    return {
+      date: new Date(observation.timestamp * 1000).toISOString().slice(0, 10),
+      direction,
+    };
+  });
+}
+
 function marketStateFromMeta(meta) {
   if (typeof meta.marketState === 'string' && meta.marketState) return meta.marketState;
   const regular = meta?.currentTradingPeriod?.regular;
@@ -532,12 +561,18 @@ function marketStateFromMeta(meta) {
 }
 
 async function requestQuote(stock, host, market) {
+  const interval = market.key === 'indices' ? '1d' : '1m';
+  const range = market.key === 'indices' ? '1mo' : '1d';
   const url =
     'https://' +
     host +
     '/v8/finance/chart/' +
     encodeURIComponent(stock.symbol) +
-    '?interval=1m&range=1d&includePrePost=false&events=div%2Csplits';
+    '?interval=' +
+    interval +
+    '&range=' +
+    range +
+    '&includePrePost=false&events=div%2Csplits';
 
   const response = await fetch(url, {
     headers: {
@@ -561,12 +596,14 @@ async function requestQuote(stock, host, market) {
 
 async function requestQuoteBatch(stocks, host, market) {
   const symbols = stocks.map((stock) => stock.symbol).join(',');
+  const range = market.key === 'indices' ? '1mo' : '1d';
   const url =
     'https://' +
     host +
     '/v7/finance/spark?symbols=' +
     encodeURIComponent(symbols) +
-    '&interval=1d&range=1d';
+    '&interval=1d&range=' +
+    range;
 
   const response = await fetch(url, {
     headers: {
@@ -613,6 +650,7 @@ function quoteFromResult(stock, market, result) {
     price,
     currency: market.currency,
     marketState: marketStateFromMeta(meta),
+    fiveDayMoves: market.key === 'indices' ? fiveDayMovesFromResult(result) : undefined,
     sourceUpdated:
       typeof meta.regularMarketTime === 'number'
         ? new Date(meta.regularMarketTime * 1000).toISOString()
