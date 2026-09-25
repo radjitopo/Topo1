@@ -1,69 +1,67 @@
 const STOCKS = [
-  { ticker: "FPH", name: "Fisher & Paykel" },
-  { ticker: "MEL", name: "Meridian" },
-  { ticker: "IFT", name: "Infratil" },
-  { ticker: "AIA", name: "Auckland Airport" },
-  { ticker: "MCY", name: "Mercury" },
-  { ticker: "CEN", name: "Contact Energy" },
-  { ticker: "EBO", name: "EBOS" },
-  { ticker: "SPK", name: "Spark" },
-  { ticker: "MFT", name: "Mainfreight" },
-  { ticker: "SUM", name: "Summerset" }
+  { ticker: "7203", symbol: "7203.T", name: "Toyota" },
+  { ticker: "6758", symbol: "6758.T", name: "Sony" },
+  { ticker: "8306", symbol: "8306.T", name: "Mitsubishi UFJ" },
+  { ticker: "9984", symbol: "9984.T", name: "SoftBank Group" },
+  { ticker: "6501", symbol: "6501.T", name: "Hitachi" },
+  { ticker: "6861", symbol: "6861.T", name: "Keyence" },
+  { ticker: "8035", symbol: "8035.T", name: "Tokyo Electron" },
+  { ticker: "7974", symbol: "7974.T", name: "Nintendo" },
+  { ticker: "9983", symbol: "9983.T", name: "Fast Retailing" },
+  { ticker: "6098", symbol: "6098.T", name: "Recruit" }
 ];
 
-function decodeHtml(text) {
-  return text
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&#39;/gi, "'")
-    .replace(/&quot;/gi, '"');
-}
-
-function parseNZX(html) {
-  const text = decodeHtml(
-    html
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/\s+/g, " ")
-  );
-
-  const priceMatch = text.match(/\$([0-9]+(?:\.[0-9]{1,4})?)\s*NZD/i);
-  const updatedMatch = text.match(/Last Updated:\s*([^$]{0,80}?)(?=\s*\$|\s*Issued By:|\s*ISIN:)/i);
-
-  return {
-    price: priceMatch ? Number(priceMatch[1]) : null,
-    sourceUpdated: updatedMatch ? updatedMatch[1].trim() : null
-  };
+function lastNumber(values) {
+  if (!Array.isArray(values)) return null;
+  for (let i = values.length - 1; i >= 0; i--) {
+    if (typeof values[i] === "number" && Number.isFinite(values[i])) return values[i];
+  }
+  return null;
 }
 
 async function fetchQuote(stock) {
-  const url = "https://www.nzx.com/instruments/" + stock.ticker;
+  const url =
+    "https://query1.finance.yahoo.com/v8/finance/chart/" +
+    encodeURIComponent(stock.symbol) +
+    "?interval=1m&range=1d&includePrePost=false&events=div%2Csplits";
+
   const response = await fetch(url, {
     headers: {
-      "accept": "text/html,application/xhtml+xml",
-      "user-agent": "AcoesNZPrototype/1.0"
+      accept: "application/json,text/plain,*/*",
+      "user-agent": "Mozilla/5.0 AcoesTokyoPrototype/1.0"
     },
     cache: "no-store"
   });
 
   if (!response.ok) {
-    throw new Error("NZX " + stock.ticker + " returned " + response.status);
+    throw new Error("Tokyo quote " + stock.ticker + " returned " + response.status);
   }
 
-  const html = await response.text();
-  const parsed = parseNZX(html);
+  const data = await response.json();
+  const result = data?.chart?.result?.[0];
+  if (!result) throw new Error("No market data for " + stock.ticker);
 
-  if (parsed.price == null) {
-    throw new Error("Price not found for " + stock.ticker);
-  }
+  const meta = result.meta || {};
+  const closes = result?.indicators?.quote?.[0]?.close || [];
+  const price =
+    typeof meta.regularMarketPrice === "number"
+      ? meta.regularMarketPrice
+      : lastNumber(closes);
+
+  if (price == null) throw new Error("Price not found for " + stock.ticker);
 
   return {
     ticker: stock.ticker,
+    symbol: stock.symbol,
     name: stock.name,
-    price: parsed.price,
-    sourceUpdated: parsed.sourceUpdated,
-    source: "NZX"
+    price,
+    currency: meta.currency || "JPY",
+    marketState: meta.marketState || null,
+    sourceUpdated:
+      typeof meta.regularMarketTime === "number"
+        ? new Date(meta.regularMarketTime * 1000).toISOString()
+        : null,
+    source: "Yahoo Finance / TSE"
   };
 }
 
@@ -77,6 +75,7 @@ export default async function handler(req, res) {
       if (item.status === "fulfilled") return { ...item.value, ok: true };
       return {
         ticker: STOCKS[index].ticker,
+        symbol: STOCKS[index].symbol,
         name: STOCKS[index].name,
         ok: false,
         error: item.reason && item.reason.message ? item.reason.message : "Unavailable"
@@ -86,14 +85,16 @@ export default async function handler(req, res) {
     const okCount = quotes.filter(q => q.ok).length;
     res.status(okCount ? 200 : 502).json({
       ok: okCount > 0,
-      delayedMinutes: 20,
+      market: "Tokyo Stock Exchange",
+      currency: "JPY",
       fetchedAt: new Date().toISOString(),
       quotes
     });
   } catch (error) {
     res.status(500).json({
       ok: false,
-      delayedMinutes: 20,
+      market: "Tokyo Stock Exchange",
+      currency: "JPY",
       fetchedAt: new Date().toISOString(),
       error: error && error.message ? error.message : "Unexpected error",
       quotes: []
