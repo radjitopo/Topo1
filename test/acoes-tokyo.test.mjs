@@ -143,11 +143,20 @@ test('API selects the requested market and returns all 30 quotes', async () => {
 
   function resultForSymbol(symbol) {
     const quote = quoteForSymbol(symbol);
+    const openByTradingPeriod = symbol === 'SAP.DE';
     return {
       meta: {
         regularMarketPrice: quote.price,
         currency: quote.currency,
-        marketState: 'CLOSED',
+        marketState: openByTradingPeriod ? null : 'CLOSED',
+        currentTradingPeriod: openByTradingPeriod
+          ? {
+              regular: {
+                start: Math.floor(Date.now() / 1000) - 60,
+                end: Math.floor(Date.now() / 1000) + 60,
+              },
+            }
+          : undefined,
         regularMarketTime: 1790298000,
       },
       indicators: { quote: [{ close: [quote.price] }] },
@@ -267,6 +276,22 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(currencies.result.body.quotes[0].ticker, 'EUR');
     assert.equal(currencies.result.body.quotes[0].price, 0.5);
     assert.equal(fetchCount, 33);
+
+    const statuses = responseRecorder();
+    await quoteHandler({ query: { status: 'all' } }, statuses.response);
+    assert.equal(statuses.result.status, 200);
+    assert.equal(statuses.result.body.expectedCount, 11);
+    assert.equal(statuses.result.body.okCount, 11);
+    assert.equal(statuses.result.body.statuses.length, 11);
+    assert.equal(
+      statuses.result.body.statuses.find((status) => status.marketKey === 'frankfurt').isOpen,
+      true,
+    );
+    assert.equal(
+      statuses.result.body.statuses.find((status) => status.marketKey === 'tokyo').isOpen,
+      false,
+    );
+    assert.equal(fetchCount, 44);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -292,6 +317,11 @@ test('market tabs have dedicated pages and API routes', () => {
   );
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-bovespa/?'));
   assert.ok(vercel.routes.some((route) => route.src === '/acoes-bovespa/([^/]+)/?'));
+  assert.ok(
+    vercel.routes.some(
+      (route) => route.src === '/acoes-status-api' && route.dest === '/acoes-nz-api.js?status=all',
+    ),
+  );
   for (const [market, routeSlug] of [
     ['frankfurt', 'frankfurt'],
     ['madrid', 'madrid'],
@@ -349,4 +379,15 @@ test('board offers three persistent sound presets with an audible preview', () =
   assert.match(pageSource, /function playMoogSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /ctx\.createBiquadFilter\(\)/);
   assert.match(pageSource, /\["down","flat","up"\]/);
+});
+
+test('market tabs remain clickable and show live open or closed colors', () => {
+  assert.match(pageSource, /\.marketTabs button\.market-open\{color:#168447\}/);
+  assert.match(pageSource, /\.marketTabs button\.market-closed\{color:#c64040\}/);
+  assert.match(pageSource, /const MARKET_STATUS_REFRESH_MS = 60000;/);
+  assert.match(pageSource, /const MARKET_STATUS_API = "\/acoes-status-api";/);
+  assert.match(pageSource, /function refreshMarketStatuses\(\)/);
+  assert.match(pageSource, /btn\.classList\.toggle\("market-open",isOpen === true\)/);
+  assert.match(pageSource, /btn\.classList\.toggle\("market-closed",isOpen === false\)/);
+  assert.match(pageSource, /btn\.addEventListener\("click"/);
 });

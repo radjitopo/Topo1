@@ -445,10 +445,26 @@ function marketFromRequest(req) {
   const queryMarket = Array.isArray(req.query?.market) ? req.query.market[0] : req.query?.market;
   return MARKETS[queryMarket] || MARKETS.tokyo;
 }
+
+function isStatusRequest(req) {
+  const queryStatus = Array.isArray(req.query?.status) ? req.query.status[0] : req.query?.status;
+  return queryStatus === 'all';
+}
+
 function lastNumber(values) {
   if (!Array.isArray(values)) return null;
   for (let i = values.length - 1; i >= 0; i--) {
     if (typeof values[i] === 'number' && Number.isFinite(values[i])) return values[i];
+  }
+  return null;
+}
+
+function marketStateFromMeta(meta) {
+  if (typeof meta.marketState === 'string' && meta.marketState) return meta.marketState;
+  const regular = meta?.currentTradingPeriod?.regular;
+  const now = Date.now() / 1000;
+  if (Number.isFinite(regular?.start) && Number.isFinite(regular?.end)) {
+    return now >= regular.start && now < regular.end ? 'REGULAR' : 'CLOSED';
   }
   return null;
 }
@@ -534,7 +550,7 @@ function quoteFromResult(stock, market, result) {
     name: stock.name,
     price,
     currency: market.currency,
-    marketState: meta.marketState || null,
+    marketState: marketStateFromMeta(meta),
     sourceUpdated:
       typeof meta.regularMarketTime === 'number'
         ? new Date(meta.regularMarketTime * 1000).toISOString()
@@ -584,6 +600,43 @@ async function fetchQuoteGroup(stocks, market) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+  if (isStatusRequest(req)) {
+    res.setHeader('Cache-Control', 'public, s-maxage=20, stale-while-revalidate=40');
+    const marketEntries = Object.values(MARKETS);
+    const settled = await Promise.allSettled(
+      marketEntries.map((market) => fetchQuote(market.stocks[0], market)),
+    );
+    const statuses = settled.map((item, index) => {
+      const market = marketEntries[index];
+      if (item.status === 'fulfilled') {
+        const marketState = item.value.marketState || 'CLOSED';
+        return {
+          marketKey: market.key,
+          market: market.name,
+          ok: true,
+          marketState,
+          isOpen: marketState === 'REGULAR',
+        };
+      }
+      return {
+        marketKey: market.key,
+        market: market.name,
+        ok: false,
+        marketState: null,
+        isOpen: null,
+      };
+    });
+    const okCount = statuses.filter((status) => status.ok).length;
+    res.status(okCount ? 200 : 502).json({
+      ok: okCount === marketEntries.length,
+      expectedCount: marketEntries.length,
+      okCount,
+      fetchedAt: new Date().toISOString(),
+      statuses,
+    });
+    return;
+  }
 
   const market = marketFromRequest(req);
   const stocks = market.stocks;

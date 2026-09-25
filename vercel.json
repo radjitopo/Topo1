@@ -185,6 +185,10 @@
       "dest": "/acoes-nz-api.js?market=tokyo"
     },
     {
+      "src": "/acoes-status-api",
+      "dest": "/acoes-nz-api.js?status=all"
+    },
+    {
       "src": "/acoes-bovespa-api",
       "dest": "/acoes-nz-api.js?market=bovespa"
     },
