@@ -1,4 +1,4 @@
-const STOCKS = [
+const TOKYO_STOCKS = [
   { ticker: '7203', symbol: '7203.T', name: 'Toyota' },
   { ticker: '6758', symbol: '6758.T', name: 'Sony' },
   { ticker: '8306', symbol: '8306.T', name: 'Mitsubishi UFJ' },
@@ -31,6 +31,61 @@ const STOCKS = [
   { ticker: '9433', symbol: '9433.T', name: 'KDDI' },
 ];
 
+const BOVESPA_STOCKS = [
+  { ticker: 'PETR4', symbol: 'PETR4.SA', name: 'Petrobras' },
+  { ticker: 'VALE3', symbol: 'VALE3.SA', name: 'Vale' },
+  { ticker: 'ITUB4', symbol: 'ITUB4.SA', name: 'Itaú Unibanco' },
+  { ticker: 'BBDC4', symbol: 'BBDC4.SA', name: 'Bradesco' },
+  { ticker: 'BBAS3', symbol: 'BBAS3.SA', name: 'Banco do Brasil' },
+  { ticker: 'ABEV3', symbol: 'ABEV3.SA', name: 'Ambev' },
+  { ticker: 'WEGE3', symbol: 'WEGE3.SA', name: 'WEG' },
+  { ticker: 'B3SA3', symbol: 'B3SA3.SA', name: 'B3' },
+  { ticker: 'RENT3', symbol: 'RENT3.SA', name: 'Localiza' },
+  { ticker: 'SUZB3', symbol: 'SUZB3.SA', name: 'Suzano' },
+  { ticker: 'ELET3', symbol: 'ELET3.SA', name: 'Eletrobras' },
+  { ticker: 'EQTL3', symbol: 'EQTL3.SA', name: 'Equatorial' },
+  { ticker: 'PRIO3', symbol: 'PRIO3.SA', name: 'PRIO' },
+  { ticker: 'RAIL3', symbol: 'RAIL3.SA', name: 'Rumo' },
+  { ticker: 'JBSS3', symbol: 'JBSS3.SA', name: 'JBS' },
+  { ticker: 'EMBR3', symbol: 'EMBR3.SA', name: 'Embraer' },
+  { ticker: 'GGBR4', symbol: 'GGBR4.SA', name: 'Gerdau' },
+  { ticker: 'CSNA3', symbol: 'CSNA3.SA', name: 'CSN' },
+  { ticker: 'CMIG4', symbol: 'CMIG4.SA', name: 'Cemig' },
+  { ticker: 'CPLE6', symbol: 'CPLE6.SA', name: 'Copel' },
+  { ticker: 'RADL3', symbol: 'RADL3.SA', name: 'Raia Drogasil' },
+  { ticker: 'VIVT3', symbol: 'VIVT3.SA', name: 'Telefônica Brasil' },
+  { ticker: 'TIMS3', symbol: 'TIMS3.SA', name: 'TIM Brasil' },
+  { ticker: 'LREN3', symbol: 'LREN3.SA', name: 'Lojas Renner' },
+  { ticker: 'MGLU3', symbol: 'MGLU3.SA', name: 'Magazine Luiza' },
+  { ticker: 'HAPV3', symbol: 'HAPV3.SA', name: 'Hapvida' },
+  { ticker: 'BPAC11', symbol: 'BPAC11.SA', name: 'BTG Pactual' },
+  { ticker: 'SANB11', symbol: 'SANB11.SA', name: 'Santander Brasil' },
+  { ticker: 'BBSE3', symbol: 'BBSE3.SA', name: 'BB Seguridade' },
+  { ticker: 'ITSA4', symbol: 'ITSA4.SA', name: 'Itaúsa' },
+];
+
+const MARKETS = {
+  tokyo: {
+    key: 'tokyo',
+    name: 'Tokyo Stock Exchange',
+    currency: 'JPY',
+    source: 'Yahoo Finance / TSE',
+    stocks: TOKYO_STOCKS,
+  },
+  bovespa: {
+    key: 'bovespa',
+    name: 'B3 / Bovespa',
+    currency: 'BRL',
+    source: 'Yahoo Finance / B3',
+    stocks: BOVESPA_STOCKS,
+  },
+};
+
+function marketFromRequest(req) {
+  const queryMarket = Array.isArray(req.query?.market) ? req.query.market[0] : req.query?.market;
+  return queryMarket === 'bovespa' ? MARKETS.bovespa : MARKETS.tokyo;
+}
+
 function lastNumber(values) {
   if (!Array.isArray(values)) return null;
   for (let i = values.length - 1; i >= 0; i--) {
@@ -39,7 +94,7 @@ function lastNumber(values) {
   return null;
 }
 
-async function requestQuote(stock, host) {
+async function requestQuote(stock, host, market) {
   const url =
     'https://' +
     host +
@@ -50,14 +105,14 @@ async function requestQuote(stock, host) {
   const response = await fetch(url, {
     headers: {
       accept: 'application/json,text/plain,*/*',
-      'user-agent': 'Mozilla/5.0 AcoesTokyoPrototype/1.0',
+      'user-agent': 'Mozilla/5.0 AcoesSoundBoard/2.0',
     },
     cache: 'no-store',
     signal: AbortSignal.timeout(6000),
   });
 
   if (!response.ok) {
-    throw new Error('Tokyo quote ' + stock.ticker + ' returned ' + response.status);
+    throw new Error(market.name + ' quote ' + stock.ticker + ' returned ' + response.status);
   }
 
   const data = await response.json();
@@ -67,13 +122,13 @@ async function requestQuote(stock, host) {
   return result;
 }
 
-async function fetchQuote(stock) {
+async function fetchQuote(stock, market) {
   let result;
   let lastError;
 
   for (const host of ['query1.finance.yahoo.com', 'query2.finance.yahoo.com']) {
     try {
-      result = await requestQuote(stock, host);
+      result = await requestQuote(stock, host, market);
       break;
     } catch (error) {
       lastError = error;
@@ -94,13 +149,13 @@ async function fetchQuote(stock) {
     symbol: stock.symbol,
     name: stock.name,
     price,
-    currency: meta.currency || 'JPY',
+    currency: meta.currency || market.currency,
     marketState: meta.marketState || null,
     sourceUpdated:
       typeof meta.regularMarketTime === 'number'
         ? new Date(meta.regularMarketTime * 1000).toISOString()
         : null,
-    source: 'Yahoo Finance / TSE',
+    source: market.source,
   };
 }
 
@@ -108,35 +163,40 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
+  const market = marketFromRequest(req);
+  const stocks = market.stocks;
+
   try {
-    const settled = await Promise.allSettled(STOCKS.map(fetchQuote));
+    const settled = await Promise.allSettled(stocks.map((stock) => fetchQuote(stock, market)));
     const quotes = settled.map((item, index) => {
       if (item.status === 'fulfilled') return { ...item.value, ok: true };
       return {
-        ticker: STOCKS[index].ticker,
-        symbol: STOCKS[index].symbol,
-        name: STOCKS[index].name,
+        ticker: stocks[index].ticker,
+        symbol: stocks[index].symbol,
+        name: stocks[index].name,
         ok: false,
         error: item.reason && item.reason.message ? item.reason.message : 'Unavailable',
       };
     });
 
-    const okCount = quotes.filter((q) => q.ok).length;
-    const expectedCount = STOCKS.length;
+    const okCount = quotes.filter((quote) => quote.ok).length;
+    const expectedCount = stocks.length;
     res.status(okCount ? 200 : 502).json({
       ok: okCount === expectedCount,
+      marketKey: market.key,
       expectedCount,
       okCount,
-      market: 'Tokyo Stock Exchange',
-      currency: 'JPY',
+      market: market.name,
+      currency: market.currency,
       fetchedAt: new Date().toISOString(),
       quotes,
     });
   } catch (error) {
     res.status(500).json({
       ok: false,
-      market: 'Tokyo Stock Exchange',
-      currency: 'JPY',
+      marketKey: market.key,
+      market: market.name,
+      currency: market.currency,
       fetchedAt: new Date().toISOString(),
       error: error && error.message ? error.message : 'Unexpected error',
       quotes: [],

@@ -18,7 +18,10 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,179,95,.08)}
 .muted{color:var(--muted)}
 .sep{color:#c8cbd0}
-.search{margin-top:26px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
+.marketTabs{margin-top:24px;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--soft);border:1px solid #e7e9ed;border-radius:14px}
+.marketTabs button{height:42px;border:0;border-radius:10px;background:transparent;color:#767b82;font-size:15px;font-weight:600;cursor:pointer}
+.marketTabs button.active{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.search{margin-top:14px;background:var(--soft);border:1px solid #e7e9ed;border-radius:16px;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px}
 .search span{font-size:22px;color:#7d8289}
 .search input{border:0;outline:0;background:transparent;width:100%;font-size:18px;color:#111}
 .search input::placeholder{color:#a1a5ab}
@@ -65,7 +68,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 <main class="app">
   <div class="top">
     <div>
-      <h1>Ações Tóquio</h1>
+      <h1 id="pageTitle">Ações Tóquio</h1>
       <div class="status">
         <span class="dot"></span>
         <strong>Atualização automática</strong>
@@ -77,6 +80,11 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <div class="profile" aria-label="perfil">○</div>
   </div>
 
+  <div class="marketTabs" id="marketTabs" role="tablist" aria-label="Bolsa">
+    <button class="active" type="button" role="tab" aria-selected="true" data-market="tokyo">Tóquio</button>
+    <button type="button" role="tab" aria-selected="false" data-market="bovespa">Bovespa</button>
+  </div>
+
   <label class="search">
     <span>⌕</span>
     <input id="search" placeholder="Buscar ações..." autocomplete="off">
@@ -85,7 +93,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 
   <section class="list" id="list"></section>
 
-  <div class="foot">
+  <div class="foot" id="foot">
     Dados públicos de mercado da Bolsa de Tóquio; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.
   </div>
 </main>
@@ -101,7 +109,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 <div class="toast" id="toast"></div>
 
 <script>
-const stocks = [
+const TOKYO_STOCKS = [
   {ticker:"7203",name:"Toyota"},
   {ticker:"6758",name:"Sony"},
   {ticker:"8306",name:"Mitsubishi UFJ"},
@@ -134,15 +142,80 @@ const stocks = [
   {ticker:"9433",name:"KDDI"}
 ];
 
+const BOVESPA_STOCKS = [
+  {ticker:"PETR4",name:"Petrobras"},
+  {ticker:"VALE3",name:"Vale"},
+  {ticker:"ITUB4",name:"Itaú Unibanco"},
+  {ticker:"BBDC4",name:"Bradesco"},
+  {ticker:"BBAS3",name:"Banco do Brasil"},
+  {ticker:"ABEV3",name:"Ambev"},
+  {ticker:"WEGE3",name:"WEG"},
+  {ticker:"B3SA3",name:"B3"},
+  {ticker:"RENT3",name:"Localiza"},
+  {ticker:"SUZB3",name:"Suzano"},
+  {ticker:"ELET3",name:"Eletrobras"},
+  {ticker:"EQTL3",name:"Equatorial"},
+  {ticker:"PRIO3",name:"PRIO"},
+  {ticker:"RAIL3",name:"Rumo"},
+  {ticker:"JBSS3",name:"JBS"},
+  {ticker:"EMBR3",name:"Embraer"},
+  {ticker:"GGBR4",name:"Gerdau"},
+  {ticker:"CSNA3",name:"CSN"},
+  {ticker:"CMIG4",name:"Cemig"},
+  {ticker:"CPLE6",name:"Copel"},
+  {ticker:"RADL3",name:"Raia Drogasil"},
+  {ticker:"VIVT3",name:"Telefônica Brasil"},
+  {ticker:"TIMS3",name:"TIM Brasil"},
+  {ticker:"LREN3",name:"Lojas Renner"},
+  {ticker:"MGLU3",name:"Magazine Luiza"},
+  {ticker:"HAPV3",name:"Hapvida"},
+  {ticker:"BPAC11",name:"BTG Pactual"},
+  {ticker:"SANB11",name:"Santander Brasil"},
+  {ticker:"BBSE3",name:"BB Seguridade"},
+  {ticker:"ITSA4",name:"Itaúsa"}
+];
+
+const MARKETS = {
+  tokyo:{
+    label:"Tóquio",
+    title:"Ações Tóquio",
+    exchange:"TSE",
+    description:"Bolsa de Tóquio",
+    currencySymbol:"¥",
+    api:"/acoes-tokyo-api",
+    basePath:"/acoes-tokyo",
+    stocks:TOKYO_STOCKS
+  },
+  bovespa:{
+    label:"Bovespa",
+    title:"Ações Bovespa",
+    exchange:"B3",
+    description:"B3 (Bovespa)",
+    currencySymbol:"R$",
+    api:"/acoes-bovespa-api",
+    basePath:"/acoes-bovespa",
+    stocks:BOVESPA_STOCKS
+  }
+};
+
 const SOUND_CYCLE_MS = 10000;
 const SOUNDS_PER_SECOND = 3;
 const SOUND_SPACING_MS = 1000 / SOUNDS_PER_SECOND;
 const pathParts = location.pathname.split("/").filter(Boolean);
-const detailTicker = (pathParts[0] === "acoes-tokyo" || pathParts[0] === "acoes-nz") && pathParts[1] ? pathParts[1].toUpperCase() : null;
-const state = { quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[], soundCycleTimer:null };
+const initialMarket = pathParts[0] === "acoes-bovespa" ? "bovespa" : "tokyo";
+const detailTicker = ["acoes-tokyo","acoes-bovespa","acoes-nz"].includes(pathParts[0]) && pathParts[1] ? pathParts[1].toUpperCase() : null;
+const state = { market:initialMarket, quotes:{}, previous:{}, movements:{}, tab:"inicio", filter:"", audioReady:false, audioCtx:null, soundTimers:[], soundCycleTimer:null, requestSerial:0 };
 const list = document.getElementById("list");
 const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
+
+function currentMarket(){
+  return MARKETS[state.market];
+}
+
+function currentStocks(){
+  return currentMarket().stocks;
+}
 
 function showToast(msg){
   toast.textContent = msg;
@@ -194,10 +267,16 @@ function clearSoundTimers(){
   state.soundTimers = [];
 }
 
+function stopMainSoundCycle(){
+  clearSoundTimers();
+  if(state.soundCycleTimer) clearInterval(state.soundCycleTimer);
+  state.soundCycleTimer = null;
+}
+
 function scheduleMainSounds(){
   if(detailTicker || !state.audioReady) return;
   clearSoundTimers();
-  stocks.forEach(function(stock,index){
+  currentStocks().forEach(function(stock,index){
     const timer = setTimeout(function(){
       playMoveSound(state.movements[stock.ticker] || "flat");
     }, index * SOUND_SPACING_MS);
@@ -211,15 +290,34 @@ function startMainSoundCycle(){
   state.soundCycleTimer = setInterval(scheduleMainSounds,SOUND_CYCLE_MS);
 }
 
+function restartMainSoundCycle(){
+  stopMainSoundCycle();
+  startMainSoundCycle();
+}
+
 function money(v){
   if(v == null || isNaN(v)) return "—";
-  return "¥ " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
+  return currentMarket().currencySymbol + " " + Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:4});
 }
 
 function render(){
   const searchBox = document.querySelector(".search");
   const nav = document.querySelector(".nav");
   const mainSoundHint = document.getElementById("mainSoundHint");
+  const marketTabs = document.getElementById("marketTabs");
+  const pageTitle = document.getElementById("pageTitle");
+  const foot = document.getElementById("foot");
+  const market = currentMarket();
+  const stocks = currentStocks();
+
+  pageTitle.textContent = market.title;
+  if(!detailTicker) document.title = market.title;
+  if(foot) foot.textContent = "Dados públicos de mercado da " + market.description + "; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.";
+  document.querySelectorAll("[data-market]").forEach(function(btn){
+    const active = btn.getAttribute("data-market") === state.market;
+    btn.classList.toggle("active",active);
+    btn.setAttribute("aria-selected",active ? "true" : "false");
+  });
 
   if(detailTicker){
     const s = stocks.find(function(item){ return item.ticker === detailTicker; });
@@ -232,6 +330,7 @@ function render(){
     if(searchBox) searchBox.style.display = "none";
     if(nav) nav.style.display = "none";
     if(mainSoundHint) mainSoundHint.style.display = "none";
+    if(marketTabs) marketTabs.style.display = "none";
 
     const q = state.quotes[s.ticker];
     let move = "flat";
@@ -242,23 +341,23 @@ function render(){
       else if(q.price < previous){ move = "down"; symbol = "▼"; }
     }
 
-    document.title = s.name + " — Ações Tóquio";
+    document.title = s.name + " — " + market.title;
     list.innerHTML =
       '<button class="detailBack" id="detailBack">← Voltar para ações</button>' +
       '<div class="detailCard">' +
         '<div class="detailName">'+s.name+'</div>' +
-        '<div class="detailTicker">'+s.ticker+' · TSE</div>' +
+        '<div class="detailTicker">'+s.ticker+' · '+market.exchange+'</div>' +
         '<div class="detailPrice '+(!q?"loading":(!q.ok?"error":""))+'">' +
           (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>')) +
         '</div>' +
         '<div class="soundHint '+(state.audioReady?"active":"")+'" id="soundHint">' +
           (state.audioReady ? '🔊 Som ativado — sobe agudo, desce grave, igual desanimado' : '🔊 Toque aqui uma vez para ativar os sons') +
         '</div>' +
-        '<div class="detailMeta">Atualização automática a cada 10 segundos.<br>Dados públicos de mercado da TSE; podem ter atraso.</div>' +
+        '<div class="detailMeta">Atualização automática a cada 10 segundos.<br>Dados públicos de mercado da '+market.exchange+'; podem ter atraso.</div>' +
       '</div>';
 
     const back = document.getElementById("detailBack");
-    if(back) back.addEventListener("click",function(){ location.href="/acoes-tokyo"; });
+    if(back) back.addEventListener("click",function(){ location.href=market.basePath; });
     const hint = document.getElementById("soundHint");
     if(hint) hint.addEventListener("click",unlockAudio);
     return;
@@ -266,17 +365,18 @@ function render(){
 
   if(searchBox) searchBox.style.display = "";
   if(nav) nav.style.display = "";
+  if(marketTabs) marketTabs.style.display = "grid";
   if(mainSoundHint){
     mainSoundHint.style.display = "";
     mainSoundHint.className = "mainSoundHint" + (state.audioReady ? " active" : "");
     mainSoundHint.textContent = state.audioReady
-      ? "🔊 Sons ativados — Tóquio: 30 ações, 3 por segundo, ciclo de 10s"
+      ? "🔊 Sons ativados — " + market.label + ": 30 ações, 3 por segundo, ciclo de 10s"
       : "🔊 Toque aqui uma vez para ativar os sons das 30 ações";
   }
   const f = state.filter.trim().toLowerCase();
   const visible = stocks.filter(function(s){
     if(state.tab === "favoritos"){
-      const fav = JSON.parse(localStorage.getItem("nz-favs") || "[]");
+      const fav = JSON.parse(localStorage.getItem(favoriteKey()) || "[]");
       if(fav.indexOf(s.ticker) === -1) return false;
     }
     return !f || s.name.toLowerCase().includes(f) || s.ticker.toLowerCase().includes(f);
@@ -307,7 +407,7 @@ function render(){
         (!q?"…":(!q.ok?"indisponível":money(q.price)+' <span class="move '+move+'">'+symbol+'</span>'))+
       '</div>';
     row.addEventListener("click",function(){
-      location.href="/acoes-tokyo/"+s.ticker;
+      location.href=market.basePath+"/"+s.ticker;
     });
     row.addEventListener("contextmenu",function(e){
       e.preventDefault();
@@ -316,23 +416,51 @@ function render(){
     list.appendChild(row);
   });
 }
+function favoriteKey(){
+  return state.market === "tokyo" ? "nz-favs" : "bovespa-favs";
+}
 function toggleFav(ticker){
-  let fav = JSON.parse(localStorage.getItem("nz-favs") || "[]");
+  const key = favoriteKey();
+  let fav = JSON.parse(localStorage.getItem(key) || "[]");
   const i = fav.indexOf(ticker);
   if(i >= 0){ fav.splice(i,1); showToast("Removido dos favoritos"); }
   else { fav.push(ticker); showToast("Adicionado aos favoritos"); }
-  localStorage.setItem("nz-favs",JSON.stringify(fav));
+  localStorage.setItem(key,JSON.stringify(fav));
   render();
 }
 
+function switchMarket(key,updateUrl){
+  if(!MARKETS[key] || key === state.market) return;
+  state.market = key;
+  state.quotes = {};
+  state.previous = {};
+  state.movements = {};
+  state.filter = "";
+  state.tab = "inicio";
+  state.requestSerial += 1;
+  document.getElementById("search").value = "";
+  document.querySelectorAll(".nav button").forEach(function(btn){
+    btn.classList.toggle("active",btn.getAttribute("data-tab") === "inicio");
+  });
+  if(updateUrl !== false) history.pushState(null,"",currentMarket().basePath);
+  restartMainSoundCycle();
+  render();
+  refresh();
+}
+
 async function refresh(){
+  const marketKey = state.market;
+  const market = currentMarket();
+  const requestId = ++state.requestSerial;
   updated.textContent = "atualizando...";
   const button = document.getElementById("refresh");
   button.disabled = true;
   try{
-    const res = await fetch("/acoes-tokyo-api",{cache:"no-store"});
+    const res = await fetch(market.api,{cache:"no-store"});
     const data = await res.json();
+    if(state.market !== marketKey || requestId !== state.requestSerial) return;
     if(!Array.isArray(data.quotes)) throw new Error("Resposta inválida");
+    if(data.marketKey && data.marketKey !== marketKey) throw new Error("Mercado incorreto");
     data.quotes.forEach(function(q){
       const current = state.quotes[q.ticker];
       let movement = "flat";
@@ -352,10 +480,14 @@ async function refresh(){
     const now = new Date(data.fetchedAt || Date.now());
     updated.textContent = "consultado às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   }catch(e){
-    updated.textContent = "fonte temporariamente indisponível";
+    if(state.market === marketKey && requestId === state.requestSerial){
+      updated.textContent = "fonte temporariamente indisponível";
+    }
   }finally{
-    button.disabled = false;
-    render();
+    if(state.market === marketKey && requestId === state.requestSerial){
+      button.disabled = false;
+      render();
+    }
   }
 }
 
@@ -366,6 +498,17 @@ document.getElementById("search").addEventListener("input",function(e){
 document.getElementById("refresh").addEventListener("click",refresh);
 const mainSoundHint = document.getElementById("mainSoundHint");
 if(mainSoundHint) mainSoundHint.addEventListener("click",unlockAudio);
+
+document.querySelectorAll("[data-market]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    switchMarket(btn.getAttribute("data-market"),true);
+  });
+});
+
+window.addEventListener("popstate",function(){
+  const key = location.pathname.split("/").filter(Boolean)[0] === "acoes-bovespa" ? "bovespa" : "tokyo";
+  switchMarket(key,false);
+});
 
 document.querySelectorAll(".nav button").forEach(function(btn){
   btn.addEventListener("click",function(){
@@ -384,12 +527,13 @@ document.querySelectorAll(".nav button").forEach(function(btn){
 
 render();
 refresh();
-document.addEventListener("pointerdown",function firstAudioGesture(){
+document.addEventListener("pointerdown",function firstAudioGesture(event){
+  if(event.target.closest("[data-market]")) return;
   unlockAudio();
   document.removeEventListener("pointerdown",firstAudioGesture);
-},{once:true});
+});
 setInterval(refresh,SOUND_CYCLE_MS);
 </script>
-<!-- tokyo-30-three-per-second-live -->
+<!-- tokyo-bovespa-30-three-per-second-live -->
 </body>
 </html>

@@ -180,11 +180,15 @@
     },
     {
       "src": "/acoes-nz-api",
-      "dest": "/acoes-nz-api.js"
+      "dest": "/acoes-nz-api.js?market=tokyo"
     },
     {
       "src": "/acoes-tokyo-api",
-      "dest": "/acoes-nz-api.js"
+      "dest": "/acoes-nz-api.js?market=tokyo"
+    },
+    {
+      "src": "/acoes-bovespa-api",
+      "dest": "/acoes-nz-api.js?market=bovespa"
     },
     {
       "src": "/moderator-option-delete",
@@ -207,11 +211,19 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-bovespa/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-nz/?",
       "dest": "/acoes-nz.html"
     },
     {
       "src": "/acoes-tokyo/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-bovespa/?",
       "dest": "/acoes-nz.html"
     },
     {
