@@ -57,7 +57,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .soundPicker{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
 .soundPickerHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;font-size:12px;color:var(--muted)}
 .soundPickerHead strong{font-size:13px;color:#333}
-.soundOptions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.soundOptions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .soundOption{min-height:54px;border:1px solid #e5e7eb;border-radius:10px;background:var(--soft);color:#555;padding:8px 7px;cursor:pointer;text-align:left}
 .soundOption span,.soundOption small{display:block}
 .soundOption span{font-size:13px;font-weight:700;color:#333}
@@ -115,6 +115,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" aria-pressed="false" data-market="australia">Austrália</button>
     <button type="button" aria-pressed="false" data-market="korea">Coreia</button>
     <button type="button" aria-pressed="false" data-market="china">China</button>
+    <button type="button" aria-pressed="false" data-market="mexico">México</button>
     <button type="button" aria-pressed="false" data-market="currencies">Moedas</button>
   </div>
 
@@ -129,6 +130,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption active" type="button" aria-pressed="true" data-sound-preset="classic"><span>Clássico</span><small>queda mais forte</small></button>
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="waves"><span>Ondas</span><small>suave e contínuo</small></button>
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="moog"><span>Moog</span><small>tecla eletrônica</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="theremin"><span>Theremin</span><small>vibrato no ar</small></button>
     </div>
   </section>
 
@@ -480,6 +482,39 @@ const CHINA_STOCKS = [
   {ticker:"688521",name:"VeriSilicon"}
 ];
 
+const MEXICO_STOCKS = [
+  {ticker:"TLEVISACPO",name:"Grupo Televisa"},
+  {ticker:"GMEXICOB",name:"Grupo México"},
+  {ticker:"AMXB",name:"América Móvil"},
+  {ticker:"CEMEXCPO",name:"Cemex"},
+  {ticker:"WALMEX",name:"Walmart de México"},
+  {ticker:"FEMSAUBD",name:"FEMSA"},
+  {ticker:"GFNORTEO",name:"Grupo Financiero Banorte"},
+  {ticker:"KOFUBL",name:"Coca-Cola FEMSA"},
+  {ticker:"AC",name:"Arca Continental"},
+  {ticker:"GCARSOA1",name:"Grupo Carso"},
+  {ticker:"PE&OLES",name:"Industrias Peñoles"},
+  {ticker:"BIMBOA",name:"Grupo Bimbo"},
+  {ticker:"GFINBURO",name:"Grupo Financiero Inbursa"},
+  {ticker:"GAPB",name:"Grupo Aeroportuario del Pacífico"},
+  {ticker:"ASURB",name:"Grupo Aeroportuario del Sureste"},
+  {ticker:"LIVEPOLC-1",name:"El Puerto de Liverpool"},
+  {ticker:"KIMBERA",name:"Kimberly-Clark de México"},
+  {ticker:"PINFRA",name:"Pinfra"},
+  {ticker:"GRUMAB",name:"Gruma"},
+  {ticker:"OMAB",name:"OMA"},
+  {ticker:"SIGMAFA",name:"Sigma Alimentos"},
+  {ticker:"CHDRAUIB",name:"Grupo Comercial Chedraui"},
+  {ticker:"Q",name:"Quálitas"},
+  {ticker:"GCC",name:"GCC"},
+  {ticker:"BBAJIOO",name:"Banco del Bajío"},
+  {ticker:"GENTERA",name:"Gentera"},
+  {ticker:"VESTA",name:"Corporación Inmobiliaria Vesta"},
+  {ticker:"MEGACPO",name:"Megacable"},
+  {ticker:"RA",name:"Regional"},
+  {ticker:"ORBIA",name:"Orbia"}
+];
+
 const CURRENCY_STOCKS = [
   {ticker:"EUR",name:"Euro"},
   {ticker:"JPY",name:"Yen japonês"},
@@ -614,6 +649,16 @@ const MARKETS = {
     basePath:"/acoes-china",
     stocks:CHINA_STOCKS
   },
+  mexico:{
+    label:"México",
+    title:"Ações México",
+    exchange:"BMV",
+    description:"Bolsa Mexicana de Valores",
+    currencySymbol:"MX$",
+    api:"/acoes-mexico-api",
+    basePath:"/acoes-mexico",
+    stocks:MEXICO_STOCKS
+  },
   currencies:{
     label:"Moedas",
     title:"30 maiores moedas",
@@ -633,7 +678,8 @@ const SOUND_STORAGE_KEY = "acoes-sound-preset";
 const SOUND_PRESETS = {
   classic:{label:"Clássico"},
   waves:{label:"Ondas"},
-  moog:{label:"Moog"}
+  moog:{label:"Moog"},
+  theremin:{label:"Theremin"}
 };
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
@@ -649,6 +695,7 @@ const PATH_MARKETS = {
   "acoes-australia":"australia",
   "acoes-coreia":"korea",
   "acoes-china":"china",
+  "acoes-mexico":"mexico",
   "acoes-moedas":"currencies"
 };
 const MARKET_KEYS = Object.keys(MARKETS);
@@ -868,11 +915,47 @@ function playMoogSound(ctx,direction,maxDuration){
   gain.connect(ctx.destination);
 }
 
+function playThereminSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.16,Math.min(0.72,maxDuration * 3.1))
+    : 0.72;
+  const startFrequency = direction === "up" ? 310 : direction === "down" ? 690 : 440;
+  const endFrequency = direction === "up" ? 890 : direction === "down" ? 190 : 470;
+  const volume = 0.052 * densityScale(maxDuration);
+  const osc = ctx.createOscillator();
+  const vibrato = ctx.createOscillator();
+  const vibratoDepth = ctx.createGain();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(startFrequency,now);
+  osc.frequency.exponentialRampToValueAtTime(endFrequency,now + duration);
+  vibrato.type = "sine";
+  vibrato.frequency.setValueAtTime(direction === "flat" ? 5.2 : 6.1,now);
+  vibratoDepth.gain.setValueAtTime(9,now);
+  vibratoDepth.gain.linearRampToValueAtTime(18,now + duration * 0.7);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.linearRampToValueAtTime(volume,now + duration * 0.22);
+  gain.gain.linearRampToValueAtTime(volume * 0.78,now + duration * 0.72);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+  vibrato.connect(vibratoDepth);
+  vibratoDepth.connect(osc.frequency);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  vibrato.start(now);
+  osc.start(now);
+  vibrato.stop(now + duration + 0.01);
+  osc.stop(now + duration + 0.01);
+}
+
 function playMoveSound(direction,maxDuration){
   if(!state.audioReady || !state.audioCtx) return;
   try{
     if(state.soundPreset === "waves") playWaveSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "moog") playMoogSound(state.audioCtx,direction,maxDuration);
+    else if(state.soundPreset === "theremin") playThereminSound(state.audioCtx,direction,maxDuration);
     else playClassicSound(state.audioCtx,direction,maxDuration);
   }catch(e){}
 }

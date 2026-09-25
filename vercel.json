@@ -229,6 +229,10 @@
       "dest": "/acoes-nz-api.js?market=china"
     },
     {
+      "src": "/acoes-mexico-api",
+      "dest": "/acoes-nz-api.js?market=mexico"
+    },
+    {
       "src": "/acoes-moedas-api",
       "dest": "/acoes-nz-api.js?market=currencies"
     },
@@ -293,6 +297,10 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-mexico/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/acoes-moedas/([^/]+)/?",
       "dest": "/acoes-nz.html"
     },
@@ -342,6 +350,10 @@
     },
     {
       "src": "/acoes-china/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-mexico/?",
       "dest": "/acoes-nz.html"
     },
     {

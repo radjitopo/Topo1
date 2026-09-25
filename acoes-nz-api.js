@@ -328,6 +328,39 @@ const CHINA_STOCKS = [
   { ticker: '688521', symbol: '688521.SS', name: 'VeriSilicon' },
 ];
 
+const MEXICO_STOCKS = [
+  { ticker: 'TLEVISACPO', symbol: 'TLEVISACPO.MX', name: 'Grupo Televisa' },
+  { ticker: 'GMEXICOB', symbol: 'GMEXICOB.MX', name: 'Grupo México' },
+  { ticker: 'AMXB', symbol: 'AMXB.MX', name: 'América Móvil' },
+  { ticker: 'CEMEXCPO', symbol: 'CEMEXCPO.MX', name: 'Cemex' },
+  { ticker: 'WALMEX', symbol: 'WALMEX.MX', name: 'Walmart de México' },
+  { ticker: 'FEMSAUBD', symbol: 'FEMSAUBD.MX', name: 'FEMSA' },
+  { ticker: 'GFNORTEO', symbol: 'GFNORTEO.MX', name: 'Grupo Financiero Banorte' },
+  { ticker: 'KOFUBL', symbol: 'KOFUBL.MX', name: 'Coca-Cola FEMSA' },
+  { ticker: 'AC', symbol: 'AC.MX', name: 'Arca Continental' },
+  { ticker: 'GCARSOA1', symbol: 'GCARSOA1.MX', name: 'Grupo Carso' },
+  { ticker: 'PE&OLES', symbol: 'PE&OLES.MX', name: 'Industrias Peñoles' },
+  { ticker: 'BIMBOA', symbol: 'BIMBOA.MX', name: 'Grupo Bimbo' },
+  { ticker: 'GFINBURO', symbol: 'GFINBURO.MX', name: 'Grupo Financiero Inbursa' },
+  { ticker: 'GAPB', symbol: 'GAPB.MX', name: 'Grupo Aeroportuario del Pacífico' },
+  { ticker: 'ASURB', symbol: 'ASURB.MX', name: 'Grupo Aeroportuario del Sureste' },
+  { ticker: 'LIVEPOLC-1', symbol: 'LIVEPOLC-1.MX', name: 'El Puerto de Liverpool' },
+  { ticker: 'KIMBERA', symbol: 'KIMBERA.MX', name: 'Kimberly-Clark de México' },
+  { ticker: 'PINFRA', symbol: 'PINFRA.MX', name: 'Pinfra' },
+  { ticker: 'GRUMAB', symbol: 'GRUMAB.MX', name: 'Gruma' },
+  { ticker: 'OMAB', symbol: 'OMAB.MX', name: 'OMA' },
+  { ticker: 'SIGMAFA', symbol: 'SIGMAFA.MX', name: 'Sigma Alimentos' },
+  { ticker: 'CHDRAUIB', symbol: 'CHDRAUIB.MX', name: 'Grupo Comercial Chedraui' },
+  { ticker: 'Q', symbol: 'Q.MX', name: 'Quálitas' },
+  { ticker: 'GCC', symbol: 'GCC.MX', name: 'GCC' },
+  { ticker: 'BBAJIOO', symbol: 'BBAJIOO.MX', name: 'Banco del Bajío' },
+  { ticker: 'GENTERA', symbol: 'GENTERA.MX', name: 'Gentera' },
+  { ticker: 'VESTA', symbol: 'VESTA.MX', name: 'Corporación Inmobiliaria Vesta' },
+  { ticker: 'MEGACPO', symbol: 'MEGACPO.MX', name: 'Megacable' },
+  { ticker: 'RA', symbol: 'RA.MX', name: 'Regional' },
+  { ticker: 'ORBIA', symbol: 'ORBIA.MX', name: 'Orbia' },
+];
+
 const CURRENCY_STOCKS = [
   { ticker: 'EUR', symbol: 'USDEUR=X', name: 'Euro', invert: true },
   { ticker: 'JPY', symbol: 'USDJPY=X', name: 'Yen japonês', invert: true },
@@ -431,6 +464,13 @@ const MARKETS = {
     currency: 'CNY',
     source: 'Yahoo Finance / SSE',
     stocks: CHINA_STOCKS,
+  },
+  mexico: {
+    key: 'mexico',
+    name: 'Bolsa Mexicana de Valores',
+    currency: 'MXN',
+    source: 'Yahoo Finance / BMV',
+    stocks: MEXICO_STOCKS,
   },
   currencies: {
     key: 'currencies',

@@ -16,13 +16,13 @@ function arrayBlock(source, constantName) {
 function apiStocks(constantName) {
   return [
     ...arrayBlock(apiSource, constantName).matchAll(
-      /ticker:\s*['"]([A-Z0-9]+)['"],\s*symbol:\s*['"]([^'"]+)['"]/g,
+      /ticker:\s*['"]([A-Z0-9&-]+)['"],\s*symbol:\s*['"]([^'"]+)['"]/g,
     ),
   ].map((match) => ({ ticker: match[1], symbol: match[2] }));
 }
 
 function pageTickers(constantName) {
-  return [...arrayBlock(pageSource, constantName).matchAll(/\{ticker:"([A-Z0-9]+)",name:/g)].map(
+  return [...arrayBlock(pageSource, constantName).matchAll(/\{ticker:"([A-Z0-9&-]+)",name:/g)].map(
     (match) => match[1],
   );
 }
@@ -103,6 +103,10 @@ test('China board and API expose the same 30 unique stocks', () => {
   assertMarket('CHINA_STOCKS', 'SS');
 });
 
+test('Mexico board and API expose the same 30 unique stocks', () => {
+  assertMarket('MEXICO_STOCKS', 'MX');
+});
+
 test('currency board and API expose the same 30 USD-normalized currencies', () => {
   const apiItems = apiStocks('CURRENCY_STOCKS');
   const uiTickers = pageTickers('CURRENCY_STOCKS');
@@ -138,6 +142,8 @@ test('API selects the requested market and returns all 30 quotes', async () => {
                 ? { price: 125000, currency: 'KRW' }
                 : symbol.includes('.SS')
                   ? { price: 62.5, currency: 'CNY' }
+                  : symbol.includes('.MX')
+                    ? { price: 185.5, currency: 'MXN' }
                   : { price: 4200, currency: 'JPY' };
   }
 
@@ -267,6 +273,14 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(china.result.body.okCount, 30);
     assert.equal(china.result.body.quotes[0].ticker, '600519');
 
+    const mexico = responseRecorder();
+    await quoteHandler({ query: { market: 'mexico' } }, mexico.response);
+    assert.equal(mexico.result.status, 200);
+    assert.equal(mexico.result.body.marketKey, 'mexico');
+    assert.equal(mexico.result.body.currency, 'MXN');
+    assert.equal(mexico.result.body.okCount, 30);
+    assert.equal(mexico.result.body.quotes[0].ticker, 'TLEVISACPO');
+
     const currencies = responseRecorder();
     await quoteHandler({ query: { market: 'currencies' } }, currencies.response);
     assert.equal(currencies.result.status, 200);
@@ -275,14 +289,14 @@ test('API selects the requested market and returns all 30 quotes', async () => {
     assert.equal(currencies.result.body.okCount, 30);
     assert.equal(currencies.result.body.quotes[0].ticker, 'EUR');
     assert.equal(currencies.result.body.quotes[0].price, 0.5);
-    assert.equal(fetchCount, 33);
+    assert.equal(fetchCount, 36);
 
     const statuses = responseRecorder();
     await quoteHandler({ query: { status: 'all' } }, statuses.response);
     assert.equal(statuses.result.status, 200);
-    assert.equal(statuses.result.body.expectedCount, 11);
-    assert.equal(statuses.result.body.okCount, 11);
-    assert.equal(statuses.result.body.statuses.length, 11);
+    assert.equal(statuses.result.body.expectedCount, 12);
+    assert.equal(statuses.result.body.okCount, 12);
+    assert.equal(statuses.result.body.statuses.length, 12);
     assert.equal(
       statuses.result.body.statuses.find((status) => status.marketKey === 'frankfurt').isOpen,
       true,
@@ -291,7 +305,7 @@ test('API selects the requested market and returns all 30 quotes', async () => {
       statuses.result.body.statuses.find((status) => status.marketKey === 'tokyo').isOpen,
       false,
     );
-    assert.equal(fetchCount, 44);
+    assert.equal(fetchCount, 48);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -308,6 +322,7 @@ test('market tabs have dedicated pages and API routes', () => {
   assert.match(pageSource, /data-market="australia">Austrália<\/button>/);
   assert.match(pageSource, /data-market="korea">Coreia<\/button>/);
   assert.match(pageSource, /data-market="china">China<\/button>/);
+  assert.match(pageSource, /data-market="mexico">México<\/button>/);
   assert.match(pageSource, /data-market="currencies">Moedas<\/button>/);
   assert.ok(
     vercel.routes.some(
@@ -331,6 +346,7 @@ test('market tabs have dedicated pages and API routes', () => {
     ['australia', 'australia'],
     ['korea', 'coreia'],
     ['china', 'china'],
+    ['mexico', 'mexico'],
     ['currencies', 'moedas'],
   ]) {
     assert.ok(
@@ -349,7 +365,7 @@ test('market tabs have dedicated pages and API routes', () => {
 
 test('selected markets share one ten-second cycle at three sounds per market per second', () => {
   const cycleMs = 10000;
-  for (let marketCount = 1; marketCount <= 11; marketCount += 1) {
+  for (let marketCount = 1; marketCount <= 12; marketCount += 1) {
     const soundCount = marketCount * 30;
     const soundsPerSecond = marketCount * 3;
     const spacingMs = cycleMs / soundCount;
@@ -368,15 +384,18 @@ test('selected markets share one ten-second cycle at three sounds per market per
   assert.match(pageSource, /state\.movements\[stockKey\(stock\.marketKey,stock\.ticker\)\]/);
 });
 
-test('board offers three persistent sound presets with an audible preview', () => {
+test('board offers four persistent sound presets with an audible preview', () => {
   assert.match(pageSource, /data-sound-preset="classic"/);
   assert.match(pageSource, /data-sound-preset="waves"/);
   assert.match(pageSource, /data-sound-preset="moog"/);
+  assert.match(pageSource, /data-sound-preset="theremin"/);
   assert.match(pageSource, /const SOUND_STORAGE_KEY = "acoes-sound-preset";/);
   assert.match(pageSource, /soundPreset:storedSoundPreset\(\)/);
   assert.match(pageSource, /function playClassicSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playWaveSound\(ctx,direction,maxDuration\)/);
   assert.match(pageSource, /function playMoogSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /function playThereminSound\(ctx,direction,maxDuration\)/);
+  assert.match(pageSource, /vibratoDepth\.connect\(osc\.frequency\)/);
   assert.match(pageSource, /ctx\.createBiquadFilter\(\)/);
   assert.match(pageSource, /\["down","flat","up"\]/);
 });
