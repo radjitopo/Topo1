@@ -237,6 +237,10 @@
       "dest": "/acoes-nz-api.js?market=currencies"
     },
     {
+      "src": "/acoes-cripto-api",
+      "dest": "/acoes-nz-api.js?market=crypto"
+    },
+    {
       "src": "/indices-bolsas-api",
       "dest": "/acoes-nz-api.js?market=indices"
     },
@@ -309,6 +313,10 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/acoes-cripto/([^/]+)/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
       "src": "/indices-bolsas/([^/]+)/?",
       "dest": "/acoes-nz.html"
     },
@@ -366,6 +374,10 @@
     },
     {
       "src": "/acoes-moedas/?",
+      "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/acoes-cripto/?",
       "dest": "/acoes-nz.html"
     },
     {
