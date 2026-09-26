@@ -94,7 +94,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .visualTitle{margin:0;font-size:28px;line-height:1;letter-spacing:-.8px}
 .visualClear{border:0;background:transparent;color:#666;font-size:12px;padding:5px 0;cursor:pointer}
 .visualMeta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:var(--muted)}
-.visualCanvasWrap{width:100%;aspect-ratio:3/1;background:#f4f1e9;overflow:hidden}
+.visualCanvasWrap{width:100%;aspect-ratio:420/297;background:#f4f1e9;overflow:hidden}
 #marketCanvas{display:block;width:100%;height:100%;background:#f4f1e9;image-rendering:pixelated}
 .visualLegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#777}
 .visualLegend span{display:inline-flex;align-items:center;gap:6px}
@@ -144,6 +144,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" aria-pressed="false" data-market="china">China</button>
     <button type="button" aria-pressed="false" data-market="mexico">México</button>
     <button type="button" aria-pressed="false" data-market="currencies">Moedas</button>
+    <button type="button" aria-pressed="false" data-market="crypto">Criptomoedas</button>
     <button type="button" aria-pressed="false" data-market="indices">Índices</button>
   </div>
 
@@ -184,7 +185,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <span>mesmos dados do som</span>
     </div>
     <div class="visualCanvasWrap">
-      <canvas id="marketCanvas" width="960" height="320" aria-label="Painel horizontal em pixels: verde para alta, amarelo para neutro e vermelho para queda"></canvas>
+      <canvas id="marketCanvas" width="840" height="594" aria-label="Painel A3 horizontal em pixels: verde para alta, amarelo para neutro e vermelho para queda"></canvas>
     </div>
     <div class="visualLegend" aria-hidden="true">
       <span><i class="visualSwatch up"></i>alta</span>
@@ -572,6 +573,40 @@ const MEXICO_STOCKS = [
   {ticker:"ORBIA",name:"Orbia"}
 ];
 
+
+const CRYPTO_STOCKS = [
+  {ticker:"BTC",name:"Bitcoin"},
+  {ticker:"ETH",name:"Ethereum"},
+  {ticker:"BNB",name:"BNB"},
+  {ticker:"XRP",name:"XRP"},
+  {ticker:"SOL",name:"Solana"},
+  {ticker:"TRX",name:"TRON"},
+  {ticker:"DOGE",name:"Dogecoin"},
+  {ticker:"ADA",name:"Cardano"},
+  {ticker:"BCH",name:"Bitcoin Cash"},
+  {ticker:"LINK",name:"Chainlink"},
+  {ticker:"XLM",name:"Stellar"},
+  {ticker:"AVAX",name:"Avalanche"},
+  {ticker:"SUI",name:"Sui"},
+  {ticker:"TON",name:"Toncoin"},
+  {ticker:"SHIB",name:"Shiba Inu"},
+  {ticker:"HBAR",name:"Hedera"},
+  {ticker:"LTC",name:"Litecoin"},
+  {ticker:"DOT",name:"Polkadot"},
+  {ticker:"UNI",name:"Uniswap"},
+  {ticker:"PEPE",name:"Pepe"},
+  {ticker:"AAVE",name:"Aave"},
+  {ticker:"NEAR",name:"NEAR Protocol"},
+  {ticker:"ETC",name:"Ethereum Classic"},
+  {ticker:"ICP",name:"Internet Computer"},
+  {ticker:"CRO",name:"Cronos"},
+  {ticker:"POL",name:"POL"},
+  {ticker:"ATOM",name:"Cosmos"},
+  {ticker:"FIL",name:"Filecoin"},
+  {ticker:"APT",name:"Aptos"},
+  {ticker:"ARB",name:"Arbitrum"}
+];
+
 const CURRENCY_STOCKS = [
   {ticker:"EUR",name:"Euro"},
   {ticker:"JPY",name:"Yen japonês"},
@@ -740,6 +775,16 @@ const MARKETS = {
     basePath:"/acoes-moedas",
     stocks:CURRENCY_STOCKS
   },
+  crypto:{
+    label:"Criptomoedas",
+    title:"30 criptomoedas",
+    exchange:"Cripto 24/7",
+    description:"mercado global de criptomoedas",
+    currencySymbol:"US$",
+    api:"/acoes-cripto-api",
+    basePath:"/acoes-cripto",
+    stocks:CRYPTO_STOCKS
+  },
   indices:{
     label:"Índices",
     title:"Índices das bolsas",
@@ -753,8 +798,8 @@ const MARKETS = {
 };
 
 const SOUND_CYCLE_MS = 10000;
-const VISUAL_GRID_COLS = 48;
-const VISUAL_GRID_ROWS = 16;
+const VISUAL_GRID_COLS = 42;
+const VISUAL_GRID_ROWS = 30;
 const VISUAL_TOTAL_CELLS = VISUAL_GRID_COLS * VISUAL_GRID_ROWS;
 const MARKET_STATUS_REFRESH_MS = 60000;
 const MARKET_STATUS_API = "/acoes-status-api";
@@ -786,6 +831,7 @@ const PATH_MARKETS = {
   "acoes-china":"china",
   "acoes-mexico":"mexico",
   "acoes-moedas":"currencies",
+  "acoes-cripto":"crypto",
   "indices-bolsas":"indices"
 };
 const MARKET_KEYS = Object.keys(MARKETS);
