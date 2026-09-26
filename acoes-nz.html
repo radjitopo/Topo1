@@ -88,7 +88,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .nav button.active{color:#111}
 .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(10px);background:#111;color:white;border-radius:999px;padding:10px 14px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.visualSection{margin-top:74px;padding-top:28px;border-top:1px solid var(--line)}
+.visualSection{margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
 .visualHead{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:12px}
 .visualEyebrow{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
 .visualTitle{margin:0;font-size:28px;line-height:1;letter-spacing:-.8px}
@@ -148,10 +148,6 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <button type="button" aria-pressed="false" data-market="indices">Índices</button>
   </div>
 
-  <label class="search">
-    <span>⌕</span>
-    <input id="search" placeholder="Buscar ações, moedas ou índices..." autocomplete="off">
-  </label>
   <div class="mainSoundHint" id="mainSoundHint">🔊 Toque aqui uma vez para ativar os sons dos 30 instrumentos</div>
   <section class="soundPicker" id="soundPicker" aria-label="Tipo de som">
     <div class="soundPickerHead"><strong>Tipo de som</strong><span>Toque para ouvir</span></div>
@@ -169,8 +165,6 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <input id="soundVolume" type="range" min="0" max="250" step="10" value="150" aria-label="Volume dos sons">
     </div>
   </section>
-
-  <section class="list" id="list"></section>
 
   <section class="visualSection" id="visualSection" aria-label="Imagem gerada pelo mercado">
     <div class="visualHead">
@@ -193,6 +187,13 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <span><i class="visualSwatch down"></i>queda</span>
     </div>
   </section>
+
+  <label class="search">
+    <span>⌕</span>
+    <input id="search" placeholder="Buscar ações, moedas ou índices..." autocomplete="off">
+  </label>
+
+  <section class="list" id="list"></section>
 
   <div class="foot" id="foot">
     Dados públicos de mercado da Bolsa de Tóquio; podem ter atraso em relação ao pregão. Esta tela atualiza automaticamente a cada 10 segundos.
