@@ -63,7 +63,7 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
   assert.match(html, /app-real\.js\?v=20/);
-  assert.match(sw, /leli-ponto-v40/);
+  assert.match(sw, /leli-ponto-v41/);
   assert.match(sw, /app-real\.js\?v=20/);
 });
 
@@ -81,8 +81,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=22/);
-  assert.match(sw, /admin-real\.js\?v=22/);
+  assert.match(html, /admin-real\.js\?v=23/);
+  assert.match(sw, /admin-real\.js\?v=23/);
 });
 
 test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
@@ -105,6 +105,15 @@ test('forgotten passwords can be requested and reset with a new admin-issued cod
   assert.match(employeeHtml, /id="forgotPasswordForm"/);
   assert.match(employee, /api\('request-password-reset','POST'/);
   assert.match(adminHtml, /id="adminForgotPassword"/);
+  assert.match(adminHtml, /id="goAdminActivate"/);
+  assert.match(adminHtml, /id="adminActivateForm"/);
+  assert.match(adminHtml, /id="adminActivationCode"/);
+  assert.match(adminHtml, /Ativar e entrar/);
+  assert.match(adminHtml, /Como o novo ADM entra/);
+  assert.match(admin, /api\('activate','POST'/);
+  assert.match(admin, /await enterAdminDashboard\(r\.user\)/);
+  assert.match(admin, /if\(err\.data\?\.needsActivation\)/);
+  assert.match(admin, /toque em “Primeiro acesso” nesta tela/);
   assert.match(admin, /pediu nova senha/);
   assert.match(admin, /Gerar novo código/);
   assert.match(admin, /Novo código de senha/);
@@ -294,10 +303,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
   assert.match(employeeHtml, /app-real\.js\?v=20/);
-  assert.match(adminHtml, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v40/);
+  assert.match(adminHtml, /admin-real\.js\?v=23/);
+  assert.match(sw, /leli-ponto-v41/);
   assert.match(sw, /app-real\.js\?v=20/);
-  assert.match(sw, /admin-real\.js\?v=22/);
+  assert.match(sw, /admin-real\.js\?v=23/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
@@ -457,9 +466,9 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(html, /somente o administrador que apertar o botão/);
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
-  assert.match(html, /admin-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v40/);
-  assert.match(sw, /admin-real\.js\?v=22/);
+  assert.match(html, /admin-real\.js\?v=23/);
+  assert.match(sw, /leli-ponto-v41/);
+  assert.match(sw, /admin-real\.js\?v=23/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
   const [api, employeeHtml, recipeHtml, recipeApp, adminHtml, admin, sw, vercel] =
