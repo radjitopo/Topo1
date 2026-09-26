@@ -27,12 +27,17 @@ test('the employee app only references controls that exist in its page', async (
   assert.doesNotMatch(html, /href="\.\/receitas\.html">Caderno de receitas<\/a>/);
 });
 
-test('administrators cannot use the employee app or employee-only API actions', async () => {
-  const [api, employee] = await Promise.all([
+test('employee and administrator authentication stay in their own areas', async () => {
+  const [api, employee, admin, recipeHtml, recipeApp] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/app-real.js'),
+    source('pao-da-leli-ponto/admin-real.js'),
+    source('pao-da-leli-ponto/receitas.html'),
+    source('pao-da-leli-ponto/receitas-real.js'),
   ]);
 
+  assert.match(employee, /api\('employee-login','POST'/);
+  assert.match(employee, /api\('employee-activate','POST'/);
   assert.match(employee, /if\(user\?\.role!=='employee'\)/);
   assert.match(employee, /api\('logout','POST',\{\}\)\.catch/);
   assert.match(employee, /currentUser=null;show\('login'\);return false/);
@@ -42,6 +47,21 @@ test('administrators cannot use the employee app or employee-only API actions', 
   assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'\]/);
   assert.match(api, /employeeActions\.includes\(action\)&&user\.role!=='employee'/);
   assert.match(api, /Esta área é exclusiva para colaboradores/);
+  assert.match(admin, /api\('admin-login','POST'/);
+  assert.match(admin, /api\('admin-activate','POST'/);
+  assert.match(admin, /new URLSearchParams\(location\.search\)\.get\('next'\)==='recipes'/);
+  assert.match(admin, /location\.replace\('\.\/receitas\.html'\)/);
+  assert.match(api, /\['login','employee-login','admin-login'\]\.includes\(action\)/);
+  assert.match(api, /expectedRole=action==='admin-login'\?'admin':'employee'/);
+  assert.match(api, /Esta conta é de administrador\. Entre pela área ADM\./);
+  assert.match(api, /Esta conta é de colaborador\. Entre pela tela do ponto\./);
+  assert.match(api, /\['activate','employee-activate','admin-activate'\]\.includes\(action\)/);
+  assert.match(api, /Administradores fazem o primeiro acesso pela área ADM\./);
+  assert.match(api, /Colaboradores fazem o primeiro acesso pela tela do ponto\./);
+  assert.match(api, /Atualize o aplicativo fechando e abrindo novamente\./);
+  assert.doesNotMatch(recipeHtml, /id="recipeLoginForm"|id="recipeIdentifier"|id="recipePassword"/);
+  assert.match(recipeHtml, /href="\.\/admin\.html\?next=recipes"/);
+  assert.doesNotMatch(recipeApp, /api\('(?:login|employee-login|admin-login)'/);
 });
 
 test('employees can browse point history month by month', async () => {
@@ -62,9 +82,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=20/);
-  assert.match(sw, /leli-ponto-v41/);
-  assert.match(sw, /app-real\.js\?v=20/);
+  assert.match(html, /app-real\.js\?v=21/);
+  assert.match(sw, /leli-ponto-v42/);
+  assert.match(sw, /app-real\.js\?v=21/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -81,8 +101,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=23/);
-  assert.match(sw, /admin-real\.js\?v=23/);
+  assert.match(html, /admin-real\.js\?v=24/);
+  assert.match(sw, /admin-real\.js\?v=24/);
 });
 
 test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
@@ -110,7 +130,7 @@ test('forgotten passwords can be requested and reset with a new admin-issued cod
   assert.match(adminHtml, /id="adminActivationCode"/);
   assert.match(adminHtml, /Ativar e entrar/);
   assert.match(adminHtml, /Como o novo ADM entra/);
-  assert.match(admin, /api\('activate','POST'/);
+  assert.match(admin, /api\('admin-activate','POST'/);
   assert.match(admin, /await enterAdminDashboard\(r\.user\)/);
   assert.match(admin, /if\(err\.data\?\.needsActivation\)/);
   assert.match(admin, /toque em “Primeiro acesso” nesta tela/);
@@ -145,11 +165,10 @@ test('new employees and administrators are registered with name and phone', asyn
   assert.match(admin, /phone:\$\('#newAdminPhone'\)\.value\.trim\(\)/);
   assert.match(employeeHtml, /id="identifier"/);
   assert.match(employee, /identifier:\$\('#identifier'\)\.value\.trim\(\)/);
-  assert.match(recipeHtml, /id="recipeIdentifier"/);
-  assert.match(recipeApp, /identifier:\$\('#recipeIdentifier'\)\.value\.trim\(\)/);
+  assert.doesNotMatch(recipeHtml, /id="recipeIdentifier"|id="recipePassword"|id="recipeLoginForm"/);
+  assert.doesNotMatch(recipeApp, /recipeIdentifier|recipePassword|recipeLoginForm/);
   assert.match(employeeHtml, /placeholder="Seu telefone ou e-mail"/);
   assert.match(adminHtml, /Entre com seu telefone ou e-mail\./);
-  assert.match(recipeHtml, /placeholder="Telefone ou e-mail"/);
   assert.doesNotMatch(employeeHtml + adminHtml + recipeHtml + admin, /e-mail antigo|cadastros antigos|contas antigas/i);
 });
 
@@ -302,11 +321,11 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=20/);
-  assert.match(adminHtml, /admin-real\.js\?v=23/);
-  assert.match(sw, /leli-ponto-v41/);
-  assert.match(sw, /app-real\.js\?v=20/);
-  assert.match(sw, /admin-real\.js\?v=23/);
+  assert.match(employeeHtml, /app-real\.js\?v=21/);
+  assert.match(adminHtml, /admin-real\.js\?v=24/);
+  assert.match(sw, /leli-ponto-v42/);
+  assert.match(sw, /app-real\.js\?v=21/);
+  assert.match(sw, /admin-real\.js\?v=24/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
@@ -466,9 +485,9 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(html, /somente o administrador que apertar o botão/);
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
-  assert.match(html, /admin-real\.js\?v=23/);
-  assert.match(sw, /leli-ponto-v41/);
-  assert.match(sw, /admin-real\.js\?v=23/);
+  assert.match(html, /admin-real\.js\?v=24/);
+  assert.match(sw, /leli-ponto-v42/);
+  assert.match(sw, /admin-real\.js\?v=24/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
   const [api, employeeHtml, recipeHtml, recipeApp, adminHtml, admin, sw, vercel] =
@@ -488,8 +507,11 @@ test('the recipe book scales demo recipes and keeps management in the point admi
   assert.ok(demoRecipes.some((recipe) => recipe.category === 'Bebidas'));
   assert.doesNotMatch(employeeHtml, /href="\.\/receitas\.html"/);
   assert.match(recipeHtml, /id="recipeApp"/);
+  assert.match(recipeHtml, /id="authMessage"/);
+  assert.match(recipeHtml, /href="\.\/admin\.html\?next=recipes"/);
   assert.match(recipeApp, /const batchOptions=\[1,1\.5,2,3\]/);
   assert.match(recipeApp, /api\('admin-recipes'\)/);
+  assert.doesNotMatch(recipeApp, /api\('login'/);
   assert.match(adminHtml, /data-tab="recipesAdmin"/);
   assert.match(adminHtml, /href="\.\/receitas\.html">Abrir caderno<\/a>/);
   assert.match(adminHtml, /id="recipeForm"/);
@@ -499,7 +521,7 @@ test('the recipe book scales demo recipes and keeps management in the point admi
   assert.match(api, /action==='admin-recipes'/);
   assert.match(api, /action==='admin-save-recipe'/);
   assert.match(api, /action==='admin-delete-recipe'/);
-  assert.match(sw, /receitas-real\.js\?v=2/);
+  assert.match(sw, /receitas-real\.js\?v=3/);
   assert.match(vercel, /"src": "\/receitas\/\?"/);
 });
 

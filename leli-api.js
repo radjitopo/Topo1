@@ -511,9 +511,12 @@ export default async function handler(req,res){
       return json(res,201,{ok:true});
     }
 
-    if(req.method==='POST'&&action==='login'){
+    if(req.method==='POST'&&['login','employee-login','admin-login'].includes(action)){
+      if(action==='login')return json(res,400,{error:'Atualize o aplicativo fechando e abrindo novamente.'});
+      const expectedRole=action==='admin-login'?'admin':'employee';
       const b=body(req),identifier=identifierFrom(b),password=String(b.password||''),u=await userByIdentifier(identifier);
       if(!u||!u.active)return json(res,401,{error:'Telefone/e-mail ou senha inválidos.'});
+      if(u.role!==expectedRole)return json(res,403,{error:expectedRole==='employee'?'Esta conta é de administrador. Entre pela área ADM.':'Esta conta é de colaborador. Entre pela tela do ponto.'});
       if(u.activation_hash&&!u.password_hash)return json(res,428,{error:'Conta ainda não ativada.',needsActivation:true});
       if(u.locked_until&&new Date(u.locked_until)>new Date())return json(res,429,{error:'Muitas tentativas. Tente novamente mais tarde.'});
       const ok=u.password_salt&&u.password_hash&&safeEqualHex(hashPassword(password,u.password_salt),u.password_hash);
@@ -540,12 +543,15 @@ export default async function handler(req,res){
       return json(res,200,{ok:true,message:'Se o telefone ou e-mail estiver cadastrado, o pedido aparecerá para o administrador.'});
     }
 
-    if(req.method==='POST'&&action==='activate'){
+    if(req.method==='POST'&&['activate','employee-activate','admin-activate'].includes(action)){
+      if(action==='activate')return json(res,400,{error:'Atualize o aplicativo fechando e abrindo novamente.'});
+      const expectedRole=action==='admin-activate'?'admin':'employee';
       const b=body(req),identifier=identifierFrom(b),code=String(b.code||'').trim(),password=String(b.password||'');
       if(!validPassword(password))return json(res,400,{error:'A senha precisa ter pelo menos 8 caracteres.'});
       const u=await userByIdentifier(identifier);
       if(!u||!u.activation_hash||!safeEqualHex(sha(code),u.activation_hash)||(u.activation_expires_at&&new Date(u.activation_expires_at)<new Date()))return json(res,400,{error:'Código de ativação inválido.'});
       if(!u.active)return json(res,400,{error:'Código de ativação inválido.'});
+      if(u.role!==expectedRole)return json(res,403,{error:expectedRole==='employee'?'Administradores fazem o primeiro acesso pela área ADM.':'Colaboradores fazem o primeiro acesso pela tela do ponto.'});
       const ph=newPasswordHash(password);
       await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},activation_hash=NULL,activation_code=NULL,activation_expires_at=NULL,must_change_password=false,password_reset_requested_at=NULL,failed_login_count=0,locked_until=NULL,updated_at=now() WHERE id=${u.id}`;
       await audit(u.id,'activate_account','user',u.id);return json(res,200,{ok:true});

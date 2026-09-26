@@ -33,7 +33,7 @@ function factorFor(recipe){
   if(mode==='batches')return Number(batches)||1;
   return Math.max(Number(referenceAmount)||recipe.reference.amount,0.01)/recipe.reference.amount;
 }
-function showAuth(message=''){$('#recipeApp').classList.add('hidden');$('#authGate').classList.remove('hidden');$('#loginError').textContent=message}
+function showAuth(message=''){$('#recipeApp').classList.add('hidden');$('#authGate').classList.remove('hidden');$('#authMessage').textContent=message||'Entre primeiro pela área ADM.'}
 function showApp(){$('#authGate').classList.add('hidden');$('#recipeApp').classList.remove('hidden')}
 
 function renderCategories(){
@@ -91,16 +91,10 @@ async function loadRecipes(){
   const result=await api('admin-recipes');recipes=result.recipes||[];filteredRecipes=recipes;selectedId=recipes[0]?.id||'';referenceAmount=recipes[0]?.reference?.amount||0;$('#recipeCount').textContent=recipes.length;renderCategories();applyFilters();showApp();
 }
 async function boot(){
-  try{const result=await api('me');if(result.user?.role!=='admin')return showAuth('Use uma conta de administrador.');await loadRecipes()}
-  catch{showAuth()}
+  try{const result=await api('me');if(result.user?.role!=='admin')return showAuth('Entre primeiro pela área ADM.');await loadRecipes()}
+  catch{showAuth('Entre primeiro pela área ADM.')}
 }
 
 $('#recipeSearch').addEventListener('input',event=>{query=event.target.value;applyFilters()});
 $('#recipeSelect').addEventListener('change',event=>selectRecipe(event.target.value));
-$('.password-toggle').addEventListener('click',event=>{const input=$('#recipePassword'),showing=input.type==='text';input.type=showing?'password':'text';event.currentTarget.textContent=showing?'◉':'◎';event.currentTarget.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha')});
-$('#recipeLoginForm').addEventListener('submit',async event=>{
-  event.preventDefault();const button=event.submitter;button.disabled=true;$('#loginError').textContent='';
-  try{const result=await api('login','POST',{identifier:$('#recipeIdentifier').value.trim(),password:$('#recipePassword').value});if(result.user?.role!=='admin'){await api('logout','POST',{});throw new Error('Este caderno está liberado apenas para administradores.')}await loadRecipes()}
-  catch(error){showAuth(error.message)}finally{button.disabled=false}
-});
 boot();

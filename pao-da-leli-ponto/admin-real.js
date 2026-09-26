@@ -37,7 +37,9 @@ async function api(action,method='GET',data){
 function showOnly(id){['setup','adminLogin','adminActivate','dashboard'].forEach(x=>$('#'+x).classList.add('hidden'));$('#'+id).classList.remove('hidden')}
 async function enterAdminDashboard(user){
   if(user?.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}
-  currentUser=user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab();
+  currentUser=user;
+  if(new URLSearchParams(location.search).get('next')==='recipes'){location.replace('./receitas.html');return}
+  showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab();
 }
 async function endAdminSession(destination){
   try{
@@ -341,7 +343,7 @@ async function boot(){
     const health=await api('health');
     if(!health.hasAdmin){showOnly('setup');return}
     try{
-      const m=await api('me');if(m.user?.role!=='admin')throw new Error('not admin');currentUser=m.user;showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab();
+      const m=await api('me');await enterAdminDashboard(m.user);
     }catch{showOnly('adminLogin')}
   }catch(e){alert('Não foi possível conectar ao banco de dados. '+e.message);showOnly('adminLogin')}
 }
@@ -407,10 +409,10 @@ $('#freePunches').addEventListener('click',async()=>{
 });
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),phone:$('#setupPhone').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminIdentifier').value=$('#setupPhone').value.trim()}catch(err){alert(err.message)}});
-$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminIdentifier').value.trim();try{const r=await api('login','POST',{identifier,password:$('#adminPassword').value});await enterAdminDashboard(r.user)}catch(err){if(err.data?.needsActivation){$('#adminActivateIdentifier').value=identifier;showOnly('adminActivate')}else alert(err.message)}});
+$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminIdentifier').value.trim();try{const r=await api('admin-login','POST',{identifier,password:$('#adminPassword').value});await enterAdminDashboard(r.user)}catch(err){if(err.data?.needsActivation){$('#adminActivateIdentifier').value=identifier;showOnly('adminActivate')}else alert(err.message)}});
 $('#goAdminActivate').addEventListener('click',()=>{$('#adminActivateIdentifier').value=$('#adminIdentifier').value.trim();showOnly('adminActivate')});
 $('#backToAdminLogin').addEventListener('click',()=>{$('#adminIdentifier').value=$('#adminActivateIdentifier').value.trim();showOnly('adminLogin')});
-$('#adminActivateForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminActivateIdentifier').value.trim(),password=$('#adminActivationPassword').value,button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('activate','POST',{identifier,code:$('#adminActivationCode').value.trim(),password});const r=await api('login','POST',{identifier,password});await enterAdminDashboard(r.user);alert('Acesso administrativo ativado.')}catch(err){alert(err.message)}finally{button.disabled=false}});
+$('#adminActivateForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminActivateIdentifier').value.trim(),password=$('#adminActivationPassword').value,button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('admin-activate','POST',{identifier,code:$('#adminActivationCode').value.trim(),password});const r=await api('admin-login','POST',{identifier,password});await enterAdminDashboard(r.user);alert('Acesso administrativo ativado.')}catch(err){alert(err.message)}finally{button.disabled=false}});
 $('#adminForgotPassword').addEventListener('click',async()=>{const identifier=prompt('Informe o telefone ou e-mail do administrador:',$('#adminIdentifier').value.trim());if(identifier===null)return;try{await api('request-password-reset','POST',{identifier:identifier.trim()});alert('Pedido enviado. Outro administrador deve gerar o novo código. Depois toque em “Primeiro acesso” nesta tela para criar outra senha.')}catch(err){alert(err.message)}});
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),phone:$('#empPhone').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),phone:$('#newAdminPhone').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de primeiro acesso: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Entregue este código ao novo ADM. Ele deve abrir /admin, tocar em “Primeiro acesso” e criar a senha.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
