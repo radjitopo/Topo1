@@ -361,6 +361,40 @@ const MEXICO_STOCKS = [
   { ticker: 'ORBIA', symbol: 'ORBIA.MX', name: 'Orbia' },
 ];
 
+
+const CRYPTO_STOCKS = [
+  { ticker: 'BTC', symbol: 'BTC-USD', name: 'Bitcoin' },
+  { ticker: 'ETH', symbol: 'ETH-USD', name: 'Ethereum' },
+  { ticker: 'BNB', symbol: 'BNB-USD', name: 'BNB' },
+  { ticker: 'XRP', symbol: 'XRP-USD', name: 'XRP' },
+  { ticker: 'SOL', symbol: 'SOL-USD', name: 'Solana' },
+  { ticker: 'TRX', symbol: 'TRX-USD', name: 'TRON' },
+  { ticker: 'DOGE', symbol: 'DOGE-USD', name: 'Dogecoin' },
+  { ticker: 'ADA', symbol: 'ADA-USD', name: 'Cardano' },
+  { ticker: 'BCH', symbol: 'BCH-USD', name: 'Bitcoin Cash' },
+  { ticker: 'LINK', symbol: 'LINK-USD', name: 'Chainlink' },
+  { ticker: 'XLM', symbol: 'XLM-USD', name: 'Stellar' },
+  { ticker: 'AVAX', symbol: 'AVAX-USD', name: 'Avalanche' },
+  { ticker: 'SUI', symbol: 'SUI-USD', name: 'Sui' },
+  { ticker: 'TON', symbol: 'TON-USD', name: 'Toncoin' },
+  { ticker: 'SHIB', symbol: 'SHIB-USD', name: 'Shiba Inu' },
+  { ticker: 'HBAR', symbol: 'HBAR-USD', name: 'Hedera' },
+  { ticker: 'LTC', symbol: 'LTC-USD', name: 'Litecoin' },
+  { ticker: 'DOT', symbol: 'DOT-USD', name: 'Polkadot' },
+  { ticker: 'UNI', symbol: 'UNI-USD', name: 'Uniswap' },
+  { ticker: 'PEPE', symbol: 'PEPE-USD', name: 'Pepe' },
+  { ticker: 'AAVE', symbol: 'AAVE-USD', name: 'Aave' },
+  { ticker: 'NEAR', symbol: 'NEAR-USD', name: 'NEAR Protocol' },
+  { ticker: 'ETC', symbol: 'ETC-USD', name: 'Ethereum Classic' },
+  { ticker: 'ICP', symbol: 'ICP-USD', name: 'Internet Computer' },
+  { ticker: 'CRO', symbol: 'CRO-USD', name: 'Cronos' },
+  { ticker: 'POL', symbol: 'POL-USD', name: 'POL' },
+  { ticker: 'ATOM', symbol: 'ATOM-USD', name: 'Cosmos' },
+  { ticker: 'FIL', symbol: 'FIL-USD', name: 'Filecoin' },
+  { ticker: 'APT', symbol: 'APT-USD', name: 'Aptos' },
+  { ticker: 'ARB', symbol: 'ARB-USD', name: 'Arbitrum' },
+];
+
 const CURRENCY_STOCKS = [
   { ticker: 'EUR', symbol: 'USDEUR=X', name: 'Euro', invert: true },
   { ticker: 'JPY', symbol: 'USDJPY=X', name: 'Yen japonês', invert: true },
@@ -492,6 +526,14 @@ const MARKETS = {
     currency: 'USD',
     source: 'Yahoo Finance / FX',
     stocks: CURRENCY_STOCKS,
+  },
+  crypto: {
+    key: 'crypto',
+    name: 'Global cryptocurrency market',
+    currency: 'USD',
+    source: 'Yahoo Finance / Crypto',
+    stocks: CRYPTO_STOCKS,
+    alwaysOpen: true,
   },
   indices: {
     key: 'indices',
@@ -705,7 +747,11 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, s-maxage=20, stale-while-revalidate=40');
     const marketEntries = Object.values(MARKETS).filter((market) => market.status !== false);
     const settled = await Promise.allSettled(
-      marketEntries.map((market) => fetchQuote(market.stocks[0], market)),
+      marketEntries.map((market) =>
+        market.alwaysOpen
+          ? Promise.resolve({ marketState: 'REGULAR' })
+          : fetchQuote(market.stocks[0], market),
+      ),
     );
     const statuses = settled.map((item, index) => {
       const market = marketEntries[index];
