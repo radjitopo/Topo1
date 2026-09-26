@@ -78,6 +78,19 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .soundVolumeHead output{font-weight:700;color:#111;font-variant-numeric:tabular-nums}
 .soundVolume input{display:block;width:100%;height:30px;margin:4px 0 0;accent-color:#111;cursor:pointer}
 .soundVolume input:focus-visible{outline:3px solid rgba(34,179,95,.22);outline-offset:2px}
+.colorPicker{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.colorPickerHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:12px;color:var(--muted)}
+.colorPickerHead strong{font-size:13px;color:#333}
+.colorControls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.colorControl{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:7px 9px;border:1px solid #e5e7eb;border-radius:10px;background:var(--soft);font-size:12px;color:#555;cursor:pointer}
+.colorControl input{width:30px;height:30px;padding:0;border:0;background:transparent;cursor:pointer}
+.colorControl input::-webkit-color-swatch-wrapper{padding:0}
+.colorControl input::-webkit-color-swatch{border:0;border-radius:7px}
+.visualComplete{display:none;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fafafa;font-size:12px;color:#444}
+.visualComplete.show{display:flex}
+.visualCompleteActions{display:flex;gap:7px}
+.visualComplete button{border:1px solid #ddd;border-radius:9px;background:#fff;padding:8px 10px;font-size:12px;cursor:pointer}
+.visualComplete .saveVisual{background:#111;color:#fff;border-color:#111}
 .detailMeta{margin-top:18px;font-size:13px;line-height:1.6;color:var(--muted)}
 .foot{margin-top:24px;font-size:12px;line-height:1.5;color:var(--muted)}
 .refresh{margin-left:auto;border:0;background:transparent;color:#555;font-size:13px;padding:6px 0;cursor:pointer}
@@ -166,6 +179,15 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     </div>
   </section>
 
+  <section class="colorPicker" id="colorPicker" aria-label="Cores do desenho">
+    <div class="colorPickerHead"><strong>Cores do desenho</strong><span>toque para escolher</span></div>
+    <div class="colorControls">
+      <label class="colorControl"><span>Alta</span><input id="colorUp" type="color" value="#18a957" aria-label="Cor para alta"></label>
+      <label class="colorControl"><span>Neutro</span><input id="colorFlat" type="color" value="#f0c928" aria-label="Cor para neutro"></label>
+      <label class="colorControl"><span>Baixa</span><input id="colorDown" type="color" value="#e3483d" aria-label="Cor para baixa"></label>
+    </div>
+  </section>
+
   <section class="visualSection" id="visualSection" aria-label="Imagem gerada pelo mercado">
     <div class="visualHead">
       <div>
@@ -182,9 +204,16 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <canvas id="marketCanvas" width="840" height="594" aria-label="Painel A3 horizontal em pixels: verde para alta, amarelo para neutro e vermelho para queda"></canvas>
     </div>
     <div class="visualLegend" aria-hidden="true">
-      <span><i class="visualSwatch up"></i>alta</span>
-      <span><i class="visualSwatch flat"></i>neutro</span>
-      <span><i class="visualSwatch down"></i>queda</span>
+      <span><i class="visualSwatch up" id="legendUp"></i>alta</span>
+      <span><i class="visualSwatch flat" id="legendFlat"></i>neutro</span>
+      <span><i class="visualSwatch down" id="legendDown"></i>baixa</span>
+    </div>
+    <div class="visualComplete" id="visualComplete">
+      <strong>Imagem completa</strong>
+      <div class="visualCompleteActions">
+        <button class="saveVisual" id="saveVisual" type="button">Salvar PNG</button>
+        <button id="newVisual" type="button">Novo desenho</button>
+      </div>
     </div>
   </section>
 
@@ -806,6 +835,8 @@ const MARKET_STATUS_REFRESH_MS = 60000;
 const MARKET_STATUS_API = "/acoes-status-api";
 const SOUND_STORAGE_KEY = "acoes-sound-preset";
 const SOUND_VOLUME_STORAGE_KEY = "acoes-sound-volume";
+const VISUAL_COLORS_STORAGE_KEY = "acoes-visual-colors";
+const DEFAULT_VISUAL_COLORS = {up:"#18a957",flat:"#f0c928",down:"#e3483d"};
 const DEFAULT_SOUND_VOLUME = 150;
 const SOUND_PRESETS = {
   classic:{label:"Clássico"},
@@ -871,6 +902,23 @@ function storedSoundVolume(){
   }
 }
 
+function storedVisualColors(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(VISUAL_COLORS_STORAGE_KEY) || "{}");
+    return {
+      up:/^#[0-9a-f]{6}$/i.test(saved.up || "") ? saved.up : DEFAULT_VISUAL_COLORS.up,
+      flat:/^#[0-9a-f]{6}$/i.test(saved.flat || "") ? saved.flat : DEFAULT_VISUAL_COLORS.flat,
+      down:/^#[0-9a-f]{6}$/i.test(saved.down || "") ? saved.down : DEFAULT_VISUAL_COLORS.down
+    };
+  }catch(e){
+    return Object.assign({},DEFAULT_VISUAL_COLORS);
+  }
+}
+
+function saveVisualColors(){
+  try{ localStorage.setItem(VISUAL_COLORS_STORAGE_KEY,JSON.stringify(state.visualColors)); }catch(e){}
+}
+
 const state = {
   market:initialMarket,
   selectedMarkets:selectionFromUrl(initialMarket),
@@ -888,6 +936,7 @@ const state = {
   sambaNoiseBuffer:null,
   soundPreset:storedSoundPreset(),
   soundVolume:storedSoundVolume(),
+  visualColors:storedVisualColors(),
   soundTimers:[],
   soundPreviewTimers:[],
   soundPreviewResumeTimer:null,
@@ -895,6 +944,7 @@ const state = {
   visualTimers:[],
   visualIndex:0,
   visualHasPainted:false,
+  visualComplete:false,
   requestSerial:0
 };
 if(!detailTicker && state.selectedMarkets.length) state.market = state.selectedMarkets[0];
@@ -903,6 +953,7 @@ const updated = document.getElementById("updated");
 const toast = document.getElementById("toast");
 const marketCanvas = document.getElementById("marketCanvas");
 const visualStatus = document.getElementById("visualStatus");
+const visualComplete = document.getElementById("visualComplete");
 
 function currentMarket(){
   return MARKETS[state.market];
@@ -962,6 +1013,52 @@ function resetVisualCanvas(){
   ctx.fillRect(0,0,marketCanvas.width,marketCanvas.height);
   state.visualIndex = 0;
   state.visualHasPainted = false;
+  state.visualComplete = false;
+  if(visualComplete) visualComplete.classList.remove("show");
+}
+
+function syncVisualColors(){
+  const inputs = {
+    up:document.getElementById("colorUp"),
+    flat:document.getElementById("colorFlat"),
+    down:document.getElementById("colorDown")
+  };
+  const legends = {
+    up:document.getElementById("legendUp"),
+    flat:document.getElementById("legendFlat"),
+    down:document.getElementById("legendDown")
+  };
+  Object.keys(inputs).forEach(function(key){
+    if(inputs[key]) inputs[key].value = state.visualColors[key];
+    if(legends[key]) legends[key].style.background = state.visualColors[key];
+  });
+}
+
+function bindVisualColors(){
+  ["up","flat","down"].forEach(function(key){
+    const id = key === "up" ? "colorUp" : key === "flat" ? "colorFlat" : "colorDown";
+    const input = document.getElementById(id);
+    if(!input) return;
+    input.addEventListener("input",function(){
+      state.visualColors[key] = input.value;
+      saveVisualColors();
+      syncVisualColors();
+      clearVisualTimers();
+      resetVisualCanvas();
+      scheduleVisualEvents();
+      render();
+    });
+  });
+  syncVisualColors();
+}
+
+function saveVisualPng(){
+  if(!marketCanvas) return;
+  const link = document.createElement("a");
+  const stamp = new Date().toISOString().replace(/[:.]/g,"-");
+  link.download = "radji-mercado-" + stamp + ".png";
+  link.href = marketCanvas.toDataURL("image/png");
+  link.click();
 }
 
 function visualIntensity(stock){
@@ -974,14 +1071,13 @@ function visualIntensity(stock){
 }
 
 function visualColor(direction){
-  if(direction === "up") return "#18a957";
-  if(direction === "down") return "#e3483d";
-  return "#f0c928";
+  if(direction === "up") return state.visualColors.up;
+  if(direction === "down") return state.visualColors.down;
+  return state.visualColors.flat;
 }
 
 function paintVisualStock(stock){
-  if(!marketCanvas || detailTicker) return;
-  if(state.visualIndex === 0 && state.visualHasPainted) resetVisualCanvas();
+  if(!marketCanvas || detailTicker || state.visualComplete) return;
   const ctx = marketCanvas.getContext("2d");
   const cellWidth = marketCanvas.width / VISUAL_GRID_COLS;
   const cellHeight = marketCanvas.height / VISUAL_GRID_ROWS;
@@ -991,8 +1087,15 @@ function paintVisualStock(stock){
   const direction = state.movements[stockKey(stock.marketKey,stock.ticker)] || "flat";
   ctx.fillStyle = visualColor(direction);
   ctx.fillRect(Math.floor(x),Math.floor(y),Math.ceil(cellWidth)+1,Math.ceil(cellHeight)+1);
-  state.visualIndex = (index + 1) % VISUAL_TOTAL_CELLS;
+  state.visualIndex = index + 1;
   state.visualHasPainted = true;
+  if(state.visualIndex >= VISUAL_TOTAL_CELLS){
+    state.visualComplete = true;
+    state.visualIndex = VISUAL_TOTAL_CELLS;
+    clearVisualTimers();
+    if(visualComplete) visualComplete.classList.add("show");
+    if(visualStatus) visualStatus.textContent = "Pixel · " + VISUAL_TOTAL_CELLS + "/" + VISUAL_TOTAL_CELLS + " · imagem completa";
+  }
 }
 
 function scheduleVisualEvents(){
@@ -1790,7 +1893,7 @@ function render(){
   if(visualSection) visualSection.style.display = "";
   if(visualStatus){
     visualStatus.textContent = selectedKeys.length
-      ? "Pixel · " + stocks.length + " eventos em 10s · " + (state.visualIndex + 1) + "/" + VISUAL_TOTAL_CELLS
+      ? "Pixel · " + stocks.length + " eventos em 10s · " + Math.min(state.visualIndex,VISUAL_TOTAL_CELLS) + "/" + VISUAL_TOTAL_CELLS
       : "Pixel · escolha um ou mais mercados";
   }
   if(marketTabs) marketTabs.style.display = "grid";
@@ -1977,6 +2080,20 @@ document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
     selectSoundPreset(btn.getAttribute("data-sound-preset"));
   });
 });
+
+bindVisualColors();
+
+const saveVisual = document.getElementById("saveVisual");
+if(saveVisual) saveVisual.addEventListener("click",saveVisualPng);
+const newVisual = document.getElementById("newVisual");
+if(newVisual){
+  newVisual.addEventListener("click",function(){
+    clearVisualTimers();
+    resetVisualCanvas();
+    scheduleVisualEvents();
+    render();
+  });
+}
 
 const clearVisual = document.getElementById("clearVisual");
 if(clearVisual){
