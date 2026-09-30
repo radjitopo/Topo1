@@ -122,12 +122,12 @@ async function openChecklist(){
     await loadChecklistData();
     $('#checklistUnitLabel').textContent=checklistData.unit||currentUser.unit||'Pão da Leli';
     const hasQuestions=checklistData.items.length>0;
-    $('#checklistQuestions').innerHTML=hasQuestions?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">O checklist desta área ainda não foi configurado. Avise o administrador.</div>';
+    $('#checklistQuestions').innerHTML=hasQuestions?checklistData.items.map((item,index)=>'<div class="checklist-question"><strong>'+(index+1)+'. '+esc(item.question)+'</strong><div class="answer-options"><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="yes" required> Sim</label><label class="answer-choice"><input type="radio" name="checklist_'+item.id+'" value="no" required> Não</label></div></div>').join(''):'<div class="empty">Nenhuma pergunta configurada para esta área. Você pode encerrar a jornada.</div>';
     const missingOptions=checklistData.missingOptions||[];
     $('#missingOptions').innerHTML=missingOptions.length?missingOptions.map(item=>'<label class="missing-choice"><input type="checkbox" data-missing-id="'+item.id+'"> '+esc(item.label)+'</label>').join('')+'<label class="missing-choice nothing"><input id="nothingMissing" type="checkbox"> Nada está faltando</label>':'<div class="empty" style="grid-column:1/-1">A lista desta área ainda não foi configurada.</div>';
     $$('#missingOptions [data-missing-id]').forEach(input=>input.addEventListener('change',()=>{if(input.checked)document.getElementById('nothingMissing').checked=false}));
     document.getElementById('nothingMissing')?.addEventListener('change',event=>{if(event.target.checked)$$('#missingOptions [data-missing-id]').forEach(input=>{input.checked=false})});
-    $('#checklistSubmit').disabled=!hasQuestions;
+    $('#checklistSubmit').disabled=false;
     $('#messageRecipient').innerHTML='<option value="team">Toda a equipe</option>'+checklistData.recipients.map(person=>'<option value="'+person.id+'">'+esc(person.name)+' · '+esc(person.unit)+'</option>').join('');
     $('#checklistMessage').value='';$('#messageRecipient').value='team';show('checklist');
   }catch(e){alert(e.message)}

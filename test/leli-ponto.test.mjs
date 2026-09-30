@@ -82,9 +82,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=21/);
-  assert.match(sw, /leli-ponto-v42/);
-  assert.match(sw, /app-real\.js\?v=21/);
+  assert.match(html, /app-real\.js\?v=22/);
+  assert.match(sw, /leli-ponto-v43/);
+  assert.match(sw, /app-real\.js\?v=22/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -268,7 +268,7 @@ test('admins can open an employee record with full history and a weekly schedule
   assert.match(admin, /Segunda-feira/);
 });
 
-test('checkout requires the area checklist, tracks missing items and delivers team or individual messages', async () => {
+test('checkout requires configured questions, tracks missing items and delivers team or individual messages', async () => {
   const [api, employeeHtml, employee, adminHtml, admin, sw] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/index.html'),
@@ -286,7 +286,6 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(api, /WHERE unit=\$\{user\.unit\} AND active=true/);
   assert.match(api, /needsChecklist:true/);
   assert.match(api, /action==='checkout'/);
-  assert.match(api, /if\(!items\.length\)return json\(res,409/);
   assert.match(api, /typeof answer\?\.answer!=='boolean'/);
   assert.match(api, /checkout_with_checklist/);
   assert.match(api, /missingItemIds/);
@@ -303,7 +302,7 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(employeeHtml, /id="unreadMessages"/);
   assert.match(employee, /before==='afterbreak'/);
   assert.doesNotMatch(employee, /if\(p\.kind==='breakIn'\)\{await openChecklist\(\);return\}/);
-  assert.match(employee, /\$\('#checklistSubmit'\)\.disabled=!hasQuestions/);
+  assert.match(employee, /\$\('#checklistSubmit'\)\.disabled=false/);
   assert.match(employee, /api\('checkout','POST'/);
   assert.match(employee, /api\('messages-read','POST'/);
   assert.match(adminHtml, /data-tab="checklistAdmin"/);
@@ -321,10 +320,10 @@ test('checkout requires the area checklist, tracks missing items and delivers te
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=21/);
+  assert.match(employeeHtml, /app-real\.js\?v=22/);
   assert.match(adminHtml, /admin-real\.js\?v=24/);
-  assert.match(sw, /leli-ponto-v42/);
-  assert.match(sw, /app-real\.js\?v=21/);
+  assert.match(sw, /leli-ponto-v43/);
+  assert.match(sw, /app-real\.js\?v=22/);
   assert.match(sw, /admin-real\.js\?v=24/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
@@ -486,7 +485,7 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
   assert.match(html, /admin-real\.js\?v=24/);
-  assert.match(sw, /leli-ponto-v42/);
+  assert.match(sw, /leli-ponto-v43/);
   assert.match(sw, /admin-real\.js\?v=24/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {

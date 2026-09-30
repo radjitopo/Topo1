@@ -646,7 +646,6 @@ export default async function handler(req,res){
       if(expectedKind(state)!=='out')return json(res,409,{error:state==='out'?'A jornada de hoje já foi encerrada.':'A saída só pode ser registrada depois da volta do intervalo.'});
       const items=await sql`SELECT id,question FROM leli_checklist_items WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;
       const missingOptions=await sql`SELECT id,label FROM leli_checklist_missing_options WHERE unit=${user.unit} AND active=true ORDER BY sort_order,id`;
-      if(!items.length)return json(res,409,{error:'O checklist desta área ainda não foi configurado. Avise o administrador.'});
       const b=body(req),submitted=Array.isArray(b.answers)?b.answers:[],answerMap=new Map();
       for(const answer of submitted){
         const id=String(answer?.id||'');
