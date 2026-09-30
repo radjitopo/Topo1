@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="radji. — fotografia, arte e projetos">
+  <title>radji.</title>
+  <link rel="preload" href="/poppins-800.ttf" as="font" type="font/ttf" crossorigin>
+  <style>
+    @font-face {
+      font-family: "Poppins Local";
+      src: url("/poppins-800.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 800;
+      font-display: block;
+    }
+
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #fff; color: #111; }
+    body { overflow: hidden; }
+    main {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    }
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      color: #050505;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: transform .18s ease;
+      animation: arrive 650ms cubic-bezier(.22, 1, .36, 1) both;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wordmarkText {
+      font-family: "Poppins Local", "Arial Black", sans-serif;
+      font-size: clamp(86px, 16vw, 136px);
+      font-weight: 800;
+      line-height: .9;
+      letter-spacing: -.075em;
+      white-space: nowrap;
+    }
+    .wordmark:active { transform: scale(.985); }
+    .wordmark:focus-visible { outline: 3px solid #111; outline-offset: 8px; }
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wordmark { animation: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="wordmark" href="/projetos" aria-label="Entrar no site radji.">
+      <span class="wordmarkText" aria-hidden="true">radji.</span>
+    </a>
+  </main>
+</body>
+</html>
+

@@ -49,6 +49,18 @@
       "use": "@vercel/static"
     },
     {
+      "src": "radji-home.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "radji-projects.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "poppins-800.ttf",
+      "use": "@vercel/static"
+    },
+    {
       "src": "robots.txt",
       "use": "@vercel/static"
     },
@@ -385,8 +397,16 @@
       "dest": "/acoes-nz.html"
     },
     {
-      "src": "/",
+      "src": "/projetos/?",
+      "dest": "/radji-projects.html"
+    },
+    {
+      "src": "/bolsa/?",
       "dest": "/acoes-nz.html"
+    },
+    {
+      "src": "/",
+      "dest": "/radji-home.html"
     },
     {
       "src": "/rankings/([^/]+)/?",
