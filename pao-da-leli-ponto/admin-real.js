@@ -305,6 +305,17 @@ function renderEmployeeHistory(detail){
     return '<article class="history-day"><div class="history-day-head"><strong>'+fullDateLabel(date)+'</strong>'+historyBadge(date,detail.corrections,row)+'</div><div class="history-times">'+Object.entries(punchLabels).map(([kind,label])=>'<div class="history-time"><span>'+label+'</span><b>'+time(row[kind])+'</b></div>').join('')+'</div></article>';
   }).join('')||'<div class="empty">Nenhuma jornada registrada ainda.</div>';
 }
+function renderTodaySummary(users,punches){
+  const todayBy={};for(const punch of punches){todayBy[punch.user_id]??={};todayBy[punch.user_id][punch.kind]=punch}
+  const displayTime=punch=>time(punch?.effective_at||punch?.occurred_at);
+  return users.map(user=>{
+    const row=todayBy[user.id]||{};
+    let status='<span class="badge">sem jornada</span>';
+    if(row.in&&!row.out)status='<span class="badge pending">em andamento</span>';
+    if(row.out)status='<span class="badge approved">jornada encerrada</span>';
+    return '<div class="item"><div><strong>'+esc(user.name)+'</strong><div class="sub">Entrada '+displayTime(row.in)+' · Intervalo '+displayTime(row.breakOut)+' / '+displayTime(row.breakIn)+' · Saída '+displayTime(row.out)+'</div></div><div>'+status+'</div></div>';
+  }).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
+}
 window.openEmployee=async id=>{
   selectedEmployeeId=id;
   $('#employeeGrid').classList.add('hidden');$('#employeeDetail').classList.remove('hidden');$('#employeeDetailBody').classList.add('hidden');
@@ -358,8 +369,7 @@ async function render(){
 
     const empUsers=users.filter(u=>u.role==='employee');
     populateReportEmployees(empUsers);
-    const todayBy={};for(const p of punches){todayBy[p.user_id]??={};todayBy[p.user_id][p.kind]=p}
-    $('#todayList').innerHTML=empUsers.map(u=>{const r=todayBy[u.id]||{};let st='<span class="badge">sem jornada</span>';if(r.in&&!r.out)st='<span class="badge pending">em andamento</span>';if(r.out)st='<span class="badge approved">jornada encerrada</span>';return '<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">Entrada '+time(r.in?.occurred_at)+' · Intervalo '+time(r.breakOut?.occurred_at)+' / '+time(r.breakIn?.occurred_at)+' · Saída '+time(r.out?.occurred_at)+'</div></div><div>'+st+'</div></div>'}).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
+    $('#todayList').innerHTML=renderTodaySummary(empUsers,punches);
 
     $('#employeeList').innerHTML=empUsers.map(u=>'<div class="item employee-item" role="button" tabindex="0" data-employee-id="'+esc(u.id)+'"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(contactLabel(u))+' · '+esc(u.unit)+'</div><div style="margin-top:6px">'+accountStatus(u)+'</div></div><div class="actions"><button class="btn small" onclick="openEmployee(\''+u.id+'\')">Ver ficha</button>'+passwordActions(u)+'<button class="btn small secondary" onclick="toggleUser(\''+u.id+'\')">'+(u.active?'Desativar':'Reativar')+'</button></div></div>').join('')||'<p class="muted">Nenhum funcionário.</p>';
     $$('#employeeList .employee-item').forEach(item=>{

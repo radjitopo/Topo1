@@ -456,6 +456,18 @@ async function effectivePunches(userId,date){
   const latest={};for(const c of corr){if(!latest[c.kind])latest[c.kind]=c.requested_at}
   return punches.map(p=>({...p,effective_at:latest[p.kind]||p.occurred_at,corrected:Boolean(latest[p.kind])}));
 }
+function applyApprovedPunchCorrections(punches,corrections){
+  const approved=corrections.filter(c=>c.status==='approved').sort((a,b)=>
+    new Date(b.decided_at||b.created_at)-new Date(a.decided_at||a.created_at)
+    ||new Date(b.created_at)-new Date(a.created_at)
+    ||String(b.id).localeCompare(String(a.id)));
+  const latest=new Map(),key=p=>p.user_id+':'+p.work_date+':'+p.kind;
+  for(const correction of approved){if(!latest.has(key(correction)))latest.set(key(correction),correction)}
+  return punches.map(punch=>{
+    const correction=latest.get(key(punch));
+    return{...punch,effective_at:correction?.requested_at||punch.occurred_at,corrected:Boolean(correction)};
+  });
+}
 function stateFrom(punches){
   const kinds=new Set(punches.map(p=>p.kind));
   if(kinds.has('out'))return'out'; if(kinds.has('breakIn'))return'afterbreak'; if(kinds.has('breakOut'))return'break'; if(kinds.has('in'))return'working'; return'idle';
@@ -781,7 +793,10 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
       const users=await sql`SELECT id,email,phone,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
-      const punches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email,u.phone FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
+      const originalPunches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email,u.phone FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
+      const approvedCorrections=await sql`SELECT id,user_id,work_date::text AS work_date,kind,status,requested_at,decided_at,created_at
+        FROM leli_corrections WHERE work_date=${date} AND status='approved'`;
+      const punches=applyApprovedPunchCorrections(originalPunches,approvedCorrections);
       const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,u.phone,d.name AS decided_by_name
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
       const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
