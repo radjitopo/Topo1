@@ -29,7 +29,7 @@ async function api(action,method='GET',data){
 }
 function showOnly(id){['setup','adminLogin','adminActivate','dashboard'].forEach(x=>$('#'+x).classList.add('hidden'));$('#'+id).classList.remove('hidden')}
 async function enterAdminDashboard(user){
-  if(user?.role!=='admin'){await api('logout','POST',{});throw new Error('Este usuário não é administrador.')}
+  if(user?.role!=='admin'){throw new Error('Este usuário não é administrador.')}
   currentUser=user;
   if(new URLSearchParams(location.search).get('next')==='recipes'){location.replace('./receitas.html');return}
   showOnly('dashboard');$('#loggedAs').textContent='Entrou como '+currentUser.name;await render();await activateRequestedAdminTab();
@@ -38,6 +38,7 @@ async function endAdminSession(destination){
   try{
     await api('logout','POST',{});
     currentUser=null;
+    $('#adminPassword').value='';
     if(destination)location.replace(destination);
     else showOnly('adminLogin');
   }catch(err){alert('Não foi possível encerrar a sessão. '+err.message)}
@@ -411,7 +412,7 @@ $('#freePunches').addEventListener('click',async()=>{
 });
 
 $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('bootstrap','POST',{token:$('#setupToken').value.trim(),name:$('#setupName').value.trim(),phone:$('#setupPhone').value.trim(),password:$('#setupPassword').value});alert('Administrador criado. Faça o login.');showOnly('adminLogin');$('#adminIdentifier').value=$('#setupPhone').value.trim()}catch(err){alert(err.message)}});
-$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminIdentifier').value.trim();try{const r=await api('admin-login','POST',{identifier,password:$('#adminPassword').value});await enterAdminDashboard(r.user)}catch(err){if(err.data?.needsActivation){$('#adminActivateIdentifier').value=identifier;showOnly('adminActivate')}else alert(err.message)}});
+$('#adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminIdentifier').value.trim(),button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{const r=await api('admin-login','POST',{identifier,password:$('#adminPassword').value,rememberMe:$('#adminRememberLogin').checked});$('#adminPassword').value='';await enterAdminDashboard(r.user)}catch(err){if(err.data?.needsActivation){$('#adminActivateIdentifier').value=identifier;showOnly('adminActivate')}else alert(err.message)}finally{button.disabled=false}});
 $('#goAdminActivate').addEventListener('click',()=>{$('#adminActivateIdentifier').value=$('#adminIdentifier').value.trim();showOnly('adminActivate')});
 $('#backToAdminLogin').addEventListener('click',()=>{$('#adminIdentifier').value=$('#adminActivateIdentifier').value.trim();showOnly('adminLogin')});
 $('#adminActivateForm').addEventListener('submit',async e=>{e.preventDefault();const identifier=$('#adminActivateIdentifier').value.trim(),password=$('#adminActivationPassword').value,button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('admin-activate','POST',{identifier,code:$('#adminActivationCode').value.trim(),password});const r=await api('admin-login','POST',{identifier,password});await enterAdminDashboard(r.user);alert('Acesso administrativo ativado.')}catch(err){alert(err.message)}finally{button.disabled=false}});

@@ -5,6 +5,8 @@ import { demoRecipes as defaultRecipes } from './leli-recipes-data.js';
 
 const sql = neon(process.env.DATABASE_URL);
 const SESSION_COOKIE = 'leli_session';
+const SESSION_MAX_AGE = 30 * 24 * 60 * 60;
+const SESSION_SHORT_AGE = 8 * 60 * 60;
 const BOOTSTRAP_HASH = '01258930c8e560ff164c8b6d29170d573a61327f4df7ec5facc15e39b443e75e';
 const TZ = 'America/Sao_Paulo';
 const EMPLOYEE_UNITS = new Set(['Pão da Leli Café','Pão da Leli Produção']);
@@ -38,7 +40,7 @@ function hashPassword(password,saltHex){return scryptSync(String(password),Buffe
 function safeEqualHex(a,b){try{const A=Buffer.from(a,'hex'),B=Buffer.from(b,'hex');return A.length===B.length&&timingSafeEqual(A,B)}catch{return false}}
 function newPasswordHash(password){const salt=randomBytes(16).toString('hex');return{salt,hash:hashPassword(password,salt)}}
 function activationCode(){return randomBytes(7).toString('base64url')}
-function setSessionCookie(res,token){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`)}
+function setSessionCookie(res,token,rememberMe=true){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax${rememberMe?'; Max-Age='+SESSION_MAX_AGE:''}`)}
 function clearSessionCookie(res){res.setHeader('Set-Cookie',[`${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,`${SESSION_COOKIE}=; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=0`])}
 function validPassword(p){return typeof p==='string'&&p.length>=8&&p.length<=100}
 function recipeId(name){
@@ -179,6 +181,7 @@ async function ensureSchema(){
     created_at timestamptz NOT NULL DEFAULT now(),
     expires_at timestamptz NOT NULL
   )`;
+  await sql`ALTER TABLE leli_sessions ADD COLUMN IF NOT EXISTS remember_me boolean NOT NULL DEFAULT true`;
   await sql`CREATE TABLE IF NOT EXISTS leli_punches (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES leli_users(id),
@@ -439,12 +442,20 @@ async function ensureSchema(){
     GROUP BY s.user_id`;
 }
 
-async function sessionUser(req){
+async function sessionUser(req,res){
   const tok=cookie(req,SESSION_COOKIE);if(!tok)return null;
-  const rows=await sql`SELECT u.id,u.email,u.phone,u.name,u.role,u.position,u.unit,u.active,u.must_change_password,u.photo_data
+  const rows=await sql`SELECT u.id,u.email,u.phone,u.name,u.role,u.position,u.unit,u.active,u.must_change_password,u.photo_data,s.remember_me
     FROM leli_sessions s JOIN leli_users u ON u.id=s.user_id
     WHERE s.token_hash=${sha(tok)} AND s.expires_at>now() AND u.active=true LIMIT 1`;
-  return rows[0]||null;
+  const user=rows[0];if(!user)return null;
+  if(user.remember_me===true&&req.method==='GET'&&req.query?.action==='me'){
+    const renewed=await sql`UPDATE leli_sessions s SET expires_at=now()+${SESSION_MAX_AGE}*interval '1 second'
+      FROM leli_users u WHERE s.user_id=u.id AND s.token_hash=${sha(tok)}
+      AND s.remember_me=true AND s.expires_at>now() AND u.active=true RETURNING s.id`;
+    if(!renewed[0])return null;
+    setSessionCookie(res,tok);
+  }
+  const {remember_me,...profile}=user;return profile;
 }
 async function audit(actor,action,targetType=null,targetId=null,details=null){
   await sql`INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details)
@@ -516,8 +527,9 @@ export default async function handler(req,res){
       }
       await sql`UPDATE leli_users SET failed_login_count=0,locked_until=NULL WHERE id=${u.id}`;
       const tok=randomBytes(32).toString('base64url');
-      await sql`INSERT INTO leli_sessions(user_id,token_hash,expires_at) VALUES(${u.id},${sha(tok)},now()+interval '30 days')`;
-      setSessionCookie(res,tok);await audit(u.id,'login','user',u.id);
+      const rememberMe=b.rememberMe!==false;
+      await sql`INSERT INTO leli_sessions(user_id,token_hash,expires_at,remember_me) VALUES(${u.id},${sha(tok)},now()+${rememberMe?SESSION_MAX_AGE:SESSION_SHORT_AGE}*interval '1 second',${rememberMe})`;
+      setSessionCookie(res,tok,rememberMe);await audit(u.id,'login','user',u.id);
       return json(res,200,{ok:true,user:{id:u.id,email:u.email,phone:u.phone,name:u.name,role:u.role,position:u.position,unit:u.unit,mustChangePassword:u.must_change_password,photo_data:u.photo_data}});
     }
 
@@ -550,7 +562,7 @@ export default async function handler(req,res){
       const tok=cookie(req,SESSION_COOKIE);if(tok)await sql`DELETE FROM leli_sessions WHERE token_hash=${sha(tok)}`;clearSessionCookie(res);return json(res,200,{ok:true});
     }
 
-    const user=await sessionUser(req);
+    const user=await sessionUser(req,res);
     if(!user)return json(res,401,{error:'Faça login novamente.'});
 
     if(req.method==='GET'&&action==='me')return json(res,200,{user});

@@ -39,7 +39,7 @@ test('employee and administrator authentication stay in their own areas', async 
   assert.match(employee, /api\('employee-login','POST'/);
   assert.match(employee, /api\('employee-activate','POST'/);
   assert.match(employee, /if\(user\?\.role!=='employee'\)/);
-  assert.match(employee, /api\('logout','POST',\{\}\)\.catch/);
+  assert.doesNotMatch(employee.slice(employee.indexOf('async function enterEmployeeApp'),employee.indexOf("$('#loginForm')")), /api\('logout'/);
   assert.match(employee, /currentUser=null;show\('login'\);return false/);
   assert.doesNotMatch(employee, /location\.replace\('\.\/admin\.html'\)/);
   assert.match(employee, /if\(!\(await enterEmployeeApp\(m\.user\)\)\)return/);

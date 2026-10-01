@@ -195,7 +195,6 @@ async function boot(){
 }
 async function enterEmployeeApp(user){
   if(user?.role!=='employee'){
-    await api('logout','POST',{}).catch(()=>{});
     currentUser=null;show('login');return false;
   }
   currentUser=user;
@@ -203,7 +202,7 @@ async function enterEmployeeApp(user){
   catch{checklistData=null;show('ponto')}
   return true;
 }
-$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('employee-login','POST',{identifier:$('#identifier').value.trim(),password:$('#password').value});await enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateIdentifier').value=$('#identifier').value.trim();show('activate')}else alert(err.message)}});
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{const r=await api('employee-login','POST',{identifier:$('#identifier').value.trim(),password:$('#password').value,rememberMe:$('#rememberLogin').checked});$('#password').value='';await enterEmployeeApp(r.user)}catch(err){if(err.data?.needsActivation){$('#activateIdentifier').value=$('#identifier').value.trim();show('activate')}else alert(err.message)}finally{button.disabled=false}});
 $('#goActivate').addEventListener('click',()=>{$('#activateIdentifier').value=$('#identifier').value.trim();show('activate')});$('#backToLogin').addEventListener('click',()=>show('login'));
 $('#goForgotPassword').addEventListener('click',()=>{$('#forgotIdentifier').value=$('#identifier').value.trim();show('forgot')});$('#backFromForgot').addEventListener('click',()=>show('login'));
 $('#forgotPasswordForm').addEventListener('submit',async e=>{e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('request-password-reset','POST',{identifier:$('#forgotIdentifier').value.trim()});alert('Pedido enviado. Peça ao administrador o novo código e use “Primeiro acesso / ativar conta” para criar outra senha.');$('#identifier').value=$('#forgotIdentifier').value.trim();show('login')}catch(err){alert(err.message)}finally{button.disabled=false}});
@@ -283,7 +282,7 @@ $('#correctionForm').addEventListener('submit',async e=>{
   }catch(err){alert(err.message)}
 });
 $('#photoBtn').addEventListener('click',()=>$('#photoInput').click());$('#photoInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const photo=await resizeImage(f);await api('photo','POST',{photo});currentUser.photo_data=photo;renderAvatar()}catch(err){alert(err.message)}});
-$('#logoutBtn').addEventListener('click',async()=>{try{await api('logout','POST',{})}catch{}currentUser=null;show('login')});
+$('#logoutBtn').addEventListener('click',async()=>{try{await api('logout','POST',{});currentUser=null;$('#password').value='';show('login')}catch(err){alert('Não foi possível sair da conta. '+err.message)}});
 $$('.nav').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));setInterval(()=>{if($('#ponto')?.classList.contains('active'))$('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())},1000);
 initPasswordToggles();
 initInstallApp();
