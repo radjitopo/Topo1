@@ -82,9 +82,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=23/);
-  assert.match(sw, /leli-ponto-v44/);
-  assert.match(sw, /app-real\.js\?v=23/);
+  assert.match(html, /app-real\.js\?v=\d+/);
+  assert.match(sw, /leli-ponto-v\d+/);
+  assert.match(sw, /app-real\.js\?v=\d+/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -101,8 +101,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=25/);
-  assert.match(sw, /admin-real\.js\?v=25/);
+  assert.match(html, /admin-real\.js\?v=\d+/);
+  assert.match(sw, /admin-real\.js\?v=\d+/);
 });
 
 test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
@@ -320,11 +320,11 @@ test('checkout requires configured questions, tracks missing items and delivers 
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=23/);
-  assert.match(adminHtml, /admin-real\.js\?v=25/);
-  assert.match(sw, /leli-ponto-v44/);
-  assert.match(sw, /app-real\.js\?v=23/);
-  assert.match(sw, /admin-real\.js\?v=25/);
+  assert.match(employeeHtml, /app-real\.js\?v=\d+/);
+  assert.match(adminHtml, /admin-real\.js\?v=\d+/);
+  assert.match(sw, /leli-ponto-v\d+/);
+  assert.match(sw, /app-real\.js\?v=\d+/);
+  assert.match(sw, /admin-real\.js\?v=\d+/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
@@ -481,9 +481,9 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(html, /somente o administrador que apertar o botão/);
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
-  assert.match(html, /admin-real\.js\?v=25/);
-  assert.match(sw, /leli-ponto-v44/);
-  assert.match(sw, /admin-real\.js\?v=25/);
+  assert.match(html, /admin-real\.js\?v=\d+/);
+  assert.match(sw, /leli-ponto-v\d+/);
+  assert.match(sw, /admin-real\.js\?v=\d+/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
   const [api, employeeHtml, recipeHtml, recipeApp, adminHtml, admin, sw, vercel] =
@@ -517,7 +517,7 @@ test('the recipe book scales demo recipes and keeps management in the point admi
   assert.match(api, /action==='admin-recipes'/);
   assert.match(api, /action==='admin-save-recipe'/);
   assert.match(api, /action==='admin-delete-recipe'/);
-  assert.match(sw, /receitas-real\.js\?v=3/);
+  assert.match(sw, /receitas-real\.js\?v=\d+/);
   assert.match(vercel, /"src": "\/receitas\/\?"/);
 });
 

@@ -6,13 +6,7 @@ const numberFormatter=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2});
 let recipes=[],filteredRecipes=[],selectedId='',category='Todas',query='',mode='batches',batches=1,referenceAmount=0;
 
 async function api(action,method='GET',data){
-  const params=new URLSearchParams({action}),options={method,headers:{'Content-Type':'application/json'}};
-  if(method==='GET'&&data){for(const [key,value] of Object.entries(data))params.set(key,String(value))}
-  else if(data!==undefined)options.body=JSON.stringify(data);
-  const response=await fetch(API+'?'+params.toString(),options);
-  const result=await response.json().catch(()=>({error:'Resposta inválida do servidor.'}));
-  if(!response.ok){const error=new Error(result.error||'Erro no sistema.');error.status=response.status;throw error}
-  return result;
+  return leliApi(API,action,method,data);
 }
 function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function normalize(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}

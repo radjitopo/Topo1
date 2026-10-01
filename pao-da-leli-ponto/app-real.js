@@ -49,14 +49,7 @@ function initInstallApp(){
 }
 
 async function api(action,method='GET',data){
-  const params=new URLSearchParams({action});
-  const opt={method,headers:{'Content-Type':'application/json'}};
-  if(method==='GET'&&data){for(const [key,value] of Object.entries(data))params.set(key,String(value))}
-  else if(data!==undefined)opt.body=JSON.stringify(data);
-  const r=await fetch(API+'?'+params.toString(),opt);
-  const j=await r.json().catch(()=>({error:'Resposta inválida do servidor.'}));
-  if(!r.ok){const e=new Error(j.error||'Erro no sistema.');e.status=r.status;e.data=j;throw e}
-  return j;
+  return leliApi(API,action,method,data);
 }
 function show(id){
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
