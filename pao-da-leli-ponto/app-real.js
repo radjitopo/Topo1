@@ -79,8 +79,8 @@ function renderAccessPolicy(policy){
   const restricted=policy?.mode==='restricted',notice=$('#accessNotice');
   notice.classList.toggle('restricted',restricted);notice.classList.toggle('free',!restricted);
   $('#accessIcon').textContent=restricted?'⌖':'✓';
-  $('#accessTitle').textContent=restricted?'Local e rede obrigatórios':'Ponto livre';
-  $('#accessText').textContent=restricted?'Use a rede da padaria e permita a localização.':'Liberado pelo administrador.';
+  $('#accessTitle').textContent=restricted?'Localização obrigatória':'Ponto livre';
+  $('#accessText').textContent=restricted?'Permita a localização para registrar a até '+(Number(policy.radiusMeters)||30)+' metros do local salvo.':'Liberado pelo administrador.';
 }
 function captureLocation(){
   if(!navigator.geolocation)return Promise.reject(new Error('Este aparelho não permite confirmar a localização.'));
@@ -191,7 +191,7 @@ function renderAvatar(){
 function renderProfile(){
   if(!currentUser)return;
   $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Colaborador';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';
-  $('#profileAccessMode').textContent=todayData?.accessPolicy?.mode==='restricted'?'Local + rede obrigatórios':'Ponto livre';renderAvatar();
+  $('#profileAccessMode').textContent=todayData?.accessPolicy?.mode==='restricted'?'Localização: até '+(Number(todayData.accessPolicy.radiusMeters)||30)+' metros':'Ponto livre';renderAvatar();
 }
 function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})

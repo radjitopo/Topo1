@@ -8,7 +8,7 @@ const SESSION_COOKIE = 'leli_session';
 const BOOTSTRAP_HASH = '01258930c8e560ff164c8b6d29170d573a61327f4df7ec5facc15e39b443e75e';
 const TZ = 'America/Sao_Paulo';
 const EMPLOYEE_UNITS = new Set(['Pão da Leli Café','Pão da Leli Produção']);
-const ACCESS_RADIUS_METERS = 20;
+const ACCESS_RADIUS_METERS = 30;
 const RECIPE_CATEGORIES = new Set(['Pães','Doces','Salgados','Bebidas']);
 const RECIPE_UNITS = new Set(['g','ml','un.']);
 
@@ -83,29 +83,6 @@ function normalizeRecipe(payload){
   return{ok:true,recipe:{name,category,description,yieldAmount,yieldUnit,yieldMeasureAmount,yieldMeasureUnit,referenceLabel,referenceAmount,referenceUnit,prepTime,totalTime,serviceLabel,serviceValue,ingredients,steps,notes}};
 }
 function localDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
-function requestIp(req){
-  let value=String(req.headers['x-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();
-  if(value.startsWith('[')&&value.includes(']'))value=value.slice(1,value.indexOf(']'));
-  if(/^\d{1,3}(?:\.\d{1,3}){3}:\d+$/.test(value))value=value.replace(/:\d+$/,'');
-  return value.replace(/^::ffff:/i,'').split('%')[0].toLowerCase();
-}
-function ipv6Prefix64(value){
-  const halves=String(value).split('::');
-  if(halves.length>2)return'';
-  const left=halves[0]?halves[0].split(':'):[],right=halves[1]?halves[1].split(':'):[];
-  const missing=8-left.length-right.length;
-  if(missing<0||(halves.length===1&&missing!==0))return'';
-  const parts=[...left,...Array(missing).fill('0'),...right];
-  if(parts.length!==8||parts.some(part=>!/^[0-9a-f]{0,4}$/i.test(part)))return'';
-  return parts.slice(0,4).map(part=>(part||'0').padStart(4,'0')).join(':');
-}
-function networkIdentity(req){
-  const ip=requestIp(req);
-  if(/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip))return`ipv4:${ip}`;
-  if(ip.includes(':')){const prefix=ipv6Prefix64(ip);if(prefix)return`ipv6:${prefix}`}
-  return'';
-}
-function networkFingerprint(req){const identity=networkIdentity(req);return identity?sha(`leli-network:${identity}`):''}
 function parseLocation(payload){
   const location=payload?.location||{},latitude=Number(location.latitude),longitude=Number(location.longitude),accuracy=Number(location.accuracy),capturedAt=Number(location.capturedAt);
   if(!Number.isFinite(latitude)||latitude<-90||latitude>90||!Number.isFinite(longitude)||longitude<-180||longitude>180)return{ok:false,error:'Ative a localização do celular para registrar o ponto.'};
@@ -119,50 +96,47 @@ function distanceMeters(lat1,lon1,lat2,lon2){
   return 6371000*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 async function accessPolicy(){
-  const rows=await sql`SELECT p.mode,p.latitude,p.longitude,p.radius_m,p.network_fingerprint,p.network_name,p.active_profile_id,p.updated_at,u.name AS updated_by_name
+  const rows=await sql`SELECT p.mode,p.latitude,p.longitude,p.radius_m,p.network_name,p.active_profile_id,p.updated_at,u.name AS updated_by_name
     FROM leli_access_policy p LEFT JOIN leli_users u ON u.id=p.updated_by WHERE p.id=1 LIMIT 1`;
   return rows[0]||{mode:'free',radius_m:ACCESS_RADIUS_METERS};
 }
 async function accessProfiles(){
-  return sql`SELECT id,network_name,latitude,longitude,radius_m,network_fingerprint,created_at,updated_at
+  return sql`SELECT id,network_name,latitude,longitude,radius_m,created_at,updated_at
     FROM leli_access_profiles ORDER BY updated_at DESC,created_at DESC`;
 }
 function accessProfileView(profile){
   return{
     id:profile.id,
-    networkName:profile.network_name,
+    locationName:profile.network_name,
     latitude:Number(profile.latitude),
     longitude:Number(profile.longitude),
-    radiusMeters:Number(profile.radius_m)||ACCESS_RADIUS_METERS,
-    networkCode:String(profile.network_fingerprint).slice(0,8).toUpperCase(),
+    radiusMeters:ACCESS_RADIUS_METERS,
     createdAt:profile.created_at,
     updatedAt:profile.updated_at
   };
 }
 function accessPolicyView(policy,admin=false){
-  const view={mode:policy?.mode==='restricted'?'restricted':'free',radiusMeters:Number(policy?.radius_m)||ACCESS_RADIUS_METERS,updatedAt:policy?.updated_at||null};
+  const view={mode:policy?.mode==='restricted'?'restricted':'free',radiusMeters:ACCESS_RADIUS_METERS,updatedAt:policy?.updated_at||null};
   if(admin){
     const hasLocation=policy?.latitude!==null&&policy?.latitude!==undefined&&policy?.longitude!==null&&policy?.longitude!==undefined;
     view.updatedByName=policy?.updated_by_name||null;
-    view.configured=Boolean(hasLocation&&policy?.network_fingerprint);
+    view.configured=Boolean(hasLocation);
     view.latitude=hasLocation?Number(policy.latitude):null;
     view.longitude=hasLocation?Number(policy.longitude):null;
-    view.networkCode=policy?.network_fingerprint?String(policy.network_fingerprint).slice(0,8).toUpperCase():null;
-    view.networkName=policy?.network_name||null;
+    view.locationName=policy?.network_name||null;
     view.activeProfileId=policy?.active_profile_id||null;
   }
   return view;
 }
-async function validatePunchAccess(req,payload){
+async function validatePunchAccess(payload){
   const policy=await accessPolicy();
-  if(policy.mode!=='restricted')return{ok:true,mode:'free',latitude:null,longitude:null,accuracy:null,distance:null,networkFingerprint:null};
-  const fingerprint=networkFingerprint(req);
-  if(!fingerprint||fingerprint!==policy.network_fingerprint)return{ok:false,status:403,error:'Conecte-se à rede do Pão da Leli para registrar o ponto.',reason:'network'};
+  if(policy.mode!=='restricted')return{ok:true,mode:'free',latitude:null,longitude:null,accuracy:null,distance:null};
+  if(policy.latitude==null||policy.longitude==null||!Number.isFinite(Number(policy.latitude))||!Number.isFinite(Number(policy.longitude)))return{ok:false,status:403,error:'O local do ponto ainda não foi configurado. Avise o administrador.',reason:'location'};
   const location=parseLocation(payload);
   if(!location.ok)return{ok:false,status:403,error:location.error,reason:'location'};
   const distance=distanceMeters(Number(policy.latitude),Number(policy.longitude),location.latitude,location.longitude);
-  if(distance>Number(policy.radius_m||ACCESS_RADIUS_METERS))return{ok:false,status:403,error:'Você precisa estar no Pão da Leli para registrar o ponto.',reason:'distance'};
-  return{ok:true,mode:'restricted',latitude:location.latitude,longitude:location.longitude,accuracy:location.accuracy,distance:Math.round(distance),networkFingerprint:fingerprint};
+  if(distance>ACCESS_RADIUS_METERS)return{ok:false,status:403,error:'Você precisa estar a até 30 metros do local do Pão da Leli para registrar o ponto.',reason:'distance'};
+  return{ok:true,mode:'restricted',latitude:location.latitude,longitude:location.longitude,accuracy:location.accuracy,distance:Math.round(distance)};
 }
 
 async function ensureSchema(){
@@ -219,7 +193,7 @@ async function ensureSchema(){
     mode text NOT NULL DEFAULT 'free' CHECK (mode IN ('free','restricted')),
     latitude double precision,
     longitude double precision,
-    radius_m integer NOT NULL DEFAULT 20 CHECK (radius_m BETWEEN 10 AND 500),
+    radius_m integer NOT NULL DEFAULT 30 CHECK (radius_m BETWEEN 10 AND 500),
     network_fingerprint text,
     network_name text,
     updated_by uuid REFERENCES leli_users(id),
@@ -230,7 +204,7 @@ async function ensureSchema(){
     network_name text NOT NULL,
     latitude double precision NOT NULL,
     longitude double precision NOT NULL,
-    radius_m integer NOT NULL DEFAULT 20 CHECK (radius_m BETWEEN 10 AND 500),
+    radius_m integer NOT NULL DEFAULT 30 CHECK (radius_m BETWEEN 10 AND 500),
     network_fingerprint text UNIQUE NOT NULL,
     created_by uuid REFERENCES leli_users(id),
     updated_by uuid REFERENCES leli_users(id),
@@ -239,7 +213,8 @@ async function ensureSchema(){
   )`;
   await sql`ALTER TABLE leli_access_policy ADD COLUMN IF NOT EXISTS network_name text`;
   await sql`ALTER TABLE leli_access_policy ADD COLUMN IF NOT EXISTS active_profile_id uuid REFERENCES leli_access_profiles(id) ON DELETE SET NULL`;
-  await sql`ALTER TABLE leli_access_policy ALTER COLUMN radius_m SET DEFAULT 20`;
+  await sql`ALTER TABLE leli_access_policy ALTER COLUMN radius_m SET DEFAULT 30`;
+  await sql`ALTER TABLE leli_access_profiles ALTER COLUMN radius_m SET DEFAULT 30`;
   await sql`ALTER TABLE leli_access_policy DROP CONSTRAINT IF EXISTS leli_access_policy_radius_m_check`;
   await sql`DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='leli_access_policy_radius_m_range') THEN
@@ -247,9 +222,10 @@ async function ensureSchema(){
     END IF;
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$`;
-  await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',20) ON CONFLICT(id) DO NOTHING`;
-  await sql`UPDATE leli_access_policy SET radius_m=20 WHERE radius_m<>20`;
-  await sql`UPDATE leli_access_policy SET network_name='Wi-Fi Pão da Leli' WHERE network_fingerprint IS NOT NULL AND (network_name IS NULL OR btrim(network_name)='')`;
+  await sql`INSERT INTO leli_access_policy(id,mode,radius_m) VALUES(1,'free',30) ON CONFLICT(id) DO NOTHING`;
+  await sql`UPDATE leli_access_policy SET radius_m=30 WHERE radius_m<>30`;
+  await sql`UPDATE leli_access_profiles SET radius_m=30 WHERE radius_m<>30`;
+  await sql`UPDATE leli_access_policy SET network_name='Pão da Leli' WHERE latitude IS NOT NULL AND (network_name IS NULL OR btrim(network_name)='')`;
   await sql`INSERT INTO leli_access_profiles(network_name,latitude,longitude,radius_m,network_fingerprint,created_by,updated_by,created_at,updated_at)
     SELECT network_name,latitude,longitude,radius_m,network_fingerprint,updated_by,updated_by,updated_at,updated_at
     FROM leli_access_policy p
@@ -632,11 +608,11 @@ export default async function handler(req,res){
       const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current),kind=expectedKind(state);
       if(!kind)return json(res,409,{error:'A jornada de hoje já foi encerrada.'});
       if(kind==='out')return json(res,428,{error:'Preencha o checklist antes de registrar a saída.',needsChecklist:true});
-      const access=await validatePunchAccess(req,body(req));
+      const access=await validatePunchAccess(body(req));
       if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
-        const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m,network_fingerprint)
-          VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance},${access.networkFingerprint})
+        const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
+          VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance})
           RETURNING id,kind,occurred_at,work_date`;
         await audit(user.id,'punch','punch',rows[0].id,{kind,date,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
@@ -675,12 +651,12 @@ export default async function handler(req,res){
           if(!recipient[0])return json(res,400,{error:'O destinatário do recado não está disponível.'});
         }
       }else{recipientId=null;messageAudience='individual'}
-      const access=await validatePunchAccess(req,b);
+      const access=await validatePunchAccess(b);
       if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
         const rows=await sql`WITH new_punch AS (
-            INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m,network_fingerprint)
-            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance},${access.networkFingerprint})
+            INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
+            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance})
             RETURNING id,kind,occurred_at,work_date
           ), saved AS (
             INSERT INTO leli_checklist_submissions(user_id,work_date,unit,answers,missing_items,message,message_audience,recipient_user_id,punch_id)
@@ -756,7 +732,7 @@ export default async function handler(req,res){
         sql`DELETE FROM leli_schedules`,
         sql`DELETE FROM leli_punches`,
         sql`DELETE FROM leli_audit_log`,
-        sql`UPDATE leli_access_policy SET mode='free',latitude=NULL,longitude=NULL,radius_m=20,network_fingerprint=NULL,network_name=NULL,active_profile_id=NULL,updated_by=${user.id},updated_at=now() WHERE id=1`,
+        sql`UPDATE leli_access_policy SET mode='free',latitude=NULL,longitude=NULL,radius_m=30,network_fingerprint=NULL,network_name=NULL,active_profile_id=NULL,updated_by=${user.id},updated_at=now() WHERE id=1`,
         sql`DELETE FROM leli_access_profiles`,
         sql`DELETE FROM leli_sessions WHERE token_hash<>${currentSessionHash}`,
         sql`DELETE FROM leli_users WHERE id<>${user.id}`,
@@ -820,23 +796,23 @@ export default async function handler(req,res){
       }else if(b.profileId){
         const profileId=String(b.profileId||'');
         if(!/^[0-9a-f-]{36}$/i.test(profileId))return json(res,400,{error:'Configuração salva inválida.'});
-        const profiles=await sql`SELECT id,network_name,latitude,longitude,radius_m,network_fingerprint FROM leli_access_profiles WHERE id=${profileId} LIMIT 1`;
+        const profiles=await sql`SELECT id,network_name,latitude,longitude FROM leli_access_profiles WHERE id=${profileId} LIMIT 1`;
         const profile=profiles[0];
         if(!profile)return json(res,404,{error:'Esta configuração salva não foi encontrada.'});
-        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${profile.latitude},longitude=${profile.longitude},radius_m=${profile.radius_m},network_fingerprint=${profile.network_fingerprint},network_name=${profile.network_name},active_profile_id=${profile.id},updated_by=${user.id},updated_at=now() WHERE id=1`;
-        await audit(user.id,'activate_access_profile','access_profile',profile.id,{networkName:profile.network_name,radiusMeters:profile.radius_m});
+        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${profile.latitude},longitude=${profile.longitude},radius_m=${ACCESS_RADIUS_METERS},network_fingerprint=NULL,network_name=${profile.network_name},active_profile_id=${profile.id},updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'activate_access_profile','access_profile',profile.id,{locationName:profile.network_name,radiusMeters:ACCESS_RADIUS_METERS});
       }else{
-        const location=parseLocation(b),networkName=String(b.networkName||'').trim().slice(0,80);
+        const location=parseLocation(b),locationName=String(b.locationName||b.networkName||'').trim().slice(0,80);
         if(!location.ok)return json(res,400,{error:location.error});
-        if(!networkName)return json(res,400,{error:'Digite um nome para identificar esta rede.'});
-        const fingerprint=networkFingerprint(req);
-        if(!fingerprint)return json(res,400,{error:'Não foi possível identificar esta rede. Conecte-se ao Wi-Fi do Pão da Leli e tente novamente.'});
+        if(!locationName)return json(res,400,{error:'Digite um nome para identificar este local.'});
+        // Keep the historical profile columns; the key now identifies coordinates, never a network.
+        const profileKey=sha(`leli-location:${location.latitude.toFixed(5)}:${location.longitude.toFixed(5)}`);
         const profiles=await sql`INSERT INTO leli_access_profiles(network_name,latitude,longitude,radius_m,network_fingerprint,created_by,updated_by)
-          VALUES(${networkName},${location.latitude},${location.longitude},${ACCESS_RADIUS_METERS},${fingerprint},${user.id},${user.id})
+          VALUES(${locationName},${location.latitude},${location.longitude},${ACCESS_RADIUS_METERS},${profileKey},${user.id},${user.id})
           ON CONFLICT(network_fingerprint) DO UPDATE SET network_name=excluded.network_name,latitude=excluded.latitude,longitude=excluded.longitude,radius_m=excluded.radius_m,updated_by=excluded.updated_by,updated_at=now()
           RETURNING id`;
-        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${location.latitude},longitude=${location.longitude},radius_m=${ACCESS_RADIUS_METERS},network_fingerprint=${fingerprint},network_name=${networkName},active_profile_id=${profiles[0].id},updated_by=${user.id},updated_at=now() WHERE id=1`;
-        await audit(user.id,'save_access_profile','access_profile',profiles[0].id,{networkName,radiusMeters:ACCESS_RADIUS_METERS,accuracyMeters:location.accuracy});
+        await sql`UPDATE leli_access_policy SET mode='restricted',latitude=${location.latitude},longitude=${location.longitude},radius_m=${ACCESS_RADIUS_METERS},network_fingerprint=NULL,network_name=${locationName},active_profile_id=${profiles[0].id},updated_by=${user.id},updated_at=now() WHERE id=1`;
+        await audit(user.id,'save_access_profile','access_profile',profiles[0].id,{locationName,radiusMeters:ACCESS_RADIUS_METERS,accuracyMeters:location.accuracy});
       }
       const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
       return json(res,200,{ok:true,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});

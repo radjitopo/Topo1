@@ -82,9 +82,9 @@ test('employees can browse point history month by month', async () => {
   assert.match(api, /action==='history'/);
   assert.match(api, /getMonthBounds\(month\)/);
   assert.match(api, /work_date BETWEEN \$\{bounds\.start\}::date AND \$\{bounds\.end\}::date/);
-  assert.match(html, /app-real\.js\?v=22/);
-  assert.match(sw, /leli-ponto-v43/);
-  assert.match(sw, /app-real\.js\?v=22/);
+  assert.match(html, /app-real\.js\?v=23/);
+  assert.match(sw, /leli-ponto-v44/);
+  assert.match(sw, /app-real\.js\?v=23/);
 });
 
 test('leaving the admin area ends the session before opening the employee login', async () => {
@@ -101,8 +101,8 @@ test('leaving the admin area ends the session before opening the employee login'
   assert.match(admin, /if\(destination\)location\.replace\(destination\)/);
   assert.match(admin, /\$\('#leaveAdmin'\)\.addEventListener\('click'/);
   assert.doesNotMatch(admin, /catch\{\}currentUser=null/);
-  assert.match(html, /admin-real\.js\?v=24/);
-  assert.match(sw, /admin-real\.js\?v=24/);
+  assert.match(html, /admin-real\.js\?v=25/);
+  assert.match(sw, /admin-real\.js\?v=25/);
 });
 
 test('forgotten passwords can be requested and reset with a new admin-issued code', async () => {
@@ -320,17 +320,17 @@ test('checkout requires configured questions, tracks missing items and delivers 
   assert.match(admin, /api\('admin-checklist'/);
   assert.match(admin, /api\('admin-save-checklist','POST'/);
   assert.match(admin, /api\('admin-resolve-missing','POST'/);
-  assert.match(employeeHtml, /app-real\.js\?v=22/);
-  assert.match(adminHtml, /admin-real\.js\?v=24/);
-  assert.match(sw, /leli-ponto-v43/);
-  assert.match(sw, /app-real\.js\?v=22/);
-  assert.match(sw, /admin-real\.js\?v=24/);
+  assert.match(employeeHtml, /app-real\.js\?v=23/);
+  assert.match(adminHtml, /admin-real\.js\?v=25/);
+  assert.match(sw, /leli-ponto-v44/);
+  assert.match(sw, /app-real\.js\?v=23/);
+  assert.match(sw, /admin-real\.js\?v=25/);
   assert.match(employeeHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(adminHtml, /logo-leli-oficial\.jpg\?v=2/);
   assert.match(sw, /logo-leli-oficial\.jpg\?v=2/);
 });
 
-test('admins can require the bakery network and location or temporarily leave punches free', async () => {
+test('admins can require the bakery location within 30 meters or temporarily leave punches free', async () => {
   const [api, employeeHtml, employee, adminHtml, admin, vercel] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/index.html'),
@@ -342,15 +342,14 @@ test('admins can require the bakery network and location or temporarily leave pu
 
   assert.match(api, /CREATE TABLE IF NOT EXISTS leli_access_policy/);
   assert.match(api, /CREATE TABLE IF NOT EXISTS leli_access_profiles/);
-  assert.match(api, /x-forwarded-for/);
-  assert.match(api, /networkFingerprint/);
+  assert.doesNotMatch(api, /x-forwarded-for|networkFingerprint/);
   assert.match(api, /distanceMeters/);
-  assert.match(api, /ACCESS_RADIUS_METERS = 20/);
+  assert.match(api, /ACCESS_RADIUS_METERS = 30/);
   assert.match(api, /action==='admin-access-policy'/);
   assert.match(api, /mode:'restricted'/);
   assert.match(api, /mode:'free'/);
-  assert.match(api, /validatePunchAccess\(req,body\(req\)\)/);
-  assert.match(api, /validatePunchAccess\(req,b\)/);
+  assert.match(api, /validatePunchAccess\(body\(req\)\)/);
+  assert.match(api, /validatePunchAccess\(b\)/);
   assert.match(api, /accessDenied:true/);
   assert.match(employeeHtml, /id="accessNotice"/);
   assert.match(employee, /captureLocation/);
@@ -359,24 +358,22 @@ test('admins can require the bakery network and location or temporarily leave pu
   assert.match(adminHtml, /id="restrictPunches"/);
   assert.match(adminHtml, /id="freePunches"/);
   assert.match(adminHtml, /id="accessPolicyLocation"/);
-  assert.match(adminHtml, /id="accessPolicyNetwork"/);
+  assert.doesNotMatch(adminHtml, /id="accessPolicyNetwork"|Wi-Fi/);
   assert.match(adminHtml, /id="accessProfileList"/);
   assert.match(adminHtml, /Abrir no mapa/);
-  assert.match(adminHtml, /Até 20 metros/);
+  assert.match(adminHtml, /Até 30 metros/);
   assert.match(admin, /admin-access-policy/);
-  assert.match(admin, /Atualizar local \+ rede/);
-  assert.match(adminHtml, /Locais e redes salvos/);
+  assert.match(admin, /Atualizar local atual/);
+  assert.match(adminHtml, /Locais salvos/);
   assert.match(admin, /Ativar esta configuração/);
   assert.match(admin, /activateAccessProfile/);
   assert.match(admin, /profileId/);
   assert.match(api, /activate_access_profile/);
   assert.match(api, /accessProfiles:profiles\.map\(accessProfileView\)/);
-  assert.match(api, /view\.networkCode/);
-  assert.match(api, /view\.networkName/);
+  assert.match(api, /view\.locationName/);
   assert.match(api, /view\.latitude/);
-  assert.match(admin, /policy\?\.networkCode/);
-  assert.match(admin, /policy\.networkName/);
-  assert.match(admin, /Qual nome você quer mostrar para esta rede/);
+  assert.doesNotMatch(admin, /networkCode|networkName|Wi-Fi/);
+  assert.match(admin, /Qual nome você quer mostrar para este local/);
   assert.match(api, /network_name text/);
   assert.match(admin, /funcionários poderão registrar de qualquer lugar/);
   assert.match(vercel, /geolocation=\(self\)/);
@@ -484,9 +481,9 @@ test('an administrator can reset test data while keeping only their account and 
   assert.match(html, /somente o administrador que apertar o botão/);
   assert.match(admin, /api\('admin-reset-system','POST',\{confirmation:'APAGAR TUDO'\}\)/);
   assert.match(admin, /location\.reload\(\)/);
-  assert.match(html, /admin-real\.js\?v=24/);
-  assert.match(sw, /leli-ponto-v43/);
-  assert.match(sw, /admin-real\.js\?v=24/);
+  assert.match(html, /admin-real\.js\?v=25/);
+  assert.match(sw, /leli-ponto-v44/);
+  assert.match(sw, /admin-real\.js\?v=25/);
 });
 test('the recipe book scales demo recipes and keeps management in the point admin', async () => {
   const [api, employeeHtml, recipeHtml, recipeApp, adminHtml, admin, sw, vercel] =

@@ -94,29 +94,28 @@ function captureAccessLocation(){
 function renderAccessPolicy(policy){
   const restricted=policy?.mode==='restricted',status=$('#accessPolicyStatus');
   status.classList.toggle('free',!restricted);
-  $('#accessPolicyTitle').textContent=restricted?'Local + rede ativos':'Ponto livre';
-  $('#accessPolicyText').textContent=restricted?'O ponto só é aceito na rede da padaria e dentro de um raio de 20 metros.':'Funcionários podem registrar o ponto de qualquer lugar.';
+  $('#accessPolicyTitle').textContent=restricted?'Localização ativa':'Ponto livre';
+  $('#accessPolicyText').textContent=restricted?'O ponto é aceito dentro de um raio de '+(Number(policy.radiusMeters)||30)+' metros do local salvo.':'Funcionários podem registrar o ponto de qualquer lugar.';
   const changed=policy?.updatedAt?'Alterado'+(policy.updatedByName?' por '+policy.updatedByName:'')+' em '+dateTime(policy.updatedAt):'';
   $('#accessPolicyMeta').textContent=changed;
-  const details=$('#accessPolicyDetails'),latitude=Number(policy?.latitude),longitude=Number(policy?.longitude),configured=Boolean(policy?.configured&&Number.isFinite(latitude)&&Number.isFinite(longitude)&&policy?.networkCode);
+  const details=$('#accessPolicyDetails'),latitude=Number(policy?.latitude),longitude=Number(policy?.longitude),configured=Boolean(policy?.configured&&Number.isFinite(latitude)&&Number.isFinite(longitude));
   details.classList.toggle('hidden',!configured);
   if(configured){
     const coordinates=latitude.toFixed(5)+', '+longitude.toFixed(5),map=$('#accessPolicyMap');
     $('#accessPolicyLocation').textContent=coordinates;
-    $('#accessPolicyRadius').textContent='Até '+(Number(policy.radiusMeters)||20)+' metros';
-    $('#accessPolicyNetwork').textContent=policy.networkName||'Wi-Fi Pão da Leli';
+    $('#accessPolicyRadius').textContent='Até '+(Number(policy.radiusMeters)||30)+' metros';
     map.href='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
   }
-  $('#restrictPunches').textContent=policy?.configured?'Atualizar local + rede atuais':'Salvar local + rede atuais';
+  $('#restrictPunches').textContent=policy?.configured?'Atualizar local atual':'Salvar local atual';
   $('#restrictPunches').disabled=false;$('#freePunches').disabled=!restricted;
 }
 function renderAccessProfiles(profiles,policy){
   const list=$('#accessProfileList'),rows=Array.isArray(profiles)?profiles:[],restricted=policy?.mode==='restricted';
-  if(!rows.length){list.innerHTML='<div class="empty">Nenhum local e rede foram salvos ainda.</div>';return}
+  if(!rows.length){list.innerHTML='<div class="empty">Nenhum local foi salvo ainda.</div>';return}
   list.innerHTML=rows.map(profile=>{
     const latitude=Number(profile.latitude),longitude=Number(profile.longitude),coordinates=Number.isFinite(latitude)&&Number.isFinite(longitude)?latitude.toFixed(5)+', '+longitude.toFixed(5):'Local não informado';
     const active=restricted&&String(policy?.activeProfileId||'')===String(profile.id),mapUrl='https://www.google.com/maps?q='+encodeURIComponent(coordinates);
-    return '<article class="access-profile"><div class="access-profile-main"><div class="access-profile-title"><strong>'+esc(profile.networkName||'Rede salva')+'</strong>'+(active?'<span class="badge approved">em uso</span>':'<span class="badge">salva</span>')+'</div><div class="access-profile-info">Local: '+esc(coordinates)+' · Área: até '+(Number(profile.radiusMeters)||20)+' metros<br><a href="'+mapUrl+'" target="_blank" rel="noopener">Abrir local no mapa</a></div></div><button class="btn small '+(active?'secondary':'')+'" type="button" data-activate-access-profile="'+esc(profile.id)+'" '+(active?'disabled':'')+'>'+(active?'Configuração ativa':'Ativar esta configuração')+'</button></article>';
+    return '<article class="access-profile"><div class="access-profile-main"><div class="access-profile-title"><strong>'+esc(profile.locationName||'Local salvo')+'</strong>'+(active?'<span class="badge approved">em uso</span>':'<span class="badge">salva</span>')+'</div><div class="access-profile-info">Local: '+esc(coordinates)+' · Área: até '+(Number(profile.radiusMeters)||30)+' metros<br><a href="'+mapUrl+'" target="_blank" rel="noopener">Abrir local no mapa</a></div></div><button class="btn small '+(active?'secondary':'')+'" type="button" data-activate-access-profile="'+esc(profile.id)+'" '+(active?'disabled':'')+'>'+(active?'Configuração ativa':'Ativar esta configuração')+'</button></article>';
   }).join('');
   $$('[data-activate-access-profile]').forEach(button=>button.addEventListener('click',()=>activateAccessProfile(button.dataset.activateAccessProfile,button)));
 }
@@ -138,9 +137,9 @@ function passwordActions(u,allowReset=true){
 }
 async function activateAccessProfile(profileId,button){
   const profile=(overview?.accessProfiles||[]).find(item=>String(item.id)===String(profileId));
-  if(!profile||!confirm('Ativar o local e a rede “'+profile.networkName+'” para registrar o ponto?'))return;
+  if(!profile||!confirm('Ativar o local “'+profile.locationName+'” para registrar o ponto?'))return;
   button.disabled=true;button.textContent='ATIVANDO...';
-  try{await api('admin-access-policy','POST',{mode:'restricted',profileId});await render();alert('Configuração “'+profile.networkName+'” ativada.');}
+  try{await api('admin-access-policy','POST',{mode:'restricted',profileId});await render();alert('Local “'+profile.locationName+'” ativado.');}
   catch(err){alert(err.message);button.disabled=false;button.textContent='Ativar esta configuração'}
 }
 function editorQuestions(){return $$('#checklistQuestionsAdmin input').map(input=>input.value)}
@@ -390,15 +389,15 @@ window.decideCorrection=async(id,status)=>{const note=prompt(status==='approved'
 window.redoCorrection=async id=>{if(!confirm('Refazer esta decisão? O horário voltará para pendente.'))return;try{await api('admin-reset-correction-decision','POST',{id});invalidateMonthlyReport();await render()}catch(e){alert(e.message)}}
 
 $('#restrictPunches').addEventListener('click',async()=>{
-  if(!confirm('Para salvar, esteja dentro do Pão da Leli e conectado ao Wi-Fi da padaria. O local e a rede ficarão disponíveis para ativar depois. Continuar?'))return;
-  const networkName=prompt('Qual nome você quer mostrar para esta rede?',overview?.accessPolicy?.networkName||'Wi-Fi Pão da Leli');
-  if(networkName===null)return;
-  if(!networkName.trim()){alert('Digite um nome para identificar esta rede.');return}
+  if(!confirm('Para salvar, esteja dentro do Pão da Leli e permita a localização. O local ficará disponível para ativar depois. Continuar?'))return;
+  const locationName=prompt('Qual nome você quer mostrar para este local?',overview?.accessPolicy?.locationName||'Pão da Leli');
+  if(locationName===null)return;
+  if(!locationName.trim()){alert('Digite um nome para identificar este local.');return}
   const button=$('#restrictPunches'),free=$('#freePunches');button.disabled=true;free.disabled=true;button.textContent='CONFIRMANDO LOCAL...';
   try{
     const location=await captureAccessLocation();
-    await api('admin-access-policy','POST',{mode:'restricted',location,networkName:networkName.trim()});
-    await render();alert('Local e rede salvos e ativados. Depois você poderá reativar esta configuração mesmo estando longe.');
+    await api('admin-access-policy','POST',{mode:'restricted',location,locationName:locationName.trim()});
+    await render();alert('Local salvo e ativado. Depois você poderá reativar esta configuração mesmo estando longe.');
   }catch(err){alert(err.message);renderAccessPolicy(overview?.accessPolicy)}
 });
 $('#freePunches').addEventListener('click',async()=>{
@@ -470,7 +469,7 @@ $('#downloadReportCsv').addEventListener('click',downloadMonthlyReport);
 $('#printReport').addEventListener('click',printMonthlyReport);
 
 $('#resetSystem').addEventListener('click',async()=>{
-  if(!confirm('Zerar o sistema agora? Todos os funcionários, outros administradores, batidas, escalas, correções, checklists, recados e locais/redes salvos serão apagados. Somente o seu administrador continuará. Esta ação não pode ser desfeita.'))return;
+  if(!confirm('Zerar o sistema agora? Todos os funcionários, outros administradores, batidas, escalas, correções, checklists, recados e locais salvos serão apagados. Somente o seu administrador continuará. Esta ação não pode ser desfeita.'))return;
   const confirmation=prompt('Para confirmar, digite APAGAR TUDO:','');
   if(confirmation===null)return;
   if(confirmation.trim()!=='APAGAR TUDO'){alert('Nada foi apagado. A confirmação precisa ser exatamente APAGAR TUDO.');return}
