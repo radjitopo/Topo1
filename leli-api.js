@@ -9,6 +9,7 @@ const BOOTSTRAP_HASH = '01258930c8e560ff164c8b6d29170d573a61327f4df7ec5facc15e39
 const TZ = 'America/Sao_Paulo';
 const EMPLOYEE_UNITS = new Set(['Pão da Leli Café','Pão da Leli Produção']);
 const ACCESS_RADIUS_METERS = 30;
+const PUNCH_INTERVAL_ERROR = 'Aguarde pelo menos 1 minuto entre uma batida e outra.';
 const RECIPE_CATEGORIES = new Set(['Pães','Doces','Salgados','Bebidas']);
 const RECIPE_UNITS = new Set(['g','ml','un.']);
 
@@ -623,9 +624,15 @@ export default async function handler(req,res){
       const access=await validatePunchAccess(body(req));
       if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
-        const rows=await sql`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
-          VALUES(${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance})
-          RETURNING id,kind,occurred_at,work_date`;
+        // Lock this employee before checking elapsed time, including requests from another device.
+        const [,rows]=await sql.transaction(txn=>[
+          txn`SELECT id FROM leli_users WHERE id=${user.id} FOR UPDATE`,
+          txn`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
+            SELECT ${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance}
+            WHERE NOT EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${user.id} AND occurred_at>now()-interval '1 minute')
+            RETURNING id,kind,occurred_at,work_date`
+        ],{isolationLevel:'ReadCommitted'});
+        if(!rows[0])return json(res,409,{error:PUNCH_INTERVAL_ERROR,punchTooSoon:true});
         await audit(user.id,'punch','punch',rows[0].id,{kind,date,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
     }
@@ -666,9 +673,12 @@ export default async function handler(req,res){
       const access=await validatePunchAccess(b);
       if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
-        const rows=await sql`WITH new_punch AS (
+        const [,rows]=await sql.transaction(txn=>[
+          txn`SELECT id FROM leli_users WHERE id=${user.id} FOR UPDATE`,
+          txn`WITH new_punch AS (
             INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
-            VALUES(${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance})
+            SELECT ${user.id},'out',${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance}
+            WHERE NOT EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${user.id} AND occurred_at>now()-interval '1 minute')
             RETURNING id,kind,occurred_at,work_date
           ), saved AS (
             INSERT INTO leli_checklist_submissions(user_id,work_date,unit,answers,missing_items,message,message_audience,recipient_user_id,punch_id)
@@ -681,8 +691,9 @@ export default async function handler(req,res){
             RETURNING id
           ) SELECT p.id,p.kind,p.occurred_at,p.work_date,s.id AS submission_id,
               (SELECT count(*)::int FROM missing) AS missing_count
-            FROM new_punch p JOIN saved s ON s.punch_id=p.id`;
-        if(!rows[0])return json(res,409,{error:'Não foi possível registrar a saída.'});
+            FROM new_punch p JOIN saved s ON s.punch_id=p.id`
+        ],{isolationLevel:'ReadCommitted'});
+        if(!rows[0])return json(res,409,{error:PUNCH_INTERVAL_ERROR,punchTooSoon:true});
         await audit(user.id,'checkout_with_checklist','checklist_submission',rows[0].submission_id,{date,unit:user.unit,answers:snapshot.length,missingItems:missingSnapshot.length,hasMessage:Boolean(message),messageAudience:message?messageAudience:null,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});
         return json(res,201,{punch:rows[0],submissionId:rows[0].submission_id,state:'out'});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'A saída ou o checklist de hoje já foi registrado.'});throw e}

@@ -15,8 +15,8 @@ const createHandler = new Function(
 const questionId = '00000000-0000-4000-8000-000000000002';
 const missingId = '00000000-0000-4000-8000-000000000003';
 
-async function checkout({ items = [], missingOptions = [], body = {}, ended = false, restricted = false, action = 'checkout', method = 'POST', punches, headers = {}, role = 'employee', policy = {}, savedProfiles = [] } = {}) {
-  const writes = [], profileWrites = [], policyWrites = [];
+async function checkout({ items = [], missingOptions = [], body = {}, ended = false, restricted = false, action = 'checkout', method = 'POST', punches, headers = {}, role = 'employee', policy = {}, savedProfiles = [], punchTooSoon = false } = {}) {
+  const writes = [], profileWrites = [], policyWrites = [], audits = [];
   const user = { id: '00000000-0000-4000-8000-000000000001', role, unit: 'Pão da Leli Café', active: true };
   const sql = async (parts, ...values) => {
     const query = parts.join('?').replace(/\s+/g, ' ').trim();
@@ -38,20 +38,53 @@ async function checkout({ items = [], missingOptions = [], body = {}, ended = fa
     }
     if (query.startsWith("UPDATE leli_access_policy SET mode='restricted'")) policyWrites.push({ query, values });
     if (query.startsWith('INSERT INTO leli_punches')) {
+      if (punchTooSoon) return [];
       writes.push({ query, values });
       return [{ id: 'punch', kind: values[1], occurred_at: new Date().toISOString() }];
     }
     if (query.startsWith('WITH new_punch AS')) {
+      if (punchTooSoon) return [];
       writes.push({ query, values });
       return [{ id: 'out-punch', kind: 'out', submission_id: 'closing', occurred_at: new Date().toISOString() }];
     }
+    if (query.startsWith('INSERT INTO leli_audit_log')) audits.push({ query, values });
     return [];
+  };
+  sql.transaction = async (createQueries, options) => {
+    assert.equal(options.isolationLevel, 'ReadCommitted');
+    return Promise.all(createQueries(sql));
   };
   const handler = createHandler(() => sql, crypto.createHash, crypto.randomBytes, crypto.scryptSync, crypto.timingSafeEqual, buildMonthlyReport, getMonthBounds, []);
   const res = { statusCode: null, data: null, setHeader() {}, status(code) { this.statusCode = code; return this; }, json(data) { this.data = data; return this; } };
   await handler({ method, query: { action }, headers: { cookie: 'leli_session=test-session', ...headers }, body }, res);
-  return { res, writes, profileWrites, policyWrites };
+  return { res, writes, profileWrites, policyWrites, audits };
 }
+
+test('a recent punch blocks the next entry or interval punch with a clear notice', async () => {
+  for (const punches of [[], ['in'], ['in', 'breakOut']]) {
+    const { res, writes, audits } = await checkout({ action: 'punch', punches, punchTooSoon: true });
+    assert.equal(res.statusCode, 409);
+    assert.equal(res.data.punchTooSoon, true);
+    assert.equal(res.data.error, 'Aguarde pelo menos 1 minuto entre uma batida e outra.');
+    assert.equal(writes.length, 0);
+    assert.equal(audits.length, 0);
+  }
+});
+
+test('a blocked exit saves neither a closing nor its note or missing item reports', async () => {
+  for (const items of [[], [{ id: questionId, question: 'Área organizada?' }]]) {
+    const { res, writes, audits } = await checkout({
+      items,
+      missingOptions: [{ id: missingId, label: 'Café' }],
+      body: { answers: items.map(item => ({ id: item.id, answer: true })), missingItemIds: [missingId], message: 'Encomenda na geladeira', messageAudience: 'team' },
+      punchTooSoon: true,
+    });
+    assert.equal(res.statusCode, 409);
+    assert.equal(res.data.punchTooSoon, true);
+    assert.equal(writes.length, 0);
+    assert.equal(audits.length, 0);
+  }
+});
 
 test('employees can close their shift with no configured questions and keep an optional note', async () => {
   const { res, writes } = await checkout({ body: { answers: [], message: 'Encomenda na geladeira', messageAudience: 'team' } });
