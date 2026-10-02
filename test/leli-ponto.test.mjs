@@ -351,7 +351,7 @@ test('admins can require the bakery location within 30 meters or temporarily lea
   assert.match(api, /validatePunchAccess\(body\(req\)\)/);
   assert.match(api, /validatePunchAccess\(b\)/);
   assert.match(api, /accessDenied:true/);
-  assert.match(employeeHtml, /id="accessNotice"/);
+  assert.doesNotMatch(employeeHtml, /id="accessNotice"/);
   assert.match(employee, /captureLocation/);
   assert.match(employee, /enableHighAccuracy:true/);
   assert.match(employee, /punchAccessPayload/);
