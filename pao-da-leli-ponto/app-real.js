@@ -68,13 +68,6 @@ function dateTime(v){return v?new Intl.DateTimeFormat('pt-BR',{timeZone:'America
 function currentMonth(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).format(new Date())}
 function monthLabel(value){const label=new Date(value+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return label.charAt(0).toUpperCase()+label.slice(1)}
 function shiftMonth(value,amount){const [year,month]=value.split('-').map(Number),date=new Date(Date.UTC(year,month-1+amount,1));return date.getUTCFullYear()+'-'+String(date.getUTCMonth()+1).padStart(2,'0')}
-function renderAccessPolicy(policy){
-  const restricted=policy?.mode==='restricted',notice=$('#accessNotice');
-  notice.classList.toggle('restricted',restricted);notice.classList.toggle('free',!restricted);
-  $('#accessIcon').textContent=restricted?'⌖':'✓';
-  $('#accessTitle').textContent=restricted?'Localização obrigatória':'Ponto livre';
-  $('#accessText').textContent=restricted?'Permita a localização para registrar a até '+(Number(policy.radiusMeters)||30)+' metros do local salvo.':'Liberado pelo administrador.';
-}
 function captureLocation(){
   if(!navigator.geolocation)return Promise.reject(new Error('Este aparelho não permite confirmar a localização.'));
   return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(position=>resolve({
@@ -132,7 +125,6 @@ async function loadToday(){
     $('#greeting').innerHTML=greeting()+',<br>'+currentUser.name+'.';
     $('#dateLine').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',weekday:'long',day:'2-digit',month:'long'}).format(d);
     $('#clock').textContent=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
-    renderAccessPolicy(todayData.accessPolicy);
     const state=todayData.state;let html='',label='INICIAR JORNADA',disabled=false;
     if(state==='idle')html='<div class="label">Hoje</div><div class="big">Você ainda não iniciou sua jornada.</div>';
     if(state==='working'){html='<div class="statusline"><span class="dot"></span><b>Você está trabalhando</b></div><div class="big">Entrada '+effective('in')+'</div>';label='SAIR PARA INTERVALO'}
@@ -184,7 +176,7 @@ function renderAvatar(){
 function renderProfile(){
   if(!currentUser)return;
   $('#profileName').textContent=currentUser.name;$('#profileRole').textContent=currentUser.position||'Colaborador';$('#profileUnit').textContent=currentUser.unit||'Pão da Leli';
-  $('#profileAccessMode').textContent=todayData?.accessPolicy?.mode==='restricted'?'Localização: até '+(Number(todayData.accessPolicy.radiusMeters)||30)+' metros':'Ponto livre';renderAvatar();
+  renderAvatar();
 }
 function resizeImage(file){
   return new Promise((resolve,reject)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const max=320,s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),h=Math.round(img.height*s),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(u);resolve(c.toDataURL('image/jpeg',.78))};img.onerror=reject;img.src=u})
