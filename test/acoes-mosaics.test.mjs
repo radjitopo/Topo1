@@ -19,10 +19,48 @@ function contains(tile, x, y) {
 }
 
 function area(tile) {
+  if (tile.radius) return Math.PI * tile.radius ** 2;
   return Math.abs(tile.points.reduce((sum, p, i, points) => {
     const next = points[(i + 1) % points.length];
     return sum + p[0] * next[1] - next[0] * p[1];
   }, 0)) / 2;
+}
+
+for (const shape of ['circle', 'star']) {
+  test(`${shape} pieces stay separate and scale at sizes 1, 10 and 20`, () => {
+    const standard = buildTiles(shape, 1080, 1920, 10);
+    assert.ok(standard.length > 1200);
+    const radius = tile => tile.radius || Math.max(...tile.points.map(p => Math.hypot(p[0] - tile.x, p[1] - tile.y)));
+    const bucketSize = radius(standard[0]) * 2;
+    const buckets = new Map();
+    for (const tile of standard) {
+      const r = radius(tile);
+      assert.ok(Number.isFinite(tile.x) && Number.isFinite(tile.y) && r > 0);
+      if (shape === 'star') {
+        assert.equal(tile.points.length, 10);
+        const distances = tile.points.map(p => Math.hypot(p[0] - tile.x, p[1] - tile.y));
+        assert.equal(distances.filter(d => Math.abs(d - r) < 1e-7).length, 5);
+        assert.equal(distances.filter(d => d < r / 2).length, 5);
+      }
+      const bx = Math.floor(tile.x / bucketSize);
+      const by = Math.floor(tile.y / bucketSize);
+      for (let x = bx - 1; x <= bx + 1; x++) {
+        for (let y = by - 1; y <= by + 1; y++) {
+          for (const neighbor of buckets.get(`${x},${y}`) || []) {
+            assert.ok(Math.hypot(tile.x - neighbor.x, tile.y - neighbor.y) >= r + radius(neighbor) - 1e-7, `${shape} pieces overlap`);
+          }
+        }
+      }
+      const key = `${bx},${by}`;
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(tile);
+    }
+    for (const size of [1, 20]) {
+      const tiles = buildTiles(shape, 1080, 1920, size);
+      assert.ok(Math.abs(area(tiles[0]) / area(standard[0]) - (size / 10) ** 2) < 1e-9);
+      assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);
+    }
+  });
 }
 
 // Bucket polygons by their bounds so even the 1-size mosaics can be sampled densely.

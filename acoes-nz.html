@@ -86,7 +86,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .colorControl i{width:28px;height:28px;flex-shrink:0;border-radius:5px;border:1px solid rgba(0,0,0,.12)}
 .shapePicker{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .shapePicker strong{display:block;margin-bottom:10px;font-size:14px;font-weight:600}
-.shapeControls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.shapeControls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .shapeOption{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:75px;padding:9px 3px;border:1px solid #e5e7eb;border-radius:9px;background:#fff;color:#666;font:inherit;font-size:14px;cursor:pointer}
 .shapeOption svg{display:block;width:24px;height:24px;fill:currentColor}
 .shapeOption.active{border-color:#111;background:#111;color:#fff}
@@ -223,6 +223,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
         <button class="shapeOption" type="button" data-visual-shape="triangle" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 23 21H1z"/></svg><span>Triângulo</span></button>
         <button class="shapeOption" type="button" data-visual-shape="pentagon" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 23 9 19 22H5L1 9z"/></svg><span>Pentágono</span></button>
         <button class="shapeOption" type="button" data-visual-shape="hexagon" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h12l6 10-6 10H6L0 12z"/></svg><span>Hexágono</span></button>
+        <button class="shapeOption" type="button" data-visual-shape="circle" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg><span>Círculo</span></button>
+        <button class="shapeOption" type="button" data-visual-shape="star" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 15.4 8.1 23.2 9.2 17.6 14.7 18.9 22.5 12 18.8 5.1 22.5 6.4 14.7 .8 9.2 8.6 8.1z"/></svg><span>Estrela</span></button>
       </div>
     </div>
     <div class="visualSizePicker" id="visualSizePicker">
@@ -890,7 +892,7 @@ const SOUND_VOLUME_STORAGE_KEY = "acoes-sound-volume";
 const VISUAL_COLORS_STORAGE_KEY = "acoes-visual-colors";
 const DEFAULT_VISUAL_COLORS = {up:"#18a957",flat:"#f0c928",down:"#e3483d"};
 const VISUAL_SHAPE_STORAGE_KEY = "acoes-visual-shape";
-const VISUAL_SHAPES = {square:"Quadrados",triangle:"Triângulos",pentagon:"Pentágonos",hexagon:"Hexágonos"};
+const VISUAL_SHAPES = {square:"Quadrados",triangle:"Triângulos",pentagon:"Pentágonos",hexagon:"Hexágonos",circle:"Círculos",star:"Estrelas"};
 const VISUAL_SIZE_STORAGE_KEY = "acoes-visual-size";
 const DEFAULT_VISUAL_SIZE = 10;
 const DEFAULT_SOUND_VOLUME = 150;
@@ -1092,7 +1094,31 @@ function buildVisualTiles(shape,width,height,size=DEFAULT_VISUAL_SIZE){
     if(Math.max.apply(null,xs) <= 0 || Math.min.apply(null,xs) >= width || Math.max.apply(null,ys) <= 0 || Math.min.apply(null,ys) >= height) return;
     tiles.push({points:points,x:xs.reduce(function(a,b){ return a+b; },0)/points.length,y:ys.reduce(function(a,b){ return a+b; },0)/points.length});
   }
-  if(shape === "triangle"){
+  if(shape === "circle" || shape === "star"){
+    const radius = Math.sqrt(area) / 2;
+    const diameter = radius * 2;
+    const rowHeight = radius * Math.sqrt(3);
+    // Stagger the rows so circles touch and stars sit close without overlapping.
+    for(let row=0;row<=Math.ceil(height / rowHeight);row += 1){
+      const cy = row * rowHeight;
+      const offset = (row % 2) * radius;
+      for(let col=-1;col<=Math.ceil(width / diameter);col += 1){
+        const cx = col * diameter + offset;
+        if(shape === "circle"){
+          if(cx+radius <= 0 || cx-radius >= width || cy+radius <= 0 || cy-radius >= height) continue;
+          tiles.push({x:cx,y:cy,radius:radius});
+        }else{
+          const points = [];
+          for(let vertex=0;vertex<10;vertex += 1){
+            const angle = -Math.PI / 2 + vertex * Math.PI / 5;
+            const r = vertex % 2 === 0 ? radius : radius * .45;
+            points.push([cx+r*Math.cos(angle),cy+r*Math.sin(angle)]);
+          }
+          add(points);
+        }
+      }
+    }
+  }else if(shape === "triangle"){
     const side = Math.sqrt(4 * area / Math.sqrt(3));
     const rowHeight = side * Math.sqrt(3) / 2;
     for(let row=0;row<Math.ceil(height / rowHeight);row += 1){
@@ -1452,7 +1478,11 @@ function paintVisualDirection(direction){
   const tile = state.visualTiles[index];
   if(!tile) return;
   ctx.fillStyle = visualColor(direction);
-  if(state.visualShape === "square"){
+  if(state.visualShape === "circle"){
+    ctx.beginPath();
+    ctx.arc(tile.x,tile.y,tile.radius,0,Math.PI*2);
+    ctx.fill();
+  }else if(state.visualShape === "square"){
     const first = tile.points[0];
     const opposite = tile.points[2];
     const overlap = state.visualSize / DEFAULT_VISUAL_SIZE;
