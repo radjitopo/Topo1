@@ -14,6 +14,7 @@ function initPasswordToggles(){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto',currentHistoryMonth=currentMonth();
+let missingExitDate=null;
 let deferredInstallPrompt=null;
 
 function isInstalledApp(){
@@ -54,7 +55,7 @@ async function api(action,method='GET',data){
 function show(id){
   window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;
   $$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id)?.classList.add('active');
-  $('#bottom')?.classList.toggle('show',!['login','activate','forgot','confirm','review','correction','checklist','messages'].includes(id));
+  $('#bottom')?.classList.toggle('show',!['login','activate','forgot','confirm','review','correction','missingExit','checklist','messages'].includes(id));
   $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
   if(id==='ponto')loadToday();
   if(id==='history')loadHistory();
@@ -91,12 +92,40 @@ function showConfirmation(title,text,rows){
 function greeting(){const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',hour:'2-digit',hour12:false}).format(new Date()));return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function event(kind){return todayData?.punches?.find(p=>p.kind===kind)}
 function effective(kind){return time(event(kind)?.effective_at)}
-function statusBadge(date,corr){
+function statusBadge(date,corr,row={}){
   const xs=corr.filter(c=>c.work_date===date);
+  if(xs.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='pending'))return'<span class="pending">saída aguardando aprovação</span>';
+  if(row.in&&!row.out&&date<currentDate())return'<span class="pending">saída não registrada</span>';
   if(xs.some(c=>c.status==='pending'))return'<span class="pending">correção pendente</span>';
+  if(xs.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='approved'))return'<span class="approved">saída incluída depois</span>';
   if(xs.some(c=>c.status==='approved'))return'<span class="approved">corrigido</span>';
   if(xs.some(c=>c.status==='rejected'))return'<span class="rejected">correção recusada</span>';
   return'';
+}
+function currentDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function renderMissingExits(){
+  $('#missingExitCards').innerHTML=(todayData?.missingExits||[]).map(row=>{
+    const pending=row.status==='pending';
+    const text=pending?'Horário informado: '+time(row.requested_at)+'. Aguardando aprovação do ADM.':row.status==='rejected'?'O ADM recusou o pedido. Confira o horário e envie novamente.':'Informe o horário real em que você encerrou esta jornada.';
+    return '<article class="card missed-exit"><div class="label">'+fullDateLabel(row.work_date)+'</div><h3>'+(pending?'Saída aguardando aprovação':'Saída não registrada')+'</h3><p>'+esc(text)+'</p>'+(row.decision_note?'<p>Observação do ADM: '+esc(row.decision_note)+'</p>':'')+(!pending?'<button class="btn secondary" type="button" data-missing-exit="'+esc(row.work_date)+'">INFORMAR SAÍDA</button>':'')+'</article>';
+  }).join('');
+  $$('#missingExitCards [data-missing-exit]').forEach(button=>button.addEventListener('click',()=>openMissingExit(button.dataset.missingExit)));
+}
+function openMissingExit(date){
+  const row=(todayData?.missingExits||[]).find(item=>item.work_date===date);
+  if(!row||row.status==='pending')return;
+  missingExitDate=date;
+  $('#missingExitDay').textContent=fullDateLabel(date);
+  $('#missingExitTime').value=row.status==='rejected'?time(row.requested_at):'';
+  $('#missingExitReason').value=row.reason||'Esqueci de registrar a saída.';
+  show('missingExit');
+}
+async function submitMissingExit(){
+  const button=$('#missingExitSubmit');button.disabled=true;
+  try{
+    await api('missing-exit','POST',{date:missingExitDate,requestedTime:$('#missingExitTime').value,reason:$('#missingExitReason').value.trim()});
+    lastConfirmReturn='ponto';showConfirmation('Pedido enviado.','O ADM vai conferir e aprovar o horário. Você pode registrar o ponto de hoje normalmente.',[['Jornada',fullDateLabel(missingExitDate)],['Saída informada',$('#missingExitTime').value]]);
+  }catch(e){alert(e.message)}finally{button.disabled=false}
 }
 async function loadChecklistData(){checklistData=await api('checklist');return checklistData}
 function renderMessages(){
@@ -132,6 +161,7 @@ async function loadToday(){
     if(state==='afterbreak'){html='<div class="statusline"><span class="dot"></span><b>Você voltou ao trabalho</b></div><div class="big">Retorno '+effective('breakIn')+'</div>';label='ENCERRAR JORNADA'}
     if(state==='out'){html='<div class="label">Jornada encerrada</div><div class="big">Saída '+effective('out')+'</div>';label='JORNADA ENCERRADA';disabled=true}
     $('#workCard').innerHTML=html;$('#mainAction').textContent=label;$('#mainAction').disabled=disabled;
+    renderMissingExits();
   }catch(e){if(e.status===401){currentUser=null;show('login')}else alert(e.message)}
 }
 async function punch(){
@@ -159,11 +189,13 @@ async function loadHistory(){
     const h=await api('history','GET',{month});
     if(month!==currentHistoryMonth)return;
     const map={};for(const p of h.punches){map[p.work_date]??={};map[p.work_date][p.kind]=p.occurred_at}
-    for(const c of h.corrections){if(c.status==='approved'){map[c.work_date]??={};map[c.work_date][c.kind]=c.requested_at}}
+    const applied=new Set();
+    const approved=h.corrections.filter(c=>c.status==='approved').sort((a,b)=>new Date(b.decided_at||b.created_at)-new Date(a.decided_at||a.created_at)||new Date(b.created_at)-new Date(a.created_at)||String(b.id).localeCompare(String(a.id)));
+    for(const c of approved){const key=c.work_date+':'+c.kind;if(!applied.has(key)){map[c.work_date]??={};map[c.work_date][c.kind]=c.requested_at;applied.add(key)}}
     const dates=Object.keys(map).sort().reverse();
     let html='<div class="hrow head"><div>Data</div><div>Entrada</div><div>Intervalo</div><div>Saída</div></div>';
     if(!dates.length)html+='<div class="empty">Nenhum registro neste mês.</div>';
-    for(const d of dates){const r=map[d],bo=time(r.breakOut),bi=time(r.breakIn);html+='<div class="hrow"><div><b>'+dateLabel(d)+'</b><br>'+statusBadge(d,h.corrections)+'</div><div>'+time(r.in)+'</div><div>'+(bo==='—'?'—':bo+(bi!=='—'?'–'+bi:''))+'</div><div>'+time(r.out)+'</div></div>'}
+    for(const d of dates){const r=map[d],bo=time(r.breakOut),bi=time(r.breakIn);html+='<div class="hrow"><div><b>'+dateLabel(d)+'</b><br>'+statusBadge(d,h.corrections,r)+'</div><div>'+time(r.in)+'</div><div>'+(bo==='—'?'—':bo+(bi!=='—'?'–'+bi:''))+'</div><div>'+time(r.out)+'</div></div>'}
     $('#historyTable').innerHTML=html;
   }catch(e){if(e.status===401)show('login');else alert(e.message)}
   finally{if(month===currentHistoryMonth){previous.disabled=false;next.disabled=currentHistoryMonth>=currentMonth()}}
@@ -200,6 +232,8 @@ $('#goForgotPassword').addEventListener('click',()=>{$('#forgotIdentifier').valu
 $('#forgotPasswordForm').addEventListener('submit',async e=>{e.preventDefault();const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;try{await api('request-password-reset','POST',{identifier:$('#forgotIdentifier').value.trim()});alert('Pedido enviado. Peça ao administrador o novo código e use “Primeiro acesso / ativar conta” para criar outra senha.');$('#identifier').value=$('#forgotIdentifier').value.trim();show('login')}catch(err){alert(err.message)}finally{button.disabled=false}});
 $('#activateForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('employee-activate','POST',{identifier:$('#activateIdentifier').value.trim(),code:$('#activateCode').value.trim(),password:$('#activatePassword').value});alert('Conta ativada. Agora você já pode entrar.');$('#identifier').value=$('#activateIdentifier').value.trim();$('#password').value='';show('login')}catch(err){alert(err.message)}});
 $('#mainAction').addEventListener('click',punch);
+$('#missingExitForm').addEventListener('submit',e=>{e.preventDefault();submitMissingExit()});
+$('#cancelMissingExit').addEventListener('click',()=>show('ponto'));
 $('#cancelChecklist').addEventListener('click',()=>show('ponto'));
 $('#checklistForm').addEventListener('submit',async e=>{
   e.preventDefault();

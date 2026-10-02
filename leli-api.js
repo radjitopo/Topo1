@@ -463,10 +463,9 @@ async function audit(actor,action,targetType=null,targetId=null,details=null){
 }
 async function effectivePunches(userId,date){
   const punches=await sql`SELECT id,kind,occurred_at FROM leli_punches WHERE user_id=${userId} AND work_date=${date} ORDER BY occurred_at`;
-  const corr=await sql`SELECT kind,requested_at,status FROM leli_corrections
+  const corr=await sql`SELECT id,user_id,work_date::text AS work_date,kind,punch_id,requested_at,status,decided_at,created_at FROM leli_corrections
     WHERE user_id=${userId} AND work_date=${date} AND status='approved' ORDER BY decided_at DESC`;
-  const latest={};for(const c of corr){if(!latest[c.kind])latest[c.kind]=c.requested_at}
-  return punches.map(p=>({...p,effective_at:latest[p.kind]||p.occurred_at,corrected:Boolean(latest[p.kind])}));
+  return applyApprovedPunchCorrections(punches.map(p=>({...p,user_id:userId,work_date:date})),corr);
 }
 function applyApprovedPunchCorrections(punches,corrections){
   const approved=corrections.filter(c=>c.status==='approved').sort((a,b)=>
@@ -475,10 +474,46 @@ function applyApprovedPunchCorrections(punches,corrections){
     ||String(b.id).localeCompare(String(a.id)));
   const latest=new Map(),key=p=>p.user_id+':'+p.work_date+':'+p.kind;
   for(const correction of approved){if(!latest.has(key(correction)))latest.set(key(correction),correction)}
-  return punches.map(punch=>{
+  const result=punches.map(punch=>{
     const correction=latest.get(key(punch));
     return{...punch,effective_at:correction?.requested_at||punch.occurred_at,corrected:Boolean(correction)};
   });
+  const present=new Set(punches.map(key));
+  for(const correction of latest.values()){
+    if(correction.kind==='out'&&correction.punch_id===null&&!present.has(key(correction))){
+      result.push({id:correction.id,user_id:correction.user_id,work_date:correction.work_date,kind:'out',occurred_at:null,effective_at:correction.requested_at,corrected:true,added_later:true});
+    }
+  }
+  return result;
+}
+function validWorkDate(date){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  const parsed=new Date(date+'T12:00:00Z');
+  return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
+}
+function missingExitError(punches,requestedAt){
+  if(!punches.some(p=>p.kind==='in'))return 'Não existe uma entrada registrada nesta data.';
+  if(punches.some(p=>p.kind==='out'))return 'A saída desta jornada já está registrada ou aprovada.';
+  const requested=new Date(requestedAt).getTime();
+  const last=Math.max(...punches.map(p=>new Date(p.effective_at||p.occurred_at).getTime()));
+  if(!Number.isFinite(requested)||requested<Math.floor(last/60000)*60000)return 'A saída não pode ser antes da última batida desta jornada.';
+  return null;
+}
+async function missingExits(userId,date){
+  return sql`WITH open_days AS (
+      SELECT user_id,work_date FROM leli_punches WHERE work_date<${date}::date
+        AND (${userId}::uuid IS NULL OR user_id=${userId}::uuid)
+      GROUP BY user_id,work_date HAVING bool_or(kind='in') AND NOT bool_or(kind='out')
+    ) SELECT d.user_id,d.work_date::text AS work_date,u.name,u.unit,c.id AS correction_id,c.status,c.requested_at,c.reason,c.decision_note
+    FROM open_days d JOIN leli_users u ON u.id=d.user_id
+    LEFT JOIN LATERAL (
+      SELECT id,status,requested_at,reason,decision_note FROM leli_corrections
+      WHERE user_id=d.user_id AND work_date=d.work_date AND kind='out' AND punch_id IS NULL
+      ORDER BY (status='pending') DESC,created_at DESC,id DESC LIMIT 1
+    ) c ON true
+    WHERE NOT EXISTS (SELECT 1 FROM leli_corrections approved
+      WHERE approved.user_id=d.user_id AND approved.work_date=d.work_date AND approved.kind='out' AND approved.status='approved')
+    ORDER BY d.work_date DESC,u.name,d.user_id`;
 }
 function stateFrom(punches){
   const kinds=new Set(punches.map(p=>p.kind));
@@ -573,7 +608,7 @@ export default async function handler(req,res){
       const ph=newPasswordHash(next);await sql`UPDATE leli_users SET password_salt=${ph.salt},password_hash=${ph.hash},must_change_password=false,updated_at=now() WHERE id=${user.id}`;
       await audit(user.id,'change_password','user',user.id);return json(res,200,{ok:true});
     }
-    const employeeActions=['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'];
+    const employeeActions=['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction','missing-exit'];
     if(employeeActions.includes(action)&&user.role!=='employee')return json(res,403,{error:'Esta área é exclusiva para colaboradores.'});
     if(req.method==='POST'&&action==='photo'){
       const b=body(req),photo=String(b.photo||'');if(photo.length>220000||!photo.startsWith('data:image/'))return json(res,400,{error:'Foto inválida ou muito grande.'});
@@ -582,8 +617,8 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='today'){
       const date=localDate(),punches=await effectivePunches(user.id,date);
       const pending=await sql`SELECT id,kind,status,reason,requested_at,created_at FROM leli_corrections WHERE user_id=${user.id} AND work_date=${date} ORDER BY created_at DESC`;
-      const policy=await accessPolicy();
-      return json(res,200,{date,state:stateFrom(punches),punches,corrections:pending,accessPolicy:accessPolicyView(policy)});
+      const [policy,missed]=await Promise.all([accessPolicy(),missingExits(user.id,date)]);
+      return json(res,200,{date,state:stateFrom(punches),punches,corrections:pending,missingExits:missed,accessPolicy:accessPolicyView(policy)});
     }
     if(req.method==='GET'&&action==='history'){
       const month=String(req.query?.month||localDate().slice(0,7)).trim();let bounds;
@@ -592,9 +627,9 @@ export default async function handler(req,res){
       const rows=await sql`SELECT work_date::text AS work_date,kind,occurred_at FROM leli_punches
         WHERE user_id=${user.id} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
         ORDER BY work_date DESC,occurred_at ASC`;
-      const corr=await sql`SELECT work_date::text AS work_date,kind,status,requested_at,decided_at FROM leli_corrections
+      const corr=await sql`SELECT id,work_date::text AS work_date,kind,punch_id,status,requested_at,decided_at,created_at FROM leli_corrections
         WHERE user_id=${user.id} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
-        ORDER BY created_at DESC`;
+        ORDER BY decided_at DESC NULLS LAST,created_at DESC,id DESC`;
       return json(res,200,{month,punches:rows,corrections:corr});
     }
     if(req.method==='GET'&&action==='checklist'){
@@ -710,6 +745,31 @@ export default async function handler(req,res){
         return json(res,201,{punch:rows[0],submissionId:rows[0].submission_id,state:'out'});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'A saída ou o checklist de hoje já foi registrado.'});throw e}
     }
+    if(req.method==='POST'&&action==='missing-exit'){
+      const b=body(req),date=String(b.date||''),requestedTime=String(b.requestedTime||''),reason=String(b.reason||'').trim();
+      if(!validWorkDate(date)||date>=localDate())return json(res,400,{error:'Escolha uma jornada de um dia anterior.'});
+      if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(requestedTime)||reason.length<3||reason.length>1000)return json(res,400,{error:'Informe o horário real da saída e um motivo de até 1000 caracteres.'});
+      const punches=await effectivePunches(user.id,date);
+      const requested=await sql`SELECT ((${date}::date+${requestedTime}::time) AT TIME ZONE ${TZ}) AS ts`;
+      const error=missingExitError(punches,requested[0]?.ts);
+      if(error)return json(res,409,{error});
+      const [,rows]=await sql.transaction(txn=>[
+        txn`SELECT id FROM leli_users WHERE id=${user.id} FOR UPDATE`,
+        txn`WITH saved AS (
+          INSERT INTO leli_corrections(user_id,work_date,kind,requested_at,reason)
+          SELECT ${user.id},${date}::date,'out',${requested[0].ts}::timestamptz,${reason}
+          WHERE EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${user.id} AND work_date=${date}::date AND kind='in')
+            AND NOT EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${user.id} AND work_date=${date}::date AND kind='out')
+            AND NOT EXISTS (SELECT 1 FROM leli_corrections WHERE user_id=${user.id} AND work_date=${date}::date AND kind='out' AND status IN ('pending','approved'))
+          RETURNING id,user_id,work_date,requested_at
+        ), logged AS (
+          INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details)
+          SELECT user_id,'request_missing_exit','correction',id::text,jsonb_build_object('date',work_date,'requestedAt',requested_at) FROM saved
+        ) SELECT id FROM saved`
+      ],{isolationLevel:'ReadCommitted'});
+      if(!rows[0])return json(res,409,{error:'Já existe uma saída registrada ou um pedido pendente para esta jornada.'});
+      return json(res,201,{ok:true,id:rows[0].id});
+    }
     if(req.method==='POST'&&action==='correction-batch'){
       const b=body(req),date=String(b.date||localDate()),reason=String(b.reason||'').trim(),times=b.times||{};
       const kinds=['in','breakOut','breakIn','out'];
@@ -817,13 +877,15 @@ export default async function handler(req,res){
       const date=localDate();
       const users=await sql`SELECT id,email,phone,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
       const originalPunches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email,u.phone FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
-      const approvedCorrections=await sql`SELECT id,user_id,work_date::text AS work_date,kind,status,requested_at,decided_at,created_at
+      const approvedCorrections=await sql`SELECT id,user_id,work_date::text AS work_date,kind,punch_id,status,requested_at,decided_at,created_at
         FROM leli_corrections WHERE work_date=${date} AND status='approved'`;
       const punches=applyApprovedPunchCorrections(originalPunches,approvedCorrections);
-      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,u.phone,d.name AS decided_by_name
-        FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by ORDER BY c.created_at DESC LIMIT 100`;
-      const [policy,profiles]=await Promise.all([accessPolicy(),accessProfiles()]);
-      return json(res,200,{date,users,punches,corrections,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});
+      const corrections=await sql`SELECT c.id,c.user_id,c.kind,c.work_date::text,c.punch_id,c.original_at,c.requested_at,c.reason,c.status,c.request_group,c.created_at,c.decided_at,c.decision_note,u.name,u.email,u.phone,d.name AS decided_by_name
+        FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id LEFT JOIN leli_users d ON d.id=c.decided_by
+        WHERE c.status='pending' OR c.id IN (SELECT id FROM leli_corrections ORDER BY created_at DESC LIMIT 100)
+        ORDER BY (c.status='pending') DESC,c.created_at DESC`;
+      const [policy,profiles,missed]=await Promise.all([accessPolicy(),accessProfiles(),missingExits(null,date)]);
+      return json(res,200,{date,users,punches,corrections,missingExits:missed,accessPolicy:accessPolicyView(policy,true),accessProfiles:profiles.map(accessProfileView)});
     }
     if(req.method==='POST'&&action==='admin-access-policy'){
       const b=body(req),mode=String(b.mode||'');
@@ -923,8 +985,8 @@ export default async function handler(req,res){
         FROM leli_schedules WHERE user_id=${id} ORDER BY weekday`;
       const punches=await sql`SELECT work_date::text AS work_date,kind,occurred_at
         FROM leli_punches WHERE user_id=${id} ORDER BY work_date DESC,occurred_at ASC`;
-      const corrections=await sql`SELECT id,work_date::text AS work_date,kind,status,requested_at,decided_at,request_group
-        FROM leli_corrections WHERE user_id=${id} ORDER BY created_at DESC`;
+      const corrections=await sql`SELECT id,work_date::text AS work_date,kind,punch_id,status,requested_at,decided_at,created_at,request_group
+        FROM leli_corrections WHERE user_id=${id} ORDER BY decided_at DESC NULLS LAST,created_at DESC,id DESC`;
       return json(res,200,{employee:employees[0],schedule,punches,corrections});
     }
     if(req.method==='GET'&&action==='admin-monthly-report'){
@@ -944,7 +1006,7 @@ export default async function handler(req,res){
         WHERE u.role='employee' AND p.work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
           AND (${employeeFilter}::uuid IS NULL OR p.user_id=${employeeFilter}::uuid)
         ORDER BY p.work_date,p.occurred_at`;
-      const corrections=await sql`SELECT c.id,c.user_id,c.work_date::text AS work_date,c.kind,c.status,c.requested_at,c.decided_at,c.request_group
+      const corrections=await sql`SELECT c.id,c.user_id,c.work_date::text AS work_date,c.kind,c.punch_id,c.status,c.requested_at,c.decided_at,c.created_at,c.request_group
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id
         WHERE u.role='employee' AND c.work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
           AND (${employeeFilter}::uuid IS NULL OR c.user_id=${employeeFilter}::uuid)
@@ -1022,12 +1084,64 @@ export default async function handler(req,res){
       return json(res,200,{ok:true,count:rows.length});
     }
     if(req.method==='POST'&&action==='admin-decide-correction'){
-      const b=body(req),id=String(b.id||''),status=String(b.status||''),note=String(b.note||'').trim();if(!['approved','rejected'].includes(status))return json(res,400,{error:'Decisão inválida.'});
+      const b=body(req),id=String(b.id||''),status=String(b.status||''),note=String(b.note||'').trim();
+      if(!['approved','rejected'].includes(status)||!/^[0-9a-f-]{36}$/i.test(id)||note.length>1000)return json(res,400,{error:'Decisão inválida.'});
+      const requests=await sql`SELECT id,user_id,work_date::text AS work_date,kind,punch_id,requested_at,status FROM leli_corrections WHERE id=${id}`;
+      const request=requests[0];
+      if(!request||request.status!=='pending')return json(res,404,{error:'Solicitação não encontrada ou já decidida.'});
+      if(request.kind==='out'&&request.punch_id===null){
+        if(status==='approved'){
+          const error=missingExitError(await effectivePunches(request.user_id,request.work_date),request.requested_at);
+          if(error)return json(res,409,{error});
+        }
+        const [,rows]=await sql.transaction(txn=>[
+          txn`SELECT id FROM leli_users WHERE id=${request.user_id} FOR UPDATE`,
+          txn`WITH saved AS (
+            UPDATE leli_corrections c SET status=${status},decided_by=${user.id},decided_at=now(),decision_note=${note}
+            WHERE c.id=${id}::uuid AND c.status='pending'
+              AND (${status}='rejected' OR (
+                NOT EXISTS (SELECT 1 FROM leli_punches p WHERE p.user_id=c.user_id AND p.work_date=c.work_date AND p.kind='out')
+                AND NOT EXISTS (SELECT 1 FROM leli_corrections other WHERE other.user_id=c.user_id AND other.work_date=c.work_date AND other.kind='out' AND other.status='approved' AND other.id<>c.id)
+                AND NOT EXISTS (
+                  SELECT 1 FROM leli_punches p LEFT JOIN LATERAL (
+                    SELECT requested_at FROM leli_corrections a WHERE a.user_id=p.user_id AND a.work_date=p.work_date AND a.kind=p.kind AND a.status='approved'
+                    ORDER BY decided_at DESC,created_at DESC,id DESC LIMIT 1
+                  ) a ON true
+                  WHERE p.user_id=c.user_id AND p.work_date=c.work_date AND c.requested_at<date_trunc('minute',COALESCE(a.requested_at,p.occurred_at))
+                )
+              )) RETURNING c.id,c.user_id,c.work_date,c.requested_at
+          ), logged AS (
+            INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details)
+            SELECT ${user.id},'decide_missing_exit','correction',id::text,jsonb_build_object('status',${status}::text,'date',work_date,'requestedAt',requested_at,'note',${note}::text) FROM saved
+          ) SELECT id,user_id FROM saved`
+        ],{isolationLevel:'ReadCommitted'});
+        if(!rows[0])return json(res,409,{error:'A jornada ou a solicitação mudou. Atualize a tela antes de aprovar.'});
+        return json(res,200,{ok:true});
+      }
       const rows=await sql`UPDATE leli_corrections SET status=${status},decided_by=${user.id},decided_at=now(),decision_note=${note} WHERE id=${id} AND status='pending' RETURNING id,user_id`;if(!rows[0])return json(res,404,{error:'Solicitação não encontrada ou já decidida.'});await audit(user.id,'decide_correction','correction',id,{status});return json(res,200,{ok:true});
     }
     if(req.method==='POST'&&action==='admin-reset-correction-decision'){
       const b=body(req),id=String(b.id||'');
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Correção inválida.'});
+      const requests=await sql`SELECT id,user_id,kind,punch_id FROM leli_corrections WHERE id=${id}`;
+      const request=requests[0];
+      if(request?.kind==='out'&&request.punch_id===null){
+        const [,rows]=await sql.transaction(txn=>[
+          txn`SELECT id FROM leli_users WHERE id=${request.user_id} FOR UPDATE`,
+          txn`WITH saved AS (
+            UPDATE leli_corrections c SET status='pending',decided_by=NULL,decided_at=NULL,decision_note=NULL
+            WHERE c.id=${id}::uuid AND c.status IN ('approved','rejected')
+              AND NOT EXISTS (SELECT 1 FROM leli_corrections other WHERE other.user_id=c.user_id AND other.work_date=c.work_date AND other.kind='out' AND other.status IN ('pending','approved') AND other.id<>c.id)
+              AND NOT EXISTS (SELECT 1 FROM leli_punches p WHERE p.user_id=c.user_id AND p.work_date=c.work_date AND p.kind='out')
+            RETURNING c.id
+          ), logged AS (
+            INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id)
+            SELECT ${user.id},'reset_missing_exit_decision','correction',id::text FROM saved
+          ) SELECT id FROM saved`
+        ],{isolationLevel:'ReadCommitted'});
+        if(!rows[0])return json(res,409,{error:'Já existe outra saída ou outro pedido pendente para esta jornada.'});
+        return json(res,200,{ok:true});
+      }
       const rows=await sql`UPDATE leli_corrections SET status='pending',decided_by=NULL,decided_at=NULL,decision_note=NULL
         WHERE id=${id} AND status IN ('approved','rejected') RETURNING id,user_id`;
       if(!rows[0])return json(res,404,{error:'Decisão não encontrada ou já está pendente.'});

@@ -198,7 +198,7 @@ function correctionGroups(rows){
 }
 function correctionDecision(item){
   if(item.status==='pending')return '<div class="correction-decision"><button class="btn small" type="button" onclick="decideCorrection(\''+item.id+'\',\'approved\')">Aprovar</button><button class="btn small red" type="button" onclick="decideCorrection(\''+item.id+'\',\'rejected\')">Recusar</button></div>';
-  const label=item.status==='approved'?'Aprovado':'Recusado';
+  const label=item.status==='approved'?(item.kind==='out'&&item.punch_id===null?'Incluída depois':'Aprovado'):'Recusado';
   return '<div class="correction-decision"><span class="badge '+item.status+'">'+label+'</span>'+(item.decided_by_name?'<span class="sub">por '+esc(item.decided_by_name)+'</span>':'')+'<button class="btn small secondary" type="button" onclick="redoCorrection(\''+item.id+'\')">Refazer</button></div>';
 }
 function correctionRequestSummary(items){
@@ -217,6 +217,7 @@ function currentMonth(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Americ
 function monthLabel(value){if(!value)return'';const label=new Date(value+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return label.charAt(0).toUpperCase()+label.slice(1)}
 function durationLabel(value){if(value===null||value===undefined)return'—';const total=Math.max(0,Number(value)||0),hours=Math.floor(total/60),minutes=total%60;return hours?(hours+'h'+(minutes?' '+minutes+'min':'')):(minutes+'min')}
 function reportStatusBadge(status){const type=status==='Completo'?'approved':status==='Falta'||status==='Batidas incompletas'?'rejected':status==='Fora da escala'?'':'pending';return '<span class="badge '+type+'">'+esc(status)+'</span>'}
+function reportRowStatus(row){return row.status+(row.exitAddedLater?' · Saída incluída depois':'')}
 function populateReportEmployees(users){
   const select=$('#reportEmployee'),selected=select.value;
   select.innerHTML='<option value="">Equipe inteira</option>'+users.map(user=>'<option value="'+esc(user.id)+'">'+esc(user.name)+(user.active?'':' (inativo)')+'</option>').join('');
@@ -236,7 +237,7 @@ function renderMonthlyReport(report){
   $('#reportAbsences').textContent=report.totals.absenceDays;
   $('#reportCorrections').textContent=report.totals.correctionRequests;
   $('#reportEmployeeSummary').innerHTML=report.employees.map(employee=>'<article class="report-person"><div class="report-person-head"><div><strong>'+esc(employee.name)+'</strong><div class="sub">'+esc(employee.unit)+'</div></div>'+(employee.pendingCorrections?'<span class="badge pending">'+employee.pendingCorrections+' pendente'+(employee.pendingCorrections===1?'':'s')+'</span>':'')+'</div><div class="report-person-stats"><div class="report-person-stat"><span>Previsto</span><b>'+durationLabel(employee.expectedMinutes)+'</b></div><div class="report-person-stat"><span>Trabalhado</span><b>'+durationLabel(employee.workedMinutes)+'</b></div><div class="report-person-stat"><span>Atraso</span><b>'+durationLabel(employee.delayMinutes)+'</b></div><div class="report-person-stat"><span>Faltas</span><b>'+employee.absenceDays+'</b></div><div class="report-person-stat"><span>Incompletas</span><b>'+employee.incompleteDays+'</b></div><div class="report-person-stat"><span>Correções</span><b>'+employee.correctionRequests+'</b></div></div></article>').join('')||'<div class="empty">Nenhum funcionário encontrado.</div>';
-  $('#reportRows').innerHTML=report.rows.map(row=>'<tr><td class="nowrap"><strong>'+esc(fullDateLabel(row.date))+'</strong></td><td><strong>'+esc(row.name)+'</strong><span class="sub">'+esc(row.unit)+'</span></td><td class="nowrap">'+esc(row.schedule)+'</td><td class="nowrap">'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td class="nowrap">'+durationLabel(row.workedMinutes)+'</td><td class="nowrap">'+durationLabel(row.delayMinutes)+'</td><td>'+reportStatusBadge(row.status)+'</td><td>'+(row.correctionRequests?row.correctionRequests+(row.pendingCorrections?' · '+row.pendingCorrections+' pendente'+(row.pendingCorrections===1?'':'s'):''):'—')+'</td></tr>').join('')||'<tr><td colspan="8" class="empty">Nenhuma jornada encontrada neste período.</td></tr>';
+  $('#reportRows').innerHTML=report.rows.map(row=>'<tr><td class="nowrap"><strong>'+esc(fullDateLabel(row.date))+'</strong></td><td><strong>'+esc(row.name)+'</strong><span class="sub">'+esc(row.unit)+'</span></td><td class="nowrap">'+esc(row.schedule)+'</td><td class="nowrap">'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td class="nowrap">'+durationLabel(row.workedMinutes)+'</td><td class="nowrap">'+durationLabel(row.delayMinutes)+'</td><td>'+reportStatusBadge(row.status)+(row.exitAddedLater?'<span class="sub">Saída incluída depois</span>':'')+'</td><td>'+(row.correctionRequests?row.correctionRequests+(row.pendingCorrections?' · '+row.pendingCorrections+' pendente'+(row.pendingCorrections===1?'':'s'):''):'—')+'</td></tr>').join('')||'<tr><td colspan="8" class="empty">Nenhuma jornada encontrada neste período.</td></tr>';
 }
 function csvCell(value){return '"'+String(value??'').replace(/"/g,'""')+'"'}
 function downloadMonthlyReport(){
@@ -252,7 +253,7 @@ function downloadMonthlyReport(){
     [],
     ['Detalhamento diário'],
     ['Data','Funcionário','Área','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Atraso','Situação','Correções','Correções pendentes'],
-    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(value=>value||''),durationLabel(row.workedMinutes),durationLabel(row.delayMinutes),row.status,row.correctionRequests,row.pendingCorrections])
+    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(value=>value||''),durationLabel(row.workedMinutes),durationLabel(row.delayMinutes),reportRowStatus(row),row.correctionRequests,row.pendingCorrections])
   ];
   const blob=new Blob(['\ufeff'+lines.map(line=>line.map(csvCell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
   link.href=url;link.download='pao-da-leli-fechamento-'+report.month+'.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -261,7 +262,7 @@ function printMonthlyReport(){
   if(!monthlyReport)return;
   const report=monthlyReport,popup=window.open('','_blank');if(!popup){alert('O navegador bloqueou a janela do PDF. Autorize a abertura e tente novamente.');return}
   const employeeRows=report.employees.map(employee=>'<tr><td><b>'+esc(employee.name)+'</b><br><small>'+esc(employee.unit)+'</small></td><td>'+durationLabel(employee.expectedMinutes)+'</td><td>'+durationLabel(employee.workedMinutes)+'</td><td>'+durationLabel(employee.delayMinutes)+'</td><td>'+employee.absenceDays+'</td><td>'+employee.incompleteDays+'</td><td>'+employee.correctionRequests+(employee.pendingCorrections?' ('+employee.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
-  const dailyRows=report.rows.map(row=>'<tr><td>'+esc(row.date.split('-').reverse().join('/'))+'</td><td><b>'+esc(row.name)+'</b></td><td>'+esc(row.schedule)+'</td><td>'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td>'+durationLabel(row.workedMinutes)+'</td><td>'+durationLabel(row.delayMinutes)+'</td><td>'+esc(row.status)+'</td><td>'+row.correctionRequests+(row.pendingCorrections?' ('+row.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
+  const dailyRows=report.rows.map(row=>'<tr><td>'+esc(row.date.split('-').reverse().join('/'))+'</td><td><b>'+esc(row.name)+'</b></td><td>'+esc(row.schedule)+'</td><td>'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td>'+durationLabel(row.workedMinutes)+'</td><td>'+durationLabel(row.delayMinutes)+'</td><td>'+esc(reportRowStatus(row))+'</td><td>'+row.correctionRequests+(row.pendingCorrections?' ('+row.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
   popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fechamento '+esc(report.month)+'</title><style>@page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#31251f;margin:0;font-size:10px}h1,h2{font-family:Georgia,serif;color:#a71831;margin:0 0 8px}h1{font-size:25px}h2{font-size:16px;margin-top:20px}.meta{color:#6f6259;margin-bottom:14px}.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:12px 0}.total{border:1px solid #dbcdbd;border-radius:8px;padding:8px}.total b{display:block;color:#a71831;font:700 17px Georgia,serif}.total span{color:#7d6d63;text-transform:uppercase;font-size:8px}table{width:100%;border-collapse:collapse;margin-top:6px}th{background:#f2e5d3;color:#6f6259;text-align:left;text-transform:uppercase;font-size:8px}th,td{border:1px solid #dbcdbd;padding:6px;vertical-align:top}small{color:#7d6d63}.foot{margin-top:12px;color:#7d6d63;font-size:8px}@media print{button{display:none}}</style></head><body><h1>Pão da Leli — Fechamento mensal</h1><div class="meta">'+esc(monthLabel(report.month))+' · '+esc(report.periodStart.split('-').reverse().join('/'))+' a '+esc(report.periodEnd.split('-').reverse().join('/'))+'</div><div class="totals"><div class="total"><b>'+durationLabel(report.totals.workedMinutes)+'</b><span>Trabalhadas</span></div><div class="total"><b>'+durationLabel(report.totals.expectedMinutes)+'</b><span>Previstas</span></div><div class="total"><b>'+durationLabel(report.totals.delayMinutes)+'</b><span>Atrasos</span></div><div class="total"><b>'+report.totals.absenceDays+'</b><span>Faltas</span></div><div class="total"><b>'+report.totals.correctionRequests+'</b><span>Correções</span></div></div><h2>Resumo por funcionário</h2><table><thead><tr><th>Funcionário</th><th>Previsto</th><th>Trabalhado</th><th>Atraso</th><th>Faltas</th><th>Incompletas</th><th>Correções</th></tr></thead><tbody>'+employeeRows+'</tbody></table><h2>Detalhamento diário</h2><table><thead><tr><th>Data</th><th>Funcionário</th><th>Escala</th><th>Batidas</th><th>Trabalhado</th><th>Atraso</th><th>Situação</th><th>Correções</th></tr></thead><tbody>'+dailyRows+'</tbody></table><div class="foot">Gerado em '+esc(new Date(report.generatedAt).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}))+'. Relatório para conferência administrativa.</div></body></html>');popup.document.close();popup.focus();setTimeout(()=>popup.print(),350);
 }
 function syncScheduleRow(row){
@@ -283,8 +284,11 @@ function renderSchedule(schedule){
   $$('#scheduleList .schedule-row').forEach(row=>{syncScheduleRow(row);row.querySelector('input[type="checkbox"]').addEventListener('change',()=>syncScheduleRow(row))});
 }
 function historyBadge(date,corrections,row){
-  const statuses=corrections.filter(c=>c.work_date===date).map(c=>c.status);
+  const items=corrections.filter(c=>c.work_date===date),statuses=items.map(c=>c.status);
+  if(items.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='pending'))return'<span class="badge pending">saída aguardando aprovação</span>';
+  if(row.in&&!row.out&&date<new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()))return'<span class="badge pending">saída não registrada</span>';
   if(statuses.includes('pending'))return'<span class="badge pending">correção pendente</span>';
+  if(items.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='approved'))return'<span class="badge approved">saída incluída depois</span>';
   if(statuses.includes('approved'))return'<span class="badge approved">corrigido</span>';
   if(statuses.includes('rejected'))return'<span class="badge rejected">correção recusada</span>';
   return Object.keys(row).length===4?'<span class="badge approved">completo</span>':'<span class="badge pending">incompleto</span>';
@@ -293,7 +297,8 @@ function renderEmployeeHistory(detail){
   const days={};
   for(const punch of detail.punches){days[punch.work_date]??={};days[punch.work_date][punch.kind]=punch.occurred_at}
   const applied=new Set();
-  for(const correction of detail.corrections){
+  const corrections=detail.corrections.slice().sort((a,b)=>new Date(b.decided_at||b.created_at)-new Date(a.decided_at||a.created_at)||new Date(b.created_at)-new Date(a.created_at)||String(b.id).localeCompare(String(a.id)));
+  for(const correction of corrections){
     if(correction.status!=='approved')continue;
     const key=correction.work_date+':'+correction.kind;
     if(applied.has(key))continue;
@@ -357,13 +362,14 @@ async function render(){
     const {users,punches,corrections,date}=overview;
     const correctionRequests=correctionGroups(corrections);
     const pendingCorrectionRequests=correctionRequests.filter(request=>request.items.some(item=>item.status==='pending')).length;
+    const missing=overview.missingExits||[],pendingCount=pendingCorrectionRequests+missing.filter(row=>row.status!=='pending').length;
     $('#batidas').textContent=punches.length;
     $('#entradas').textContent=punches.filter(p=>p.kind==='in').length;
-    $('#pendentes').textContent=pendingCorrectionRequests;
-    $('#correctionCount').textContent=pendingCorrectionRequests;
-    $('#correctionCount').classList.toggle('hidden',pendingCorrectionRequests===0);
-    $('#correctionCount').setAttribute('aria-hidden',pendingCorrectionRequests===0?'true':'false');
-    $('[data-tab="corrections"]').setAttribute('aria-label',pendingCorrectionRequests?'Correções, '+pendingCorrectionRequests+' '+(pendingCorrectionRequests===1?'pedido pendente':'pedidos pendentes'):'Correções');
+    $('#pendentes').textContent=pendingCount;
+    $('#correctionCount').textContent=pendingCount;
+    $('#correctionCount').classList.toggle('hidden',pendingCount===0);
+    $('#correctionCount').setAttribute('aria-hidden',pendingCount===0?'true':'false');
+    $('[data-tab="corrections"]').setAttribute('aria-label',pendingCount?'Correções, '+pendingCount+' '+(pendingCount===1?'pendência':'pendências'):'Correções');
     $('#funcionarios').textContent=users.filter(u=>u.role==='employee'&&u.active).length;
     renderAccessPolicy(overview.accessPolicy);
     renderAccessProfiles(overview.accessProfiles,overview.accessPolicy);
@@ -379,7 +385,12 @@ async function render(){
     });
 
     const labels={in:'Chegada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'},order={in:0,breakOut:1,breakIn:2,out:3};
-    $('#correctionList').innerHTML=correctionRequests.map(c=>{const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span><span>Decisão</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+time(x.original_at)+'</b><b>'+time(x.requested_at)+'</b>'+correctionDecision(x)+'</div>').join('')+'</div>';return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div>'+correctionRequestSummary(items)+'</div></div>'}).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
+    $('#missingExitList').innerHTML=missing.map(row=>'<div class="item"><div><strong>'+esc(row.name)+' — '+esc(fullDateLabel(row.work_date))+'</strong><div class="sub">'+esc(row.unit)+'</div><div class="sub">'+(row.status==='pending'?'Saída informada: '+time(row.requested_at)+'. Pedido aguardando aprovação abaixo.':row.status==='rejected'?'Pedido recusado. Aguardando o colaborador informar novamente.':'Aguardando o colaborador informar o horário real da saída.')+'</div></div><span class="badge pending">saída pendente</span></div>').join('')||'<p class="muted">Nenhuma saída pendente de dias anteriores.</p>';
+    $('#correctionList').innerHTML=correctionRequests.map(c=>{
+      const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,missingExit=c.kind==='out'&&c.punch_id===null;
+      const table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span><span>Decisão</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+(x.kind==='out'&&x.punch_id===null?'Não registrada':time(x.original_at))+'</b><b>'+time(x.requested_at)+'</b>'+correctionDecision(x)+'</div>').join('')+'</div>';
+      return '<div class="item"><div class="correction-content"><strong>'+esc(c.name)+' — '+(missingExit?'Saída esquecida':complete?'Jornada completa':labels[c.kind])+'</strong><div class="sub">'+c.work_date.split('-').reverse().join('/')+'</div>'+table+'<div class="sub">Motivo: '+esc(c.reason)+'</div>'+correctionRequestSummary(items)+'</div></div>';
+    }).join('')||'<p class="muted">Nenhuma solicitação de correção.</p>';
 
     const admins=users.filter(u=>u.role==='admin');
     $('#adminList').innerHTML=admins.map(u=>'<div class="item"><div><strong>'+esc(u.name)+'</strong><div class="sub">'+esc(contactLabel(u))+'</div><div style="margin-top:6px">'+accountStatus(u)+'</div></div><div class="actions">'+passwordActions(u,u.id!==currentUser?.id)+'</div></div>').join('');

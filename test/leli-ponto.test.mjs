@@ -44,7 +44,7 @@ test('employee and administrator authentication stay in their own areas', async 
   assert.doesNotMatch(employee, /location\.replace\('\.\/admin\.html'\)/);
   assert.match(employee, /if\(!\(await enterEmployeeApp\(m\.user\)\)\)return/);
   assert.match(employee, /await enterEmployeeApp\(r\.user\)/);
-  assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction'\]/);
+  assert.match(api, /employeeActions=\['photo','today','history','punch','checklist','checkout','messages-read','correction-batch','correction','missing-exit'\]/);
   assert.match(api, /employeeActions\.includes\(action\)&&user\.role!=='employee'/);
   assert.match(api, /Esta área é exclusiva para colaboradores/);
   assert.match(admin, /api\('admin-login','POST'/);

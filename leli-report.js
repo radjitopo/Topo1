@@ -91,7 +91,9 @@ function effectiveTimes(punches, corrections) {
   for (const punch of punches) times[punch.kind] = localClock(punch.occurred_at);
   const approved = corrections
     .filter((item) => item.status === 'approved')
-    .sort((a, b) => String(b.decided_at || '').localeCompare(String(a.decided_at || '')));
+    .sort((a, b) => String(b.decided_at || b.created_at || '').localeCompare(String(a.decided_at || a.created_at || ''))
+      || String(b.created_at || '').localeCompare(String(a.created_at || ''))
+      || String(b.id).localeCompare(String(a.id)));
   for (const correction of approved) {
     if (!correction.kind || times[`corrected:${correction.kind}`]) continue;
     times[correction.kind] = localClock(correction.requested_at);
@@ -107,7 +109,8 @@ function workedMinutes(times) {
   return values[1] - values[0] + values[3] - values[2];
 }
 
-function statusForDay({ date, today, nowMinutes, schedule, hasPunches, complete, delayMinutes, pendingCorrections }) {
+function statusForDay({ date, today, nowMinutes, schedule, hasPunches, complete, delayMinutes, pendingCorrections, missingExit, pendingExit }) {
+  if (date < today && missingExit) return pendingExit ? 'Saída aguardando aprovação' : 'Saída não registrada';
   if (!schedule) return complete ? 'Fora da escala' : 'Batidas incompletas';
   if (!hasPunches) {
     const shiftEnded = date < today || (date === today && nowMinutes > timeMinutes(schedule.endTime));
@@ -189,13 +192,15 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
           complete,
           delayMinutes: delay,
           pendingCorrections,
+          missingExit: Boolean(times.in && !times.out),
+          pendingExit: dayCorrections.some((item) => item.kind === 'out' && item.punch_id === null && item.status === 'pending'),
         });
 
         summary.expectedMinutes += expected;
         if (worked !== null) summary.workedMinutes += worked;
         summary.delayMinutes += delay;
         if (status === 'Falta') summary.absenceDays += 1;
-        if (status === 'Batidas incompletas') summary.incompleteDays += 1;
+        if ((!complete && dayPunches.length > 0 && date < today) || status === 'Batidas incompletas') summary.incompleteDays += 1;
 
         rows.push({
           date,
@@ -210,6 +215,8 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
           workedMinutes: worked,
           delayMinutes: delay,
           status,
+          exitAddedLater: Boolean(times.out && !dayPunches.some((item) => item.kind === 'out')
+            && dayCorrections.some((item) => item.kind === 'out' && item.punch_id === null && item.status === 'approved')),
           correctionRequests: requestCount(dayCorrections),
           pendingCorrections,
         });
