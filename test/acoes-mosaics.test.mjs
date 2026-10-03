@@ -26,6 +26,31 @@ function area(tile) {
   }, 0)) / 2;
 }
 
+test('dachshund silhouettes keep their proportions and spacing at sizes 1, 10 and 20', () => {
+  const standard = buildTiles('dachshund', 1080, 1920, 10);
+  assert.ok(standard.length > 900 && standard.length < 1400);
+  for (const size of [1, 10, 20]) {
+    const tiles = size === 10 ? standard : buildTiles('dachshund', 1080, 1920, size);
+    const first = tiles[0];
+    assert.ok(Math.abs(first.width / standard[0].width - size / 10) < 1e-9);
+    assert.ok(Math.abs(first.height / standard[0].height - size / 10) < 1e-9);
+    if (size !== 10) assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);
+    let previous;
+    for (const tile of tiles) {
+      assert.equal(tile.width / tile.height, 2);
+      assert.ok(tile.x < 1080 && tile.x + tile.width > 0 && tile.y < 1920 && tile.y + tile.height > 0);
+      if (previous) {
+        if (Math.abs(tile.y - previous.y) < 1e-7) {
+          assert.ok(tile.x >= previous.x + previous.width, 'Dogs in the same row overlap');
+        } else {
+          assert.ok(tile.y >= previous.y + previous.height, 'Dog rows overlap');
+        }
+      }
+      previous = tile;
+    }
+  }
+});
+
 for (const shape of ['circle', 'star']) {
   test(`${shape} pieces stay separate and scale at sizes 1, 10 and 20`, () => {
     const standard = buildTiles(shape, 1080, 1920, 10);
