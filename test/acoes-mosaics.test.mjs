@@ -26,33 +26,35 @@ function area(tile) {
   }, 0)) / 2;
 }
 
-test('dachshund silhouettes keep their proportions and spacing at sizes 1, 10 and 20', () => {
-  const standard = buildTiles('dachshund', 1080, 1920, 10);
-  assert.ok(standard.length > 900 && standard.length < 1400);
-  for (const size of [1, 10, 20]) {
-    const tiles = size === 10 ? standard : buildTiles('dachshund', 1080, 1920, size);
-    const first = tiles[0];
-    assert.ok(Math.abs(first.width / standard[0].width - size / 10) < 1e-9);
-    assert.ok(Math.abs(first.height / standard[0].height - size / 10) < 1e-9);
-    if (size !== 10) assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);
-    let previous;
-    for (const tile of tiles) {
-      assert.equal(tile.width / tile.height, 2);
-      assert.ok(tile.x < 1080 && tile.x + tile.width > 0 && tile.y < 1920 && tile.y + tile.height > 0);
-      if (previous) {
-        if (Math.abs(tile.y - previous.y) < 1e-7) {
-          assert.ok(tile.x >= previous.x + previous.width, 'Dogs in the same row overlap');
-        } else {
-          assert.ok(tile.y >= previous.y + previous.height, 'Dog rows overlap');
+for (const [shape, aspectRatio] of [['dachshund', 2], ['skull', 1]]) {
+  test(`${shape} silhouettes keep their proportions and spacing at sizes 1, 10, 20 and 30`, () => {
+    const standard = buildTiles(shape, 1080, 1920, 10);
+    assert.ok(standard.length > 900 && standard.length < 1400);
+    for (const size of [1, 10, 20, 30]) {
+      const tiles = size === 10 ? standard : buildTiles(shape, 1080, 1920, size);
+      const first = tiles[0];
+      assert.ok(Math.abs(first.width / standard[0].width - size / 10) < 1e-9);
+      assert.ok(Math.abs(first.height / standard[0].height - size / 10) < 1e-9);
+      if (size !== 10) assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);
+      let previous;
+      for (const tile of tiles) {
+        assert.equal(tile.width / tile.height, aspectRatio);
+        assert.ok(tile.x < 1080 && tile.x + tile.width > 0 && tile.y < 1920 && tile.y + tile.height > 0);
+        if (previous) {
+          if (Math.abs(tile.y - previous.y) < 1e-7) {
+            assert.ok(tile.x >= previous.x + previous.width, `${shape} pieces in the same row overlap`);
+          } else {
+            assert.ok(tile.y >= previous.y + previous.height, `${shape} rows overlap`);
+          }
         }
+        previous = tile;
       }
-      previous = tile;
     }
-  }
-});
+  });
+}
 
 for (const shape of ['circle', 'star']) {
-  test(`${shape} pieces stay separate and scale at sizes 1, 10 and 20`, () => {
+  test(`${shape} pieces stay separate and scale at sizes 1, 10, 20 and 30`, () => {
     const standard = buildTiles(shape, 1080, 1920, 10);
     assert.ok(standard.length > 1200);
     const radius = tile => tile.radius || Math.max(...tile.points.map(p => Math.hypot(p[0] - tile.x, p[1] - tile.y)));
@@ -80,7 +82,7 @@ for (const shape of ['circle', 'star']) {
       if (!buckets.has(key)) buckets.set(key, []);
       buckets.get(key).push(tile);
     }
-    for (const size of [1, 20]) {
+    for (const size of [1, 20, 30]) {
       const tiles = buildTiles(shape, 1080, 1920, size);
       assert.ok(Math.abs(area(tiles[0]) / area(standard[0]) - (size / 10) ** 2) < 1e-9);
       assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);
@@ -135,9 +137,9 @@ for (const [shape, sides] of [['square', 4], ['triangle', 3], ['pentagon', 5], [
     coverage(tiles, xs, ys, shape);
   });
 
-  test(`${shape} size 1 and 20 scale the pieces and still cover the Story`, () => {
+  test(`${shape} sizes 1, 20 and 30 scale the pieces and still cover the Story`, () => {
     const standard = buildTiles(shape, 1080, 1920, 10);
-    for (const size of [1, 20]) {
+    for (const size of [1, 20, 30]) {
       const tiles = buildTiles(shape, 1080, 1920, size);
       assert.ok(Math.abs(area(tiles[0]) / area(standard[0]) - (size / 10) ** 2) < 1e-9);
       assert.ok(size === 1 ? tiles.length > standard.length * 90 : tiles.length < standard.length / 3);

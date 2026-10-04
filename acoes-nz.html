@@ -89,7 +89,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .shapeControls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .shapeOption{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:75px;padding:9px 3px;border:1px solid #e5e7eb;border-radius:9px;background:#fff;color:#666;font:inherit;font-size:14px;cursor:pointer}
 .shapeOption svg{display:block;width:24px;height:24px;fill:currentColor}
-.shapeOption[data-visual-shape="dachshund"]{grid-column:1 / -1;flex-direction:row;min-height:52px;gap:12px}
+.shapeOption[data-visual-shape="dachshund"]{grid-column:span 2;flex-direction:row;min-height:52px;gap:12px}
 .shapeOption[data-visual-shape="dachshund"] svg{width:42px}
 .shapeOption.active{border-color:#111;background:#111;color:#fff}
 .shapeOption:focus-visible,.colorControl:focus-visible,.paletteSwatch:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
@@ -97,7 +97,8 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .visualSizeHead{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600}
 .visualSizeHead output{min-width:34px;padding:4px 8px;border-radius:7px;background:var(--soft);text-align:center;font-variant-numeric:tabular-nums}
 .visualSizePicker input{display:block;width:100%;height:28px;margin:8px 0 3px;accent-color:#111;cursor:pointer}
-.visualSizeScale{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.visualSizeScale{position:relative;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.visualSizeScale span:nth-child(2){position:absolute;left:31.034%;transform:translateX(-50%)}
 .colorDialog{width:min(440px,calc(100% - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:20px;border:0;border-radius:18px;background:#fff;color:#111;overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.2)}
 .colorDialog::backdrop{background:rgba(0,0,0,.4)}
 .colorDialogHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
@@ -228,12 +229,13 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
         <button class="shapeOption" type="button" data-visual-shape="circle" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg><span>Círculo</span></button>
         <button class="shapeOption" type="button" data-visual-shape="star" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 15.4 8.1 23.2 9.2 17.6 14.7 18.9 22.5 12 18.8 5.1 22.5 6.4 14.7 .8 9.2 8.6 8.1z"/></svg><span>Estrela</span></button>
         <button class="shapeOption" type="button" data-visual-shape="dachshund" aria-pressed="false"><svg viewBox="0 0 64 32" aria-hidden="true"><path id="dachshundShapePath" d="M13 12C25 10 35 11 44 11C46 9 46 6 47 4C49 1 54 2 56 6L62 7Q64 8 62 11L54 12C55 17 53 21 50 20C48 19 48 16 48 13L48 23L49 29Q51 31 48 31L44 31Q43 31 43 29L43 23C34 25 25 25 16 23L15 29Q17 29 17 31L11 31Q9 31 10 29L11 23C9 21 9 18 10 16C6 13 3 9 2 5Q1 2 3 2C5 3 6 8 13 12Z"/></svg><span>Dachshund</span></button>
+        <button class="shapeOption" type="button" data-visual-shape="skull" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><path id="skullShapePath" fill-rule="evenodd" d="M32 3C17 3 6 14 6 29C6 40 12 46 19 49V56Q19 61 24 61H40Q45 61 45 56V49C52 46 58 40 58 29C58 14 47 3 32 3ZM25 29A7 8 0 1 0 11 29A7 8 0 1 0 25 29ZM53 29A7 8 0 1 0 39 29A7 8 0 1 0 53 29ZM32 36L27 44H37ZM27 52H29V61H27ZM35 52H37V61H35Z"/></svg><span>Caveira</span></button>
       </div>
     </div>
     <div class="visualSizePicker" id="visualSizePicker">
       <div class="visualSizeHead"><label for="visualSize">Tamanho das peças</label><output id="visualSizeValue" for="visualSize">10</output></div>
-      <input id="visualSize" type="range" min="1" max="20" step="1" value="10">
-      <div class="visualSizeScale" aria-hidden="true"><span>1 · menor</span><span>10 · padrão</span><span>20 · maior</span></div>
+      <input id="visualSize" type="range" min="1" max="30" step="1" value="10">
+      <div class="visualSizeScale" aria-hidden="true"><span>1 · menor</span><span>10 · padrão</span><span>30 · maior</span></div>
     </div>
   </section>
 
@@ -895,7 +897,7 @@ const SOUND_VOLUME_STORAGE_KEY = "acoes-sound-volume";
 const VISUAL_COLORS_STORAGE_KEY = "acoes-visual-colors";
 const DEFAULT_VISUAL_COLORS = {up:"#18a957",flat:"#f0c928",down:"#e3483d"};
 const VISUAL_SHAPE_STORAGE_KEY = "acoes-visual-shape";
-const VISUAL_SHAPES = {square:"Quadrados",triangle:"Triângulos",pentagon:"Pentágonos",hexagon:"Hexágonos",circle:"Círculos",star:"Estrelas",dachshund:"Dachshunds"};
+const VISUAL_SHAPES = {square:"Quadrados",triangle:"Triângulos",pentagon:"Pentágonos",hexagon:"Hexágonos",circle:"Círculos",star:"Estrelas",dachshund:"Dachshunds",skull:"Caveiras"};
 const VISUAL_SIZE_STORAGE_KEY = "acoes-visual-size";
 const DEFAULT_VISUAL_SIZE = 10;
 const DEFAULT_SOUND_VOLUME = 150;
@@ -990,7 +992,7 @@ function storedVisualShape(){
 function storedVisualSize(){
   try{
     const saved = Number(localStorage.getItem(VISUAL_SIZE_STORAGE_KEY));
-    return Number.isInteger(saved) && saved >= 1 && saved <= 20 ? saved : DEFAULT_VISUAL_SIZE;
+    return Number.isInteger(saved) && saved >= 1 && saved <= 30 ? saved : DEFAULT_VISUAL_SIZE;
   }catch(e){ return DEFAULT_VISUAL_SIZE; }
 }
 
@@ -1034,6 +1036,7 @@ const marketCanvas = document.getElementById("marketCanvas");
 const visualStatus = document.getElementById("visualStatus");
 const visualComplete = document.getElementById("visualComplete");
 const visualDachshundPath = new Path2D(document.getElementById("dachshundShapePath").getAttribute("d"));
+const visualSkullPath = new Path2D(document.getElementById("skullShapePath").getAttribute("d"));
 
 function currentMarket(){
   return MARKETS[state.market];
@@ -1098,18 +1101,19 @@ function buildVisualTiles(shape,width,height,size=DEFAULT_VISUAL_SIZE){
     if(Math.max.apply(null,xs) <= 0 || Math.min.apply(null,xs) >= width || Math.max.apply(null,ys) <= 0 || Math.min.apply(null,ys) >= height) return;
     tiles.push({points:points,x:xs.reduce(function(a,b){ return a+b; },0)/points.length,y:ys.reduce(function(a,b){ return a+b; },0)/points.length});
   }
-  if(shape === "dachshund"){
-    const dogHeight = Math.sqrt(area / 2);
-    const dogWidth = dogHeight * 2;
-    const spacingX = dogWidth * 1.08;
-    const spacingY = dogHeight * 1.08;
+  if(shape === "dachshund" || shape === "skull"){
+    const aspectRatio = shape === "dachshund" ? 2 : 1;
+    const pieceHeight = Math.sqrt(area / aspectRatio);
+    const pieceWidth = pieceHeight * aspectRatio;
+    const spacingX = pieceWidth * 1.08;
+    const spacingY = pieceHeight * 1.08;
     for(let row=0;row<Math.ceil(height / spacingY);row += 1){
       const y = row * spacingY;
       const offset = (row % 2) * spacingX / 2;
       for(let col=-1;col<Math.ceil(width / spacingX);col += 1){
         const x = col * spacingX + offset;
-        if(x+dogWidth <= 0 || x >= width) continue;
-        tiles.push({x:x,y:y,width:dogWidth,height:dogHeight});
+        if(x+pieceWidth <= 0 || x >= width) continue;
+        tiles.push({x:x,y:y,width:pieceWidth,height:pieceHeight});
       }
     }
   }else if(shape === "circle" || shape === "star"){
@@ -1407,7 +1411,7 @@ function bindVisualSize(){
   function apply(){
     clearTimeout(pending);
     pending = null;
-    const size = Math.max(1,Math.min(20,Math.round(Number(input.value) || DEFAULT_VISUAL_SIZE)));
+    const size = Math.max(1,Math.min(30,Math.round(Number(input.value) || DEFAULT_VISUAL_SIZE)));
     if(size === state.visualSize) return;
     state.visualSize = size;
     try{ localStorage.setItem(VISUAL_SIZE_STORAGE_KEY,String(size)); }catch(e){}
@@ -1496,11 +1500,12 @@ function paintVisualDirection(direction){
   const tile = state.visualTiles[index];
   if(!tile) return;
   ctx.fillStyle = visualColor(direction);
-  if(state.visualShape === "dachshund"){
+  if(state.visualShape === "dachshund" || state.visualShape === "skull"){
     ctx.save();
     ctx.translate(tile.x,tile.y);
-    ctx.scale(tile.width/64,tile.height/32);
-    ctx.fill(visualDachshundPath);
+    const isSkull = state.visualShape === "skull";
+    ctx.scale(tile.width/64,tile.height/(isSkull ? 64 : 32));
+    ctx.fill(isSkull ? visualSkullPath : visualDachshundPath,isSkull ? "evenodd" : "nonzero");
     ctx.restore();
   }else if(state.visualShape === "circle"){
     ctx.beginPath();
