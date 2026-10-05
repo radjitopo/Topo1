@@ -99,6 +99,17 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .visualSizePicker input{display:block;width:100%;height:28px;margin:8px 0 3px;accent-color:#111;cursor:pointer}
 .visualSizeScale{position:relative;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
 .visualSizeScale span:nth-child(2){position:absolute;left:31.034%;transform:translateX(-50%)}
+.artPicker{margin:14px 0 12px}
+.artPickerLabel{display:block;margin-bottom:8px;font-size:14px;font-weight:600}
+.artControls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.artOption{min-height:46px;padding:10px 8px;border:1px solid #e5e7eb;border-radius:9px;background:#fff;color:#555;font:inherit;font-size:14px;cursor:pointer}
+.artOption.active{border-color:#111;background:#111;color:#fff}
+.artOption:focus-visible,.artComplexity input:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
+.artHint{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+.artComplexity{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.artComplexity[hidden]{display:none}
+.artComplexity input{display:block;width:100%;height:28px;margin:7px 0 3px;accent-color:#111;cursor:pointer}
+.artComplexityScale{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
 .colorDialog{width:min(440px,calc(100% - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:20px;border:0;border-radius:18px;background:#fff;color:#111;overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.2)}
 .colorDialog::backdrop{background:rgba(0,0,0,.4)}
 .colorDialogHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
@@ -255,6 +266,21 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
         <h2 class="visualTitle">Desenho do mercado</h2>
       </div>
       <button class="visualClear" id="clearVisual" type="button">Limpar desenho</button>
+    </div>
+    <div class="artPicker" id="artPicker">
+      <strong class="artPickerLabel">Estilo do desenho</strong>
+      <div class="artControls" role="group" aria-label="Estilo do desenho">
+        <button class="artOption active" type="button" data-visual-style="standard" aria-pressed="true">Padrão</button>
+        <button class="artOption" type="button" data-visual-style="field" aria-pressed="false">Campo de forças</button>
+        <button class="artOption" type="button" data-visual-style="organism" aria-pressed="false">Organismo</button>
+        <button class="artOption" type="button" data-visual-style="engraving" aria-pressed="false">Gravura</button>
+      </div>
+      <p class="artHint" id="artHint">As figuras preenchem o quadro, uma após a outra.</p>
+      <div class="artComplexity" id="artComplexity" hidden>
+        <div class="visualSizeHead"><label for="visualComplexity">Complexidade</label><output id="visualComplexityValue" for="visualComplexity">5</output></div>
+        <input id="visualComplexity" type="range" min="1" max="10" step="1" value="5">
+        <div class="artComplexityScale" aria-hidden="true"><span>1 · suave</span><span>10 · intensa</span></div>
+      </div>
     </div>
     <div class="visualMeta">
       <span id="visualStatus">Pixel · aguardando dados</span>
@@ -901,6 +927,14 @@ const VISUAL_SHAPE_STORAGE_KEY = "acoes-visual-shape";
 const VISUAL_SHAPES = {square:"Quadrados",triangle:"Triângulos",pentagon:"Pentágonos",hexagon:"Hexágonos",circle:"Círculos",star:"Estrelas",dachshund:"Dachshunds",skull:"Caveiras"};
 const VISUAL_SIZE_STORAGE_KEY = "acoes-visual-size";
 const DEFAULT_VISUAL_SIZE = 10;
+const VISUAL_STYLE_STORAGE_KEY = "acoes-visual-style";
+const VISUAL_COMPLEXITY_STORAGE_KEY = "acoes-visual-complexity";
+const VISUAL_STYLES = {
+  standard:{label:"Padrão",hint:"As figuras preenchem o quadro, uma após a outra."},
+  field:{label:"Campo de forças",hint:"Altas atraem, quedas espalham. As figuras deixam correntes e redemoinhos."},
+  organism:{label:"Organismo",hint:"Os movimentos do mercado fazem nascer, crescer e desviar ramificações."},
+  engraving:{label:"Gravura",hint:"Marcas transparentes se acumulam em contornos e texturas."}
+};
 const DEFAULT_SOUND_VOLUME = 150;
 const SOUND_PRESETS = {
   classic:{label:"Clássico"},
@@ -998,6 +1032,20 @@ function storedVisualSize(){
   }catch(e){ return DEFAULT_VISUAL_SIZE; }
 }
 
+function storedVisualStyle(){
+  try{
+    const saved = localStorage.getItem(VISUAL_STYLE_STORAGE_KEY);
+    return Object.prototype.hasOwnProperty.call(VISUAL_STYLES,saved) ? saved : "standard";
+  }catch(e){ return "standard"; }
+}
+
+function storedVisualComplexity(){
+  try{
+    const saved = Number(localStorage.getItem(VISUAL_COMPLEXITY_STORAGE_KEY));
+    return Number.isInteger(saved) && saved >= 1 && saved <= 10 ? saved : 5;
+  }catch(e){ return 5; }
+}
+
 const state = {
   market:initialMarket,
   selectedMarkets:selectionFromUrl(initialMarket),
@@ -1018,6 +1066,11 @@ const state = {
   visualColors:storedVisualColors(),
   visualShape:storedVisualShape(),
   visualSize:storedVisualSize(),
+  visualStyle:storedVisualStyle(),
+  visualComplexity:storedVisualComplexity(),
+  visualSeed:Date.now() >>> 0,
+  visualArt:null,
+  visualStamp:[],
   visualTiles:[],
   visualEvents:[],
   soundTimers:[],
@@ -1089,6 +1142,152 @@ function soundSpacingMs(stockCount){
 function clearVisualTimers(){
   state.visualTimers.forEach(function(timer){ clearTimeout(timer); });
   state.visualTimers = [];
+}
+
+// These generators only produce drawing commands, so replay uses exactly the same events and seed.
+function normalizeVisualEvent(value){
+  const event = typeof value === "string" ? {direction:value} : (value || {});
+  const intensity = Number(event.intensity);
+  return {
+    direction:event.direction === "up" || event.direction === "down" ? event.direction : "flat",
+    intensity:Number.isFinite(intensity) ? Math.max(.12,Math.min(1,intensity)) : .18,
+    key:typeof event.key === "string" ? event.key : ""
+  };
+}
+
+function visualHash(text){
+  let hash = 2166136261;
+  for(let i=0;i<text.length;i += 1) hash = Math.imul(hash ^ text.charCodeAt(i),16777619);
+  return hash >>> 0;
+}
+
+function createVisualArt(style,width,height,size,complexity,seed){
+  let randomSeed = seed >>> 0;
+  function random(){
+    randomSeed = (randomSeed + 0x6D2B79F5) >>> 0;
+    let value = Math.imul(randomSeed ^ (randomSeed >>> 15),1 | randomSeed);
+    value ^= value + Math.imul(value ^ (value >>> 7),61 | value);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  }
+  const scale = size / 10;
+  const unit = Math.sqrt(width / 27 * height / 48) * scale;
+  const art = {style:style,width:width,height:height,unit:unit,c:(complexity-1)/9,
+    random:random,index:0,limit:Math.max(400,Math.min(3000,Math.round(1296/(scale*scale)))),
+    phase:random()*Math.PI*2,anchors:[],streams:[],branches:[]};
+  for(let i=0;i<6;i += 1){
+    art.anchors.push({x:width*(.14+random()*.72),y:height*(.10+random()*.80),spin:i%2 ? -1 : 1});
+  }
+  for(let i=0;i<24;i += 1){
+    art.streams.push({x:width*(.10+random()*.80),y:height*(.08+random()*.84),angle:random()*Math.PI*2});
+  }
+  for(let i=0;i<6;i += 1){
+    art.branches.push({x:width*(.2+(i%3)*.3),y:height*(i<3 ? .35 : .7),angle:-Math.PI/2+random()*.8-.4});
+  }
+  return art;
+}
+
+function visualArtPoint(art,x,y){
+  const margin = Math.min(art.unit*.55,art.width*.08);
+  return [Math.max(margin,Math.min(art.width-margin,x)),Math.max(margin,Math.min(art.height-margin,y))];
+}
+
+function nextVisualArt(art,value){
+  const event = normalizeVisualEvent(value);
+  const n = art.index;
+  const c = art.c;
+  const unit = art.unit;
+  const power = event.intensity;
+  const sign = event.direction === "up" ? 1 : event.direction === "down" ? -1 : 0;
+  const commands = [];
+  const instrument = event.key ? visualHash(event.key) : n;
+  if(art.style === "field"){
+    const stream = art.streams[instrument % art.streams.length];
+    const points = [[stream.x,stream.y]];
+    const steps = 3+Math.round(c*3);
+    for(let i=0;i<steps;i += 1){
+      let vx = Math.cos(stream.y/art.height*7+art.phase)*.35;
+      let vy = Math.sin(stream.x/art.width*6-art.phase)*.35;
+      art.anchors.forEach(function(anchor){
+        const dx = stream.x-anchor.x;
+        const dy = stream.y-anchor.y;
+        const distance = Math.max(unit*.5,Math.hypot(dx,dy));
+        const weight = 1/(.45+distance/art.width);
+        const pull = -sign*(.35+power*.9);
+        const spin = anchor.spin*(.35+c*.8);
+        vx += weight*(pull*dx-spin*dy)/distance;
+        vy += weight*(pull*dy+spin*dx)/distance;
+      });
+      const target = Math.atan2(vy,vx);
+      const turn = Math.atan2(Math.sin(target-stream.angle),Math.cos(target-stream.angle));
+      stream.angle += turn*(.25+c*.45);
+      const distance = unit*(.55+power*.65);
+      const rawX = stream.x+Math.cos(stream.angle)*distance;
+      const rawY = stream.y+Math.sin(stream.angle)*distance;
+      const next = visualArtPoint(art,rawX,rawY);
+      if(next[0] !== rawX) stream.angle = Math.PI-stream.angle;
+      if(next[1] !== rawY) stream.angle = -stream.angle;
+      stream.x = next[0]; stream.y = next[1];
+      points.push(next);
+    }
+    commands.push({type:"path",points:points,width:Math.max(.8,unit*(.035+power*.06)),alpha:.3+power*.3});
+    commands.push({type:"stamp",x:stream.x,y:stream.y,size:unit*(.55+power*.55),angle:stream.angle,alpha:.72});
+  }else if(art.style === "organism"){
+    const index = instrument % art.branches.length;
+    const branch = art.branches[index];
+    let angle = branch.angle+(art.random()-.5)*(.3+c*1.3);
+    if(sign < 0) angle += (art.random() < .5 ? -1 : 1)*(.7+power);
+    let distance = unit*(.7+c*.7+power*(sign > 0 ? 1.2 : .5));
+    // Nearby tips push a growing branch sideways instead of all following one stem.
+    art.branches.forEach(function(other,i){
+      if(i === index) return;
+      const dx = branch.x-other.x;
+      const dy = branch.y-other.y;
+      const d = Math.hypot(dx,dy);
+      if(d > 0 && d < unit*2) angle += Math.sin(Math.atan2(dy,dx)-angle)*.18;
+    });
+    let x = branch.x+Math.cos(angle)*distance;
+    let y = branch.y+Math.sin(angle)*distance;
+    const next = visualArtPoint(art,x,y);
+    if(next[0] !== x) angle = Math.PI-angle;
+    if(next[1] !== y) angle = -angle;
+    const bend = (art.random()-.5)*distance*(.5+c);
+    const mid = visualArtPoint(art,(branch.x+next[0])/2-Math.sin(angle)*bend,(branch.y+next[1])/2+Math.cos(angle)*bend);
+    commands.push({type:"curve",points:[[branch.x,branch.y],mid,next],width:Math.max(1,unit*(.06+power*.13)),alpha:.78});
+    commands.push({type:"stamp",x:next[0],y:next[1],size:unit*(.45+power*.55),angle:angle,alpha:.9});
+    art.branches[index] = {x:next[0],y:next[1],angle:angle};
+    const chance = sign > 0 ? .32+power*.3 : sign < 0 ? .06 : .1+c*.13;
+    if(art.random() < chance && art.branches.length < 48+Math.round(c*120)){
+      art.branches.push({x:next[0],y:next[1],angle:angle+(art.random() < .5 ? -1 : 1)*(.65+c*.75)});
+    }else if(sign < 0 && art.branches.length > 6 && art.random() < power*.45){
+      art.branches.splice(index,1);
+    }
+  }else if(art.style === "engraving"){
+    const hash = event.key ? instrument : visualHash(String(n%31));
+    const phase = art.phase+n*.027*(sign < 0 ? -1 : 1);
+    const cx = art.width*(.12+((hash%997)/997)*.76)+Math.sin(phase)*unit*1.2;
+    const cy = art.height*(.10+(((hash>>>10)%991)/991)*.80)+Math.cos(phase*.73)*unit*1.6;
+    const rx = unit*(1.4+c*3.2+power*2.5);
+    const ry = rx*(.4+((hash>>>20)%100)/100*.6);
+    const rotation = phase+sign*power;
+    const points = [];
+    const vertices = 18+Math.round(c*18);
+    for(let i=0;i<=vertices;i += 1){
+      const theta = i/vertices*Math.PI*2;
+      const ripple = 1+Math.sin(theta*3+phase)*(.06+c*.18);
+      const x = Math.cos(theta)*rx*ripple;
+      const y = Math.sin(theta)*ry*ripple;
+      points.push(visualArtPoint(art,cx+x*Math.cos(rotation)-y*Math.sin(rotation),cy+x*Math.sin(rotation)+y*Math.cos(rotation)));
+    }
+    commands.push({type:"path",points:points,width:Math.max(.65,unit*(.018+power*.035)),alpha:.16+power*.22});
+    for(let i=0;i<3+Math.round(c*4);i += 1){
+      const offset = (i-3)*unit*.22;
+      commands.push({type:"path",points:[visualArtPoint(art,cx-rx*.55,cy+offset),visualArtPoint(art,cx+rx*.55,cy+offset+unit*.65)],width:Math.max(.6,unit*.018),alpha:.1+power*.15});
+    }
+    const center = visualArtPoint(art,cx,cy);
+    commands.push({type:"stamp",x:center[0],y:center[1],size:unit*(.8+power),angle:rotation,alpha:.12+power*.22,outline:true});
+  }
+  art.index += 1;
+  return commands;
 }
 
 function buildVisualTiles(shape,width,height,size=DEFAULT_VISUAL_SIZE){
@@ -1214,7 +1413,16 @@ function resetVisualCanvas(){
   const ctx = marketCanvas.getContext("2d");
   ctx.fillStyle = "#f4f1e9";
   ctx.fillRect(0,0,marketCanvas.width,marketCanvas.height);
-  state.visualTiles = buildVisualTiles(state.visualShape,marketCanvas.width,marketCanvas.height,state.visualSize);
+  state.visualTiles = state.visualStyle === "standard" ? buildVisualTiles(state.visualShape,marketCanvas.width,marketCanvas.height,state.visualSize) : [];
+  state.visualArt = state.visualStyle === "standard" ? null : createVisualArt(state.visualStyle,marketCanvas.width,marketCanvas.height,state.visualSize,state.visualComplexity,state.visualSeed);
+  state.visualStamp = [];
+  if(state.visualStyle !== "standard" && ["circle","dachshund","skull"].indexOf(state.visualShape) === -1){
+    const tile = buildVisualTiles(state.visualShape,marketCanvas.width,marketCanvas.height,DEFAULT_VISUAL_SIZE)[0];
+    const xs = tile.points.map(function(p){ return p[0]; });
+    const ys = tile.points.map(function(p){ return p[1]; });
+    const unit = Math.max(Math.max.apply(null,xs)-Math.min.apply(null,xs),Math.max.apply(null,ys)-Math.min.apply(null,ys));
+    state.visualStamp = tile.points.map(function(p){ return [(p[0]-tile.x)/unit,(p[1]-tile.y)/unit]; });
+  }
   state.visualEvents = [];
   state.visualIndex = 0;
   state.visualHasPainted = false;
@@ -1225,9 +1433,71 @@ function resetVisualCanvas(){
 function repaintVisualCanvas(){
   const events = state.visualEvents.slice();
   resetVisualCanvas();
-  events.slice(0,state.visualTiles.length).forEach(paintVisualDirection);
+  events.slice(0,visualTotal()).forEach(paintVisualDirection);
   // Keep the remaining history so shrinking the pieces can reveal it again.
   state.visualEvents = events;
+}
+
+function visualTotal(){
+  return state.visualStyle === "standard" ? state.visualTiles.length : (state.visualArt ? state.visualArt.limit : 1296);
+}
+
+function visualLabel(){
+  return VISUAL_STYLES[state.visualStyle].label+" · "+VISUAL_SHAPES[state.visualShape];
+}
+
+function syncVisualDescription(){
+  marketCanvas.setAttribute("aria-label",VISUAL_STYLES[state.visualStyle].label+" com "+VISUAL_SHAPES[state.visualShape].toLowerCase()+" em formato vertical 9 por 16, pronto para Story ou fundo de tela");
+}
+
+function bindVisualStyles(){
+  const buttons = document.querySelectorAll("[data-visual-style]");
+  const input = document.getElementById("visualComplexity");
+  const output = document.getElementById("visualComplexityValue");
+  let pending = null;
+  function sync(){
+    buttons.forEach(function(button){
+      const active = button.dataset.visualStyle === state.visualStyle;
+      button.classList.toggle("active",active);
+      button.setAttribute("aria-pressed",String(active));
+    });
+    document.getElementById("artHint").textContent = VISUAL_STYLES[state.visualStyle].hint;
+    document.getElementById("artComplexity").hidden = state.visualStyle === "standard";
+    syncVisualDescription();
+  }
+  buttons.forEach(function(button){
+    button.addEventListener("click",function(){
+      const style = button.dataset.visualStyle;
+      if(style === state.visualStyle) return;
+      state.visualStyle = style;
+      try{ localStorage.setItem(VISUAL_STYLE_STORAGE_KEY,style); }catch(e){}
+      clearVisualTimers();
+      repaintVisualCanvas();
+      sync();
+      scheduleVisualEvents();
+      render();
+    });
+  });
+  function applyComplexity(){
+    clearTimeout(pending); pending = null;
+    const complexity = Math.max(1,Math.min(10,Math.round(Number(input.value) || 5)));
+    if(complexity === state.visualComplexity) return;
+    state.visualComplexity = complexity;
+    try{ localStorage.setItem(VISUAL_COMPLEXITY_STORAGE_KEY,String(complexity)); }catch(e){}
+    clearVisualTimers();
+    repaintVisualCanvas();
+    scheduleVisualEvents();
+    render();
+  }
+  input.value = String(state.visualComplexity);
+  output.value = input.value;
+  input.addEventListener("input",function(){
+    output.value = input.value;
+    clearTimeout(pending);
+    pending = setTimeout(applyComplexity,120);
+  });
+  input.addEventListener("change",applyComplexity);
+  sync();
 }
 
 function syncVisualColors(){
@@ -1387,7 +1657,7 @@ function bindVisualShapes(){
       button.classList.toggle("active",active);
       button.setAttribute("aria-pressed",String(active));
     });
-    marketCanvas.setAttribute("aria-label","Mosaico de "+VISUAL_SHAPES[state.visualShape].toLowerCase()+" em formato vertical 9 por 16, pronto para Story ou fundo de tela");
+    syncVisualDescription();
   }
   buttons.forEach(function(button){
     button.addEventListener("click",function(){
@@ -1494,15 +1764,60 @@ function visualColor(direction){
   return state.visualColors.flat;
 }
 
-function paintVisualDirection(direction){
+function drawVisualArt(ctx,commands,color){
+  commands.forEach(function(command){
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = command.alpha;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    if(command.type === "stamp"){
+      ctx.translate(command.x,command.y);
+      ctx.rotate(command.angle);
+      ctx.lineWidth = Math.max(.7,command.size*.035);
+      if(state.visualShape === "dachshund" || state.visualShape === "skull"){
+        const isSkull = state.visualShape === "skull";
+        const width = command.size*(isSkull ? 1 : Math.SQRT2);
+        const height = command.size/(isSkull ? 1 : Math.SQRT2);
+        ctx.translate(-width/2,-height/2);
+        ctx.scale(width/64,height/(isSkull ? 64 : 32));
+        ctx.fill(isSkull ? visualSkullPath : visualDachshundPath,isSkull ? "evenodd" : "nonzero");
+      }else{
+        ctx.beginPath();
+        if(state.visualShape === "circle") ctx.arc(0,0,command.size/2,0,Math.PI*2);
+        else state.visualStamp.forEach(function(point,i){
+          if(i === 0) ctx.moveTo(point[0]*command.size,point[1]*command.size);
+          else ctx.lineTo(point[0]*command.size,point[1]*command.size);
+        });
+        ctx.closePath();
+        if(command.outline) ctx.stroke(); else ctx.fill();
+      }
+    }else{
+      ctx.lineWidth = command.width;
+      ctx.beginPath();
+      ctx.moveTo(command.points[0][0],command.points[0][1]);
+      if(command.type === "curve") ctx.quadraticCurveTo(command.points[1][0],command.points[1][1],command.points[2][0],command.points[2][1]);
+      else command.points.slice(1).forEach(function(point){ ctx.lineTo(point[0],point[1]); });
+      ctx.stroke();
+    }
+    ctx.restore();
+  });
+}
+
+function paintVisualDirection(value){
   if(!marketCanvas || detailTicker || state.visualComplete) return;
+  const event = normalizeVisualEvent(value);
+  const direction = event.direction;
   const ctx = marketCanvas.getContext("2d");
-  const total = state.visualTiles.length;
+  const total = visualTotal();
   const index = state.visualIndex;
   const tile = state.visualTiles[index];
-  if(!tile) return;
+  if(state.visualStyle === "standard" && !tile) return;
   ctx.fillStyle = visualColor(direction);
-  if(state.visualShape === "dachshund" || state.visualShape === "skull"){
+  if(state.visualStyle !== "standard"){
+    drawVisualArt(ctx,nextVisualArt(state.visualArt,event),ctx.fillStyle);
+  }else if(state.visualShape === "dachshund" || state.visualShape === "skull"){
     ctx.save();
     ctx.translate(tile.x,tile.y);
     const isSkull = state.visualShape === "skull";
@@ -1531,7 +1846,7 @@ function paintVisualDirection(direction){
     ctx.lineWidth = .8 * state.visualSize / DEFAULT_VISUAL_SIZE;
     ctx.stroke();
   }
-  state.visualEvents.push(direction);
+  state.visualEvents.push(event);
   state.visualIndex = index + 1;
   state.visualHasPainted = true;
   if(state.visualIndex >= total){
@@ -1539,13 +1854,13 @@ function paintVisualDirection(direction){
     state.visualIndex = total;
     clearVisualTimers();
     if(visualComplete) visualComplete.classList.add("show");
-    if(visualStatus) visualStatus.textContent = VISUAL_SHAPES[state.visualShape]+" · "+total+"/"+total+" · imagem completa";
+    if(visualStatus) visualStatus.textContent = visualLabel()+" · "+total+"/"+total+" · imagem completa";
   }
 }
 
 function paintVisualStock(stock){
   const direction = state.movements[stockKey(stock.marketKey,stock.ticker)] || "flat";
-  paintVisualDirection(direction);
+  paintVisualDirection({direction:direction,intensity:visualIntensity(stock),key:stockKey(stock.marketKey,stock.ticker)});
 }
 
 function scheduleVisualEvents(){
@@ -2436,8 +2751,8 @@ function render(){
   if(nav) nav.style.display = "";
   if(visualSection) visualSection.style.display = "";
   if(visualStatus){
-    const total = state.visualTiles.length;
-    const label = VISUAL_SHAPES[state.visualShape];
+    const total = visualTotal();
+    const label = visualLabel();
     visualStatus.textContent = selectedKeys.length
       ? label+" · "+Math.min(state.visualIndex,total)+"/"+total+(state.visualComplete ? " · imagem completa" : " · "+stocks.length+" eventos em 10s")
       : label+" · escolha um ou mais mercados";
@@ -2628,6 +2943,7 @@ document.querySelectorAll("[data-sound-preset]").forEach(function(btn){
 });
 
 bindVisualColors();
+bindVisualStyles();
 bindVisualShapes();
 bindVisualSize();
 
@@ -2637,6 +2953,7 @@ const newVisual = document.getElementById("newVisual");
 if(newVisual){
   newVisual.addEventListener("click",function(){
     clearVisualTimers();
+    state.visualSeed = (state.visualSeed+1) >>> 0;
     resetVisualCanvas();
     scheduleVisualEvents();
     render();
@@ -2647,6 +2964,7 @@ const clearVisual = document.getElementById("clearVisual");
 if(clearVisual){
   clearVisual.addEventListener("click",function(){
     clearVisualTimers();
+    state.visualSeed = (state.visualSeed+1) >>> 0;
     resetVisualCanvas();
     scheduleVisualEvents();
     render();
@@ -2703,7 +3021,7 @@ render();
 refresh();
 refreshMarketStatuses();
 document.addEventListener("pointerdown",function firstAudioGesture(event){
-  if(event.target.closest("[data-market],[data-sound-preset],[data-color-key],[data-visual-shape],#visualSizePicker,#colorDialog")) return;
+  if(event.target.closest("[data-market],[data-sound-preset],[data-color-key],[data-visual-shape],#visualSizePicker,#artPicker,#colorDialog")) return;
   unlockAudio();
   document.removeEventListener("pointerdown",firstAudioGesture);
 });
