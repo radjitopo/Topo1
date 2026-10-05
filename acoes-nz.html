@@ -204,6 +204,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="theremin"><span>Theremin</span><small>vibrato no ar</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Animais: subida com rugido e latido, queda com miau, neutro com bufada" data-sound-preset="animals"><span>Animais</span><small>rugido, miau e pfff</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Samba: subida com tamborim, queda com surdo, neutro com agogô" data-sound-preset="samba"><span>Samba</span><small>tamborim, surdo e agogô</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" aria-label="Guitarra noise: acordes abertos, dissonância, drone e feedback" data-sound-preset="noiseguitar"><span>Guitarra noise</span><small>acordes, drone e feedback</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Estado de espírito: subida com depressão, queda com alegria, neutro sem emoção marcada" data-sound-preset="mood"><span>Estado de espírito</span><small>alegria, neutro e depressão</small></button>
     </div>
     <div class="soundVolume">
@@ -908,6 +909,7 @@ const SOUND_PRESETS = {
   theremin:{label:"Theremin"},
   animals:{label:"Animais"},
   samba:{label:"Samba"},
+  noiseguitar:{label:"Guitarra noise"},
   mood:{label:"Estado de espírito"}
 };
 const pathParts = location.pathname.split("/").filter(Boolean);
@@ -2112,6 +2114,103 @@ function playAnimalSound(ctx,direction,maxDuration){
   breath.start(now,Math.random() * 0.55,duration);
 }
 
+
+function playNoiseGuitarSound(ctx,direction,maxDuration){
+  const now = ctx.currentTime;
+  const baseDuration = direction === "flat" ? 0.78 : 0.62;
+  const duration = typeof maxDuration === "number"
+    ? Math.max(0.11,Math.min(baseDuration,maxDuration * 2.15))
+    : baseDuration;
+  const scale = densityScale(maxDuration);
+  const bus = ctx.createGain();
+  const drive = ctx.createWaveShaper();
+  const tone = ctx.createBiquadFilter();
+  const body = ctx.createBiquadFilter();
+  const delay = ctx.createDelay(0.24);
+  const feedback = ctx.createGain();
+  const echoGain = ctx.createGain();
+
+  // Afinações abertas e intervalos tensos: a referência é a linguagem do noise rock,
+  // não uma afinação ou música específica.
+  const chord = direction === "up"
+    ? [73.42,110,146.83,196,220,293.66]
+    : direction === "down"
+      ? [65.41,98,138.59,146.83,207.65,233.08]
+      : [82.41,123.47,164.81,174.61,246.94,329.63];
+
+  const curve = new Float32Array(384);
+  const amount = direction === "down" ? 5.2 : direction === "up" ? 4.1 : 4.6;
+  for(let index=0;index<curve.length;index += 1){
+    const x = index * 2 / (curve.length - 1) - 1;
+    curve[index] = (1 + amount) * x / (1 + amount * Math.abs(x));
+  }
+  drive.curve = curve;
+  drive.oversample = "2x";
+
+  tone.type = "lowpass";
+  tone.frequency.setValueAtTime(direction === "up" ? 4200 : direction === "down" ? 2550 : 3300,now);
+  tone.frequency.exponentialRampToValueAtTime(direction === "down" ? 1200 : 1750,now + duration);
+  tone.Q.setValueAtTime(direction === "flat" ? 1.4 : 0.9,now);
+
+  body.type = "peaking";
+  body.frequency.setValueAtTime(direction === "down" ? 390 : 520,now);
+  body.Q.setValueAtTime(0.85,now);
+  body.gain.setValueAtTime(direction === "down" ? 5 : 3,now);
+
+  bus.gain.setValueAtTime(0.0001,now);
+  bus.gain.exponentialRampToValueAtTime(0.115 * scale,now + Math.min(0.025,duration * 0.12));
+  bus.gain.setValueAtTime(0.092 * scale,now + duration * 0.42);
+  bus.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+
+  chord.forEach(function(frequency,index){
+    const start = now + Math.min(index * 0.008,duration * 0.16);
+    const osc = ctx.createOscillator();
+    const stringGain = ctx.createGain();
+    osc.type = index % 3 === 0 ? "sawtooth" : "triangle";
+    osc.frequency.setValueAtTime(frequency,start);
+    osc.detune.setValueAtTime((index - 2.5) * 2.4,start);
+    if(direction === "down" && index % 2 === 1){
+      osc.detune.linearRampToValueAtTime((index - 2.5) * 2.4 - 22,start + duration * 0.72);
+    }else if(direction === "up" && index > 2){
+      osc.detune.linearRampToValueAtTime((index - 2.5) * 2.4 + 9,start + duration * 0.68);
+    }
+    stringGain.gain.setValueAtTime(0.0001,start);
+    stringGain.gain.exponentialRampToValueAtTime(index < 2 ? 0.62 : 0.42,start + Math.min(0.012,duration * 0.08));
+    stringGain.gain.exponentialRampToValueAtTime(0.055,start + duration);
+    osc.connect(stringGain);
+    stringGain.connect(drive);
+    osc.start(start);
+    osc.stop(now + duration + 0.03);
+  });
+
+  const squeal = ctx.createOscillator();
+  const squealGain = ctx.createGain();
+  squeal.type = "sine";
+  squeal.frequency.setValueAtTime(direction === "down" ? 1245 : direction === "up" ? 1760 : 1510,now);
+  squeal.frequency.linearRampToValueAtTime(direction === "down" ? 1170 : direction === "up" ? 1845 : 1475,now + duration);
+  squealGain.gain.setValueAtTime(0.0001,now);
+  squealGain.gain.linearRampToValueAtTime(0.018 * scale,now + duration * 0.48);
+  squealGain.gain.exponentialRampToValueAtTime(0.0001,now + duration);
+  squeal.connect(squealGain);
+  squealGain.connect(tone);
+  squeal.start(now);
+  squeal.stop(now + duration + 0.02);
+
+  drive.connect(tone);
+  tone.connect(body);
+  body.connect(bus);
+  bus.connect(setupAudioOutput(ctx));
+
+  delay.delayTime.setValueAtTime(direction === "flat" ? 0.092 : 0.072,now);
+  feedback.gain.setValueAtTime(direction === "flat" ? 0.28 : 0.2,now);
+  echoGain.gain.setValueAtTime(0.19,now);
+  body.connect(delay);
+  delay.connect(feedback);
+  feedback.connect(delay);
+  delay.connect(echoGain);
+  echoGain.connect(bus);
+}
+
 function playMoveSound(direction,maxDuration){
   if(!state.audioReady || !state.audioCtx) return;
   try{
@@ -2120,6 +2219,7 @@ function playMoveSound(direction,maxDuration){
     else if(state.soundPreset === "theremin") playThereminSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "animals") playAnimalSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "samba") playSambaSound(state.audioCtx,direction,maxDuration);
+    else if(state.soundPreset === "noiseguitar") playNoiseGuitarSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "mood") playMoodSound(state.audioCtx,direction,maxDuration);
     else playClassicSound(state.audioCtx,direction,maxDuration);
   }catch(e){}
