@@ -104,6 +104,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .artControls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .artOption{min-height:46px;padding:10px 8px;border:1px solid #e5e7eb;border-radius:9px;background:#fff;color:#555;font:inherit;font-size:14px;cursor:pointer}
 .artOption.active{border-color:#111;background:#111;color:#fff}
+.artOption[data-visual-style="pollock"]{grid-column:1 / -1}
 .artOption:focus-visible,.artComplexity input:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
 .artHint{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 .artComplexity{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
@@ -274,6 +275,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
         <button class="artOption" type="button" data-visual-style="field" aria-pressed="false">Campo de forças</button>
         <button class="artOption" type="button" data-visual-style="organism" aria-pressed="false">Organismo</button>
         <button class="artOption" type="button" data-visual-style="engraving" aria-pressed="false">Gravura</button>
+        <button class="artOption" type="button" data-visual-style="pollock" aria-pressed="false">Pollock</button>
       </div>
       <p class="artHint" id="artHint">As figuras preenchem o quadro, uma após a outra.</p>
       <div class="artComplexity" id="artComplexity" hidden>
@@ -933,7 +935,8 @@ const VISUAL_STYLES = {
   standard:{label:"Padrão",hint:"As figuras preenchem o quadro, uma após a outra."},
   field:{label:"Campo de forças",hint:"Altas atraem, quedas espalham. As figuras deixam correntes e redemoinhos."},
   organism:{label:"Organismo",hint:"Os movimentos do mercado fazem nascer, crescer e desviar ramificações."},
-  engraving:{label:"Gravura",hint:"Marcas transparentes se acumulam em contornos e texturas."}
+  engraving:{label:"Gravura",hint:"Marcas transparentes se acumulam em contornos e texturas."},
+  pollock:{label:"Pollock",hint:"Fios de tinta e respingos se cruzam em camadas. O mercado conduz o gesto."}
 };
 const DEFAULT_SOUND_VOLUME = 150;
 const SOUND_PRESETS = {
@@ -1200,7 +1203,45 @@ function nextVisualArt(art,value){
   const sign = event.direction === "up" ? 1 : event.direction === "down" ? -1 : 0;
   const commands = [];
   const instrument = event.key ? visualHash(event.key) : n;
-  if(art.style === "field"){
+  if(art.style === "pollock"){
+    const brush = art.streams[instrument % art.streams.length];
+    const segments = 2+Math.round(c*4);
+    for(let i=0;i<segments;i += 1){
+      const start = [brush.x,brush.y];
+      const previousAngle = brush.angle;
+      brush.angle += (art.random()-.5)*(.9+c*2.1)+sign*power*.65;
+      const distance = unit*(1.25+c*1.5+power*2)*( .65+art.random()*.7);
+      const rawX = brush.x+Math.cos(brush.angle)*distance;
+      const rawY = brush.y+Math.sin(brush.angle)*distance+(sign < 0 ? power*unit*.6 : 0);
+      const end = visualArtPoint(art,rawX,rawY);
+      const first = visualArtPoint(art,brush.x+Math.cos(previousAngle)*distance*.55,brush.y+Math.sin(previousAngle)*distance*.55);
+      const second = visualArtPoint(art,end[0]-Math.cos(brush.angle)*distance*.45,end[1]-Math.sin(brush.angle)*distance*.45);
+      const points = [start,first,second,end];
+      const width = Math.max(.8,unit*(.025+power*.13)*( .4+art.random()*1.6));
+      // Occasional dark underpainting and light threads keep the gesture visible even on a quiet market.
+      if(n%9 === 0) commands.push({type:"bezier",points:points,width:width*1.7,alpha:.7,ink:true});
+      commands.push({type:"bezier",points:points,width:width,alpha:.72+power*.23});
+      if(n%13 === 0) commands.push({type:"bezier",points:points,width:Math.max(.65,width*.4),alpha:.9,paper:true});
+      brush.x = end[0]; brush.y = end[1];
+      if(end[0] !== rawX) brush.angle = Math.PI-brush.angle;
+      if(end[1] !== rawY) brush.angle = -brush.angle;
+    }
+    const drops = 4+Math.round(c*8+power*8);
+    for(let i=0;i<drops;i += 1){
+      const angle = art.random()*Math.PI*2;
+      const scatter = unit*(.6+c*3+power*2)*Math.sqrt(art.random());
+      const center = visualArtPoint(art,brush.x+Math.cos(angle)*scatter,brush.y+Math.sin(angle)*scatter);
+      const size = unit*(.02+Math.pow(art.random(),3)*.18)*( .7+power);
+      const points = [];
+      for(let vertex=0;vertex<8;vertex += 1){
+        const theta = vertex/8*Math.PI*2;
+        const radius = size*(.5+art.random()*.5);
+        points.push(visualArtPoint(art,center[0]+Math.cos(theta)*radius,center[1]+Math.sin(theta)*radius));
+      }
+      commands.push({type:"blot",points:points,size:size,alpha:.6+art.random()*.35,ink:n%11 === 0,paper:n%17 === 0});
+    }
+    if(n%7 === 0) commands.push({type:"stamp",x:brush.x,y:brush.y,size:unit*(.2+power*.3),angle:brush.angle,alpha:.75});
+  }else if(art.style === "field"){
     const stream = art.streams[instrument % art.streams.length];
     const points = [[stream.x,stream.y]];
     const steps = 3+Math.round(c*3);
@@ -1767,8 +1808,8 @@ function visualColor(direction){
 function drawVisualArt(ctx,commands,color){
   commands.forEach(function(command){
     ctx.save();
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
+    ctx.fillStyle = command.paper ? "#f4f1e9" : command.ink ? "#20201e" : color;
+    ctx.strokeStyle = ctx.fillStyle;
     ctx.globalAlpha = command.alpha;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -1793,11 +1834,23 @@ function drawVisualArt(ctx,commands,color){
         ctx.closePath();
         if(command.outline) ctx.stroke(); else ctx.fill();
       }
+    }else if(command.type === "blot"){
+      const points = command.points;
+      const last = points[points.length-1];
+      ctx.beginPath();
+      ctx.moveTo((last[0]+points[0][0])/2,(last[1]+points[0][1])/2);
+      points.forEach(function(point,i){
+        const next = points[(i+1)%points.length];
+        ctx.quadraticCurveTo(point[0],point[1],(point[0]+next[0])/2,(point[1]+next[1])/2);
+      });
+      ctx.closePath();
+      ctx.fill();
     }else{
       ctx.lineWidth = command.width;
       ctx.beginPath();
       ctx.moveTo(command.points[0][0],command.points[0][1]);
-      if(command.type === "curve") ctx.quadraticCurveTo(command.points[1][0],command.points[1][1],command.points[2][0],command.points[2][1]);
+      if(command.type === "bezier") ctx.bezierCurveTo(command.points[1][0],command.points[1][1],command.points[2][0],command.points[2][1],command.points[3][0],command.points[3][1]);
+      else if(command.type === "curve") ctx.quadraticCurveTo(command.points[1][0],command.points[1][1],command.points[2][0],command.points[2][1]);
       else command.points.slice(1).forEach(function(point){ ctx.lineTo(point[0],point[1]); });
       ctx.stroke();
     }

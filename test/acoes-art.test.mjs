@@ -10,7 +10,7 @@ const geometry = section('function buildVisualTiles(', 'function resetVisualCanv
 const lifecycle = section('function resetVisualCanvas(', 'function syncVisualColors(');
 const drawing = section('function visualColor(', 'function paintVisualStock(');
 const engine = vm.runInNewContext(`${generators}; ({createVisualArt,nextVisualArt,normalizeVisualEvent});`);
-const modes = ['field', 'organism', 'engraving'];
+const modes = ['field', 'organism', 'engraving', 'pollock'];
 const events = Array.from({ length: 180 }, (_, i) => ({ direction: ['up', 'flat', 'down'][i % 3], intensity: .12 + (i % 8) / 10, key: `tokyo:${i % 30}` }));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -50,9 +50,9 @@ for (const mode of modes) {
   });
 }
 
-test('the three styles create different compositions from identical market events', () => {
+test('the styles create different compositions from identical market events', () => {
   const results = modes.map(mode => JSON.stringify(commands(mode)));
-  assert.equal(new Set(results).size, 3);
+  assert.equal(new Set(results).size, modes.length);
 });
 
 test('rises grow more branches than falls and neutral quotes still draw', () => {
@@ -69,7 +69,7 @@ test('rises grow more branches than falls and neutral quotes still draw', () => 
 function runtime(shape = 'square') {
   let balance = 0;
   const operations = [];
-  const methods = ['fillRect', 'translate', 'rotate', 'scale', 'beginPath', 'moveTo', 'lineTo', 'quadraticCurveTo', 'arc', 'closePath', 'fill', 'stroke'];
+  const methods = ['fillRect', 'translate', 'rotate', 'scale', 'beginPath', 'moveTo', 'lineTo', 'quadraticCurveTo', 'bezierCurveTo', 'arc', 'closePath', 'fill', 'stroke'];
   const ctx = { save() { balance++; operations.push(['save']); }, restore() { balance--; operations.push(['restore']); } };
   for (const name of methods) ctx[name] = (...args) => operations.push([name, ...args]);
   const context = {
