@@ -1217,10 +1217,10 @@ function nextVisualArt(art,value){
       const first = visualArtPoint(art,brush.x+Math.cos(previousAngle)*distance*.55,brush.y+Math.sin(previousAngle)*distance*.55);
       const second = visualArtPoint(art,end[0]-Math.cos(brush.angle)*distance*.45,end[1]-Math.sin(brush.angle)*distance*.45);
       const points = [start,first,second,end];
-      const width = Math.max(.8,unit*(.025+power*.13)*( .4+art.random()*1.6));
+      const width = Math.max(.8,unit*(.055+power*.2)*( .35+art.random()*2.2));
       // Occasional dark underpainting and light threads keep the gesture visible even on a quiet market.
       if(n%9 === 0) commands.push({type:"bezier",points:points,width:width*1.7,alpha:.7,ink:true});
-      commands.push({type:"bezier",points:points,width:width,alpha:.72+power*.23});
+      commands.push({type:"bezier",points:points,width:width,alpha:.72+power*.23,ink:n%9 === 0 && i%2 === 0});
       if(n%13 === 0) commands.push({type:"bezier",points:points,width:Math.max(.65,width*.4),alpha:.9,paper:true});
       brush.x = end[0]; brush.y = end[1];
       if(end[0] !== rawX) brush.angle = Math.PI-brush.angle;
@@ -1231,7 +1231,7 @@ function nextVisualArt(art,value){
       const angle = art.random()*Math.PI*2;
       const scatter = unit*(.6+c*3+power*2)*Math.sqrt(art.random());
       const center = visualArtPoint(art,brush.x+Math.cos(angle)*scatter,brush.y+Math.sin(angle)*scatter);
-      const size = unit*(.02+Math.pow(art.random(),3)*.18)*( .7+power);
+      const size = unit*(.03+Math.pow(art.random(),3)*.4)*( .7+power);
       const points = [];
       for(let vertex=0;vertex<8;vertex += 1){
         const theta = vertex/8*Math.PI*2;
