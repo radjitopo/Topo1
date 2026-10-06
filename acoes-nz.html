@@ -72,6 +72,29 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .soundOption.active span{color:#fff}
 .soundOption.active small{color:#c9cbd0}
 .soundOption:focus-visible{outline:3px solid rgba(34,179,95,.22);outline-offset:2px}
+.soundOption[data-sound-preset="house"]{grid-column:1 / -1}
+.houseControls{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.houseControls[hidden]{display:none}
+.houseHead{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px}
+.housePlay{min-height:40px;padding:8px 17px;border:1px solid #111;border-radius:8px;background:#111;color:#fff;font:inherit;cursor:pointer}
+.houseHint{margin:9px 0 12px;color:var(--muted);font-size:12px;line-height:1.5}
+.houseLayers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.houseLayer{min-height:44px;padding:8px 5px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#777;font:inherit;font-size:13px;cursor:pointer}
+.houseLayer[aria-pressed="true"]{border-color:#111;background:#111;color:#fff}
+.houseLayer:focus-visible,.housePlay:focus-visible,.houseTempo input:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
+.houseTempo{margin-top:12px}
+.houseTempoHead{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#555}
+.houseTempoHead output{color:#111;font-weight:700;font-variant-numeric:tabular-nums}
+.houseTempo input{display:block;width:100%;height:28px;margin:5px 0;accent-color:#111;cursor:pointer}
+.houseStatusRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.houseStatusRow p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+.houseBeat{display:flex;gap:5px;flex-shrink:0}
+.houseBeat i{width:7px;height:7px;border-radius:50%;background:#e3e5e8}
+.houseBeat i.active{background:#111}
+.houseMeter{width:54px;height:8px;flex-shrink:0}
+.houseMeter::-webkit-meter-bar{border:0;background:#e3e5e8;border-radius:4px}
+.houseMeter::-webkit-meter-optimum-value{background:#111;border-radius:4px}
+.houseMeter::-moz-meter-bar{background:#111;border-radius:4px}
 .soundVolume{margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
 .soundVolumeHead{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#555}
 .soundVolumeHead output{font-weight:700;color:#111;font-variant-numeric:tabular-nums}
@@ -169,6 +192,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
   .marketTabs button{font-size:12px;padding:0 2px}
   .soundOption{padding:8px 5px}
   .soundOption span{font-size:12px}
+  .houseLayers{grid-template-columns:repeat(2,minmax(0,1fr))}
   .shapeControls{grid-template-columns:repeat(2,minmax(0,1fr))}
   .shapeOption{flex-direction:row;min-height:52px;padding:8px;gap:8px}
 }
@@ -218,6 +242,22 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Samba: subida com tamborim, queda com surdo, neutro com agogô" data-sound-preset="samba"><span>Samba</span><small>tamborim, surdo e agogô</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Guitarra noise: acordes abertos, dissonância, drone e feedback" data-sound-preset="noiseguitar"><span>Guitarra noise</span><small>acordes, drone e feedback</small></button>
       <button class="soundOption" type="button" aria-pressed="false" aria-label="Estado de espírito: subida com depressão, queda com alegria, neutro sem emoção marcada" data-sound-preset="mood"><span>Estado de espírito</span><small>alegria, neutro e depressão</small></button>
+      <button class="soundOption" type="button" aria-pressed="false" data-sound-preset="house"><span>House mode</span><small>bateria, baixo, acordes e melodia</small></button>
+    </div>
+    <div class="houseControls" id="houseControls" hidden>
+      <div class="houseHead"><strong>Misture as camadas</strong><button class="housePlay" id="housePlay" type="button">Tocar</button></div>
+      <p class="houseHint">Altas abrem o som; quedas deixam a música mais grave. A batida continua, mesmo com o mercado neutro.</p>
+      <div class="houseLayers" role="group" aria-label="Camadas da música">
+        <button class="houseLayer" type="button" data-house-layer="drums" aria-pressed="true">Bateria</button>
+        <button class="houseLayer" type="button" data-house-layer="bass" aria-pressed="true">Baixo</button>
+        <button class="houseLayer" type="button" data-house-layer="chords" aria-pressed="true">Acordes</button>
+        <button class="houseLayer" type="button" data-house-layer="lead" aria-pressed="true">Melodia</button>
+      </div>
+      <div class="houseTempo">
+        <div class="houseTempoHead"><label for="houseTempo">Velocidade</label><output id="houseTempoValue" for="houseTempo">124 BPM</output></div>
+        <input id="houseTempo" type="range" min="90" max="140" step="1" value="124" aria-label="Velocidade da música">
+      </div>
+      <div class="houseStatusRow"><p id="houseStatus">Toque em House mode para começar.</p><meter class="houseMeter" id="houseLevel" min="0" max="1" value="0" aria-label="Nível da música"></meter><div class="houseBeat" id="houseBeat" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
     </div>
     <div class="soundVolume">
       <div class="soundVolumeHead"><label for="soundVolume">Volume dos sons</label><output id="soundVolumeValue" for="soundVolume">150%</output></div>
@@ -961,8 +1001,12 @@ const SOUND_PRESETS = {
   animals:{label:"Animais"},
   samba:{label:"Samba"},
   noiseguitar:{label:"Guitarra noise"},
-  mood:{label:"Estado de espírito"}
+  mood:{label:"Estado de espírito"},
+  house:{label:"House mode"}
 };
+const HOUSE_LAYERS = {drums:"Bateria",bass:"Baixo",chords:"Acordes",lead:"Melodia"};
+const HOUSE_STORAGE_KEY = "acoes-house-settings";
+const DEFAULT_HOUSE_TEMPO = 124;
 const pathParts = location.pathname.split("/").filter(Boolean);
 const PATH_MARKETS = {
   "acoes-nz":"tokyo",
@@ -1018,6 +1062,20 @@ function storedSoundVolume(){
   }
 }
 
+function normalizedHouseTempo(value){
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(90,Math.min(140,Math.round(parsed))) : DEFAULT_HOUSE_TEMPO;
+}
+
+function storedHouseSettings(){
+  let saved = {};
+  try{ saved = JSON.parse(localStorage.getItem(HOUSE_STORAGE_KEY) || "{}"); }catch(e){}
+  if(!saved || typeof saved !== "object") saved = {};
+  const layers = {};
+  Object.keys(HOUSE_LAYERS).forEach(function(key){ layers[key] = !(saved.layers && saved.layers[key] === false); });
+  return {tempo:saved.tempo == null ? DEFAULT_HOUSE_TEMPO : normalizedHouseTempo(saved.tempo),layers:layers};
+}
+
 function storedVisualColors(){
   try{
     const saved = JSON.parse(localStorage.getItem(VISUAL_COLORS_STORAGE_KEY) || "{}");
@@ -1063,6 +1121,7 @@ function storedVisualComplexity(){
   }catch(e){ return 5; }
 }
 
+const houseSettings = storedHouseSettings();
 const state = {
   market:initialMarket,
   selectedMarkets:selectionFromUrl(initialMarket),
@@ -1080,6 +1139,10 @@ const state = {
   sambaNoiseBuffer:null,
   soundPreset:storedSoundPreset(),
   soundVolume:storedSoundVolume(),
+  houseTempo:houseSettings.tempo,
+  houseLayers:houseSettings.layers,
+  housePaused:false,
+  houseTransport:null,
   visualColors:storedVisualColors(),
   visualShape:storedVisualShape(),
   visualSize:storedVisualSize(),
@@ -2597,8 +2660,284 @@ function playNoiseGuitarSound(ctx,direction,maxDuration){
   echoGain.connect(bus);
 }
 
+function houseStocks(){
+  return detailTicker ? [{ticker:detailTicker,marketKey:state.market}] : mixedStocks();
+}
+
+function houseProfileFromEvents(events){
+  let balance = 0;
+  let weight = 0;
+  let energy = 0;
+  let motif = 0;
+  events.forEach(function(value){
+    const event = normalizeVisualEvent(value);
+    const sign = event.direction === "up" ? 1 : event.direction === "down" ? -1 : 0;
+    const strength = .5+event.intensity*.5;
+    balance += sign*strength;
+    weight += strength;
+    energy += event.intensity;
+    motif += sign*(visualHash(event.key)%17+1);
+  });
+  return {balance:weight ? balance/weight : 0,energy:events.length ? energy/events.length : .18,motif:Math.abs(motif)%8};
+}
+
+function houseMarketProfile(){
+  return houseProfileFromEvents(houseStocks().map(function(stock){
+    const key = stockKey(stock.marketKey,stock.ticker);
+    return {direction:state.movements[key] || "flat",intensity:visualIntensity(stock),key:key};
+  }));
+}
+
+function houseStepNotes(step,profile,tempo){
+  const phase = step%16;
+  const bar = Math.floor(step/16)%4;
+  const root = [45,41,48,43][bar];
+  const intervals = bar === 0 ? [0,3,7,10] : bar === 3 ? [0,4,7,10] : [0,4,7,11];
+  const beat = 60/normalizedHouseTempo(tempo);
+  const energy = Math.max(0,Math.min(1,profile.energy));
+  const balance = Math.max(-1,Math.min(1,profile.balance));
+  const notes = [];
+  if(phase%4 === 0) notes.push({layer:"drums",voice:"kick",duration:.29,volume:.52});
+  if(phase === 4 || phase === 12) notes.push({layer:"drums",voice:"clap",duration:.18,volume:.12+energy*.04});
+  if(phase%4 === 2 || (phase%2 === 1 && (energy > .45 || balance > .2))){
+    notes.push({layer:"drums",voice:"hat",duration:phase%4 === 2 ? .13 : .055,volume:phase%4 === 2 ? .065 : .025});
+  }
+  if([0,3,6,8,11,14].indexOf(phase) !== -1){
+    const interval = phase === 6 || phase === 14 ? 7 : phase === 11 ? 12 : 0;
+    notes.push({layer:"bass",voice:"bass",midi:root+(balance < -.15 ? -12 : 0)+interval,duration:beat*.32,offset:phase%4 === 0 ? .025 : 0,volume:.1,cutoff:Math.max(180,500+energy*1400+balance*350)});
+  }
+  if(phase === 2 || phase === 10){
+    intervals.forEach(function(interval,i){
+      notes.push({layer:"chords",voice:"chord",midi:root+12+interval,duration:beat*.72,volume:.025,detune:(i-1.5)*3,cutoff:Math.max(350,1100+energy*2200+balance*1000)});
+    });
+  }
+  if(phase === 5 || phase === 13 || ((phase === 1 || phase === 9) && (energy > .4 || balance > .2))){
+    const scale = [0,intervals[1],7,12];
+    let index = (Math.floor(step/4)+profile.motif)%scale.length;
+    if(balance < -.15) index = scale.length-1-index;
+    notes.push({layer:"lead",voice:"lead",midi:root+24+scale[index],duration:beat*.42,volume:.045,cutoff:Math.max(700,1800+energy*4000+balance*1400)});
+  }
+  return notes;
+}
+
+function trackHouseVoice(runtime,source,nodes){
+  runtime.sources.add(source);
+  source.onended = function(){
+    runtime.sources.delete(source);
+    nodes.forEach(function(node){ node.disconnect(); });
+  };
+}
+
+function playHouseNote(runtime,note,time){
+  if(!state.houseLayers[note.layer]) return;
+  const ctx = runtime.ctx;
+  const gain = ctx.createGain();
+  const source = note.layer === "drums" && note.voice !== "kick" ? ctx.createBufferSource() : ctx.createOscillator();
+  const nodes = [source,gain];
+  const duration = note.duration;
+  if(note.voice === "kick"){
+    source.type = "sine";
+    source.frequency.setValueAtTime(155,time);
+    source.frequency.exponentialRampToValueAtTime(48,time+.14);
+    gain.gain.setValueAtTime(.0001,time);
+    gain.gain.exponentialRampToValueAtTime(note.volume,time+.002);
+    gain.gain.exponentialRampToValueAtTime(.0001,time+duration);
+    source.connect(gain);
+    runtime.duck.gain.cancelScheduledValues(time);
+    runtime.duck.gain.setValueAtTime(1,time);
+    runtime.duck.gain.linearRampToValueAtTime(.32,time+.008);
+    runtime.duck.gain.setTargetAtTime(1,time+.045,.075);
+  }else if(note.layer === "drums"){
+    const filter = ctx.createBiquadFilter();
+    nodes.push(filter);
+    source.buffer = getSambaNoiseBuffer(ctx);
+    filter.type = "highpass";
+    filter.frequency.setValueAtTime(note.voice === "hat" ? 7800 : 1050,time);
+    gain.gain.setValueAtTime(.0001,time);
+    if(note.voice === "clap"){
+      [0,.018,.036].forEach(function(offset){
+        gain.gain.setValueAtTime(.0001,time+offset);
+        gain.gain.linearRampToValueAtTime(note.volume,time+offset+.002);
+        gain.gain.exponentialRampToValueAtTime(.0001,time+offset+.016);
+      });
+      gain.gain.setValueAtTime(note.volume*.65,time+.055);
+    }else{
+      gain.gain.linearRampToValueAtTime(note.volume,time+.002);
+    }
+    gain.gain.exponentialRampToValueAtTime(.0001,time+duration);
+    source.connect(filter);
+    filter.connect(gain);
+  }else{
+    const filter = ctx.createBiquadFilter();
+    nodes.push(filter);
+    source.type = note.voice === "lead" ? "triangle" : "sawtooth";
+    source.frequency.setValueAtTime(440*Math.pow(2,(note.midi-69)/12),time);
+    source.detune.setValueAtTime(note.detune || 0,time);
+    filter.type = "lowpass";
+    filter.Q.setValueAtTime(note.voice === "lead" ? 1.8 : .8,time);
+    filter.frequency.setValueAtTime(note.cutoff,time);
+    filter.frequency.exponentialRampToValueAtTime(Math.max(100,note.cutoff*.42),time+duration);
+    gain.gain.setValueAtTime(.0001,time);
+    gain.gain.exponentialRampToValueAtTime(note.volume,time+.008);
+    gain.gain.exponentialRampToValueAtTime(.0001,time+duration);
+    source.connect(filter);
+    filter.connect(gain);
+  }
+  gain.connect(runtime.layers[note.layer]);
+  trackHouseVoice(runtime,source,nodes);
+  source.start(time);
+  source.stop(time+duration+.025);
+}
+
+function updateHouseControls(){
+  const panel = document.getElementById("houseControls");
+  if(!panel) return;
+  panel.hidden = state.soundPreset !== "house";
+  const running = Boolean(state.houseTransport && state.audioCtx && state.audioCtx.state === "running");
+  const count = Object.keys(HOUSE_LAYERS).filter(function(key){ return state.houseLayers[key]; }).length;
+  document.querySelectorAll("[data-house-layer]").forEach(function(button){
+    button.setAttribute("aria-pressed",state.houseLayers[button.dataset.houseLayer] ? "true" : "false");
+  });
+  document.getElementById("houseTempo").value = String(state.houseTempo);
+  document.getElementById("houseTempoValue").textContent = state.houseTempo+" BPM";
+  document.getElementById("housePlay").textContent = running ? "Pausar" : "Tocar";
+  document.getElementById("houseStatus").textContent = !houseStocks().length
+    ? "Escolha um mercado para começar."
+    : running ? (count ? "Tocando" : "Silenciado")+" · "+count+" camadas · compasso "+(state.houseTransport.bar+1)
+      : state.housePaused ? "Música pausada." : "Toque em Tocar para começar.";
+  const mainHint = document.getElementById("mainSoundHint");
+  if(mainHint && state.soundPreset === "house" && state.audioReady && houseStocks().length){
+    mainHint.textContent = "🔊 House mode · "+state.houseTempo+" BPM · "+(state.housePaused ? "música pausada" : "música guiada pelo mercado");
+  }
+  if(!running){
+    document.querySelectorAll("#houseBeat i").forEach(function(dot){ dot.classList.remove("active"); });
+    document.getElementById("houseLevel").value = 0;
+  }
+}
+
+function stopHouseMusic(){
+  const runtime = state.houseTransport;
+  if(!runtime) return;
+  state.houseTransport = null;
+  clearInterval(runtime.timer);
+  const now = runtime.ctx.currentTime;
+  runtime.output.gain.cancelScheduledValues(now);
+  runtime.output.gain.setTargetAtTime(0,now,.008);
+  runtime.feedback.gain.setValueAtTime(0,now);
+  runtime.sources.forEach(function(source){ try{ source.stop(now+.025); }catch(e){} });
+  setTimeout(function(){ runtime.graph.forEach(function(node){ node.disconnect(); }); },40);
+  updateHouseControls();
+}
+
+function scheduleHouseMusic(){
+  const runtime = state.houseTransport;
+  if(!runtime || runtime.ctx.state !== "running") return;
+  const now = runtime.ctx.currentTime;
+  const stepDuration = 60/state.houseTempo/4;
+  // Schedule on the audio clock; delayed UI timers must never produce a burst of missed notes.
+  if(runtime.nextTime < now+.005){
+    const missed = Math.ceil((now+.005-runtime.nextTime)/stepDuration);
+    runtime.step += missed;
+    runtime.nextTime += missed*stepDuration;
+    runtime.beats = [];
+  }
+  const profile = houseMarketProfile();
+  while(runtime.nextTime < now+.1){
+    houseStepNotes(runtime.step,profile,state.houseTempo).forEach(function(note){
+      playHouseNote(runtime,note,runtime.nextTime+(note.offset || 0));
+    });
+    if(runtime.step%4 === 0) runtime.beats.push({time:runtime.nextTime,beat:runtime.step%16/4,bar:Math.floor(runtime.step/16)%4});
+    runtime.nextTime += stepDuration;
+    runtime.step += 1;
+  }
+  while(runtime.beats.length && runtime.beats[0].time <= now){
+    const beat = runtime.beats.shift();
+    document.querySelectorAll("#houseBeat i").forEach(function(dot,i){ dot.classList.toggle("active",i === beat.beat); });
+    if(runtime.bar !== beat.bar){ runtime.bar = beat.bar; updateHouseControls(); }
+  }
+  const level = document.getElementById("houseLevel");
+  if(level){
+    runtime.analyser.getByteTimeDomainData(runtime.wave);
+    let sum = 0;
+    for(let i=0;i<runtime.wave.length;i += 1){ const sample = (runtime.wave[i]-128)/128; sum += sample*sample; }
+    level.value = Math.min(1,Math.sqrt(sum/runtime.wave.length)*state.soundVolume/100*3);
+  }
+}
+
+function startHouseMusic(){
+  if(state.soundPreset !== "house" || !state.audioReady || !state.audioCtx || state.housePaused || state.houseTransport || !houseStocks().length) return;
+  const ctx = state.audioCtx;
+  const output = ctx.createGain();
+  const analyser = ctx.createAnalyser();
+  const duck = ctx.createGain();
+  const delay = ctx.createDelay(1);
+  const feedback = ctx.createGain();
+  const wet = ctx.createGain();
+  const layers = {};
+  output.gain.setValueAtTime(.78,ctx.currentTime);
+  analyser.fftSize = 256;
+  output.connect(analyser);
+  analyser.connect(setupAudioOutput(ctx));
+  duck.connect(output);
+  delay.delayTime.setValueAtTime(60/state.houseTempo*.75,ctx.currentTime);
+  feedback.gain.setValueAtTime(.23,ctx.currentTime);
+  wet.gain.setValueAtTime(.17,ctx.currentTime);
+  delay.connect(feedback);
+  feedback.connect(delay);
+  delay.connect(wet);
+  wet.connect(duck);
+  Object.keys(HOUSE_LAYERS).forEach(function(key){
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(state.houseLayers[key] ? 1 : 0,ctx.currentTime);
+    gain.connect(key === "drums" ? output : duck);
+    if(key === "chords" || key === "lead") gain.connect(delay);
+    layers[key] = gain;
+  });
+  state.houseTransport = {ctx:ctx,output:output,analyser:analyser,wave:new Uint8Array(256),duck:duck,delay:delay,feedback:feedback,layers:layers,graph:[output,analyser,duck,delay,feedback,wet].concat(Object.values(layers)),sources:new Set(),nextTime:ctx.currentTime+.035,step:0,bar:0,beats:[],timer:null};
+  scheduleHouseMusic();
+  state.houseTransport.timer = setInterval(scheduleHouseMusic,25);
+  updateHouseControls();
+}
+
+function saveHouseSettings(){
+  try{ localStorage.setItem(HOUSE_STORAGE_KEY,JSON.stringify({tempo:state.houseTempo,layers:state.houseLayers})); }catch(e){}
+}
+
+function setHouseTempo(value){
+  state.houseTempo = normalizedHouseTempo(value);
+  saveHouseSettings();
+  if(state.houseTransport) state.houseTransport.delay.delayTime.setTargetAtTime(60/state.houseTempo*.75,state.audioCtx.currentTime,.04);
+  updateHouseControls();
+}
+
+function toggleHouseLayer(key){
+  if(!Object.prototype.hasOwnProperty.call(HOUSE_LAYERS,key)) return;
+  state.houseLayers[key] = !state.houseLayers[key];
+  saveHouseSettings();
+  if(state.houseTransport){
+    const now = state.audioCtx.currentTime;
+    state.houseTransport.layers[key].gain.setTargetAtTime(state.houseLayers[key] ? 1 : 0,now,.012);
+    const audible = Object.keys(HOUSE_LAYERS).some(function(layer){ return state.houseLayers[layer]; });
+    state.houseTransport.output.gain.setTargetAtTime(audible ? .78 : 0,now,.012);
+  }
+  updateHouseControls();
+}
+
+function toggleHousePlayback(){
+  if(state.houseTransport && state.audioCtx.state === "running"){
+    state.housePaused = true;
+    stopHouseMusic();
+  }else{
+    state.housePaused = false;
+    unlockAudio();
+    startHouseMusic();
+  }
+  updateHouseControls();
+}
+
 function playMoveSound(direction,maxDuration){
   if(!state.audioReady || !state.audioCtx) return;
+  if(state.soundPreset === "house") return;
   try{
     if(state.soundPreset === "waves") playWaveSound(state.audioCtx,direction,maxDuration);
     else if(state.soundPreset === "moog") playMoogSound(state.audioCtx,direction,maxDuration);
@@ -2620,6 +2959,7 @@ function clearSoundPreview(){
 
 function previewSoundPreset(){
   clearSoundPreview();
+  if(state.soundPreset === "house"){ startMainSoundCycle(); return; }
   stopMainSoundCycle();
   ["down","flat","up"].forEach(function(direction,index){
     const timer = setTimeout(function(){ playMoveSound(direction); },index * 290);
@@ -2634,7 +2974,10 @@ function previewSoundPreset(){
 
 function selectSoundPreset(preset){
   if(!SOUND_PRESETS[preset]) return;
+  clearSoundPreview();
+  stopMainSoundCycle();
   state.soundPreset = preset;
+  if(preset === "house") state.housePaused = false;
   try{ localStorage.setItem(SOUND_STORAGE_KEY,preset); }catch(e){}
   const audioAvailable = unlockAudio();
   render();
@@ -2649,6 +2992,7 @@ function clearSoundTimers(){
 
 function stopMainSoundCycle(){
   clearSoundTimers();
+  stopHouseMusic();
   if(state.soundCycleTimer) clearInterval(state.soundCycleTimer);
   state.soundCycleTimer = null;
 }
@@ -2671,6 +3015,7 @@ function scheduleMainSounds(){
 }
 
 function startMainSoundCycle(){
+  if(state.soundPreset === "house") startHouseMusic();
   if(detailTicker || !state.audioReady || state.soundCycleTimer || !selectedMarketKeys().length) return;
   scheduleMainSounds();
   state.soundCycleTimer = setInterval(scheduleMainSounds,SOUND_CYCLE_MS);
@@ -2733,6 +3078,7 @@ function render(){
     btn.setAttribute("aria-pressed",active ? "true" : "false");
   });
   setSoundVolume(state.soundVolume,false);
+  updateHouseControls();
 
   if(detailTicker){
     if(visualSection) visualSection.style.display = "none";
@@ -2836,6 +3182,8 @@ function render(){
     const soundsPerSecond = totalStocks / (SOUND_CYCLE_MS / 1000);
     if(!selectedKeys.length){
       mainSoundHint.textContent = "Escolha um ou mais mercados acima";
+    }else if(state.audioReady && state.soundPreset === "house"){
+      mainSoundHint.textContent = "🔊 House mode · "+state.houseTempo+" BPM · "+(state.housePaused ? "música pausada" : "música guiada pelo mercado");
     }else if(state.audioReady && selectedKeys.length === 1){
       mainSoundHint.textContent = "🔊 " + SOUND_PRESETS[state.soundPreset].label + " ativado — " + MARKETS[selectedKeys[0]].label + ": " + totalStocks + " instrumentos, " + soundsPerSecond + " por segundo, ciclo de 10s";
     }else if(state.audioReady){
@@ -3042,6 +3390,13 @@ if(clearVisual){
   });
 }
 
+document.querySelectorAll("[data-house-layer]").forEach(function(button){
+  button.addEventListener("click",function(){ toggleHouseLayer(button.dataset.houseLayer); });
+});
+document.getElementById("houseTempo").addEventListener("input",function(event){ setHouseTempo(event.target.value); });
+document.getElementById("housePlay").addEventListener("click",toggleHousePlayback);
+window.addEventListener("pagehide",stopMainSoundCycle);
+
 const soundVolume = document.getElementById("soundVolume");
 if(soundVolume){
   soundVolume.addEventListener("input",function(e){
@@ -3092,7 +3447,7 @@ render();
 refresh();
 refreshMarketStatuses();
 document.addEventListener("pointerdown",function firstAudioGesture(event){
-  if(event.target.closest("[data-market],[data-sound-preset],[data-color-key],[data-visual-shape],#visualSizePicker,#artPicker,#colorDialog")) return;
+  if(event.target.closest("[data-market],[data-sound-preset],[data-color-key],[data-visual-shape],#visualSizePicker,#artPicker,#colorDialog,#houseControls")) return;
   unlockAudio();
   document.removeEventListener("pointerdown",firstAudioGesture);
 });
