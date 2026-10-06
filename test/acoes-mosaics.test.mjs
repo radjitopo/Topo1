@@ -5,7 +5,8 @@ import vm from 'node:vm';
 
 const page = await readFile(new URL('../acoes-nz.html', import.meta.url), 'utf8');
 const geometry = page.slice(page.indexOf('function buildVisualTiles('), page.indexOf('function resetVisualCanvas('));
-const buildTiles = vm.runInNewContext(`const VISUAL_GRID_COLS = 27; const VISUAL_GRID_ROWS = 48; const DEFAULT_VISUAL_SIZE = 10; ${geometry}; buildVisualTiles;`);
+const silhouettes = page.slice(page.indexOf('const VISUAL_SILHOUETTES ='), page.indexOf('const VISUAL_SIZE_STORAGE_KEY ='));
+const buildTiles = vm.runInNewContext(`const VISUAL_GRID_COLS = 27; const VISUAL_GRID_ROWS = 48; const DEFAULT_VISUAL_SIZE = 10; ${silhouettes} ${geometry}; buildVisualTiles;`);
 
 function contains(tile, x, y) {
   const points = tile.points;
@@ -26,7 +27,7 @@ function area(tile) {
   }, 0)) / 2;
 }
 
-for (const [shape, aspectRatio] of [['dachshund', 2], ['skull', 1]]) {
+for (const [shape, aspectRatio] of [['dachshund', 2], ['skull', 1], ['tree', 1], ['heart', 1], ['nature', 1], ['life', 1], ['health', 1]]) {
   test(`${shape} silhouettes keep their proportions and spacing at sizes 1, 10, 20 and 30`, () => {
     const standard = buildTiles(shape, 1080, 1920, 10);
     assert.ok(standard.length > 900 && standard.length < 1400);

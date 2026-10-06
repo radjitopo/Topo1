@@ -9,6 +9,9 @@ const generators = section('function normalizeVisualEvent(', 'function buildVisu
 const geometry = section('function buildVisualTiles(', 'function resetVisualCanvas(');
 const lifecycle = section('function resetVisualCanvas(', 'function syncVisualColors(');
 const drawing = section('function visualColor(', 'function paintVisualStock(');
+const silhouettes = section('const VISUAL_SILHOUETTES =', 'const VISUAL_SIZE_STORAGE_KEY =');
+const silhouetteShapes = vm.runInNewContext(`${silhouettes}; VISUAL_SILHOUETTES;`);
+const shapeLabels = vm.runInNewContext(`${page.match(/const VISUAL_SHAPES = .*?;/)[0]}; VISUAL_SHAPES;`);
 const engine = vm.runInNewContext(`${generators}; ({createVisualArt,nextVisualArt,normalizeVisualEvent});`);
 const modes = ['field', 'organism', 'engraving', 'pollock'];
 const events = Array.from({ length: 180 }, (_, i) => ({ direction: ['up', 'flat', 'down'][i % 3], intensity: .12 + (i % 8) / 10, key: `tokyo:${i % 30}` }));
@@ -76,11 +79,11 @@ function runtime(shape = 'square') {
     state: { visualStyle: 'standard', visualShape: shape, visualSize: 10, visualComplexity: 5, visualSeed: 37, visualColors: { up: '#18a957', flat: '#f0c928', down: '#e3483d' }, visualEvents: [] },
     marketCanvas: { width: 1080, height: 1920, getContext: () => ctx }, detailTicker: null,
     visualStatus: {}, visualComplete: { classList: { add() {}, remove() {} } },
-    visualDachshundPath: 'dog-path', visualSkullPath: 'skull-path', clearVisualTimers() {},
+    visualSilhouettePaths: Object.fromEntries(Object.keys(silhouetteShapes).map(shape => [shape, `${shape}-path`])), clearVisualTimers() {},
     VISUAL_GRID_COLS: 27, VISUAL_GRID_ROWS: 48, DEFAULT_VISUAL_SIZE: 10
   };
   vm.createContext(context);
-  vm.runInContext(`${page.match(/const VISUAL_SHAPES = .*?;/)[0]} ${section('const VISUAL_STYLES =', 'const DEFAULT_SOUND_VOLUME =')} ${generators} ${geometry} ${lifecycle} ${drawing}`, context);
+  vm.runInContext(`${page.match(/const VISUAL_SHAPES = .*?;/)[0]} ${silhouettes} ${section('const VISUAL_STYLES =', 'const DEFAULT_SOUND_VOLUME =')} ${generators} ${geometry} ${lifecycle} ${drawing}`, context);
   context.resetVisualCanvas();
   return { context, operations, balance: () => balance };
 }
@@ -109,17 +112,18 @@ test('switching styles preserves event history and reconstructs the original mos
   assert.deepEqual(plain(operations), original);
 });
 
-test('all eight shapes render in every new style with balanced canvas state', () => {
-  for (const shape of ['square', 'triangle', 'pentagon', 'hexagon', 'circle', 'star', 'dachshund', 'skull']) {
+test('all shapes render in every style with balanced canvas state and silhouette cutouts', () => {
+  for (const shape of Object.keys(shapeLabels)) {
     const { context: r, operations, balance } = runtime(shape);
-    for (const mode of modes) {
+    for (const mode of ['standard', ...modes]) {
+      operations.length = 0;
       r.state.visualStyle = mode;
       r.resetVisualCanvas();
       for (const event of events.slice(0, 60)) r.paintVisualDirection(event);
       assert.equal(r.state.visualIndex, 60);
       assert.equal(balance(), 0);
-      assert.ok(operations.some(op => op[0] === 'stroke'));
-      if (shape === 'skull') assert.ok(operations.some(op => op[0] === 'fill' && op[1] === 'skull-path' && op[2] === 'evenodd'));
+      if (mode !== 'standard') assert.ok(operations.some(op => op[0] === 'stroke'));
+      if (silhouetteShapes[shape]) assert.ok(operations.some(op => op[0] === 'fill' && op[1] === `${shape}-path` && op[2] === silhouetteShapes[shape].rule), `${shape} does not render in ${mode}`);
     }
   }
 });
