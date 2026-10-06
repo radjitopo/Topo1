@@ -324,13 +324,17 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <div class="artPicker" id="artPicker">
       <strong class="artPickerLabel">Estilo do desenho</strong>
       <div class="artControls" role="group" aria-label="Estilo do desenho">
-        <button class="artOption active" type="button" data-visual-style="standard" aria-pressed="true">Padrão</button>
+        <button class="artOption active" type="button" data-visual-style="topography" aria-pressed="true">Cartografia sonora</button>
+        <button class="artOption" type="button" data-visual-style="flow" aria-pressed="false">Fluxos de cor</button>
+        <button class="artOption" type="button" data-visual-style="interference" aria-pressed="false">Interferência</button>
+        <button class="artOption" type="button" data-visual-style="architecture" aria-pressed="false">Arquitetura rítmica</button>
+        <button class="artOption" type="button" data-visual-style="standard" aria-pressed="false">Padrão</button>
         <button class="artOption" type="button" data-visual-style="field" aria-pressed="false">Campo de forças</button>
         <button class="artOption" type="button" data-visual-style="organism" aria-pressed="false">Organismo</button>
         <button class="artOption" type="button" data-visual-style="engraving" aria-pressed="false">Gravura</button>
         <button class="artOption" type="button" data-visual-style="pollock" aria-pressed="false">Pollock</button>
       </div>
-      <p class="artHint" id="artHint">As figuras preenchem o quadro, uma após a outra.</p>
+      <p class="artHint" id="artHint">O baixo deforma o relevo, a melodia conduz as curvas e a bateria cria acentos.</p>
       <div class="artComplexity" id="artComplexity" hidden>
         <div class="visualSizeHead"><label for="visualComplexity">Complexidade</label><output id="visualComplexityValue" for="visualComplexity">5</output></div>
         <input id="visualComplexity" type="range" min="1" max="10" step="1" value="5">
@@ -338,7 +342,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       </div>
     </div>
     <div class="visualMeta">
-      <span id="visualStatus">Pixel · aguardando dados</span>
+      <span id="visualStatus">Cartografia sonora · aguardando dados</span>
       <span>Story · 1080 × 1920</span>
     </div>
     <div class="visualCanvasWrap">
@@ -350,7 +354,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <span><i class="visualSwatch down" id="legendDown"></i>baixa</span>
     </div>
     <div class="visualComplete" id="visualComplete">
-      <strong>Imagem completa</strong>
+      <strong>Imagem pronta</strong>
       <div class="visualCompleteActions">
         <button class="saveVisual" id="saveVisual" type="button">Salvar PNG</button>
         <button id="newVisual" type="button">Novo desenho</button>
@@ -994,6 +998,10 @@ const DEFAULT_VISUAL_SIZE = 10;
 const VISUAL_STYLE_STORAGE_KEY = "acoes-visual-style";
 const VISUAL_COMPLEXITY_STORAGE_KEY = "acoes-visual-complexity";
 const VISUAL_STYLES = {
+  topography:{label:"Cartografia sonora",hint:"O baixo deforma o relevo, a melodia conduz as curvas e a bateria cria acentos."},
+  flow:{label:"Fluxos de cor",hint:"Faixas de cor se curvam com as notas. Os acordes transformam a paleta aos poucos."},
+  interference:{label:"Interferência",hint:"A melodia dobra as linhas; o baixo e a bateria criam ondas e ritmos ópticos."},
+  architecture:{label:"Arquitetura rítmica",hint:"Grandes formas, repetições e acentos geométricos acompanham as camadas da música."},
   standard:{label:"Padrão",hint:"As figuras preenchem o quadro, uma após a outra."},
   field:{label:"Campo de forças",hint:"Altas atraem, quedas espalham. As figuras deixam correntes e redemoinhos."},
   organism:{label:"Organismo",hint:"Os movimentos do mercado fazem nascer, crescer e desviar ramificações."},
@@ -1138,8 +1146,8 @@ function storedVisualSize(){
 function storedVisualStyle(){
   try{
     const saved = localStorage.getItem(VISUAL_STYLE_STORAGE_KEY);
-    return Object.prototype.hasOwnProperty.call(VISUAL_STYLES,saved) ? saved : "standard";
-  }catch(e){ return "standard"; }
+    return Object.prototype.hasOwnProperty.call(VISUAL_STYLES,saved) ? saved : "topography";
+  }catch(e){ return "topography"; }
 }
 
 function storedVisualComplexity(){
@@ -1179,6 +1187,10 @@ const state = {
   visualComplexity:storedVisualComplexity(),
   visualSeed:Date.now() >>> 0,
   visualArt:null,
+  visualSoundEvents:[],
+  visualFrame:null,
+  visualFrameTimer:null,
+  visualFrameTime:0,
   visualStamp:[],
   visualTiles:[],
   visualEvents:[],
@@ -1294,6 +1306,7 @@ function createVisualArt(style,width,height,size,complexity,seed){
   for(let i=0;i<6;i += 1){
     art.branches.push({x:width*(.2+(i%3)*.3),y:height*(i<3 ? .35 : .7),angle:-Math.PI/2+random()*.8-.4});
   }
+  if(isSonicVisualStyle(style)) initializeSonicVisualArt(art,size);
   return art;
 }
 
@@ -1439,6 +1452,326 @@ function nextVisualArt(art,value){
   return commands;
 }
 
+
+// Complete compositions evolve within bounded parameters, rather than accumulating stamps.
+function isSonicVisualStyle(style){
+  return ["topography","flow","interference","architecture"].indexOf(style) !== -1;
+}
+
+function initializeSonicVisualArt(art,size){
+  art.limit = Infinity;
+  art.size = size;
+  art.sound = {direction:0,pitch:.79,energy:.64,bass:.64,chords:.5,phase:.32+(art.random()-.5)*.4,
+    focalX:.38+(art.random()-.5)*.08,focalY:.35+(art.random()-.5)*.06,rhythm:[1,.18,.42,.25,.86,.2,.52,.28],notes:0};
+  art.surface = null;
+  art.bitmap = null;
+  art.grain = null;
+}
+
+function advanceSonicVisualArt(art,value){
+  const sound = art.sound;
+  if(value.layer){
+    const strength = Math.max(0,Math.min(1,Number(value.volume || 0)/(value.layer === "drums" ? .55 : value.layer === "chords" ? .045 : .14)));
+    if(value.layer === "bass"){
+      sound.bass += (strength-sound.bass)*.09;
+      sound.energy += (strength-sound.energy)*.05;
+    }else if(value.layer === "lead" && Number.isFinite(value.midi)){
+      sound.pitch += (Math.max(.3,Math.min(1,value.midi/84))-sound.pitch)*.075;
+    }else if(value.layer === "chords" && Number.isFinite(value.midi)){
+      sound.chords += ((value.midi%12)/12-sound.chords)*.055;
+    }else if(value.layer === "drums"){
+      const index = sound.notes%8;
+      sound.rhythm[index] += (strength-sound.rhythm[index])*.15;
+    }
+    sound.phase += value.voice === "kick" ? .016 : .002;
+    sound.notes += 1;
+  }else{
+    const event = normalizeVisualEvent(value);
+    const sign = event.direction === "up" ? 1 : event.direction === "down" ? -1 : 0;
+    sound.direction += (sign-sound.direction)*.055;
+    sound.energy += ((.42+event.intensity*.42)-sound.energy)*.05;
+    sound.pitch += ((.67+sign*.12)-sound.pitch)*.035;
+    sound.phase += .006+event.intensity*.005;
+    art.index += 1;
+  }
+  // Wrapping phase keeps every parameter bounded over long sessions.
+  sound.phase %= Math.PI*2;
+}
+
+function sonicVisualPalette(){
+  const palette = {paper:[241,237,223],ink:[23,59,50],moss:[74,101,80],sage:[140,170,139],mist:[197,210,179],
+    copper:[189,105,60],coral:[220,101,72],ochre:[212,160,82],blue:[36,60,101],red:[216,62,41],lime:[183,206,82],optical:[35,44,40]};
+  const parse = color => [1,3,5].map(i => parseInt(color.slice(i,i+2),16));
+  const blend = (a,b,t) => a.map((v,i) => Math.round(v+(b[i]-v)*t));
+  // Keep the curated defaults; customized market colors also tint the new compositions.
+  if(state.visualColors.up !== DEFAULT_VISUAL_COLORS.up){
+    const color = parse(state.visualColors.up);
+    palette.ink = blend(color,palette.optical,.6);
+    palette.moss = blend(color,palette.paper,.25);
+    palette.sage = blend(color,palette.paper,.55);
+    palette.mist = blend(color,palette.paper,.78);
+    palette.blue = blend(color,palette.optical,.4);
+  }
+  if(state.visualColors.flat !== DEFAULT_VISUAL_COLORS.flat){ palette.copper = parse(state.visualColors.flat); palette.ochre = palette.copper; }
+  if(state.visualColors.down !== DEFAULT_VISUAL_COLORS.down){ palette.coral = parse(state.visualColors.down); palette.red = palette.coral; }
+  return palette;
+}
+
+function requestSonicVisualFrame(immediate){
+  if(!marketCanvas || !isSonicVisualStyle(state.visualStyle) || !state.visualArt || document.hidden) return;
+  if(immediate){
+    if(state.visualFrame != null) cancelAnimationFrame(state.visualFrame);
+    clearTimeout(state.visualFrameTimer);
+    state.visualFrame = null; state.visualFrameTimer = null;
+    renderSonicVisualFrame();
+    return;
+  }
+  if(state.visualFrame != null || state.visualFrameTimer != null) return;
+  const delay = Math.max(0,280-(performance.now()-state.visualFrameTime));
+  state.visualFrameTimer = setTimeout(function(){
+    state.visualFrameTimer = null;
+    state.visualFrame = requestAnimationFrame(function(){ state.visualFrame = null; renderSonicVisualFrame(); });
+  },delay);
+}
+
+function renderSonicVisualFrame(){
+  if(!isSonicVisualStyle(state.visualStyle) || !state.visualArt) return;
+  const art = state.visualArt;
+  if(!art.surface){
+    art.surface = document.createElement("canvas");
+    art.surface.width = 300; art.surface.height = 534;
+  }
+  drawSonicComposition(art.surface,art,sonicVisualPalette());
+  const ctx = marketCanvas.getContext("2d");
+  ctx.drawImage(art.surface,0,0,marketCanvas.width,marketCanvas.height);
+  state.visualHasPainted = true;
+  if(visualComplete) visualComplete.classList.add("show");
+  state.visualFrameTime = performance.now();
+}
+
+function applySonicVisualNotes(notes){
+  if(!isSonicVisualStyle(state.visualStyle) || !state.visualArt || !notes.length) return;
+  notes.forEach(function(note){
+    const event = {layer:note.layer,voice:note.voice,midi:note.midi,volume:note.volume};
+    advanceSonicVisualArt(state.visualArt,event);
+    state.visualSoundEvents.push(event);
+  });
+  if(state.visualSoundEvents.length > 1024) state.visualSoundEvents.splice(0,state.visualSoundEvents.length-1024);
+  state.visualHasPainted = true;
+  requestSonicVisualFrame();
+}
+
+function drawSonicComposition(canvas,art,colors){
+  const ctx = canvas.getContext("2d"), W = 600, H = 1068, TAU = Math.PI*2;
+  const sound = art.sound;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  const css = color => `rgb(${color.join(',')})`;
+  function random(seed) {
+    return () => {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function backdrop(ctx, colors) {
+    ctx.fillStyle = css(colors.paper);
+    ctx.fillRect(0, 0, W, H);
+  }
+  function grain(ctx, colors, seed, amount = 0.075) {
+    const paletteKey = JSON.stringify([colors.paper,colors.ink]);
+    if(art.grain && art.grainKey === paletteKey){ ctx.drawImage(art.grain,0,0,W,H); return; }
+    art.grain = document.createElement("canvas"); art.grain.width = canvas.width; art.grain.height = canvas.height;
+    art.grainKey = paletteKey;
+    const target = ctx;
+    ctx = art.grain.getContext("2d"); ctx.scale(canvas.width/W,canvas.height/H);
+    const rng = random(seed);
+    ctx.save(); ctx.globalAlpha = amount;
+    for (let i = 0; i < 14000; i++) {
+      ctx.fillStyle = i % 3 ? css(colors.ink) : css(colors.paper);
+      const size = 0.45 + rng() * 0.6;
+      ctx.fillRect(rng() * W, rng() * H, size, size);
+    }
+    ctx.restore();
+    target.drawImage(art.grain,0,0,W,H);
+  }
+  function contourColor(t, colors) {
+    const stops = [
+      [0, colors.paper], [0.19, colors.mist], [0.34, colors.sage],
+      [0.49, colors.moss], [0.61, colors.ink], [0.72, colors.moss],
+      [0.86, colors.mist], [1, colors.paper]
+    ];
+    for (let i = 1; i < stops.length; i++) {
+      if (t <= stops[i][0]) {
+        return mix(stops[i - 1][1], stops[i][1], (t - stops[i - 1][0]) / (stops[i][0] - stops[i - 1][0]));
+      }
+    }
+    return colors.paper;
+  }
+  function topography(ctx, colors, sound) {
+    const bw = Math.min(canvas.width,600), bh = Math.round(bw*H/W);
+    const nx = 61, ny = 108;
+    const cellW = W/(nx-1), cellH = H/(ny-1);
+    const field = new Float32Array(nx * ny);
+    let minimum = Infinity, maximum = -Infinity;
+    for (let y = 0; y < ny; y++) for (let x = 0; x < nx; x++) {
+      const u = x / (nx - 1), v = y / (ny - 1);
+      const ax = u - sound.focalX, ay = v - (sound.focalY+(1-sound.direction)*.10);
+      const bx = u - 0.72, by = v - 0.81;
+      const peak = (.35+sound.bass*.17) * Math.exp(-(ax * ax / 0.085 + ay * ay / 0.070));
+      const valley = 0.35 * Math.exp(-(bx * bx / 0.045 + by * by / 0.12));
+      const value = v * 0.54 + u * 0.055 * sound.direction + peak - valley
+        + 0.031 * Math.sin(u * 10 + v * 8 + sound.phase)
+        + 0.012 * Math.sin(u * 21 - v * 13 + sound.pitch * 3);
+      field[y * nx + x] = value;
+      minimum = Math.min(minimum, value); maximum = Math.max(maximum, value);
+    }
+    const range = maximum - minimum;
+    const levels = Math.round((22+art.c*20)*Math.max(.7,Math.min(1.25,10/art.size)));
+    const colorsByBand = Array.from({length: levels + 1}, (_, i) => contourColor(i / levels, colors));
+    const bitmap = ctx.createImageData(bw, bh);
+    for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) {
+      const gx = x / bw*(nx-1), gy = y / bh*(ny-1), ix = gx|0, iy = gy|0;
+      const tx = gx - ix, ty = gy - iy;
+      const a = field[iy * nx + ix], b = field[iy * nx + ix + 1];
+      const d = field[(iy + 1) * nx + ix], c = field[(iy + 1) * nx + ix + 1];
+      const value = (a + (b - a) * tx) * (1 - ty) + (d + (c - d) * tx) * ty;
+      const t = (value-minimum)/range;
+      const color = colorsByBand[(t*levels)|0];
+      const offset = (y * bw + x) * 4;
+      bitmap.data[offset] = color[0]; bitmap.data[offset + 1] = color[1]; bitmap.data[offset + 2] = color[2]; bitmap.data[offset + 3] = 255;
+    }
+    if(!art.bitmap) art.bitmap = document.createElement("canvas");
+    if(art.bitmap.width !== bw || art.bitmap.height !== bh){ art.bitmap.width = bw; art.bitmap.height = bh; }
+    art.bitmap.getContext("2d").putImageData(bitmap,0,0);
+    ctx.drawImage(art.bitmap,0,0,W,H);
+    for (let level = 1; level < levels; level++) {
+      const threshold = minimum + range * level / levels;
+      const fill = colorsByBand[level];
+      const brightness = fill[0] * 0.2126 + fill[1] * 0.7152 + fill[2] * 0.0722;
+      ctx.strokeStyle = css(brightness < 118 ? mix(colors.paper, colors.ink, 0.1) : colors.ink);
+      ctx.globalAlpha = level % 5 === 0 ? 0.56 : 0.34;
+      ctx.lineWidth = level % 5 === 0 ? 1.15 : 0.65;
+      ctx.beginPath();
+      for (let y = 0; y < ny - 1; y++) for (let x = 0; x < nx - 1; x++) {
+        const a = field[y*nx+x], b = field[y*nx+x+1], c = field[(y+1)*nx+x+1], d = field[(y+1)*nx+x];
+        const mask = (a<threshold ? 1:0)|(b<threshold ? 2:0)|(c<threshold ? 4:0)|(d<threshold ? 8:0);
+        if(mask === 0 || mask === 15) continue;
+        const values = [a,b,c,d];
+        const points = [[x*cellW,y*cellH],[(x+1)*cellW,y*cellH],[(x+1)*cellW,(y+1)*cellH],[x*cellW,(y+1)*cellH]];
+        const intersections = [];
+        for (let edge = 0; edge < 4; edge++) {
+          const next = (edge + 1) % 4;
+          if ((values[edge] < threshold) !== (values[next] < threshold)) {
+            const t = (threshold - values[edge]) / (values[next] - values[edge]);
+            intersections.push([points[edge][0] + (points[next][0] - points[edge][0]) * t, points[edge][1] + (points[next][1] - points[edge][1]) * t]);
+          }
+        }
+        for (let i = 0; i + 1 < intersections.length; i += 2) {
+          ctx.moveTo(...intersections[i]); ctx.lineTo(...intersections[i + 1]);
+        }
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = css(colors.copper);
+    ctx.beginPath(); ctx.arc(449, H*(.207+.021*sound.direction), 17 + sound.energy * 4, 0, TAU); ctx.fill();
+    grain(ctx, colors, 42, 0.08);
+  }
+  function flow(ctx, colors, sound) {
+    backdrop(ctx, colors);
+    const warm = mix(colors.coral,colors.ochre,sound.chords*.25);
+    const sequence = [colors.paper,colors.blue,colors.paper,warm,colors.ochre,colors.paper,colors.moss,colors.paper,colors.blue,warm,colors.paper,colors.ochre];
+    const boundary = (x, band) => {
+      const u = x / W;
+      return (band-3)*H/16.3*(.8+art.size/50) + (84+sound.bass*38)*(.83+art.c*.36) * Math.sin(u * 3.7 + band * 0.057 + sound.phase)
+        + 38 * Math.sin(u * 7.3 - band * 0.044) + sound.direction * (0.5 - u) * 105;
+    };
+    for (let band = -1; band < Math.ceil(16.3/(.8+art.size/50))+8; band++) {
+      ctx.fillStyle = css(sequence[(band + sequence.length) % sequence.length]);
+      ctx.beginPath(); ctx.moveTo(-10, boundary(-10, band));
+      for (let x = -10; x <= W + 10; x += 4) ctx.lineTo(x, boundary(x, band));
+      for (let x = W + 10; x >= -10; x -= 4) ctx.lineTo(x, boundary(x, band + 1));
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.save();
+    for (const band of [2, 5, 9, 14, 17]) for (let line = 1; line <= 4; line++) {
+      ctx.strokeStyle = css(colors.ink); ctx.globalAlpha = 0.48; ctx.lineWidth = .55+art.c*.4;
+      ctx.beginPath();
+      for (let x = -10; x <= W + 10; x += 3) {
+        const t = line / 5;
+        const y = boundary(x, band) * (1 - t) + boundary(x, band + 1) * t;
+        if (x === -10) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+    grain(ctx, colors, 812, 0.10);
+  }
+  function interference(ctx, colors, sound) {
+    backdrop(ctx, colors);
+    ctx.fillStyle = css(colors.lime);
+    ctx.beginPath(); ctx.arc(403, H*.30, 113+sound.bass*19, 0, TAU); ctx.fill();
+    const spacing = (7.4+(1-sound.direction)*1.3)*Math.max(.65,Math.min(1.6,art.size/10))*(1.15-sound.pitch*.19);
+    const pathX = (origin, y) => {
+      const dx = (origin - 270) / 165, dy = (y - H*.63) / (H*.30);
+      const influence = Math.exp(-0.65 * (dx * dx + dy * dy));
+      const ripple = Math.sin(y / 87 + origin / 135 + sound.phase);
+      return origin + (85+art.c*60)*influence*ripple*sound.energy + 27 * Math.sin(y / 215 + sound.phase) * sound.direction;
+    };
+    ctx.strokeStyle = css(colors.optical);
+    ctx.lineWidth = spacing * 0.43; ctx.lineCap = 'round';
+    for (let origin = -65; origin < W + 65; origin += spacing) {
+      ctx.beginPath();
+      for (let y = -10; y <= H + 10; y += 3) {
+        const x = pathX(origin, y);
+        if (y === -10) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    grain(ctx, colors, 735, 0.045);
+  }
+  function architecture(ctx, colors, sound) {
+    backdrop(ctx, colors);
+    const sign = sound.direction;
+    const radius = 136+(art.size-10)*.75+sound.bass*20;
+    ctx.fillStyle = css(colors.red);
+    ctx.fillRect(74,0,107,H*.67);
+    ctx.fillStyle = css(colors.optical);
+    ctx.fillRect(74,H*.66,350,56);
+    ctx.fillStyle = css(colors.red);
+    ctx.beginPath(); ctx.arc(405, H*(.32-sign*.045), radius, 0, TAU); ctx.fill();
+    ctx.fillStyle = css(colors.paper);
+    ctx.beginPath(); ctx.arc(405, H*(.32-sign*.045), radius*.70, Math.PI * 0.5, Math.PI * 1.5); ctx.closePath(); ctx.fill();
+    ctx.save(); ctx.translate(385,H*.505); ctx.rotate(sign * -0.39);
+    ctx.fillStyle = css(colors.optical);
+    ctx.fillRect(-157, -28, 310, 56);
+    ctx.fillStyle = css(colors.paper);
+    for (let i = 0; i < 9; i++) ctx.fillRect(-145 + i * 33, -28, 11, 56);
+    ctx.restore();
+    ctx.fillStyle = css(colors.optical);
+    for (let row = 0; row < Math.round(4+art.c*9); row++) for (let col = 0; col < 11; col++) {
+      const x = 275 + col * 17, y = H*.768 + row*17;
+      if ((x - 352) ** 2 + (y - (H*.768+66)) ** 2 < 78 ** 2) {
+        ctx.beginPath(); ctx.arc(x, y, 2.8 + sound.rhythm[row%8] * 1.2, 0, TAU); ctx.fill();
+      }
+    }
+    ctx.fillStyle = css(colors.red);
+    for (let i = 0; i < 5; i++) ctx.fillRect(75 + i * 30, H*.866-sign*i*21, 22, 22);
+    ctx.strokeStyle = css(colors.optical); ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(245, 53); ctx.lineTo(535, 53); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(245, 63); ctx.lineTo(390, 63); ctx.stroke();
+    grain(ctx, colors, 948, 0.095);
+  }
+
+  const painters = {topography,flow,interference,architecture};
+  ctx.save(); ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.scale(canvas.width/W,canvas.height/H);
+  painters[art.style](ctx,colors,sound);
+  ctx.restore();
+}
+
 function buildVisualTiles(shape,width,height,size=DEFAULT_VISUAL_SIZE){
   const tiles = [];
   const scale = size / DEFAULT_VISUAL_SIZE;
@@ -1574,16 +1907,29 @@ function resetVisualCanvas(){
     state.visualStamp = tile.points.map(function(p){ return [(p[0]-tile.x)/unit,(p[1]-tile.y)/unit]; });
   }
   state.visualEvents = [];
+  state.visualSoundEvents = [];
   state.visualIndex = 0;
   state.visualHasPainted = false;
   state.visualComplete = false;
   if(visualComplete) visualComplete.classList.remove("show");
+  if(isSonicVisualStyle(state.visualStyle)) requestSonicVisualFrame(true);
 }
 
 function repaintVisualCanvas(){
   const events = state.visualEvents.slice();
+  const notes = state.visualSoundEvents.slice();
+  const sound = state.visualArt && state.visualArt.sound ? JSON.parse(JSON.stringify(state.visualArt.sound)) : null;
   resetVisualCanvas();
-  events.slice(0,visualTotal()).forEach(paintVisualDirection);
+  if(isSonicVisualStyle(state.visualStyle) && sound){
+    state.visualArt.sound = sound;
+    state.visualArt.index = events.length;
+    state.visualIndex = events.length;
+  }else events.slice(0,visualTotal()).forEach(paintVisualDirection);
+  if(isSonicVisualStyle(state.visualStyle)){
+    if(!sound) notes.forEach(function(note){ advanceSonicVisualArt(state.visualArt,note); });
+    requestSonicVisualFrame(true);
+  }
+  state.visualSoundEvents = notes;
   // Keep the remaining history so shrinking the pieces can reveal it again.
   state.visualEvents = events;
 }
@@ -1593,11 +1939,11 @@ function visualTotal(){
 }
 
 function visualLabel(){
-  return VISUAL_STYLES[state.visualStyle].label+" · "+VISUAL_SHAPES[state.visualShape];
+  return VISUAL_STYLES[state.visualStyle].label+(isSonicVisualStyle(state.visualStyle) ? "" : " · "+VISUAL_SHAPES[state.visualShape]);
 }
 
 function syncVisualDescription(){
-  marketCanvas.setAttribute("aria-label",VISUAL_STYLES[state.visualStyle].label+" com "+VISUAL_SHAPES[state.visualShape].toLowerCase()+" em formato vertical 9 por 16, pronto para Story ou fundo de tela");
+  marketCanvas.setAttribute("aria-label",visualLabel()+" em formato vertical 9 por 16, pronto para Story ou fundo de tela");
 }
 
 function bindVisualStyles(){
@@ -1613,6 +1959,8 @@ function bindVisualStyles(){
     });
     document.getElementById("artHint").textContent = VISUAL_STYLES[state.visualStyle].hint;
     document.getElementById("artComplexity").hidden = state.visualStyle === "standard";
+    const legend = document.querySelector(".visualLegend");
+    if(legend) legend.style.display = isSonicVisualStyle(state.visualStyle) ? "none" : "";
     syncVisualDescription();
   }
   buttons.forEach(function(button){
@@ -1867,6 +2215,7 @@ function visualPngBlob(){
 
 async function saveVisualPng(){
   if(!marketCanvas) return;
+  if(isSonicVisualStyle(state.visualStyle)) requestSonicVisualFrame(true);
   const saveButton = document.getElementById("saveVisual");
   const originalLabel = saveButton ? saveButton.textContent : "Salvar PNG";
   if(saveButton){
@@ -1875,6 +2224,7 @@ async function saveVisualPng(){
   }
 
   try{
+    if(isSonicVisualStyle(state.visualStyle)) drawSonicComposition(marketCanvas,state.visualArt,sonicVisualPalette());
     const blob = await visualPngBlob();
     const stamp = new Date().toISOString().replace(/[:.]/g,"-");
     const filename = "radji-mercado-story-" + stamp + ".png";
@@ -1973,6 +2323,15 @@ function paintVisualDirection(value){
   const event = normalizeVisualEvent(value);
   const direction = event.direction;
   const ctx = marketCanvas.getContext("2d");
+  if(isSonicVisualStyle(state.visualStyle)){
+    advanceSonicVisualArt(state.visualArt,event);
+    state.visualEvents.push(event);
+    if(state.visualEvents.length > 3000) state.visualEvents.shift();
+    state.visualIndex += 1;
+    state.visualHasPainted = true;
+    requestSonicVisualFrame();
+    return;
+  }
   const total = visualTotal();
   const index = state.visualIndex;
   const tile = state.visualTiles[index];
@@ -2999,9 +3358,11 @@ function scheduleHouseMusic(){
     runtime.step += missed;
     runtime.nextTime += missed*stepDuration;
     runtime.beats = [];
+    runtime.visualNotes = [];
   }
   const profile = houseMarketProfile();
-  while(runtime.nextTime < now+.1){
+  const lookAhead = isSonicVisualStyle(state.visualStyle) ? .22 : .1;
+  while(runtime.nextTime < now+lookAhead){
     if(runtime.response && runtime.step >= runtime.response.endStep) runtime.response = null;
     let movement = null;
     if(runtime.step%4 === 0 && !runtime.response){
@@ -3016,7 +3377,11 @@ function scheduleHouseMusic(){
       notes = notes.filter(function(note){ return note.layer !== "lead" && note.layer !== "bass"; }).concat(houseResponseNotes(runtime.step,response,state.houseTempo,runtime.genre));
     }
     notes.forEach(function(note){
-      playHouseNote(runtime,note,runtime.nextTime+(note.offset || 0));
+      const time = runtime.nextTime+(note.offset || 0);
+      playHouseNote(runtime,note,time);
+      if(state.houseLayers[note.layer] && isSonicVisualStyle(state.visualStyle)){
+        runtime.visualNotes.push({time:time,note:note});
+      }
     });
     if(runtime.step%4 === 0) runtime.beats.push({time:runtime.nextTime,beat:runtime.step%16/4,bar:Math.floor(runtime.step/16)%4,movement:movement});
     runtime.nextTime += stepDuration;
@@ -3028,6 +3393,13 @@ function scheduleHouseMusic(){
     document.querySelectorAll("#houseBeat i").forEach(function(dot,i){ dot.classList.toggle("active",i === beat.beat); });
     if(runtime.bar !== beat.bar){ runtime.bar = beat.bar; updateHouseControls(); }
   }
+  runtime.visualNotes.sort(function(a,b){ return a.time-b.time; });
+  const visualNotes = [];
+  while(runtime.visualNotes.length && runtime.visualNotes[0].time <= now){
+    const entry = runtime.visualNotes.shift();
+    if(state.houseLayers[entry.note.layer]) visualNotes.push(entry.note);
+  }
+  applySonicVisualNotes(visualNotes);
   const level = document.getElementById("houseLevel");
   if(level){
     runtime.analyser.getByteTimeDomainData(runtime.wave);
@@ -3067,7 +3439,7 @@ function startHouseMusic(){
     if(key === "chords" || key === "lead") gain.connect(delay);
     layers[key] = gain;
   });
-  state.houseTransport = {genre:state.soundPreset,mixGain:genre.mix,ctx:ctx,output:output,analyser:analyser,wave:new Uint8Array(256),duck:duck,delay:delay,feedback:feedback,layers:layers,graph:[output,analyser,duck,delay,feedback,wet].concat(Object.values(layers)),sources:new Set(),nextTime:ctx.currentTime+.035,step:0,bar:0,beats:[],pendingMovements:[],response:null,lastMovement:null,timer:null};
+  state.houseTransport = {genre:state.soundPreset,mixGain:genre.mix,ctx:ctx,output:output,analyser:analyser,wave:new Uint8Array(256),duck:duck,delay:delay,feedback:feedback,layers:layers,graph:[output,analyser,duck,delay,feedback,wet].concat(Object.values(layers)),sources:new Set(),nextTime:ctx.currentTime+.035,step:0,bar:0,beats:[],visualNotes:[],pendingMovements:[],response:null,lastMovement:null,timer:null};
   scheduleHouseMusic();
   state.houseTransport.timer = setInterval(scheduleHouseMusic,25);
   updateHouseControls();
@@ -3352,7 +3724,8 @@ function render(){
     const total = visualTotal();
     const label = visualLabel();
     visualStatus.textContent = selectedKeys.length
-      ? label+" · "+Math.min(state.visualIndex,total)+"/"+total+(state.visualComplete ? " · imagem completa" : " · "+stocks.length+" eventos em 10s")
+      ? isSonicVisualStyle(state.visualStyle) ? label+" · imagem em evolução"
+        : label+" · "+Math.min(state.visualIndex,total)+"/"+total+(state.visualComplete ? " · imagem completa" : " · "+stocks.length+" eventos em 10s")
       : label+" · escolha um ou mais mercados";
   }
   if(marketTabs) marketTabs.style.display = "grid";

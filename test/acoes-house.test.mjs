@@ -10,6 +10,7 @@ const preferences = section('function normalizedHouseTempo(', 'function storedVi
 const engine = section('function houseStocks(', 'function playMoveSound(');
 const lifecycle = section('function playMoveSound(', 'function money(');
 const normalizer = section('function normalizeVisualEvent(', 'function createVisualArt(');
+const visualNotes = section('function isSonicVisualStyle(', 'function drawSonicComposition(');
 const noise = section('function getSambaNoiseBuffer(', 'function playSambaSound(');
 
 function runtime() {
@@ -68,7 +69,7 @@ function runtime() {
     playClassicSound() { r.classicCalls++; }, classicCalls: 0
   };
   vm.createContext(r);
-  vm.runInContext(`${constants} ${preferences} ${normalizer} ${noise} ${engine} ${lifecycle}`, r);
+  vm.runInContext(`${constants} ${preferences} ${normalizer} ${visualNotes} ${noise} ${engine} ${lifecycle}`, r);
   const sources = () => nodes.filter(n => n.kind === 'oscillator' || n.kind === 'noise');
   function advance(time) {
     ctx.currentTime = time;
@@ -78,6 +79,34 @@ function runtime() {
   }
   return { r, ctx, nodes, intervals, timeouts, saved, sources, advance };
 }
+
+test('sonic artwork receives audible notes at playback time and ignores muted layers',()=>{
+  for(const genre of ['house','techno','hardtechno','drumandbass']){
+    const {r,ctx,advance} = runtime();
+    r.state.soundPreset = genre;
+    r.state.visualStyle = 'topography';
+    r.state.visualArt = {random:()=>.5,index:0};
+    r.initializeSonicVisualArt(r.state.visualArt,10);
+    r.state.visualSoundEvents = [];
+    let renders = 0;
+    r.requestSonicVisualFrame = ()=>{ renders++; };
+    r.state.houseLayers = {drums:true,bass:false,chords:false,lead:false};
+    const originalPitch = r.state.visualArt.sound.pitch;
+    const originalBass = r.state.visualArt.sound.bass;
+    r.startHouseMusic();
+    assert.equal(r.state.visualArt.sound.notes,0,'look-ahead scheduling must not advance the image early');
+    advance(.05); r.scheduleHouseMusic();
+    assert.ok(r.state.visualArt.sound.notes>0);
+    assert.ok(renders>0);
+    assert.ok(r.state.visualSoundEvents.every(event=>event.layer==='drums'));
+    assert.equal(r.state.visualArt.sound.pitch,originalPitch);
+    assert.equal(r.state.visualArt.sound.bass,originalBass);
+    const count = r.state.visualArt.sound.notes;
+    r.toggleHouseLayer('drums');
+    advance(.45); r.scheduleHouseMusic();
+    assert.equal(r.state.visualArt.sound.notes,count);
+  }
+});
 
 test('four-on-the-floor beat and backbeat share one clock at every supported tempo', () => {
   const { r } = runtime();
