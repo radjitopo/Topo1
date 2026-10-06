@@ -44,6 +44,7 @@ function runtime() {
   ctx.createOscillator = () => node('oscillator');
   ctx.createBufferSource = () => node('noise');
   ctx.createBiquadFilter = () => node('filter');
+  ctx.createWaveShaper = () => node('shaper');
   ctx.createDelay = () => node('delay');
   ctx.createBuffer = (channels, length, sampleRate) => ({ sampleRate, getChannelData: () => new Float32Array(length) });
   const output = node('master');
@@ -59,7 +60,7 @@ function runtime() {
     visualIntensity: () => .18,
     setupAudioOutput: () => output,
     unlockAudio: () => true, render() {}, showToast() {}, clearVisualTimers() {}, paintVisualStock() {},
-    soundSpacingMs: () => 10000, SOUND_CYCLE_MS: 10000, SOUND_STORAGE_KEY: 'sound', SOUND_PRESETS: { house: {}, classic: {} },
+    soundSpacingMs: () => 10000, SOUND_CYCLE_MS: 10000, SOUND_STORAGE_KEY: 'sound', SOUND_PRESETS: { house: {}, techno: {}, hardtechno: {}, drumandbass: {}, classic: {} },
     setInterval: (fn, ms) => { const id = nextTimer++; intervals.set(id, { fn, ms }); return id; },
     clearInterval: id => intervals.delete(id),
     setTimeout: (fn, ms) => { const id = nextTimer++; timeouts.set(id, { fn, ms }); return id; },
@@ -294,4 +295,115 @@ test('tempo and selected layers survive reload, sanitize saved values and do not
   r.state.audioReady = false;
   r.startHouseMusic();
   assert.equal(r.state.houseTransport, null);
+});
+
+const genres = ['house', 'techno', 'hardtechno', 'drumandbass'];
+const defaults = { house: 124, techno: 134, hardtechno: 155, drumandbass: 172 };
+
+test('four genres have distinct rhythms and instruments, including a broken Drum & Bass beat', () => {
+  const { r } = runtime();
+  const signatures = new Set();
+  for (const genre of genres) {
+    const bars = Array.from({ length: 64 }, (_, step) => r.houseStepNotes(step, { balance: 0, energy: .18, motif: 0 }, defaults[genre], genre));
+    signatures.add(JSON.stringify(bars.map(notes => notes.map(({ voice, midi, waveform, drive }) => ({ voice, midi, waveform, drive })))));
+    assert.deepEqual([...new Set(bars.flat().map(n => n.layer))].sort(), ['bass', 'chords', 'drums', 'lead']);
+    const kicks = bars.slice(0, 16).flatMap((notes, phase) => notes.some(n => n.voice === 'kick') ? [phase] : []);
+    assert.deepEqual(kicks, genre === 'drumandbass' ? [0, 6, 10] : [0, 4, 8, 12]);
+    if (genre === 'drumandbass') {
+      assert.deepEqual(bars.slice(16, 32).flatMap((notes, phase) => notes.some(n => n.voice === 'kick') ? [phase] : []), [0, 3, 10, 14]);
+      assert.deepEqual(bars.slice(0, 16).flatMap((notes, phase) => notes.some(n => n.voice === 'snare') ? [phase] : []), [4, 12]);
+    }
+    assert.equal(bars.flat().some(n => n.drive > 0), genre === 'hardtechno');
+    for (const note of bars.flat()) assert.ok(note.duration > 0 && note.volume > 0 && note.volume < 1);
+  }
+  assert.equal(signatures.size, 4, 'genre changes must change patterns and timbres, not just speed');
+});
+
+test('small rises and falls remain clearly separated in every genre and at its tempo limits', () => {
+  const { r } = runtime();
+  for (const genre of genres) for (const tempo of [r.normalizedHouseTempo(0, genre), r.normalizedHouseTempo(999, genre)]) for (let bar = 0; bar < 4; bar++) {
+    const phrase = direction => Array.from({ length: 4 }, (_, phase) => r.houseResponseNotes(bar * 16 + phase, { direction, intensity: .12 }, tempo, genre)).flat().filter(n => n.layer === 'lead');
+    const up = phrase('up');
+    const down = phrase('down');
+    assert.ok(up.every((n, i) => i === 0 || n.midi > up[i - 1].midi));
+    assert.ok(down.every((n, i) => i === 0 || n.midi < down[i - 1].midi));
+    assert.ok(Math.min(...up.map(n => n.midi)) >= Math.max(...down.map(n => n.midi)) + 5);
+    assert.ok(up.every(n => n.volume > .11 && n.cutoff > down[0].cutoff * 4));
+    assert.notEqual(up[0].waveform, down[0].waveform);
+  }
+});
+
+test('switching genres preserves separate tempos, migrates House settings and keeps the selected mix', () => {
+  const { r, saved, intervals } = runtime();
+  saved.set('acoes-house-settings', '{"tempo":132,"layers":{"lead":false}}');
+  assert.equal(r.storedHouseSettings().tempo, 132);
+  assert.equal(r.storedHouseSettings('hardtechno').tempo, 155);
+  r.state.houseTempo = 132;
+  r.state.houseLayers.lead = false;
+  const tempos = { house: 132, techno: 145, hardtechno: 170, drumandbass: 184 };
+  for (const genre of genres) {
+    r.selectSoundPreset(genre);
+    assert.equal(r.state.houseTempo, genre === 'house' ? 132 : defaults[genre]);
+    r.setHouseTempo(tempos[genre]);
+    assert.equal(r.state.houseTransport.genre, genre);
+    assert.equal([...intervals.values()].filter(timer => timer.ms === 25).length, 1);
+  }
+  for (const genre of genres) {
+    r.selectSoundPreset(genre);
+    assert.equal(r.state.houseTempo, tempos[genre]);
+    assert.equal(r.storedHouseSettings(genre).tempo, tempos[genre]);
+    assert.equal(r.storedHouseSettings(genre).layers.lead, false);
+  }
+  const restored = JSON.parse(saved.get('acoes-house-settings'));
+  assert.deepEqual(restored.tempos, tempos);
+  saved.set('acoes-house-settings', '{"tempos":{"techno":999,"hardtechno":-5,"drumandbass":"bad"}}');
+  assert.equal(r.storedHouseSettings('techno').tempo, 160);
+  assert.equal(r.storedHouseSettings('hardtechno').tempo, 130);
+  assert.equal(r.storedHouseSettings('drumandbass').tempo, 172);
+});
+
+test('every genre produces audio, supports comparisons and releases notes, distortion and effects when stopped', () => {
+  for (const genre of genres) {
+    const { r, advance, intervals, timeouts, sources, nodes } = runtime();
+    r.selectSoundPreset(genre);
+    const transport = r.state.houseTransport;
+    r.previewHouseMovement('down');
+    for (let i = 1; i <= 240; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+    assert.ok(sources().length > 50);
+    assert.equal(transport.lastMovement.direction, 'down');
+    assert.equal(transport.lastMovement.example, true);
+    assert.ok(transport.sources.size < 30, `${genre} must release completed voices`);
+    assert.equal(nodes.some(node => node.kind === 'shaper'), genre === 'hardtechno');
+    for (const node of nodes.filter(node => node.kind === 'shaper')) {
+      assert.equal(node.oversample, '2x');
+      assert.ok(node.curve.every(value => Number.isFinite(value) && Math.abs(value) <= 1));
+      assert.ok(Math.abs(node.curve[511] + node.curve[512]) < .000001);
+    }
+    r.toggleHousePlayback();
+    assert.equal(r.state.houseTransport, null);
+    assert.equal([...intervals.values()].filter(timer => timer.ms === 25).length, 0);
+    advance(6.05);
+    assert.equal(transport.sources.size, 0);
+    assert.ok(nodes.filter(node => node.kind === 'shaper').every(node => node.disconnected));
+    for (const timer of timeouts.values()) if (timer.ms === 40) timer.fn();
+    assert.ok(transport.graph.every(node => node.disconnected));
+  }
+});
+
+test('mixing and delayed clocks work in every genre, including the fastest supported tempo', () => {
+  for (const genre of genres) {
+    const { r, advance, sources } = runtime();
+    r.selectSoundPreset(genre);
+    r.setHouseTempo(999);
+    for (const layer of ['drums', 'bass', 'chords', 'lead']) r.toggleHouseLayer(layer);
+    r.previewHouseMovement('up');
+    const count = sources().length;
+    for (let i = 1; i <= 100; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+    assert.equal(sources().length, count, 'a muted mix must stay silent during comparisons');
+    r.toggleHouseLayer('drums');
+    advance(20);
+    r.scheduleHouseMusic();
+    assert.ok(sources().length - count < 10, 'a delayed clock must skip missed beats');
+    assert.ok(sources().slice(count).every(source => source.starts[0] >= 20));
+  }
 });
