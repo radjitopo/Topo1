@@ -102,6 +102,99 @@ test('rises open the sound and add detail; falls lower the bass; neutral markets
   assert.ok(r.houseProfileFromEvents([{ direction: 'up', intensity: 1 }]).energy > r.houseProfileFromEvents([{ direction: 'up', intensity: .12 }]).energy);
 });
 
+test('even small moves have distinct ascending high and descending low phrases in every chord and tempo', () => {
+  const { r } = runtime();
+  for (const tempo of [90, 124, 140]) for (let bar = 0; bar < 4; bar++) {
+    const phrase = direction => Array.from({ length: 4 }, (_, phase) => r.houseResponseNotes(bar * 16 + phase, { direction, intensity: .12 }, tempo)).flat();
+    const up = phrase('up').filter(n => n.layer === 'lead');
+    const down = phrase('down').filter(n => n.layer === 'lead');
+    assert.ok(up.every((n, i) => i === 0 || n.midi > up[i - 1].midi));
+    assert.ok(down.every((n, i) => i === 0 || n.midi < down[i - 1].midi));
+    assert.ok(Math.min(...up.map(n => n.midi)) >= Math.max(...down.map(n => n.midi)) + 5);
+    assert.ok(up[0].cutoff > down[0].cutoff * 4);
+    assert.ok(up.every(n => n.waveform === 'triangle' && n.volume > .045 * 2.5));
+    assert.ok(down.every(n => n.waveform === 'sawtooth' && n.volume > .045 * 2.5));
+    assert.equal(phrase('up').filter(n => n.layer === 'bass').length, 2);
+    assert.equal(r.houseResponseNotes(bar * 16, { direction: 'flat' }, tempo).length, 0);
+  }
+});
+
+test('one rise or fall among thirty neutral stocks gets a full response instead of disappearing into their average', () => {
+  for (const direction of ['up', 'down']) {
+    const { r, sources, advance, timeouts } = runtime();
+    r.mixedStocks = () => Array.from({ length: 31 }, (_, i) => ({ marketKey: 'tokyo', ticker: `STOCK${i}` }));
+    r.visualIntensity = () => .12;
+    r.state.movements['tokyo:STOCK0'] = direction;
+    assert.ok(Math.abs(r.houseMarketProfile().balance) < .04);
+    r.startHouseMusic();
+    const event = { direction, intensity: .12, key: 'tokyo:STOCK0', ticker: 'STOCK0' };
+    r.scheduleMainSounds();
+    for (const timer of timeouts.values()) timer.fn();
+    assert.equal(r.state.houseTransport.pendingMovements.length, 1);
+    assert.equal(r.state.houseTransport.pendingMovements[0].intensity, .12);
+    for (let i = 1; i <= 38; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+    assert.equal(r.state.houseTransport.lastMovement.direction, direction);
+    assert.equal(r.state.houseTransport.lastMovement.ticker, 'STOCK0');
+    const start = .035 + 60 / 124;
+    const leadTimes = Array.from({ length: 4 }, (_, i) => start + i * 60 / 124 / 4);
+    const tones = leadTimes.map((time, i) => {
+      const source = sources().find(s => s.kind === 'oscillator' && Math.abs(s.starts[0] - time) < .00001 && s.frequency.events[0][1] === 440 * 2 ** ((r.houseResponseNotes(4 + i, event, 124)[0].midi - 69) / 12));
+      assert.ok(source, `missing ${direction} phrase note ${i}`);
+      assert.equal(source.type, direction === 'up' ? 'triangle' : 'sawtooth');
+      return source.frequency.events[0][1];
+    });
+    assert.ok(tones.every((frequency, i) => i === 0 || (direction === 'up' ? frequency > tones[i - 1] : frequency < tones[i - 1])));
+  }
+});
+
+test('adjacent opposite movements keep separate phrases on successive beats', () => {
+  const { r, advance } = runtime();
+  r.startHouseMusic();
+  r.queueHouseMovement({ direction: 'up', ticker: 'UP' });
+  r.queueHouseMovement({ direction: 'down', ticker: 'DOWN' });
+  for (let i = 1; i <= 24; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+  assert.equal(r.state.houseTransport.lastMovement.direction, 'up');
+  for (let i = 25; i <= 44; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+  assert.equal(r.state.houseTransport.lastMovement.direction, 'down');
+});
+
+test('comparison buttons use the same phrases, take priority and leave quotes, movements and drawings untouched', () => {
+  const { r, advance, intervals } = runtime();
+  r.state.quotes['tokyo:ONE'] = { price: 100 };
+  r.state.movements['tokyo:ONE'] = 'flat';
+  const before = JSON.stringify({ quotes: r.state.quotes, movements: r.state.movements });
+  r.previewHouseMovement('up');
+  r.queueHouseMovement({ direction: 'down', ticker: 'REAL' });
+  assert.equal(r.state.houseTransport.pendingMovements.length, 1);
+  assert.equal(r.state.houseTransport.pendingMovements[0].example, true);
+  for (let i = 1; i <= 24; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+  assert.equal(r.state.houseTransport.lastMovement.direction, 'up');
+  assert.equal(r.state.houseTransport.response.endStep, 20);
+  r.previewHouseMovement('down');
+  for (let i = 25; i <= 44; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+  assert.equal(r.state.houseTransport.lastMovement.direction, 'down');
+  assert.equal(r.state.houseTransport.lastMovement.example, true);
+  assert.equal(JSON.stringify({ quotes: r.state.quotes, movements: r.state.movements }), before);
+  assert.equal([...intervals.values()].filter(t => t.ms === 25).length, 1);
+  r.toggleHousePlayback();
+  assert.equal(r.state.houseTransport, null);
+  r.previewHouseMovement('up');
+  assert.equal(r.state.housePaused, false);
+  assert.equal(r.state.houseTransport.pendingMovements[0].direction, 'up');
+});
+
+test('crowded markets cannot build a stale backlog and a fresh comparison survives a delayed clock', () => {
+  const { r, advance } = runtime();
+  r.startHouseMusic();
+  for (let i = 0; i < 100; i++) r.queueHouseMovement({ direction: i % 2 ? 'up' : 'down', ticker: String(i) });
+  assert.equal(r.state.houseTransport.pendingMovements.length, 4);
+  advance(18);
+  r.previewHouseMovement('down');
+  for (let i = 720; i <= 744; i++) { advance(i / 40); r.scheduleHouseMusic(); }
+  assert.equal(r.state.houseTransport.lastMovement.direction, 'down');
+  assert.equal(r.state.houseTransport.lastMovement.example, true);
+});
+
 test('one transport schedules all layers on the audio clock without duplicating loops or quote beeps', () => {
   const { r, intervals, sources, advance } = runtime();
   r.startMainSoundCycle();
@@ -117,6 +210,7 @@ test('one transport schedules all layers on the audio clock without duplicating 
   const count = sources().length;
   r.playMoveSound('up', .2);
   assert.equal(sources().length, count);
+  assert.equal(first.pendingMovements.at(-1).direction, 'up');
 });
 
 test('each layer can be muted immediately and an empty mix schedules no sources', () => {
@@ -127,6 +221,7 @@ test('each layer can be muted immediately and an empty mix schedules no sources'
     assert.equal(r.state.houseLayers[key], false);
     assert.deepEqual([...r.state.houseTransport.layers[key].gain.events.at(-1)], ['target', 0, ctx.currentTime]);
   }
+  r.queueHouseMovement({ direction: 'down' });
   const count = sources().length;
   for (let i = 1; i <= 80; i++) { advance(i / 40); r.scheduleHouseMusic(); }
   assert.equal(sources().length, count);
@@ -139,6 +234,7 @@ test('each layer can be muted immediately and an empty mix schedules no sources'
 test('pause, preset changes and market deselection stop queued notes and disconnect the graph', () => {
   const { r, ctx, intervals, timeouts, advance, sources } = runtime();
   r.startMainSoundCycle();
+  r.queueHouseMovement({ direction: 'up' });
   advance(.3);
   r.scheduleHouseMusic();
   const old = r.state.houseTransport;
