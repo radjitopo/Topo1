@@ -7,7 +7,7 @@ const page = await readFile(new URL('../acoes-nz.html', import.meta.url), 'utf8'
 const section = (start, end) => page.slice(page.indexOf(start), page.indexOf(end));
 const constants = section('const HOUSE_LAYERS =', 'const pathParts =');
 const preferences = section('function normalizedHouseTempo(', 'function storedVisualColors(');
-const engine = section('function houseStocks(', 'function playMoveSound(');
+const engine = section('function marketSoundIntensity(', 'function playMoveSound(');
 const lifecycle = section('function playMoveSound(', 'function money(');
 const normalizer = section('function normalizeVisualEvent(', 'function createVisualArt(');
 const visualNotes = section('function isSonicVisualStyle(', 'function drawSonicComposition(');
