@@ -324,16 +324,13 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
     <div class="artPicker" id="artPicker">
       <strong class="artPickerLabel">Estilo do desenho</strong>
       <div class="artControls" role="group" aria-label="Estilo do desenho">
-        <button class="artOption active" type="button" data-visual-style="topography" aria-pressed="true">Cartografia sonora</button>
-        <button class="artOption" type="button" data-visual-style="flow" aria-pressed="false">Fluxos de cor</button>
-        <button class="artOption" type="button" data-visual-style="interference" aria-pressed="false">Interferência</button>
-        <button class="artOption" type="button" data-visual-style="standard" aria-pressed="false">Padrão</button>
+        <button class="artOption active" type="button" data-visual-style="standard" aria-pressed="true">Padrão</button>
         <button class="artOption" type="button" data-visual-style="field" aria-pressed="false">Campo de forças</button>
         <button class="artOption" type="button" data-visual-style="organism" aria-pressed="false">Organismo</button>
         <button class="artOption" type="button" data-visual-style="engraving" aria-pressed="false">Gravura</button>
         <button class="artOption" type="button" data-visual-style="pollock" aria-pressed="false">Pollock</button>
       </div>
-      <p class="artHint" id="artHint">O baixo deforma o relevo, a melodia conduz as curvas e a bateria cria acentos.</p>
+      <p class="artHint" id="artHint">As figuras preenchem o quadro, uma após a outra.</p>
       <div class="artComplexity" id="artComplexity" hidden>
         <div class="visualSizeHead"><label for="visualComplexity">Complexidade</label><output id="visualComplexityValue" for="visualComplexity">5</output></div>
         <input id="visualComplexity" type="range" min="1" max="10" step="1" value="5">
@@ -341,7 +338,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       </div>
     </div>
     <div class="visualMeta">
-      <span id="visualStatus">Cartografia sonora · aguardando dados</span>
+      <span id="visualStatus">Padrão · aguardando dados</span>
       <span>Story · 1080 × 1920</span>
     </div>
     <div class="visualCanvasWrap">
@@ -997,9 +994,6 @@ const DEFAULT_VISUAL_SIZE = 10;
 const VISUAL_STYLE_STORAGE_KEY = "acoes-visual-style";
 const VISUAL_COMPLEXITY_STORAGE_KEY = "acoes-visual-complexity";
 const VISUAL_STYLES = {
-  topography:{label:"Cartografia sonora",hint:"O baixo deforma o relevo, a melodia conduz as curvas e a bateria cria acentos."},
-  flow:{label:"Fluxos de cor",hint:"Faixas de cor se curvam com as notas. Os acordes transformam a paleta aos poucos."},
-  interference:{label:"Interferência",hint:"A melodia dobra as linhas; o baixo e a bateria criam ondas e ritmos ópticos."},
   standard:{label:"Padrão",hint:"As figuras preenchem o quadro, uma após a outra."},
   field:{label:"Campo de forças",hint:"Altas atraem, quedas espalham. As figuras deixam correntes e redemoinhos."},
   organism:{label:"Organismo",hint:"Os movimentos do mercado fazem nascer, crescer e desviar ramificações."},
@@ -1144,8 +1138,8 @@ function storedVisualSize(){
 function storedVisualStyle(){
   try{
     const saved = localStorage.getItem(VISUAL_STYLE_STORAGE_KEY);
-    return Object.prototype.hasOwnProperty.call(VISUAL_STYLES,saved) ? saved : "topography";
-  }catch(e){ return "topography"; }
+    return Object.prototype.hasOwnProperty.call(VISUAL_STYLES,saved) ? saved : "standard";
+  }catch(e){ return "standard"; }
 }
 
 function storedVisualComplexity(){
