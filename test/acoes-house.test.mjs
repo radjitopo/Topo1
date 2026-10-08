@@ -436,3 +436,83 @@ test('mixing and delayed clocks work in every genre, including the fastest suppo
     assert.ok(sources().slice(count).every(source => source.starts[0] >= 20));
   }
 });
+
+
+test('market influence defaults to 80%, stays between 0–100 and persists across electronic genres', () => {
+  const { r, saved } = runtime();
+  assert.match(page, /id="houseInfluence"[^>]*min="0" max="100" step="5" value="80"/);
+  assert.equal(r.storedHouseSettings().influence, 80);
+  assert.equal(r.normalizedHouseInfluence(-100), 0);
+  assert.equal(r.normalizedHouseInfluence(999), 100);
+  assert.equal(r.normalizedHouseInfluence('invalid'), 80);
+  r.setHouseInfluence(35);
+  assert.equal(r.state.houseInfluence, 35);
+  assert.equal(JSON.parse(saved.get('acoes-house-settings')).influence, 35);
+  for (const genre of genres) assert.equal(r.storedHouseSettings(genre).influence, 35);
+  r.setHouseInfluence(0);
+  assert.equal(r.storedHouseSettings().influence, 0);
+  r.setHouseInfluence(80);
+  assert.equal(r.storedHouseSettings().influence, 80);
+});
+
+test('all electronic genres emphasize direction, strength and high market influence', () => {
+  const { r } = runtime();
+  for (const genre of genres) for (const direction of ['up', 'down']) {
+    const phrase = (strength, influence) => Array.from({length:4},(_,i)=>
+      r.houseResponseNotes(i,{direction,intensity:strength},defaults[genre],genre,influence)
+    ).flat();
+    const soft = phrase(.12,80).filter(n=>n.layer==='lead');
+    const strong = phrase(1,80).filter(n=>n.layer==='lead');
+    assert.ok(soft.length===4 && strong.length===4);
+    assert.ok(soft.every(n=>n.market && n.volume>.11));
+    assert.ok(strong.every(n=>n.volume>soft[0].volume));
+    assert.ok(Math.abs(strong[3].midi-strong[0].midi)>Math.abs(soft[3].midi-soft[0].midi));
+    assert.ok(soft.every((n,i)=>i===0 || (direction==='up' ? n.midi>soft[i-1].midi : n.midi<soft[i-1].midi)));
+    assert.ok(phrase(.8,100)[0].volume>phrase(.8,20)[0].volume);
+    assert.equal(phrase(.8,0).length,0,'0% must not play extra market phrases');
+    const quiet=phrase(.8,20)[0].volume;
+    assert.ok(quiet<phrase(.8,80)[0].volume*.55,'20% is intentionally more subtle');
+  }
+});
+
+test('small real price changes are amplified only for the electronic sound, without inventing market direction', () => {
+  const { r } = runtime();
+  const stock={marketKey:'tokyo',ticker:'ONE'};
+  assert.equal(r.marketSoundIntensity(stock), .18);
+  r.state.previous['tokyo:ONE']=100;
+  r.state.quotes['tokyo:ONE']={ok:true,price:100.1};
+  assert.ok(r.marketSoundIntensity(stock)>.4);
+  r.state.quotes['tokyo:ONE'].price=100.0001;
+  assert.ok(r.marketSoundIntensity(stock)>=.12);
+  r.state.quotes['tokyo:ONE'].price=101;
+  assert.equal(r.marketSoundIntensity(stock),1);
+});
+
+test('market events duck backing music and play on a dedicated bus', () => {
+  const { r, advance } = runtime();
+  r.state.houseInfluence=80;
+  r.startHouseMusic();
+  const transport=r.state.houseTransport;
+  assert.ok(transport.marketBus.connections.includes(transport.output));
+  assert.ok(transport.bed.connections.includes(transport.output));
+  assert.ok(transport.marketLayers.lead.connections.includes(transport.marketBus));
+  assert.ok(transport.duck.connections.includes(transport.bed));
+  r.queueHouseMovement({direction:'up',intensity:.7});
+  for(let i=1;i<=27;i++){advance(i/40);r.scheduleHouseMusic();}
+  assert.equal(transport.lastMovement.direction,'up');
+  assert.ok(transport.bed.gain.events.some(e=>e[0]==='linear' && e[1]<.5));
+  assert.ok(transport.bed.gain.events.some(e=>e[0]==='linear' && e[1]===1));
+  r.toggleHouseLayer('lead');
+  assert.equal(transport.marketLayers.lead.gain.events.at(-1)[1],0);
+});
+
+test('0% influence keeps the original electronic rhythm without adding melodic market events', () => {
+  const { r, sources, advance }=runtime();
+  r.setHouseInfluence(0);
+  r.startHouseMusic();
+  r.queueHouseMovement({direction:'down',intensity:1});
+  assert.equal(r.state.houseTransport.pendingMovements.length,0);
+  for(let i=1;i<=90;i++){advance(i/40);r.scheduleHouseMusic();}
+  assert.ok(sources().length>20,'background rhythm must keep playing');
+  assert.equal(r.state.houseTransport.bed.gain.events.filter(e=>e[0]==='linear').length,0);
+});
