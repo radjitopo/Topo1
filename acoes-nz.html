@@ -89,6 +89,11 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .houseTempoHead{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#555}
 .houseTempoHead output{color:#111;font-weight:700;font-variant-numeric:tabular-nums}
 .houseTempo input{display:block;width:100%;height:28px;margin:5px 0;accent-color:#111;cursor:pointer}
+.houseInfluence{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.houseInfluence input{display:block;width:100%;height:28px;margin:6px 0 0;accent-color:#111;cursor:pointer}
+.houseInfluence input:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
+.houseInfluenceScale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
+.houseInfluenceHint{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
 .houseStatusRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
 .houseStatusRow p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
 .houseBeat{display:flex;gap:5px;flex-shrink:0}
@@ -262,6 +267,12 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
       <div class="houseTempo">
         <div class="houseTempoHead"><label for="houseTempo">Velocidade</label><output id="houseTempoValue" for="houseTempo">124 BPM</output></div>
         <input id="houseTempo" type="range" min="90" max="140" step="1" value="124" aria-label="Velocidade da música">
+      </div>
+      <div class="houseInfluence">
+        <div class="houseTempoHead"><label for="houseInfluence">Influência da bolsa</label><output id="houseInfluenceValue" for="houseInfluence">80%</output></div>
+        <input id="houseInfluence" type="range" min="0" max="100" step="5" value="80" aria-label="Influência das altas e baixas da bolsa sobre a música">
+        <div class="houseInfluenceScale"><span>Música dominante</span><span>Bolsa dominante</span></div>
+        <p class="houseInfluenceHint" id="houseInfluenceHint">Altas e quedas ganham destaque; a base recua para deixá-las audíveis.</p>
       </div>
       <div class="houseStatusRow"><p id="houseStatus">Toque em House mode para começar.</p><meter class="houseMeter" id="houseLevel" min="0" max="1" value="0" aria-label="Nível da música"></meter><div class="houseBeat" id="houseBeat" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
       <div class="houseCompare" role="group" aria-label="Exemplos de alta e queda"><span>Compare os sons</span><button class="houseExample" type="button" data-house-example="up">↑ Ouvir alta</button><button class="houseExample" type="button" data-house-example="down">↓ Ouvir queda</button></div>
@@ -1020,6 +1031,7 @@ const SOUND_PRESETS = {
 const HOUSE_LAYERS = {drums:"Bateria",bass:"Baixo",chords:"Acordes",lead:"Melodia"};
 const HOUSE_STORAGE_KEY = "acoes-house-settings";
 const DEFAULT_HOUSE_TEMPO = 124;
+const DEFAULT_HOUSE_INFLUENCE = 80;
 const ELECTRONIC_GENRES = {
   house:{label:"House",tempo:DEFAULT_HOUSE_TEMPO,min:90,max:140,mix:.78,echo:.17},
   techno:{label:"Techno",tempo:134,min:110,max:160,mix:.75,echo:.13},
@@ -1092,6 +1104,11 @@ function normalizedHouseTempo(value,preset){
   return Number.isFinite(parsed) ? Math.max(genre.min,Math.min(genre.max,Math.round(parsed))) : genre.tempo;
 }
 
+function normalizedHouseInfluence(value){
+  const number = Number(value);
+  return value == null || !Number.isFinite(number) ? DEFAULT_HOUSE_INFLUENCE : Math.max(0,Math.min(100,Math.round(number/5)*5));
+}
+
 function storedHouseSettings(preset){
   let saved = {};
   try{ saved = JSON.parse(localStorage.getItem(HOUSE_STORAGE_KEY) || "{}"); }catch(e){}
@@ -1103,7 +1120,7 @@ function storedHouseSettings(preset){
     const savedTempo = saved.tempos && saved.tempos[key] != null ? saved.tempos[key] : key === "house" ? saved.tempo : null;
     tempos[key] = savedTempo == null ? ELECTRONIC_GENRES[key].tempo : normalizedHouseTempo(savedTempo,key);
   });
-  return {tempo:tempos[isElectronicPreset(preset) ? preset : "house"],tempos:tempos,layers:layers};
+  return {tempo:tempos[isElectronicPreset(preset) ? preset : "house"],tempos:tempos,layers:layers,influence:normalizedHouseInfluence(saved.influence)};
 }
 
 function storedVisualColors(){
@@ -1171,6 +1188,7 @@ const state = {
   soundPreset:initialSoundPreset,
   soundVolume:storedSoundVolume(),
   houseTempo:houseSettings.tempo,
+  houseInfluence:houseSettings.influence,
   houseLayers:houseSettings.layers,
   housePaused:false,
   houseTransport:null,
@@ -3095,6 +3113,15 @@ function playNoiseGuitarSound(ctx,direction,maxDuration){
   echoGain.connect(bus);
 }
 
+function marketSoundIntensity(stock){
+  const key = stockKey(stock.marketKey,stock.ticker);
+  const quote = state.quotes[key];
+  const previous = state.previous[key];
+  if(!quote || !quote.ok || typeof quote.price !== "number" || typeof previous !== "number" || previous === 0) return visualIntensity(stock);
+  // The square-root curve makes even a modest real quote change audible.
+  return Math.max(.12,Math.min(1,Math.sqrt(Math.abs((quote.price-previous)/previous)/.004)));
+}
+
 function houseStocks(){
   return detailTicker ? [{ticker:detailTicker,marketKey:state.market}] : mixedStocks();
 }
@@ -3202,7 +3229,7 @@ function houseStepNotes(step,profile,tempo,preset){
   return notes;
 }
 
-function houseResponseNotes(step,value,tempo,preset){
+function houseResponseNotes(step,value,tempo,preset,influenceValue=DEFAULT_HOUSE_INFLUENCE){
   const event = normalizeVisualEvent(value);
   if(event.direction === "flat") return [];
   const phase = step%4;
@@ -3212,11 +3239,31 @@ function houseResponseNotes(step,value,tempo,preset){
   const third = harmony.third;
   const rising = event.direction === "up";
   const beat = 60/normalizedHouseTempo(tempo,preset);
-  const melody = rising ? [24,24+third,31,36] : [19,12+third,12,7];
-  const notes = [{layer:"lead",voice:"lead",waveform:rising ? (preset === "hardtechno" ? "square" : "triangle") : "sawtooth",midi:leadRoot+melody[phase],duration:beat*.23,volume:.12+event.intensity*.02,cutoff:rising ? 5200+event.intensity*1400 : 900+event.intensity*500,resonance:preset === "hardtechno" ? 3 : 1.8}];
+  const influence = normalizedHouseInfluence(influenceValue)/100;
+  if(influence === 0) return [];
+  const strength = Math.max(.12,Math.min(1,event.intensity));
+  const span = Math.round(4+strength*5); // stronger market moves produce bigger pitch leaps
+  const melody = rising ? [25,25+third+Math.round(span*.25),29+span,34+span]
+    : [19,15-third-Math.round(span*.25),11-span,6-span];
+  const isHard = preset === "hardtechno";
+  const isTechno = preset === "techno";
+  const isDnb = preset === "drumandbass";
+  const wave = rising ? (isHard ? "square" : isTechno ? "sawtooth" : isDnb ? "sine" : "triangle") : "sawtooth";
+  const notes = [{layer:"lead",voice:"lead",market:true,waveform:wave,
+    midi:leadRoot+melody[phase],duration:beat*(isDnb ? .30 : isHard ? .18 : .28),
+    volume:(.135+.09*strength)*Math.pow(influence,.2),
+    cutoff:rising ? 4200+strength*3700 : 650+strength*550,
+    resonance:isHard ? 5 : isTechno ? 3.5 : 1.8,
+    drive:isHard ? (rising ? 2.7 : 3.6) : isTechno ? .9 : 0}];
   if(phase === 0 || phase === 2){
-    const interval = rising ? (phase === 0 ? 12 : 19) : (phase === 0 ? 0 : -5);
-    notes.push({layer:"bass",voice:"bass",midi:root+interval,duration:beat*.38,offset:phase === 0 ? .025 : 0,volume:.13,cutoff:rising ? 1600 : 350,drive:preset === "hardtechno" ? 2 : 0});
+    const interval = rising ? (phase === 0 ? 12 : 17+Math.round(span*.4))
+      : (phase === 0 ? 0 : -5-Math.round(span*.4));
+    notes.push({layer:"bass",voice:"bass",market:true,midi:root+interval,
+      duration:beat*(isDnb ? .65 : .38),offset:phase === 0 ? .025 : 0,
+      volume:(.08+.11*strength)*Math.pow(influence,.65),
+      waveform:isHard || isDnb ? "sawtooth" : "square",
+      cutoff:rising ? 1250+strength*1150 : 240+strength*180,
+      drive:isHard ? 2.5 : isDnb ? 1.2 : 0});
   }
   return notes;
 }
@@ -3225,7 +3272,7 @@ function queueHouseMovement(value){
   const runtime = state.houseTransport;
   if(!isElectronicPreset(state.soundPreset) || !runtime || state.housePaused) return;
   const event = normalizeVisualEvent(value);
-  if(event.direction === "flat") return;
+  if(event.direction === "flat" || normalizedHouseInfluence(state.houseInfluence)===0) return;
   event.ticker = typeof value.ticker === "string" ? value.ticker : "";
   event.example = value.example === true;
   event.time = runtime.ctx.currentTime;
@@ -3255,7 +3302,7 @@ function previewHouseMovement(direction){
   state.housePaused = false;
   if(unlockAudio()){
     startMainSoundCycle();
-    queueHouseMovement({direction:direction,intensity:.18,example:true});
+    queueHouseMovement({direction:direction,intensity:.8,example:true});
   }
   updateHouseControls();
 }
@@ -3343,7 +3390,7 @@ function playHouseNote(runtime,note,time){
     connectHouseVoice(ctx,source,filter,note,nodes);
     filter.connect(gain);
   }
-  gain.connect(runtime.layers[note.layer]);
+  gain.connect(note.market ? runtime.marketLayers[note.layer] : runtime.layers[note.layer]);
   trackHouseVoice(runtime,source,nodes);
   source.start(time);
   source.stop(time+duration+.025);
@@ -3364,6 +3411,14 @@ function updateHouseControls(){
   document.getElementById("houseTempo").max = String(genre.max);
   document.getElementById("houseTempo").value = String(state.houseTempo);
   document.getElementById("houseTempoValue").textContent = state.houseTempo+" BPM";
+  const influence = normalizedHouseInfluence(state.houseInfluence);
+  document.getElementById("houseInfluence").value = String(influence);
+  document.getElementById("houseInfluenceValue").textContent = influence+"%";
+  document.getElementById("houseInfluenceHint").textContent = influence===0
+    ? "Só a música: altas e quedas não alteram a composição."
+    : influence<=30 ? "O ritmo domina; a bolsa faz pequenos comentários sonoros."
+    : influence<=65 ? "Música e movimentos da bolsa dividem o protagonismo."
+    : "Altas e quedas ganham destaque; a base recua para deixá-las audíveis.";
   document.getElementById("housePlay").textContent = running ? "Pausar" : "Tocar";
   document.getElementById("houseStatus").textContent = !houseStocks().length
     ? "Escolha um mercado para começar."
@@ -3407,7 +3462,9 @@ function scheduleHouseMusic(){
     runtime.beats = [];
     runtime.visualNotes = [];
   }
-  const profile = houseMarketProfile();
+  const influence = normalizedHouseInfluence(state.houseInfluence)/100;
+  const rawProfile = houseMarketProfile();
+  const profile = {balance:rawProfile.balance*influence,energy:.18+(rawProfile.energy-.18)*influence,motif:rawProfile.motif};
   const lookAhead = isSonicVisualStyle(state.visualStyle) ? .22 : .1;
   while(runtime.nextTime < now+lookAhead){
     if(runtime.response && runtime.step >= runtime.response.endStep) runtime.response = null;
@@ -3415,13 +3472,25 @@ function scheduleHouseMusic(){
     if(runtime.step%4 === 0 && !runtime.response){
       runtime.pendingMovements = runtime.pendingMovements.filter(function(event){ return now-event.time <= 1.5; });
       movement = runtime.pendingMovements.shift() || null;
-      if(movement) runtime.response = {event:movement,endStep:runtime.step+(movement.example ? 16 : 4)};
+      if(movement){
+        runtime.response = {event:movement,endStep:runtime.step+(movement.example ? 16 : 4)};
+        if(influence > 0){
+          const start = runtime.nextTime;
+          const length = (movement.example ? 16 : 4)*stepDuration;
+          const quiet = Math.max(.24,1-.78*influence);
+          runtime.bed.gain.setValueAtTime(1,start);
+          runtime.bed.gain.linearRampToValueAtTime(quiet,start+.04);
+          runtime.bed.gain.setValueAtTime(quiet,start+length*.70);
+          runtime.bed.gain.linearRampToValueAtTime(1,start+length);
+        }
+      }
     }
     const response = runtime.response && runtime.response.event;
     const activeProfile = response ? {balance:response.direction === "up" ? 1 : -1,energy:response.intensity,motif:profile.motif} : profile;
     let notes = houseStepNotes(runtime.step,activeProfile,state.houseTempo,runtime.genre);
-    if(response){
-      notes = notes.filter(function(note){ return note.layer !== "lead" && note.layer !== "bass"; }).concat(houseResponseNotes(runtime.step,response,state.houseTempo,runtime.genre));
+    if(response && influence > 0){
+      notes = notes.filter(function(note){ return note.layer !== "lead"; })
+        .concat(houseResponseNotes(runtime.step,response,state.houseTempo,runtime.genre,state.houseInfluence));
     }
     notes.forEach(function(note){
       const time = runtime.nextTime+(note.offset || 0);
@@ -3463,6 +3532,9 @@ function startHouseMusic(){
   const output = ctx.createGain();
   const analyser = ctx.createAnalyser();
   const duck = ctx.createGain();
+  const bed = ctx.createGain();
+  const marketBus = ctx.createGain();
+  const marketLayers = {};
   const delay = ctx.createDelay(1);
   const feedback = ctx.createGain();
   const wet = ctx.createGain();
@@ -3471,7 +3543,11 @@ function startHouseMusic(){
   analyser.fftSize = 256;
   output.connect(analyser);
   analyser.connect(setupAudioOutput(ctx));
-  duck.connect(output);
+  duck.connect(bed);
+  bed.gain.setValueAtTime(1,ctx.currentTime);
+  bed.connect(output);
+  marketBus.gain.setValueAtTime(1,ctx.currentTime);
+  marketBus.connect(output);
   delay.delayTime.setValueAtTime(60/state.houseTempo*.75,ctx.currentTime);
   feedback.gain.setValueAtTime(.23,ctx.currentTime);
   wet.gain.setValueAtTime(genre.echo,ctx.currentTime);
@@ -3485,8 +3561,12 @@ function startHouseMusic(){
     gain.connect(key === "drums" ? output : duck);
     if(key === "chords" || key === "lead") gain.connect(delay);
     layers[key] = gain;
+    const marketGain = ctx.createGain();
+    marketGain.gain.setValueAtTime(state.houseLayers[key] ? 1 : 0,ctx.currentTime);
+    marketGain.connect(marketBus);
+    marketLayers[key] = marketGain;
   });
-  state.houseTransport = {genre:state.soundPreset,mixGain:genre.mix,ctx:ctx,output:output,analyser:analyser,wave:new Uint8Array(256),duck:duck,delay:delay,feedback:feedback,layers:layers,graph:[output,analyser,duck,delay,feedback,wet].concat(Object.values(layers)),sources:new Set(),nextTime:ctx.currentTime+.035,step:0,bar:0,beats:[],visualNotes:[],pendingMovements:[],response:null,lastMovement:null,timer:null};
+  state.houseTransport = {genre:state.soundPreset,mixGain:genre.mix,ctx:ctx,output:output,analyser:analyser,wave:new Uint8Array(256),duck:duck,bed:bed,marketBus:marketBus,marketLayers:marketLayers,delay:delay,feedback:feedback,layers:layers,graph:[output,analyser,duck,bed,marketBus,delay,feedback,wet].concat(Object.values(layers),Object.values(marketLayers)),sources:new Set(),nextTime:ctx.currentTime+.035,step:0,bar:0,beats:[],visualNotes:[],pendingMovements:[],response:null,lastMovement:null,timer:null};
   scheduleHouseMusic();
   state.houseTransport.timer = setInterval(scheduleHouseMusic,25);
   updateHouseControls();
@@ -3495,13 +3575,24 @@ function startHouseMusic(){
 function saveHouseSettings(){
   const settings = storedHouseSettings(state.soundPreset);
   if(isElectronicPreset(state.soundPreset)) settings.tempos[state.soundPreset] = state.houseTempo;
-  try{ localStorage.setItem(HOUSE_STORAGE_KEY,JSON.stringify({tempo:settings.tempos.house,tempos:settings.tempos,layers:state.houseLayers})); }catch(e){}
+  try{ localStorage.setItem(HOUSE_STORAGE_KEY,JSON.stringify({tempo:settings.tempos.house,tempos:settings.tempos,layers:state.houseLayers,influence:normalizedHouseInfluence(state.houseInfluence)})); }catch(e){}
 }
 
 function setHouseTempo(value){
   state.houseTempo = normalizedHouseTempo(value,state.soundPreset);
   saveHouseSettings();
   if(state.houseTransport) state.houseTransport.delay.delayTime.setTargetAtTime(60/state.houseTempo*.75,state.audioCtx.currentTime,.04);
+  updateHouseControls();
+}
+
+function setHouseInfluence(value){
+  state.houseInfluence = normalizedHouseInfluence(value);
+  saveHouseSettings();
+  if(state.houseTransport && state.audioCtx){
+    const now = state.audioCtx.currentTime;
+    state.houseTransport.bed.gain.cancelScheduledValues(now);
+    state.houseTransport.bed.gain.setTargetAtTime(1,now,.04);
+  }
   updateHouseControls();
 }
 
@@ -3512,6 +3603,7 @@ function toggleHouseLayer(key){
   if(state.houseTransport){
     const now = state.audioCtx.currentTime;
     state.houseTransport.layers[key].gain.setTargetAtTime(state.houseLayers[key] ? 1 : 0,now,.012);
+    state.houseTransport.marketLayers[key].gain.setTargetAtTime(state.houseLayers[key] ? 1 : 0,now,.012);
     const audible = Object.keys(HOUSE_LAYERS).some(function(layer){ return state.houseLayers[layer]; });
     state.houseTransport.output.gain.setTargetAtTime(audible ? state.houseTransport.mixGain : 0,now,.012);
   }
@@ -3607,7 +3699,7 @@ function scheduleMainSounds(){
     const timer = setTimeout(function(){
       const key = stockKey(stock.marketKey,stock.ticker);
       const direction = state.movements[key] || "flat";
-      playMoveSound(direction,spacingMs / 1000 * 0.78,{direction:direction,intensity:visualIntensity(stock),key:key,ticker:stock.ticker});
+      playMoveSound(direction,spacingMs / 1000 * 0.78,{direction:direction,intensity:marketSoundIntensity(stock),key:key,ticker:stock.ticker});
       paintVisualStock(stock);
     }, index * spacingMs);
     state.soundTimers.push(timer);
@@ -3996,6 +4088,7 @@ document.querySelectorAll("[data-house-layer]").forEach(function(button){
   button.addEventListener("click",function(){ toggleHouseLayer(button.dataset.houseLayer); });
 });
 document.getElementById("houseTempo").addEventListener("input",function(event){ setHouseTempo(event.target.value); });
+document.getElementById("houseInfluence").addEventListener("input",function(event){ setHouseInfluence(event.target.value); });
 document.getElementById("housePlay").addEventListener("click",toggleHousePlayback);
 document.querySelectorAll("[data-house-example]").forEach(function(button){
   button.addEventListener("click",function(){ previewHouseMovement(button.dataset.houseExample); });
