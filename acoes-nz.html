@@ -130,7 +130,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
 .artControls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .artOption{min-height:46px;padding:10px 8px;border:1px solid #e5e7eb;border-radius:9px;background:#fff;color:#555;font:inherit;font-size:14px;cursor:pointer}
 .artOption.active{border-color:#111;background:#111;color:#fff}
-.artOption[data-visual-style="pollock"]{grid-column:1 / -1}
+.shapePicker[hidden]{display:none}
 .artOption:focus-visible,.artComplexity input:focus-visible{outline:3px solid #168ee6;outline-offset:2px}
 .artHint{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 .artComplexity{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
@@ -329,6 +329,7 @@ h1{margin:0;font-size:42px;line-height:1;letter-spacing:-1.5px;font-weight:700}
         <button class="artOption" type="button" data-visual-style="organism" aria-pressed="false">Organismo</button>
         <button class="artOption" type="button" data-visual-style="engraving" aria-pressed="false">Gravura</button>
         <button class="artOption" type="button" data-visual-style="pollock" aria-pressed="false">Pollock</button>
+         <button class="artOption" type="button" data-visual-style="snake" aria-pressed="false">Cobrinha</button>
       </div>
       <p class="artHint" id="artHint">As figuras preenchem o quadro, uma após a outra.</p>
       <div class="artComplexity" id="artComplexity" hidden>
@@ -998,7 +999,8 @@ const VISUAL_STYLES = {
   field:{label:"Campo de forças",hint:"Altas atraem, quedas espalham. As figuras deixam correntes e redemoinhos."},
   organism:{label:"Organismo",hint:"Os movimentos do mercado fazem nascer, crescer e desviar ramificações."},
   engraving:{label:"Gravura",hint:"Marcas transparentes se acumulam em contornos e texturas."},
-  pollock:{label:"Pollock",hint:"Fios de tinta e respingos se cruzam em camadas. O mercado conduz o gesto."}
+  pollock:{label:"Pollock",hint:"Fios de tinta e respingos se cruzam em camadas. O mercado conduz o gesto."},
+   snake:{label:"Cobrinha",hint:"Começa descendo. Alta gira 90° à esquerda, baixa 90° à direita. Ao tocar a parede, rebate e volta."}
 };
 const DEFAULT_SOUND_VOLUME = 150;
 const SOUND_PRESETS = {
@@ -1298,6 +1300,10 @@ function createVisualArt(style,width,height,size,complexity,seed){
   for(let i=0;i<6;i += 1){
     art.branches.push({x:width*(.2+(i%3)*.3),y:height*(i<3 ? .35 : .7),angle:-Math.PI/2+random()*.8-.4});
   }
+  if(style === "snake"){
+    art.limit = 3000;
+    art.snake = {x:Math.round(width*.5),y:Math.round(height*.16),heading:1}; // right, down, left, up
+  }
   if(isSonicVisualStyle(style)) initializeSonicVisualArt(art,size);
   return art;
 }
@@ -1316,6 +1322,41 @@ function nextVisualArt(art,value){
   const sign = event.direction === "up" ? 1 : event.direction === "down" ? -1 : 0;
   const commands = [];
   const instrument = event.key ? visualHash(event.key) : n;
+  if(art.style === "snake"){
+    const snake = art.snake;
+    const vectors = [[1,0],[0,1],[-1,0],[0,-1]];
+    const stride = Math.max(12,Math.min(80,unit*(.8+c*.35)));
+    const stroke = Math.max(7,Math.min(56,unit*(.45+power*.1)));
+    const edge = Math.max(stroke/2+3,Math.min(art.width,art.height)*.023);
+    function advance(){
+      let remaining = stride;
+      // Each reflection reverses the heading; the remaining part of the same step comes back inward.
+      for(let i=0;i<4 && remaining>.0001;i+=1){
+        const vector = vectors[snake.heading];
+        const dx = vector[0],dy = vector[1];
+        const free = dx>0 ? art.width-edge-snake.x : dx<0 ? snake.x-edge
+          : dy>0 ? art.height-edge-snake.y : snake.y-edge;
+        if(free<=.0001){
+          snake.heading = (snake.heading+2)%4;
+          continue;
+        }
+        const travel = Math.min(remaining,free);
+        const endX = snake.x+dx*travel, endY = snake.y+dy*travel;
+        commands.push({type:"snake",points:[[snake.x,snake.y],[endX,endY]],width:stroke,alpha:1});
+        snake.x = endX;
+        snake.y = endY;
+        remaining -= travel;
+        if(travel>=free-.0001) snake.heading = (snake.heading+2)%4;
+      }
+    }
+    // Draw the first downward movement before reacting to the first market signal.
+    if(n===0) advance();
+    if(event.direction==="up") snake.heading = (snake.heading+3)%4;
+    else if(event.direction==="down") snake.heading = (snake.heading+1)%4;
+    advance();
+    art.index += 1;
+    return commands;
+  }
   if(art.style === "pollock"){
     const brush = art.streams[instrument % art.streams.length];
     const segments = 2+Math.round(c*4);
@@ -1931,7 +1972,7 @@ function visualTotal(){
 }
 
 function visualLabel(){
-  return VISUAL_STYLES[state.visualStyle].label+(isSonicVisualStyle(state.visualStyle) ? "" : " · "+VISUAL_SHAPES[state.visualShape]);
+  return VISUAL_STYLES[state.visualStyle].label+(isSonicVisualStyle(state.visualStyle) || state.visualStyle==="snake" ? "" : " · "+VISUAL_SHAPES[state.visualShape]);
 }
 
 function syncVisualDescription(){
@@ -1951,6 +1992,9 @@ function bindVisualStyles(){
     });
     document.getElementById("artHint").textContent = VISUAL_STYLES[state.visualStyle].hint;
     document.getElementById("artComplexity").hidden = state.visualStyle === "standard";
+    document.querySelector(".shapePicker").hidden = state.visualStyle === "snake";
+    document.querySelector('label[for="visualSize"]').textContent = state.visualStyle === "snake" ? "Espessura da cobrinha" : "Tamanho das peças";
+    document.querySelector("#visualComplete strong").textContent = state.visualStyle === "snake" && !state.visualComplete ? "Cobrinha em movimento" : "Imagem pronta";
     const legend = document.querySelector(".visualLegend");
     if(legend) legend.style.display = isSonicVisualStyle(state.visualStyle) ? "none" : "";
     syncVisualDescription();
@@ -2264,7 +2308,17 @@ function drawVisualArt(ctx,commands,color){
     ctx.globalAlpha = command.alpha;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    if(command.type === "stamp"){
+    if(command.type === "snake"){
+      const end = command.points[1];
+      ctx.lineCap = "butt";
+      ctx.lineJoin = "miter";
+      ctx.lineWidth = command.width;
+      ctx.beginPath();
+      ctx.moveTo(command.points[0][0],command.points[0][1]);
+      ctx.lineTo(end[0],end[1]);
+      ctx.stroke();
+      ctx.fillRect(end[0]-command.width/2,end[1]-command.width/2,command.width,command.width);
+    }else if(command.type === "stamp"){
       ctx.translate(command.x,command.y);
       ctx.rotate(command.angle);
       ctx.lineWidth = Math.max(.7,command.size*.035);
@@ -2363,6 +2417,7 @@ function paintVisualDirection(value){
   state.visualEvents.push(event);
   state.visualIndex = index + 1;
   state.visualHasPainted = true;
+  if(state.visualStyle==="snake" && visualComplete) visualComplete.classList.add("show");
   if(state.visualIndex >= total){
     state.visualComplete = true;
     state.visualIndex = total;
@@ -3717,6 +3772,7 @@ function render(){
     const label = visualLabel();
     visualStatus.textContent = selectedKeys.length
       ? isSonicVisualStyle(state.visualStyle) ? label+" · imagem em evolução"
+        : state.visualStyle==="snake" && !state.visualComplete ? label+" · "+state.visualIndex+" movimentos · em andamento"
         : label+" · "+Math.min(state.visualIndex,total)+"/"+total+(state.visualComplete ? " · imagem completa" : " · "+stocks.length+" eventos em 10s")
       : label+" · escolha um ou mais mercados";
   }
