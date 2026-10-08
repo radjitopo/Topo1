@@ -3251,7 +3251,7 @@ function houseResponseNotes(step,value,tempo,preset,influenceValue=DEFAULT_HOUSE
   const wave = rising ? (isHard ? "square" : isTechno ? "sawtooth" : isDnb ? "sine" : "triangle") : "sawtooth";
   const notes = [{layer:"lead",voice:"lead",market:true,waveform:wave,
     midi:leadRoot+melody[phase],duration:beat*(isDnb ? .30 : isHard ? .18 : .28),
-    volume:(.135+.09*strength)*Math.pow(influence,.2),
+    volume:(.135+.09*strength)*Math.pow(influence,.7),
     cutoff:rising ? 4200+strength*3700 : 650+strength*550,
     resonance:isHard ? 5 : isTechno ? 3.5 : 1.8,
     drive:isHard ? (rising ? 2.7 : 3.6) : isTechno ? .9 : 0}];
