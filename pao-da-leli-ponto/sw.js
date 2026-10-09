@@ -1,5 +1,5 @@
-const C = 'leli-ponto-v51';
-const assets = ['./', './admin.html', './receitas.html', './api-client.js?v=1', './app-real.js?v=28', './admin-real.js?v=29', './receitas-real.js?v=4', './logo-leli-oficial.jpg?v=2', './favicon-32.png?v=1', './apple-touch-icon.png?v=1', './icon-192.png?v=1', './icon-512.png?v=1', './icon-maskable-512.png?v=1', './manifest.webmanifest?v=5'];
+const C = 'leli-ponto-v52';
+const assets = ['./', './admin.html', './receitas.html', './api-client.js?v=1', './app-real.js?v=28', './admin-real.js?v=30', './receitas-real.js?v=4', './logo-leli-oficial.jpg?v=2', './favicon-32.png?v=1', './apple-touch-icon.png?v=1', './icon-192.png?v=1', './icon-512.png?v=1', './icon-maskable-512.png?v=1', './manifest.webmanifest?v=5'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(C).then(cache => cache.addAll(assets)).then(() => self.skipWaiting()));
 });

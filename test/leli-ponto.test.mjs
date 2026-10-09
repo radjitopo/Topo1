@@ -247,7 +247,7 @@ test('employee registration requires one of the two Pão da Leli areas', async (
   assert.match(api, /unit IN \('Pão da Leli','Pão da Leli atendimento'\)/);
 });
 
-test('admins can open an employee record with full history and a weekly schedule', async () => {
+test('admins can open an employee record with full history without editing a weekly schedule', async () => {
   const [api, html, admin] = await Promise.all([
     source('leli-api.js'),
     source('pao-da-leli-ponto/admin.html'),
@@ -260,12 +260,12 @@ test('admins can open an employee record with full history and a weekly schedule
   assert.match(api, /action==='admin-save-schedule'/);
   assert.match(api, /Acesso restrito aos administradores/);
   assert.match(html, /id="employeeDetail"/);
-  assert.match(html, /id="scheduleForm"/);
+  assert.doesNotMatch(html, /scheduleForm|scheduleList|scheduleStatus|Escala semanal|Salvar escala/);
   assert.match(html, /id="employeeHistory"/);
   assert.match(admin, /openEmployee/);
   assert.match(admin, /admin-employee-detail/);
-  assert.match(admin, /admin-save-schedule/);
-  assert.match(admin, /Segunda-feira/);
+  assert.doesNotMatch(admin, /admin-save-schedule|scheduleForm|scheduleStatus|renderSchedule|syncScheduleRow/);
+  assert.match(admin, /renderEmployeeHistory\(detail\)/);
 });
 
 test('checkout requires configured questions, tracks missing items and delivers team or individual messages', async () => {

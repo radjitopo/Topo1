@@ -14,15 +14,6 @@ function initPasswordToggles(){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 const punchLabels={in:'Entrada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'};
-const scheduleDays=[
-  {weekday:1,label:'Segunda-feira'},
-  {weekday:2,label:'Terça-feira'},
-  {weekday:3,label:'Quarta-feira'},
-  {weekday:4,label:'Quinta-feira'},
-  {weekday:5,label:'Sexta-feira'},
-  {weekday:6,label:'Sábado'},
-  {weekday:0,label:'Domingo'}
-];
 let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,monthlyReport=null,recipeAdminData=[],selectedRecipeAdminId=null;
 async function api(action,method='GET',data){
   return leliApi(API,action,method,data);
@@ -265,24 +256,6 @@ function printMonthlyReport(){
   const dailyRows=report.rows.map(row=>'<tr><td>'+esc(row.date.split('-').reverse().join('/'))+'</td><td><b>'+esc(row.name)+'</b></td><td>'+esc(row.schedule)+'</td><td>'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td>'+durationLabel(row.workedMinutes)+'</td><td>'+durationLabel(row.delayMinutes)+'</td><td>'+esc(reportRowStatus(row))+'</td><td>'+row.correctionRequests+(row.pendingCorrections?' ('+row.pendingCorrections+' pend.)':'')+'</td></tr>').join('');
   popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fechamento '+esc(report.month)+'</title><style>@page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#31251f;margin:0;font-size:10px}h1,h2{font-family:Georgia,serif;color:#a71831;margin:0 0 8px}h1{font-size:25px}h2{font-size:16px;margin-top:20px}.meta{color:#6f6259;margin-bottom:14px}.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:12px 0}.total{border:1px solid #dbcdbd;border-radius:8px;padding:8px}.total b{display:block;color:#a71831;font:700 17px Georgia,serif}.total span{color:#7d6d63;text-transform:uppercase;font-size:8px}table{width:100%;border-collapse:collapse;margin-top:6px}th{background:#f2e5d3;color:#6f6259;text-align:left;text-transform:uppercase;font-size:8px}th,td{border:1px solid #dbcdbd;padding:6px;vertical-align:top}small{color:#7d6d63}.foot{margin-top:12px;color:#7d6d63;font-size:8px}@media print{button{display:none}}</style></head><body><h1>Pão da Leli — Fechamento mensal</h1><div class="meta">'+esc(monthLabel(report.month))+' · '+esc(report.periodStart.split('-').reverse().join('/'))+' a '+esc(report.periodEnd.split('-').reverse().join('/'))+'</div><div class="totals"><div class="total"><b>'+durationLabel(report.totals.workedMinutes)+'</b><span>Trabalhadas</span></div><div class="total"><b>'+durationLabel(report.totals.expectedMinutes)+'</b><span>Previstas</span></div><div class="total"><b>'+durationLabel(report.totals.delayMinutes)+'</b><span>Atrasos</span></div><div class="total"><b>'+report.totals.absenceDays+'</b><span>Faltas</span></div><div class="total"><b>'+report.totals.correctionRequests+'</b><span>Correções</span></div></div><h2>Resumo por funcionário</h2><table><thead><tr><th>Funcionário</th><th>Previsto</th><th>Trabalhado</th><th>Atraso</th><th>Faltas</th><th>Incompletas</th><th>Correções</th></tr></thead><tbody>'+employeeRows+'</tbody></table><h2>Detalhamento diário</h2><table><thead><tr><th>Data</th><th>Funcionário</th><th>Escala</th><th>Batidas</th><th>Trabalhado</th><th>Atraso</th><th>Situação</th><th>Correções</th></tr></thead><tbody>'+dailyRows+'</tbody></table><div class="foot">Gerado em '+esc(new Date(report.generatedAt).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}))+'. Relatório para conferência administrativa.</div></body></html>');popup.document.close();popup.focus();setTimeout(()=>popup.print(),350);
 }
-function syncScheduleRow(row){
-  const active=row.querySelector('input[type="checkbox"]').checked;
-  row.querySelectorAll('input[type="time"]').forEach(input=>{input.disabled=!active;input.required=active});
-}
-function renderSchedule(schedule){
-  const byDay=new Map(schedule.map(day=>[Number(day.weekday),day]));
-  $('#scheduleList').innerHTML=scheduleDays.map(day=>{
-    const saved=byDay.get(day.weekday);
-    const times=[
-      ['startTime','Entrada',saved?.start_time||''],
-      ['breakStartTime','Saída intervalo',saved?.break_start_time||''],
-      ['breakEndTime','Volta intervalo',saved?.break_end_time||''],
-      ['endTime','Saída',saved?.end_time||'']
-    ];
-    return '<div class="schedule-row" data-weekday="'+day.weekday+'"><label class="schedule-toggle"><input type="checkbox" '+(saved?'checked':'')+'> '+day.label+'</label>'+times.map(([key,label,value])=>'<label class="schedule-time">'+label+'<input type="time" data-time="'+key+'" value="'+esc(value)+'" '+(saved?'':'disabled')+'></label>').join('')+'</div>';
-  }).join('');
-  $$('#scheduleList .schedule-row').forEach(row=>{syncScheduleRow(row);row.querySelector('input[type="checkbox"]').addEventListener('change',()=>syncScheduleRow(row))});
-}
 function historyBadge(date,corrections,row){
   const items=corrections.filter(c=>c.work_date===date),statuses=items.map(c=>c.status);
   if(items.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='pending'))return'<span class="badge pending">saída aguardando aprovação</span>';
@@ -325,18 +298,18 @@ function renderTodaySummary(users,punches){
 window.openEmployee=async id=>{
   selectedEmployeeId=id;
   $('#employeeGrid').classList.add('hidden');$('#employeeDetail').classList.remove('hidden');$('#employeeDetailBody').classList.add('hidden');
-  $('#employeeDetailName').textContent='Carregando funcionário...';$('#employeeDetailMeta').textContent='';$('#employeeDetailStatus').innerHTML='';$('#scheduleStatus').textContent='';
+  $('#employeeDetailName').textContent='Carregando funcionário...';$('#employeeDetailMeta').textContent='';$('#employeeDetailStatus').innerHTML='';
   try{
     const detail=await api('admin-employee-detail','GET',{id});
     const employee=detail.employee;
     $('#employeeDetailName').textContent=employee.name;
     $('#employeeDetailMeta').textContent=[contactLabel(employee),employee.unit].filter(Boolean).join(' · ');
     $('#employeeDetailStatus').innerHTML=employee.pending_activation?'<span class="badge pending">aguardando ativação</span>':employee.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>';
-    renderSchedule(detail.schedule);renderEmployeeHistory(detail);$('#employeeDetailBody').classList.remove('hidden');
+    renderEmployeeHistory(detail);$('#employeeDetailBody').classList.remove('hidden');
     $('#employeeDetail').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');alert(e.message)}
 };
-function closeEmployeeDetail(){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden');$('#scheduleStatus').textContent=''}
+function closeEmployeeDetail(){selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden')}
 async function activateAdminTab(name){
   const button=$('[data-tab="'+name+'"]'),panel=$('#'+name);if(!button||!panel)return;
   $$('.tab').forEach(item=>item.classList.remove('active'));$$('.panel').forEach(item=>item.classList.remove('active'));button.classList.add('active');panel.classList.add('active');
@@ -431,20 +404,6 @@ $('#adminForgotPassword').addEventListener('click',async()=>{const identifier=pr
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),phone:$('#empPhone').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),phone:$('#newAdminPhone').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de primeiro acesso: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Entregue este código ao novo ADM. Ele deve abrir /admin, tocar em “Primeiro acesso” e criar a senha.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#closeEmployeeDetail').addEventListener('click',closeEmployeeDetail);
-$('#scheduleForm').addEventListener('submit',async e=>{
-  e.preventDefault();if(!selectedEmployeeId)return;
-  const days=$$('#scheduleList .schedule-row').filter(row=>row.querySelector('input[type="checkbox"]').checked).map(row=>({
-    weekday:Number(row.dataset.weekday),
-    startTime:row.querySelector('[data-time="startTime"]').value,
-    breakStartTime:row.querySelector('[data-time="breakStartTime"]').value,
-    breakEndTime:row.querySelector('[data-time="breakEndTime"]').value,
-    endTime:row.querySelector('[data-time="endTime"]').value
-  }));
-  const button=e.submitter||e.currentTarget.querySelector('button[type="submit"]');button.disabled=true;$('#scheduleStatus').textContent='Salvando...';
-  try{const id=selectedEmployeeId;await api('admin-save-schedule','POST',{id,days});invalidateMonthlyReport();await openEmployee(id);$('#scheduleStatus').textContent='Escala salva.'}
-  catch(err){$('#scheduleStatus').textContent='';alert(err.message)}
-  finally{button.disabled=false}
-});
 $('#checklistUnit').addEventListener('change',()=>{renderChecklistEditors();$('#checklistSaveStatus').textContent=''});
 $('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderQuestionEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
 $('#addMissingItem').addEventListener('click',()=>{const items=editorMissingItems();if(items.length>=60){alert('O limite é de 60 itens por área.');return}items.push('');renderMissingEditor(items);$$('#missingOptionsAdmin input').at(-1)?.focus()});
