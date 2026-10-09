@@ -15,6 +15,7 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 let currentUser=null,todayData=null,checklistData=null,lastConfirmReturn='ponto',currentHistoryMonth=currentMonth();
 let missingExitDate=null;
+let punchInProgress=false;
 let deferredInstallPrompt=null;
 
 function isInstalledApp(){
@@ -103,10 +104,11 @@ function statusBadge(date,corr,row={}){
   return'';
 }
 function currentDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function nextMissingExit(){return(todayData?.missingExits||[]).find(row=>row.status!=='pending')}
 function renderMissingExits(){
   $('#missingExitCards').innerHTML=(todayData?.missingExits||[]).map(row=>{
     const pending=row.status==='pending';
-    const text=pending?'Horário informado: '+time(row.requested_at)+'. Aguardando aprovação do ADM.':row.status==='rejected'?'O ADM recusou o pedido. Confira o horário e envie novamente.':'Informe o horário real em que você encerrou esta jornada.';
+    const text=pending?'Horário informado: '+time(row.requested_at)+'. Aguardando aprovação do ADM.':row.status==='rejected'?'O ADM recusou o pedido. Confira o horário e envie novamente.':todayData.state==='idle'?'Antes de iniciar a jornada de hoje, informe a que horas você saiu nesta data.':'Informe o horário real em que você encerrou esta jornada.';
     return '<article class="card missed-exit"><div class="label">'+fullDateLabel(row.work_date)+'</div><h3>'+(pending?'Saída aguardando aprovação':'Saída não registrada')+'</h3><p>'+esc(text)+'</p>'+(row.decision_note?'<p>Observação do ADM: '+esc(row.decision_note)+'</p>':'')+(!pending?'<button class="btn secondary" type="button" data-missing-exit="'+esc(row.work_date)+'">INFORMAR SAÍDA</button>':'')+'</article>';
   }).join('');
   $$('#missingExitCards [data-missing-exit]').forEach(button=>button.addEventListener('click',()=>openMissingExit(button.dataset.missingExit)));
@@ -122,9 +124,11 @@ function openMissingExit(date){
 }
 async function submitMissingExit(){
   const button=$('#missingExitSubmit');button.disabled=true;
+  const date=missingExitDate,requestedTime=$('#missingExitTime').value;
   try{
-    await api('missing-exit','POST',{date:missingExitDate,requestedTime:$('#missingExitTime').value,reason:$('#missingExitReason').value.trim()});
-    lastConfirmReturn='ponto';showConfirmation('Pedido enviado.','O ADM vai conferir e aprovar o horário. Você pode registrar o ponto de hoje normalmente.',[['Jornada',fullDateLabel(missingExitDate)],['Saída informada',$('#missingExitTime').value]]);
+    await api('missing-exit','POST',{date,requestedTime,reason:$('#missingExitReason').value.trim()});
+    const text='O horário aguarda confirmação do ADM.'+(todayData?.state==='idle'?' Volte ao ponto e registre sua entrada de hoje.':'');
+    lastConfirmReturn='ponto';showConfirmation('Saída enviada.',text,[['Jornada',fullDateLabel(date)],['Saída informada',requestedTime],['Status','Aguardando confirmação do ADM']]);
   }catch(e){alert(e.message)}finally{button.disabled=false}
 }
 async function loadChecklistData(){checklistData=await api('checklist');return checklistData}
@@ -165,18 +169,30 @@ async function loadToday(){
   }catch(e){if(e.status===401){currentUser=null;show('login')}else alert(e.message)}
 }
 async function punch(){
+  if(punchInProgress)return;
+  punchInProgress=true;
+  const button=$('#mainAction'),label=button.textContent;button.disabled=true;button.textContent='VERIFICANDO...';
   try{
     todayData=await api('today');
     const before=todayData?.state;
+    const missed=before==='idle'?nextMissingExit():null;
+    if(missed){openMissingExit(missed.work_date);return}
     if(before==='afterbreak'){await openChecklist();return}
-    const button=$('#mainAction');button.disabled=true;button.textContent='VERIFICANDO...';
     const access=await punchAccessPayload();
     await api('punch','POST',access);
     todayData=await api('today');
     const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
     lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
-  }catch(e){if(e.data?.needsChecklist)openChecklist();else{alert(e.message);loadToday()}}
+  }catch(e){
+    if(e.data?.needsMissingExit){
+      todayData??={state:'idle'};todayData.missingExits=e.data.missingExits||[];
+      const missed=nextMissingExit();
+      if(missed)openMissingExit(missed.work_date);
+      else{alert(e.message);await loadToday()}
+    }else if(e.data?.needsChecklist)await openChecklist();
+    else{alert(e.message);await loadToday()}
+  }finally{punchInProgress=false;button.disabled=todayData?.state==='out';if(button.textContent==='VERIFICANDO...')button.textContent=label}
 }
 function renderReview(){
   if(!todayData)return;

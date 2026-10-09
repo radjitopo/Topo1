@@ -668,6 +668,10 @@ export default async function handler(req,res){
       const date=localDate(),current=await effectivePunches(user.id,date),state=stateFrom(current),kind=expectedKind(state);
       if(!kind)return json(res,409,{error:'A jornada de hoje já foi encerrada.'});
       if(kind==='out')return json(res,428,{error:'Preencha o checklist antes de registrar a saída.',needsChecklist:true});
+      if(kind==='in'){
+        const missed=(await missingExits(user.id,date)).filter(row=>row.status!=='pending');
+        if(missed.length)return json(res,428,{error:'Informe a saída esquecida antes de iniciar a jornada de hoje.',needsMissingExit:true,missingExits:missed});
+      }
       const access=await validatePunchAccess(body(req));
       if(!access.ok)return json(res,access.status,{error:access.error,accessDenied:true,reason:access.reason});
       try{
@@ -677,9 +681,21 @@ export default async function handler(req,res){
           txn`INSERT INTO leli_punches(user_id,kind,work_date,user_agent,access_mode,location_lat,location_lng,location_accuracy,distance_m)
             SELECT ${user.id},${kind},${date},${String(req.headers['user-agent']||'').slice(0,300)},${access.mode},${access.latitude},${access.longitude},${access.accuracy},${access.distance}
             WHERE NOT EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${user.id} AND occurred_at>now()-interval '1 minute')
+              AND (${kind}<>'in' OR NOT EXISTS (
+                SELECT 1 FROM leli_punches open_day
+                WHERE open_day.user_id=${user.id} AND open_day.work_date<${date}::date AND open_day.kind='in'
+                  AND NOT EXISTS (SELECT 1 FROM leli_punches closed WHERE closed.user_id=open_day.user_id AND closed.work_date=open_day.work_date AND closed.kind='out')
+                  AND NOT EXISTS (SELECT 1 FROM leli_corrections reported WHERE reported.user_id=open_day.user_id AND reported.work_date=open_day.work_date AND reported.kind='out' AND reported.status IN ('pending','approved'))
+              ))
             RETURNING id,kind,occurred_at,work_date`
         ],{isolationLevel:'ReadCommitted'});
-        if(!rows[0])return json(res,409,{error:PUNCH_INTERVAL_ERROR,punchTooSoon:true});
+        if(!rows[0]){
+          if(kind==='in'){
+            const missed=(await missingExits(user.id,date)).filter(row=>row.status!=='pending');
+            if(missed.length)return json(res,428,{error:'Informe a saída esquecida antes de iniciar a jornada de hoje.',needsMissingExit:true,missingExits:missed});
+          }
+          return json(res,409,{error:PUNCH_INTERVAL_ERROR,punchTooSoon:true});
+        }
         await audit(user.id,'punch','punch',rows[0].id,{kind,date,accessMode:access.mode,distanceMeters:access.distance,accuracyMeters:access.accuracy});return json(res,201,{punch:rows[0],state:stateFrom([...current,rows[0]])});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:'Essa batida já foi registrada.'});throw e}
     }

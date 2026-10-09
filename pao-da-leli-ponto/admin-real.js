@@ -188,9 +188,24 @@ function correctionGroups(rows){
   return [...groups.values()];
 }
 function correctionDecision(item){
+  if(item.status==='pending'&&item.kind==='out'&&item.punch_id===null)return '<div class="correction-decision"><button class="btn small" type="button" title="Confirmar saída informada" onclick="confirmMissingExit(\''+item.id+'\',this)">OK</button><button class="btn small red" type="button" onclick="decideCorrection(\''+item.id+'\',\'rejected\')">Recusar</button></div>';
   if(item.status==='pending')return '<div class="correction-decision"><button class="btn small" type="button" onclick="decideCorrection(\''+item.id+'\',\'approved\')">Aprovar</button><button class="btn small red" type="button" onclick="decideCorrection(\''+item.id+'\',\'rejected\')">Recusar</button></div>';
   const label=item.status==='approved'?(item.kind==='out'&&item.punch_id===null?'Incluída depois':'Aprovado'):'Recusado';
   return '<div class="correction-decision"><span class="badge '+item.status+'">'+label+'</span>'+(item.decided_by_name?'<span class="sub">por '+esc(item.decided_by_name)+'</span>':'')+'<button class="btn small secondary" type="button" onclick="redoCorrection(\''+item.id+'\')">Refazer</button></div>';
+}
+function missingExitList(rows){
+  return rows.map(row=>{
+    const pending=row.status==='pending'&&row.correction_id;
+    const text=pending?'Saída informada: '+time(row.requested_at)+'. Confira o horário e toque em OK para confirmar.':row.status==='rejected'?'Pedido recusado. Aguardando o colaborador informar novamente.':'Aguardando o colaborador informar o horário real da saída.';
+    const decision=pending?correctionDecision({id:row.correction_id,kind:'out',punch_id:null,status:'pending'}):'<span class="badge pending">aguardando colaborador</span>';
+    return '<div class="item"><div><strong>'+esc(row.name)+' — '+esc(fullDateLabel(row.work_date))+'</strong><div class="sub">'+esc(row.unit)+'</div><div style="margin-top:6px"><span class="badge rejected">saída não registrada</span></div><div class="sub">'+esc(text)+'</div></div>'+decision+'</div>';
+  }).join('')||'<p class="muted">Nenhuma saída pendente de dias anteriores.</p>';
+}
+async function confirmMissingExit(id,button){
+  if(button?.disabled)return;
+  if(button)button.disabled=true;
+  try{await api('admin-decide-correction','POST',{id,status:'approved'});invalidateMonthlyReport();await render()}
+  catch(err){alert(err.message)}finally{if(button)button.disabled=false}
 }
 function correctionRequestSummary(items){
   const approved=items.filter(item=>item.status==='approved').length,rejected=items.filter(item=>item.status==='rejected').length,pending=items.filter(item=>item.status==='pending').length;
@@ -358,7 +373,7 @@ async function render(){
     });
 
     const labels={in:'Chegada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'},order={in:0,breakOut:1,breakIn:2,out:3};
-    $('#missingExitList').innerHTML=missing.map(row=>'<div class="item"><div><strong>'+esc(row.name)+' — '+esc(fullDateLabel(row.work_date))+'</strong><div class="sub">'+esc(row.unit)+'</div><div class="sub">'+(row.status==='pending'?'Saída informada: '+time(row.requested_at)+'. Pedido aguardando aprovação abaixo.':row.status==='rejected'?'Pedido recusado. Aguardando o colaborador informar novamente.':'Aguardando o colaborador informar o horário real da saída.')+'</div></div><span class="badge pending">saída pendente</span></div>').join('')||'<p class="muted">Nenhuma saída pendente de dias anteriores.</p>';
+    $('#missingExitList').innerHTML=missingExitList(missing);
     $('#correctionList').innerHTML=correctionRequests.map(c=>{
       const items=c.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]),complete=c.grouped&&items.length===4,missingExit=c.kind==='out'&&c.punch_id===null;
       const table='<div class="correction-times"><div class="correction-time-head"><span>Batida</span><span>Registrado</span><span>Solicitado</span><span>Decisão</span></div>'+items.map(x=>'<div class="correction-time-row '+(time(x.original_at)!==time(x.requested_at)?'changed':'')+'"><strong>'+labels[x.kind]+'</strong><b>'+(x.kind==='out'&&x.punch_id===null?'Não registrada':time(x.original_at))+'</b><b>'+time(x.requested_at)+'</b>'+correctionDecision(x)+'</div>').join('')+'</div>';

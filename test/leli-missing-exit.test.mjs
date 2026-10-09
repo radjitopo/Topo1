@@ -15,7 +15,7 @@ async function submit() {
   return response.data.id;
 }
 
-test('previous missing exits stay visible across months without blocking the new day', async () => {
+test('previous missing exits must be reported before starting the new day', async () => {
   await fixture.seedDay('2026-09-30');
   await fixture.seedDay('2026-10-01', otherEmployeeId);
   const today = await fixture.request('today');
@@ -24,13 +24,55 @@ test('previous missing exits stay visible across months without blocking the new
   assert.deepEqual(today.data.missingExits.map(row => row.work_date), ['2026-10-01', '2026-09-30']);
   assert.ok(today.data.missingExits.every(row => row.user_id === employeeId));
   const entry = await fixture.request('punch', 'POST');
-  assert.equal(entry.statusCode, 201);
-  assert.equal(entry.data.state, 'working');
+  assert.equal(entry.statusCode, 428);
+  assert.equal(entry.data.needsMissingExit, true);
+  assert.deepEqual(entry.data.missingExits.map(row => row.work_date), ['2026-10-01', '2026-09-30']);
+  assert.equal((await fixture.request('today')).data.state, 'idle');
+  assert.equal((await fixture.db.query("SELECT count(*)::int AS n FROM leli_punches WHERE user_id=$1 AND work_date='2026-10-02'", [employeeId])).rows[0].n, 0);
   assert.equal((await fixture.request('today')).data.missingExits.length, 2);
   const overview = await fixture.request('admin-overview', 'GET', {}, 'admin');
   assert.equal(overview.statusCode, 200);
   assert.equal(overview.data.missingExits.length, 3);
   assert.equal(firstDay(await report()).status, 'Saída não registrada');
+});
+
+test('reporting the forgotten exit allows a new entry while ADM approval is still pending', async () => {
+  const id = await submit();
+  const entry = await fixture.request('punch', 'POST');
+  assert.equal(entry.statusCode, 201, JSON.stringify(entry.data));
+  assert.equal(entry.data.state, 'working');
+  const today = (await fixture.request('today')).data;
+  assert.equal(today.missingExits[0].correction_id, id);
+  assert.equal(today.missingExits[0].status, 'pending');
+  assert.equal(firstDay(await report()).workedMinutes, null);
+});
+
+test('all unanswered days must be reported, including a missing exit from the previous month', async () => {
+  await fixture.seedDay('2026-09-30');
+  await submit();
+  const blocked = await fixture.request('punch', 'POST');
+  assert.equal(blocked.statusCode, 428);
+  assert.deepEqual(blocked.data.missingExits.map(row => row.work_date), ['2026-09-30']);
+  assert.equal((await fixture.request('missing-exit', 'POST', { ...payload, date: '2026-09-30' })).statusCode, 201);
+  assert.equal((await fixture.request('punch', 'POST')).statusCode, 201);
+});
+
+test('a rejected exit is asked again before a new entry and a resubmission unlocks the entry', async () => {
+  const id = await submit();
+  await fixture.request('admin-decide-correction', 'POST', { id, status: 'rejected', note: 'Confira o horário.' }, 'admin');
+  const blocked = await fixture.request('punch', 'POST');
+  assert.equal(blocked.statusCode, 428);
+  assert.equal(blocked.data.missingExits[0].status, 'rejected');
+  assert.equal(blocked.data.missingExits[0].decision_note, 'Confira o horário.');
+  await submit();
+  assert.equal((await fixture.request('punch', 'POST')).statusCode, 201);
+});
+
+test('an already active day can continue its interval punches despite an older missing exit', async () => {
+  await fixture.seedDay('2026-10-02', employeeId, ['in']);
+  const interval = await fixture.request('punch', 'POST');
+  assert.equal(interval.statusCode, 201, JSON.stringify(interval.data));
+  assert.equal(interval.data.punch.kind, 'breakOut');
 });
 
 test('a submitted exit awaits approval and changes neither original punches nor worked hours', async () => {
