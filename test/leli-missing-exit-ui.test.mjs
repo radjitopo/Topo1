@@ -153,3 +153,75 @@ test('double tapping start sends only one entry for a completed previous day', a
   assert.equal(ui.active('missingExit'), false);
   assert.deepEqual(ui.alerts, []);
 });
+
+function regularizationForm(markup, requestedTime = '17:00') {
+  const attributes = markup.match(/<form class="regularize-exit-form"([^>]+)>/)[1];
+  const time = node(), reason = node(), button = node(), status = node();
+  time.value = requestedTime;
+  reason.value = 'Horário conferido com Laura.';
+  button.textContent = 'OK — regularizar';
+  const fields = new Map([['[name="requestedTime"]', time], ['[name="reason"]', reason], ['button[type="submit"]', button], ['[data-regularize-status]', status]]);
+  return {
+    button, status,
+    dataset: { userId: attributes.match(/data-user-id="([^"]+)"/)[1], workDate: attributes.match(/data-work-date="([^"]+)"/)[1] },
+    reportValidity() { return Boolean(time.value && reason.value); },
+    querySelector(selector) { return fields.get(selector); },
+  };
+}
+
+test('ADM regularizes an unanswered exit from its row and the employee can then start today', async () => {
+  const adm = client({ role: 'admin' });
+  const oldExits = (await fixture.request('admin-overview', 'GET', {}, 'admin')).data.missingExits;
+  const markup = adm.context.missingExitList(oldExits);
+  assert.match(markup, /<summary[^>]*>Regularizar saída<\/summary>/);
+  assert.match(markup, /onsubmit="submitExitRegularization\(event,this\)"/);
+  assert.match(markup, /type="time"[^>]*required/);
+  const form = regularizationForm(markup);
+  let refreshed;
+  adm.context.render = async () => { refreshed = (await fixture.request('admin-overview', 'GET', {}, 'admin')).data; };
+  adm.context.invalidateMonthlyReport = () => {};
+  let prevented = false;
+  const event = { preventDefault() { prevented = true; } };
+  await Promise.all([adm.context.submitExitRegularization(event, form), adm.context.submitExitRegularization(event, form)]);
+  assert.equal(prevented, true);
+  assert.equal(adm.calls.filter(call => call.action === 'admin-regularize-missing-exit').length, 1);
+  assert.equal(refreshed.missingExits.length, 0);
+  assert.equal(form.status.textContent, 'Saída regularizada.');
+  assert.equal(form.button.disabled, false);
+  const employee = client();
+  await employee.context.punch();
+  assert.equal(await todayPunchCount(), 1);
+  assert.equal(employee.active('missingExit'), false);
+  const report = await fixture.request('admin-monthly-report', 'GET', {}, 'admin', { month: '2026-10', employeeId });
+  assert.equal(report.data.rows.find(row => row.date === '2026-10-01').workedMinutes, 420);
+});
+
+test('ADM sees validation errors beside the form and cannot regularize without a real time', async () => {
+  const adm = client({ role: 'admin' });
+  const oldExits = (await fixture.request('today')).data.missingExits;
+  const markup = adm.context.missingExitList(oldExits);
+  const event = { preventDefault() {} };
+  await adm.context.submitExitRegularization(event, regularizationForm(markup, ''));
+  assert.equal(adm.calls.length, 0);
+  const form = regularizationForm(markup, '12:59');
+  await adm.context.submitExitRegularization(event, form);
+  assert.match(form.status.textContent, /antes da última batida/);
+  assert.equal(form.button.disabled, false);
+  assert.equal(form.button.textContent, 'OK — regularizar');
+  assert.equal((await fixture.request('today')).data.missingExits.length, 1);
+  assert.equal((await fixture.db.query('SELECT count(*)::int AS n FROM leli_corrections')).rows[0].n, 0);
+});
+
+test('a pending employee exit offers OK and refusal while a rejected exit offers regularization', async () => {
+  const request = await fixture.request('missing-exit', 'POST', { date: '2026-10-01', requestedTime: '17:00', reason: 'Saída esquecida.' });
+  const adm = client({ role: 'admin' });
+  const pending = (await fixture.request('today')).data.missingExits;
+  const markup = adm.context.missingExitList(pending);
+  assert.match(markup, />OK<\/button>/);
+  assert.doesNotMatch(markup, /regularize-exit-form/);
+  await fixture.request('admin-decide-correction', 'POST', { id: request.data.id, status: 'rejected' }, 'admin');
+  const rejected = (await fixture.request('today')).data.missingExits;
+  const rejectedMarkup = adm.context.missingExitList(rejected);
+  assert.match(rejectedMarkup, /Regularizar saída/);
+  assert.match(rejectedMarkup, /name="requestedTime"[^>]*value="17:00"/);
+});

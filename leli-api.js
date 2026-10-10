@@ -826,6 +826,41 @@ export default async function handler(req,res){
 
     if(user.role!=='admin')return json(res,403,{error:'Acesso restrito aos administradores.'});
 
+    if(req.method==='POST'&&action==='admin-regularize-missing-exit'){
+      const b=body(req),userId=String(b.userId||''),date=String(b.date||''),requestedTime=String(b.requestedTime||''),reason=String(b.reason||'').trim();
+      if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId))return json(res,400,{error:'Escolha um colaborador válido.'});
+      if(!validWorkDate(date)||date>=localDate())return json(res,400,{error:'Escolha uma jornada de um dia anterior.'});
+      if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(requestedTime)||reason.length<3||reason.length>1000)return json(res,400,{error:'Informe o horário real da saída e um motivo de até 1000 caracteres.'});
+      const employees=await sql`SELECT id FROM leli_users WHERE id=${userId}::uuid AND role='employee'`;
+      if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      const requested=await sql`SELECT ((${date}::date+${requestedTime}::time) AT TIME ZONE ${TZ}) AS ts`;
+      const error=missingExitError(await effectivePunches(userId,date),requested[0]?.ts);
+      if(error)return json(res,409,{error});
+      const [,rows]=await sql.transaction(txn=>[
+        txn`SELECT id FROM leli_users WHERE id=${userId}::uuid FOR UPDATE`,
+        txn`WITH saved AS (
+          INSERT INTO leli_corrections(user_id,work_date,kind,requested_at,reason,status,decided_by,decided_at)
+          SELECT ${userId}::uuid,${date}::date,'out',${requested[0].ts}::timestamptz,${reason},'approved',${user.id}::uuid,now()
+          WHERE EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${userId}::uuid AND work_date=${date}::date AND kind='in')
+            AND NOT EXISTS (SELECT 1 FROM leli_punches WHERE user_id=${userId}::uuid AND work_date=${date}::date AND kind='out')
+            AND NOT EXISTS (SELECT 1 FROM leli_corrections WHERE user_id=${userId}::uuid AND work_date=${date}::date AND kind='out' AND status IN ('pending','approved'))
+            AND NOT EXISTS (
+              SELECT 1 FROM leli_punches p LEFT JOIN LATERAL (
+                SELECT requested_at FROM leli_corrections a WHERE a.user_id=p.user_id AND a.work_date=p.work_date AND a.kind=p.kind AND a.status='approved'
+                ORDER BY decided_at DESC,created_at DESC,id DESC LIMIT 1
+              ) a ON true
+              WHERE p.user_id=${userId}::uuid AND p.work_date=${date}::date AND ${requested[0].ts}::timestamptz<date_trunc('minute',COALESCE(a.requested_at,p.occurred_at))
+            )
+          RETURNING id,user_id,work_date,requested_at,reason
+        ), logged AS (
+          INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details)
+          SELECT ${user.id}::uuid,'admin_regularize_missing_exit','correction',id::text,jsonb_build_object('userId',user_id,'date',work_date,'requestedAt',requested_at,'reason',reason) FROM saved
+        ) SELECT id FROM saved`
+      ],{isolationLevel:'ReadCommitted'});
+      if(!rows[0])return json(res,409,{error:'A jornada mudou ou já existe uma saída ou pedido pendente. Atualize a tela antes de regularizar.'});
+      return json(res,201,{ok:true,id:rows[0].id});
+    }
+
     if(req.method==='POST'&&action==='admin-reset-system'){
       const b=body(req),confirmation=String(b.confirmation||'').trim(),sessionToken=cookie(req,SESSION_COOKIE);
       if(confirmation!=='APAGAR TUDO')return json(res,400,{error:'Confirmação inválida. Digite APAGAR TUDO para zerar o sistema.'});

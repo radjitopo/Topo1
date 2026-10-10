@@ -198,8 +198,18 @@ function missingExitList(rows){
     const pending=row.status==='pending'&&row.correction_id;
     const text=pending?'Saída informada: '+time(row.requested_at)+'. Confira o horário e toque em OK para confirmar.':row.status==='rejected'?'Pedido recusado. Aguardando o colaborador informar novamente.':'Aguardando o colaborador informar o horário real da saída.';
     const decision=pending?correctionDecision({id:row.correction_id,kind:'out',punch_id:null,status:'pending'}):'<span class="badge pending">aguardando colaborador</span>';
-    return '<div class="item"><div><strong>'+esc(row.name)+' — '+esc(fullDateLabel(row.work_date))+'</strong><div class="sub">'+esc(row.unit)+'</div><div style="margin-top:6px"><span class="badge rejected">saída não registrada</span></div><div class="sub">'+esc(text)+'</div></div>'+decision+'</div>';
+    const regularize=pending?'':'<details class="regularize-exit"><summary class="btn small secondary">Regularizar saída</summary><form class="regularize-exit-form" data-user-id="'+esc(row.user_id)+'" data-work-date="'+esc(row.work_date)+'" onsubmit="submitExitRegularization(event,this)"><p class="sub">Confirme o horário real com o colaborador e toque em OK para regularizar.</p><label class="form-label">Horário da saída<input type="time" name="requestedTime" step="60" value="'+(row.requested_at?esc(time(row.requested_at)):'')+'" required></label><label class="form-label">Motivo<input name="reason" value="Regularização de saída pelo ADM." minlength="3" maxlength="1000" required></label><div class="actions"><button class="btn small" type="submit">OK — regularizar</button><button class="btn small secondary" type="button" onclick="this.closest(\'details\').open=false">Cancelar</button></div><p class="sub" data-regularize-status role="status" aria-live="polite"></p></form></details>';
+    return '<div class="item"><div class="missing-exit-content"><strong>'+esc(row.name)+' — '+esc(fullDateLabel(row.work_date))+'</strong><div class="sub">'+esc(row.unit)+'</div><div style="margin-top:6px"><span class="badge rejected">saída não registrada</span></div><div class="sub">'+esc(text)+'</div>'+regularize+'</div>'+decision+'</div>';
   }).join('')||'<p class="muted">Nenhuma saída pendente de dias anteriores.</p>';
+}
+async function submitExitRegularization(event,form){
+  event.preventDefault();
+  const button=form.querySelector('button[type="submit"]'),status=form.querySelector('[data-regularize-status]');
+  if(button.disabled||!form.reportValidity())return;
+  const data={userId:form.dataset.userId,date:form.dataset.workDate,requestedTime:form.querySelector('[name="requestedTime"]').value,reason:form.querySelector('[name="reason"]').value.trim()};
+  const originalLabel=button.textContent;button.disabled=true;button.textContent='SALVANDO...';status.textContent='Regularizando saída...';
+  try{await api('admin-regularize-missing-exit','POST',data);status.textContent='Saída regularizada.';invalidateMonthlyReport();await render()}
+  catch(err){status.textContent=err.message}finally{button.disabled=false;button.textContent=originalLabel}
 }
 async function confirmMissingExit(id,button){
   if(button?.disabled)return;
