@@ -212,9 +212,10 @@ export function buildMonthlyReport({
     const overtimeByDate = calculateOvertimeForEmployee(
       employeePunches, employeeCorrections, mondayOf(info.start), periodEnd, dailyLimitMinutes, weeklyLimitMinutes,
     );
-    const reportCorrectionKeys = new Set(employeeCorrections.map((item) => item.request_group || item.id));
+    const reportCorrections = employeeCorrections.filter((item) => item.work_date >= info.start && item.work_date <= periodEnd);
+    const reportCorrectionKeys = new Set(reportCorrections.map((item) => item.request_group || item.id));
     const pendingCorrectionKeys = new Set(
-      employeeCorrections.filter((item) => item.status === 'pending').map((item) => item.request_group || item.id),
+      reportCorrections.filter((item) => item.status === 'pending').map((item) => item.request_group || item.id),
     );
     summary.correctionRequests = reportCorrectionKeys.size;
     summary.pendingCorrections = pendingCorrectionKeys.size;
