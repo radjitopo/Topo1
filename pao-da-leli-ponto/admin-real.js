@@ -256,24 +256,70 @@ function renderMonthlyReport(report){
   $('#reportEmployeeSummary').innerHTML=report.employees.map(employee=>'<article class="report-person"><div class="report-person-head"><div><strong>'+esc(employee.name)+'</strong><div class="sub">'+esc(employee.unit)+'</div></div>'+(employee.pendingCorrections?'<span class="badge pending">'+employee.pendingCorrections+' pendente'+(employee.pendingCorrections===1?'':'s')+'</span>':'')+'</div><div class="report-person-stats"><div class="report-person-stat"><span>Previsto</span><b>'+durationLabel(employee.expectedMinutes)+'</b></div><div class="report-person-stat"><span>Trabalhado</span><b>'+durationLabel(employee.workedMinutes)+'</b></div><div class="report-person-stat"><span>Horas extras</span><b>'+durationLabel(employee.overtimeMinutes)+'</b></div><div class="report-person-stat"><span>Extras diárias</span><b>'+durationLabel(employee.overtimeDailyMinutes)+'</b></div><div class="report-person-stat"><span>Extras semanais</span><b>'+durationLabel(employee.overtimeWeeklyMinutes)+'</b></div><div class="report-person-stat"><span>Atraso</span><b>'+durationLabel(employee.delayMinutes)+'</b></div><div class="report-person-stat"><span>Faltas</span><b>'+employee.absenceDays+'</b></div><div class="report-person-stat"><span>Incompletas</span><b>'+employee.incompleteDays+'</b></div><div class="report-person-stat"><span>Correções</span><b>'+employee.correctionRequests+'</b></div></div></article>').join('')||'<div class="empty">Nenhum funcionário encontrado.</div>';
   $('#reportRows').innerHTML=report.rows.map(row=>'<tr><td class="nowrap"><strong>'+esc(fullDateLabel(row.date))+'</strong></td><td><strong>'+esc(row.name)+'</strong><span class="sub">'+esc(row.unit)+'</span></td><td class="nowrap">'+esc(row.schedule)+'</td><td class="nowrap">'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td class="nowrap">'+durationLabel(row.workedMinutes)+'</td><td class="nowrap"><b>'+durationLabel(row.overtimeMinutes)+'</b></td><td class="nowrap">'+durationLabel(row.delayMinutes)+'</td><td>'+reportStatusBadge(row.status)+(row.exitAddedLater?'<span class="sub">Saída incluída depois</span>':'')+'</td><td>'+(row.correctionRequests?row.correctionRequests+(row.pendingCorrections?' · '+row.pendingCorrections+' pendente'+(row.pendingCorrections===1?'':'s'):''):'—')+'</td></tr>').join('')||'<tr><td colspan="9" class="empty">Nenhuma jornada encontrada neste período.</td></tr>';
 }
-function csvCell(value){return '"'+String(value??'').replace(/"/g,'""')+'"'}
+
+function csvCell(value){
+  const cell=String(value??'');
+  const safe=/^[=+\-@\t\r]/.test(cell)?"'"+cell:cell;
+  return '"'+safe.replace(/"/g,'""')+'"';
+}
+function saveReportFile(text,filename,type){
+  const blob=new Blob(['\ufeff',text],{type:type+';charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function downloadMonthlyReport(){
   if(!monthlyReport)return;
-  const report=monthlyReport,lines=[
+  const report=monthlyReport,rule=report.overtimeRules,lines=[
     ['Pão da Leli — Fechamento mensal'],
     ['Mês',monthLabel(report.month)],
     ['Período',report.periodStart.split('-').reverse().join('/')+' a '+report.periodEnd.split('-').reverse().join('/')],
+    ['Limite diário de referência',durationLabel(rule.dailyLimitMinutes)],
+    ['Limite semanal de referência',durationLabel(rule.weeklyLimitMinutes)],
+    ['Horas extras totais (estimadas)',durationLabel(report.totals.overtimeMinutes)],
+    ['Horas extras diárias',durationLabel(report.totals.overtimeDailyMinutes)],
+    ['Horas extras semanais (sem duplicidade)',durationLabel(report.totals.overtimeWeeklyMinutes)],
     [],
     ['Resumo por funcionário'],
-    ['Funcionário','Área','Horas previstas','Horas trabalhadas','Atrasos','Faltas','Jornadas incompletas','Correções','Correções pendentes'],
-    ...report.employees.map(employee=>[employee.name,employee.unit,durationLabel(employee.expectedMinutes),durationLabel(employee.workedMinutes),durationLabel(employee.delayMinutes),employee.absenceDays,employee.incompleteDays,employee.correctionRequests,employee.pendingCorrections]),
+    ['Funcionário','Área','Horas previstas','Horas trabalhadas','Horas extras total','Extras diárias','Extras semanais','Atrasos','Faltas','Jornadas incompletas','Correções','Correções pendentes'],
+    ...report.employees.map(e=>[e.name,e.unit,durationLabel(e.expectedMinutes),durationLabel(e.workedMinutes),durationLabel(e.overtimeMinutes),durationLabel(e.overtimeDailyMinutes),durationLabel(e.overtimeWeeklyMinutes),durationLabel(e.delayMinutes),e.absenceDays,e.incompleteDays,e.correctionRequests,e.pendingCorrections]),
     [],
     ['Detalhamento diário'],
-    ['Data','Funcionário','Área','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Atraso','Situação','Correções','Correções pendentes'],
-    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(value=>value||''),durationLabel(row.workedMinutes),durationLabel(row.delayMinutes),reportRowStatus(row),row.correctionRequests,row.pendingCorrections])
+    ['Data','Funcionário','Área','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Extras totais','Extras diárias','Extras semanais','Atraso','Situação','Correções','Correções pendentes'],
+    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(v=>v||''),durationLabel(row.workedMinutes),durationLabel(row.overtimeMinutes),durationLabel(row.overtimeDailyMinutes),durationLabel(row.overtimeWeeklyMinutes),durationLabel(row.delayMinutes),reportRowStatus(row),row.correctionRequests,row.pendingCorrections]),
+    [],
+    ['Observações','Horas extras são estimativas para conferência do ADM; verificar jornada contratual individual, feriados, adicional noturno, compensações e batidas incompletas antes da folha.']
   ];
-  const blob=new Blob(['\ufeff'+lines.map(line=>line.map(csvCell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;link.download='pao-da-leli-fechamento-'+report.month+'.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  saveReportFile(lines.map(line=>line.map(csvCell).join(';')).join('\r\n'),'pao-da-leli-fechamento-'+report.month+'.csv','text/csv');
+}
+function downloadMonthlyReportTxt(){
+  if(!monthlyReport)return;
+  const report=monthlyReport,rule=report.overtimeRules;
+  const date=dateValue=>String(dateValue).split('-').reverse().join('/');
+  const lines=[
+    'PÃO DA LELI | FECHAMENTO MENSAL',
+    monthLabel(report.month)+' | '+date(report.periodStart)+' a '+date(report.periodEnd),
+    'Referência: '+durationLabel(rule.dailyLimitMinutes)+'/dia e '+durationLabel(rule.weeklyLimitMinutes)+'/semana (segunda a domingo)',
+    '',
+    'TOTAL DA EQUIPE',
+    'Trabalhado: '+durationLabel(report.totals.workedMinutes)+' | Previsto: '+durationLabel(report.totals.expectedMinutes),
+    'Horas extras: '+durationLabel(report.totals.overtimeMinutes)+' (diárias '+durationLabel(report.totals.overtimeDailyMinutes)+'; semanais '+durationLabel(report.totals.overtimeWeeklyMinutes)+')',
+    'Atrasos: '+durationLabel(report.totals.delayMinutes)+' | Faltas: '+report.totals.absenceDays+' | Incompletas: '+report.totals.incompleteDays,
+    '',
+    'RESUMO POR FUNCIONÁRIO',
+  ];
+  for(const e of report.employees){
+    lines.push('',e.name+' | '+e.unit,'Trabalhado: '+durationLabel(e.workedMinutes)+' | Previsto: '+durationLabel(e.expectedMinutes),'Extras: '+durationLabel(e.overtimeMinutes)+' (diárias '+durationLabel(e.overtimeDailyMinutes)+'; semanais '+durationLabel(e.overtimeWeeklyMinutes)+')','Atrasos: '+durationLabel(e.delayMinutes)+' | Faltas: '+e.absenceDays+' | Incompletas: '+e.incompleteDays+' | Correções: '+e.correctionRequests+' ('+e.pendingCorrections+' pendentes)');
+  }
+  lines.push('','DETALHAMENTO DIÁRIO');
+  for(const row of report.rows){
+    lines.push('',date(row.date)+' | '+row.name+' | '+row.unit,
+      'Escala: '+row.schedule,
+      'Batidas: '+row.punches.map((value,index)=>['Entrada','Intervalo saída','Intervalo volta','Saída'][index]+' '+(value||'—')).join(' | '),
+      'Trabalhado: '+durationLabel(row.workedMinutes)+' | Extras: '+durationLabel(row.overtimeMinutes)+' (diárias '+durationLabel(row.overtimeDailyMinutes)+'; semanais '+durationLabel(row.overtimeWeeklyMinutes)+')',
+      'Situação: '+reportRowStatus(row)+' | Correções: '+row.correctionRequests+' ('+row.pendingCorrections+' pendentes)');
+  }
+  lines.push('','OBSERVAÇÃO','Estimativa administrativa. Conferir jornada contratual, batidas incompletas, feriados, adicional noturno e compensações antes de usar em folha. Correções aprovadas entram no cálculo; correções pendentes não.','Gerado em '+dateTime(report.generatedAt)+'.');
+  saveReportFile(lines.join('\r\n'),'pao-da-leli-fechamento-'+report.month+'.txt','text/plain');
 }
 function printMonthlyReport(){
   if(!monthlyReport)return;
