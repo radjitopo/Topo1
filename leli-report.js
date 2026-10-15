@@ -37,6 +37,15 @@ function weekday(date) {
   return new Date(`${date}T12:00:00Z`).getUTCDay();
 }
 
+function addDays(date, days) {
+  const [year, month, day] = date.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+function mondayOf(date) {
+  return addDays(date, -((weekday(date) + 6) % 7));
+}
+
 function timeMinutes(value) {
   const match = /^(\d{2}):(\d{2})/.exec(String(value || ''));
   return match ? Number(match[1]) * 60 + Number(match[2]) : null;
@@ -125,6 +134,36 @@ function statusForDay({ date, today, nowMinutes, schedule, hasPunches, complete,
   return 'Completo';
 }
 
+function calculateOvertimeForEmployee(punches, corrections, start, end, dailyLimitMinutes, weeklyLimitMinutes) {
+  const punchDates = new Map();
+  const correctionDates = new Map();
+  for (const punch of punches) {
+    if (!punchDates.has(punch.work_date)) punchDates.set(punch.work_date, []);
+    punchDates.get(punch.work_date).push(punch);
+  }
+  for (const correction of corrections) {
+    if (!correctionDates.has(correction.work_date)) correctionDates.set(correction.work_date, []);
+    correctionDates.get(correction.work_date).push(correction);
+  }
+
+  const result = new Map();
+  let countedRegularMinutes = 0;
+  for (let date = start; date <= end; date = addDays(date, 1)) {
+    if (weekday(date) === 1) countedRegularMinutes = 0;
+    const dailyPunches = punchDates.get(date) || [];
+    const dailyCorrections = correctionDates.get(date) || [];
+    const worked = workedMinutes(effectiveTimes(dailyPunches, dailyCorrections));
+    if (worked === null) continue;
+    const dailyExtra = Math.max(0, worked - dailyLimitMinutes);
+    const regularToday = Math.min(worked, dailyLimitMinutes);
+    const weeklyExtra = Math.max(0, countedRegularMinutes + regularToday - weeklyLimitMinutes)
+      - Math.max(0, countedRegularMinutes - weeklyLimitMinutes);
+    countedRegularMinutes += regularToday;
+    result.set(date, { dailyExtra, weeklyExtra, total: dailyExtra + weeklyExtra });
+  }
+  return result;
+}
+
 function blankSummary(employee) {
   return {
     userId: employee.id,
@@ -133,6 +172,9 @@ function blankSummary(employee) {
     active: employee.active,
     expectedMinutes: 0,
     workedMinutes: 0,
+    overtimeDailyMinutes: 0,
+    overtimeWeeklyMinutes: 0,
+    overtimeMinutes: 0,
     delayMinutes: 0,
     absenceDays: 0,
     incompleteDays: 0,
@@ -146,7 +188,15 @@ export function getMonthBounds(month) {
   return { start: info.start, end: info.end };
 }
 
-export function buildMonthlyReport({ month, employees, punches, corrections, scheduleVersions, now = new Date() }) {
+export function getReportCoverageBounds(month) {
+  const bounds = getMonthBounds(month);
+  return { start: mondayOf(bounds.start), end: bounds.end };
+}
+
+export function buildMonthlyReport({
+  month, employees, punches, corrections, scheduleVersions,
+  dailyLimitMinutes = 480, weeklyLimitMinutes = 2640, now = new Date(),
+}) {
   const info = monthInfo(month);
   const today = localDateFormatter.format(now);
   const periodEnd = today < info.end ? today : info.end;
@@ -159,9 +209,13 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
     const employeePunches = punches.filter((item) => item.user_id === employee.id);
     const employeeCorrections = corrections.filter((item) => item.user_id === employee.id);
     const versions = scheduleVersions.filter((item) => item.user_id === employee.id);
-    const reportCorrectionKeys = new Set(employeeCorrections.map((item) => item.request_group || item.id));
+    const overtimeByDate = calculateOvertimeForEmployee(
+      employeePunches, employeeCorrections, mondayOf(info.start), periodEnd, dailyLimitMinutes, weeklyLimitMinutes,
+    );
+    const reportCorrections = employeeCorrections.filter((item) => item.work_date >= info.start && item.work_date <= periodEnd);
+    const reportCorrectionKeys = new Set(reportCorrections.map((item) => item.request_group || item.id));
     const pendingCorrectionKeys = new Set(
-      employeeCorrections.filter((item) => item.status === 'pending').map((item) => item.request_group || item.id),
+      reportCorrections.filter((item) => item.status === 'pending').map((item) => item.request_group || item.id),
     );
     summary.correctionRequests = reportCorrectionKeys.size;
     summary.pendingCorrections = pendingCorrectionKeys.size;
@@ -178,6 +232,7 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
         const times = effectiveTimes(dayPunches, dayCorrections);
         const worked = workedMinutes(times);
         const complete = worked !== null;
+        const extra = overtimeByDate.get(date);
         const expected = expectedMinutes(schedule);
         const arrival = timeMinutes(times.in);
         const scheduledArrival = schedule ? timeMinutes(schedule.startTime) : null;
@@ -198,6 +253,11 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
 
         summary.expectedMinutes += expected;
         if (worked !== null) summary.workedMinutes += worked;
+        if (extra) {
+          summary.overtimeDailyMinutes += extra.dailyExtra;
+          summary.overtimeWeeklyMinutes += extra.weeklyExtra;
+          summary.overtimeMinutes += extra.total;
+        }
         summary.delayMinutes += delay;
         if (status === 'Falta') summary.absenceDays += 1;
         if ((!complete && dayPunches.length > 0 && date < today) || status === 'Batidas incompletas') summary.incompleteDays += 1;
@@ -213,6 +273,9 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
           punches: KINDS.map((kind) => times[kind]),
           expectedMinutes: expected,
           workedMinutes: worked,
+          overtimeDailyMinutes: extra?.dailyExtra ?? null,
+          overtimeWeeklyMinutes: extra?.weeklyExtra ?? null,
+          overtimeMinutes: extra?.total ?? null,
           delayMinutes: delay,
           status,
           exitAddedLater: Boolean(times.out && !dayPunches.some((item) => item.kind === 'out')
@@ -230,6 +293,9 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
     (result, item) => ({
       expectedMinutes: result.expectedMinutes + item.expectedMinutes,
       workedMinutes: result.workedMinutes + item.workedMinutes,
+      overtimeDailyMinutes: result.overtimeDailyMinutes + item.overtimeDailyMinutes,
+      overtimeWeeklyMinutes: result.overtimeWeeklyMinutes + item.overtimeWeeklyMinutes,
+      overtimeMinutes: result.overtimeMinutes + item.overtimeMinutes,
       delayMinutes: result.delayMinutes + item.delayMinutes,
       absenceDays: result.absenceDays + item.absenceDays,
       incompleteDays: result.incompleteDays + item.incompleteDays,
@@ -239,6 +305,9 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
     {
       expectedMinutes: 0,
       workedMinutes: 0,
+      overtimeDailyMinutes: 0,
+      overtimeWeeklyMinutes: 0,
+      overtimeMinutes: 0,
       delayMinutes: 0,
       absenceDays: 0,
       incompleteDays: 0,
@@ -252,6 +321,7 @@ export function buildMonthlyReport({ month, employees, punches, corrections, sch
     periodStart: info.start,
     periodEnd,
     generatedAt: now.toISOString(),
+    overtimeRules: { dailyLimitMinutes, weeklyLimitMinutes, weekStartsOn: 'Monday', method: 'daily-and-weekly-no-double-count' },
     totals,
     employees: employeeSummaries,
     rows,

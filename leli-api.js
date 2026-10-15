@@ -1,6 +1,6 @@
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
-import { buildMonthlyReport, getMonthBounds } from './leli-report.js';
+import { buildMonthlyReport, getMonthBounds, getReportCoverageBounds } from './leli-report.js';
 import { demoRecipes as defaultRecipes } from './leli-recipes-data.js';
 
 const sql = neon(process.env.DATABASE_URL);
@@ -1042,11 +1042,13 @@ export default async function handler(req,res){
     }
     if(req.method==='GET'&&action==='admin-monthly-report'){
       const month=String(req.query?.month||'').trim(),employeeId=String(req.query?.employeeId||'').trim();
+      const dailyHours=Number(req.query?.dailyHours??8),weeklyHours=Number(req.query?.weeklyHours??44);
+      if(!Number.isFinite(dailyHours)||!Number.isFinite(weeklyHours)||dailyHours<1||dailyHours>12||weeklyHours<1||weeklyHours>60||!Number.isInteger(dailyHours*4)||!Number.isInteger(weeklyHours*4))return json(res,400,{error:'Informe jornadas diárias e semanais válidas, em intervalos de 15 minutos.'});
       if(employeeId&&!/^[0-9a-f-]{36}$/i.test(employeeId))return json(res,400,{error:'Colaborador inválido.'});
       let bounds;
       try{bounds=getMonthBounds(month)}catch{return json(res,400,{error:'Escolha um mês válido.'})}
       if(month>localDate().slice(0,7))return json(res,400,{error:'Escolha o mês atual ou um mês anterior.'});
-      const employeeFilter=employeeId||null;
+      const employeeFilter=employeeId||null,coverage=getReportCoverageBounds(month);
       const employees=await sql`SELECT id,name,email,phone,unit,active,created_at
         FROM leli_users
         WHERE role='employee' AND (${employeeFilter}::uuid IS NULL OR id=${employeeFilter}::uuid)
@@ -1054,12 +1056,12 @@ export default async function handler(req,res){
       if(employeeId&&!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
       const punches=await sql`SELECT p.user_id,p.work_date::text AS work_date,p.kind,p.occurred_at
         FROM leli_punches p JOIN leli_users u ON u.id=p.user_id
-        WHERE u.role='employee' AND p.work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
+        WHERE u.role='employee' AND p.work_date BETWEEN ${coverage.start}::date AND ${bounds.end}::date
           AND (${employeeFilter}::uuid IS NULL OR p.user_id=${employeeFilter}::uuid)
         ORDER BY p.work_date,p.occurred_at`;
       const corrections=await sql`SELECT c.id,c.user_id,c.work_date::text AS work_date,c.kind,c.punch_id,c.status,c.requested_at,c.decided_at,c.created_at,c.request_group
         FROM leli_corrections c JOIN leli_users u ON u.id=c.user_id
-        WHERE u.role='employee' AND c.work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date
+        WHERE u.role='employee' AND c.work_date BETWEEN ${coverage.start}::date AND ${bounds.end}::date
           AND (${employeeFilter}::uuid IS NULL OR c.user_id=${employeeFilter}::uuid)
         ORDER BY c.work_date,c.created_at`;
       const scheduleVersions=await sql`SELECT v.user_id,v.effective_from::text AS effective_from,v.schedule
@@ -1067,8 +1069,8 @@ export default async function handler(req,res){
         WHERE u.role='employee' AND v.effective_from<=${bounds.end}::date
           AND (${employeeFilter}::uuid IS NULL OR v.user_id=${employeeFilter}::uuid)
         ORDER BY v.user_id,v.effective_from`;
-      const report=buildMonthlyReport({month,employees,punches,corrections,scheduleVersions});
-      await audit(user.id,'view_monthly_report','month',month,{employeeId:employeeFilter});
+      const report=buildMonthlyReport({month,employees,punches,corrections,scheduleVersions,dailyLimitMinutes:dailyHours*60,weeklyLimitMinutes:weeklyHours*60});
+      await audit(user.id,'view_monthly_report','month',month,{employeeId:employeeFilter,dailyHours,weeklyHours});
       return json(res,200,report);
     }
     if(req.method==='POST'&&action==='admin-save-schedule'){
