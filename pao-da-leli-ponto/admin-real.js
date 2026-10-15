@@ -14,7 +14,7 @@ function initPasswordToggles(){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API='/leli-api';
 const punchLabels={in:'Entrada',breakOut:'Saída para intervalo',breakIn:'Volta do intervalo',out:'Saída'};
-let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,monthlyReport=null,recipeAdminData=[],selectedRecipeAdminId=null;
+let currentUser=null,overview=null,selectedEmployeeId=null,checklistAdminData=null,closingSearchDate='',monthlyReport=null,recipeAdminData=[],selectedRecipeAdminId=null;
 async function api(action,method='GET',data){
   return leliApi(API,action,method,data);
 }
@@ -157,11 +157,11 @@ function renderChecklistHistory(){
     const readStatus=row.message_audience==='team'?(Number(row.recipient_count)?Number(row.read_count)+' de '+Number(row.recipient_count)+' leram':'sem destinatários ativos'):(Number(row.read_count)?'lido pelo destinatário':'ainda não lido');
     const messageHtml=row.message?'<div class="message-box"><div class="sub">Recado para '+esc(target)+' · '+esc(readStatus)+'</div><p>'+esc(row.message)+'</p></div>':'';
     return '<article class="checklist-entry"><div class="checklist-entry-head"><div><strong>'+esc(row.employee_name)+'</strong><div class="sub">'+esc(row.unit)+' · '+dateTime(row.created_at)+'</div></div><span class="badge approved">'+esc(fullDateLabel(row.work_date))+'</span></div>'+answerHtml+missingHtml+messageHtml+'</article>';
-  }).join('')||'<div class="empty">Nenhum checklist concluído ainda.</div>';
+  }).join('')||'<div class="empty">Nenhum fechamento encontrado para esta data.</div>';
 }
 function renderClosingMessages(){
   const messages=(checklistAdminData?.submissions||[]).filter(row=>row.message).slice(0,30);
-  $('#closingMessages').innerHTML=messages.map(row=>{const target=row.message_audience==='team'?'toda a equipe':(row.recipient_name||'destinatário removido');return '<article class="message-box" style="margin-top:0"><div class="sub">De '+esc(row.employee_name)+' para '+esc(target)+' · '+dateTime(row.created_at)+'</div><p>'+esc(row.message)+'</p></article>'}).join('')||'<div class="empty">Nenhum recado enviado ainda.</div>';
+  $('#closingMessages').innerHTML=messages.map(row=>{const target=row.message_audience==='team'?'toda a equipe':(row.recipient_name||'destinatário removido');return '<article class="message-box" style="margin-top:0"><div class="sub">De '+esc(row.employee_name)+' para '+esc(target)+' · '+dateTime(row.created_at)+'</div><p>'+esc(row.message)+'</p></article>'}).join('')||'<div class="empty">Nenhum recado enviado nesta data.</div>';
 }
 function renderMissingReports(){
   const reports=checklistAdminData?.missingReports||[];
@@ -171,7 +171,14 @@ function renderMissingReports(){
 async function loadAdminChecklist(){
   $('#checklistHistory').innerHTML='<div class="empty">Carregando...</div>';
   $('#missingReports').innerHTML='<div class="empty">Carregando...</div>';$('#closingMessages').innerHTML='<div class="empty">Carregando...</div>';
-  try{checklistAdminData=await api('admin-checklist');renderChecklistEditors();renderChecklistHistory();renderClosingMessages();renderMissingReports()}
+  try{
+    checklistAdminData=await api('admin-checklist','GET',closingSearchDate?{date:closingSearchDate}:undefined);
+    const selectedDate=checklistAdminData.selectedDate||'';
+    $('#closingDate').value=selectedDate;
+    $('#closingDateStatus').textContent=selectedDate?fullDateLabel(selectedDate)+' · '+(checklistAdminData.submissions?.length||0)+' fechamento(s)':'Nenhum fechamento registrado';
+    $('#closingLatestDate').disabled=!checklistAdminData.latestDate||!closingSearchDate;
+    renderChecklistEditors();renderChecklistHistory();renderClosingMessages();renderMissingReports();
+  }
   catch(e){if(e.status===401)showOnly('adminLogin');else alert(e.message)}
 }
 window.removeChecklistQuestion=index=>{const questions=editorQuestions();questions.splice(index,1);renderQuestionEditor(questions)};
@@ -476,6 +483,8 @@ $('#adminForgotPassword').addEventListener('click',async()=>{const identifier=pr
 $('#employeeForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#empName').value.trim(),phone:$('#empPhone').value.trim(),position:'Colaborador',unit:$('#empUnit').value,role:'employee'});$('#activationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de ativação: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Este código ficará visível aqui até a conta ser ativada.</span></div>';e.target.reset();invalidateMonthlyReport();await render()}catch(err){alert(err.message)}});
 $('#addAdminForm').addEventListener('submit',async e=>{e.preventDefault();try{const r=await api('admin-create-user','POST',{name:$('#newAdminName').value.trim(),phone:$('#newAdminPhone').value.trim(),position:'Administrador',unit:'Pão da Leli',role:'admin'});$('#adminActivationResult').innerHTML='<div class="notice" style="margin-top:12px"><b>'+esc(r.user.name)+'</b><br>Código de primeiro acesso: <strong style="font-size:18px">'+esc(r.activationCode)+'</strong><br><span class="sub">Entregue este código ao novo ADM. Ele deve abrir /admin, tocar em “Primeiro acesso” e criar a senha.</span></div>';e.target.reset();await render()}catch(err){alert(err.message)}});
 $('#closeEmployeeDetail').addEventListener('click',closeEmployeeDetail);
+$('#closingDateForm').addEventListener('submit',async e=>{e.preventDefault();const date=$('#closingDate').value;if(!date)return;closingSearchDate=date;await loadAdminChecklist()});
+$('#closingLatestDate').addEventListener('click',async()=>{closingSearchDate='';await loadAdminChecklist()});
 $('#checklistUnit').addEventListener('change',()=>{renderChecklistEditors();$('#checklistSaveStatus').textContent=''});
 $('#addChecklistQuestion').addEventListener('click',()=>{const questions=editorQuestions();if(questions.length>=30){alert('O limite é de 30 perguntas por área.');return}questions.push('');renderQuestionEditor(questions);$$('#checklistQuestionsAdmin input').at(-1)?.focus()});
 $('#addMissingItem').addEventListener('click',()=>{const items=editorMissingItems();if(items.length>=60){alert('O limite é de 60 itens por área.');return}items.push('');renderMissingEditor(items);$$('#missingOptionsAdmin input').at(-1)?.focus()});
