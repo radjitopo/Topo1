@@ -387,6 +387,7 @@ async function ensureSchema(){
   await sql`CREATE INDEX IF NOT EXISTS leli_sessions_token_idx ON leli_sessions(token_hash)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_checklist_items_unit_idx ON leli_checklist_items(unit,active,sort_order)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_checklist_missing_options_unit_idx ON leli_checklist_missing_options(unit,active,sort_order)`;
+  await sql`CREATE INDEX IF NOT EXISTS leli_checklist_submissions_work_date_idx ON leli_checklist_submissions(work_date DESC,created_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_checklist_submissions_recipient_idx ON leli_checklist_submissions(recipient_user_id,read_at,created_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_checklist_message_reads_user_idx ON leli_checklist_message_reads(user_id,read_at)`;
   await sql`CREATE INDEX IF NOT EXISTS leli_missing_reports_open_idx ON leli_missing_reports(status,unit,created_at)`;
@@ -971,17 +972,25 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='admin-checklist'){
       const items=await sql`SELECT id,unit,question,sort_order,active,updated_at FROM leli_checklist_items WHERE active=true ORDER BY unit,sort_order,id`;
       const missingOptions=await sql`SELECT id,unit,label,sort_order,active,updated_at FROM leli_checklist_missing_options WHERE active=true ORDER BY unit,sort_order,id`;
-      const submissions=await sql`SELECT s.id,s.work_date::text AS work_date,s.unit,s.answers,s.missing_items,s.message,s.message_audience,s.read_at,s.created_at,
+      const dateParam=String(req.query?.date||'').trim();
+      if(dateParam){
+        const parsedDate=new Date(dateParam+'T00:00:00.000Z');
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(dateParam)||Number.isNaN(parsedDate.getTime())||parsedDate.toISOString().slice(0,10)!==dateParam)return json(res,400,{error:'Data inválida.'});
+      }
+      const latestRows=await sql`SELECT MAX(work_date)::text AS latest_date FROM leli_checklist_submissions`;
+      const latestDate=latestRows[0]?.latest_date||null;
+      const selectedDate=dateParam||latestDate;
+      const submissions=selectedDate?await sql`SELECT s.id,s.work_date::text AS work_date,s.unit,s.answers,s.missing_items,s.message,s.message_audience,s.read_at,s.created_at,
           u.name AS employee_name,r.name AS recipient_name,
           CASE WHEN s.message_audience='team' THEN (SELECT count(*)::int FROM leli_users x WHERE x.role='employee' AND x.active=true AND x.id<>s.user_id) ELSE CASE WHEN s.recipient_user_id IS NULL THEN 0 ELSE 1 END END AS recipient_count,
           CASE WHEN s.message_audience='team' THEN (SELECT count(*)::int FROM leli_checklist_message_reads mr WHERE mr.submission_id=s.id) ELSE CASE WHEN s.read_at IS NULL THEN 0 ELSE 1 END END AS read_count
         FROM leli_checklist_submissions s JOIN leli_users u ON u.id=s.user_id
-        LEFT JOIN leli_users r ON r.id=s.recipient_user_id ORDER BY s.created_at DESC LIMIT 120`;
+        LEFT JOIN leli_users r ON r.id=s.recipient_user_id WHERE s.work_date=${selectedDate}::date ORDER BY s.created_at DESC LIMIT 500`:[];
       const missingReports=await sql`SELECT m.unit,lower(trim(m.item_name)) AS item_key,(array_agg(m.item_name ORDER BY m.created_at DESC))[1] AS item_name,
           count(*)::int AS report_count,max(m.created_at) AS last_reported_at,array_agg(DISTINCT u.name ORDER BY u.name) AS reporter_names
         FROM leli_missing_reports m JOIN leli_users u ON u.id=m.reported_by
         WHERE m.status='open' GROUP BY m.unit,lower(trim(m.item_name)) ORDER BY max(m.created_at) DESC`;
-      return json(res,200,{items,missingOptions,submissions,missingReports});
+      return json(res,200,{items,missingOptions,submissions,missingReports,selectedDate,latestDate});
     }
     if(req.method==='POST'&&action==='admin-save-checklist'){
       const b=body(req),unit=String(b.unit||'').trim(),raw=Array.isArray(b.questions)?b.questions:[],missingRaw=Array.isArray(b.missingItems)?b.missingItems:[];
