@@ -175,6 +175,10 @@ function blankSummary(employee) {
     overtimeDailyMinutes: 0,
     overtimeWeeklyMinutes: 0,
     overtimeMinutes: 0,
+    balancePositiveMinutes: 0,
+    balanceNegativeMinutes: 0,
+    balanceNetMinutes: 0,
+    balancePendingDays: 0,
     delayMinutes: 0,
     absenceDays: 0,
     incompleteDays: 0,
@@ -251,6 +255,17 @@ export function buildMonthlyReport({
           pendingExit: dayCorrections.some((item) => item.kind === 'out' && item.punch_id === null && item.status === 'pending'),
         });
 
+        // Saldo da jornada é separado das horas extras: dias inconclusivos não geram débito automático.
+        const validSchedule=Boolean(schedule&&[schedule.startTime,schedule.breakStartTime,schedule.breakEndTime,schedule.endTime].every(value=>timeMinutes(value)!==null));
+        const balanceEligible=validSchedule&&complete&&pendingCorrections===0;
+        const balanceMinutes=balanceEligible?worked-expected:null;
+        const balancePending=Boolean(schedule&&expected>0&&!balanceEligible&&status!=='Previsto hoje'&&status!=='Em andamento');
+        if(balanceMinutes!==null){
+          summary.balancePositiveMinutes+=Math.max(0,balanceMinutes);
+          summary.balanceNegativeMinutes+=Math.max(0,-balanceMinutes);
+          summary.balanceNetMinutes+=balanceMinutes;
+        }
+        if(balancePending)summary.balancePendingDays+=1;
         summary.expectedMinutes += expected;
         if (worked !== null) summary.workedMinutes += worked;
         if (extra) {
@@ -273,6 +288,10 @@ export function buildMonthlyReport({
           punches: KINDS.map((kind) => times[kind]),
           expectedMinutes: expected,
           workedMinutes: worked,
+          balanceMinutes,
+          balancePositiveMinutes:balanceMinutes===null?null:Math.max(0,balanceMinutes),
+          balanceNegativeMinutes:balanceMinutes===null?null:Math.max(0,-balanceMinutes),
+          balancePending,
           overtimeDailyMinutes: extra?.dailyExtra ?? null,
           overtimeWeeklyMinutes: extra?.weeklyExtra ?? null,
           overtimeMinutes: extra?.total ?? null,
@@ -296,6 +315,10 @@ export function buildMonthlyReport({
       overtimeDailyMinutes: result.overtimeDailyMinutes + item.overtimeDailyMinutes,
       overtimeWeeklyMinutes: result.overtimeWeeklyMinutes + item.overtimeWeeklyMinutes,
       overtimeMinutes: result.overtimeMinutes + item.overtimeMinutes,
+      balancePositiveMinutes: result.balancePositiveMinutes + item.balancePositiveMinutes,
+      balanceNegativeMinutes: result.balanceNegativeMinutes + item.balanceNegativeMinutes,
+      balanceNetMinutes: result.balanceNetMinutes + item.balanceNetMinutes,
+      balancePendingDays: result.balancePendingDays + item.balancePendingDays,
       delayMinutes: result.delayMinutes + item.delayMinutes,
       absenceDays: result.absenceDays + item.absenceDays,
       incompleteDays: result.incompleteDays + item.incompleteDays,
@@ -308,6 +331,10 @@ export function buildMonthlyReport({
       overtimeDailyMinutes: 0,
       overtimeWeeklyMinutes: 0,
       overtimeMinutes: 0,
+      balancePositiveMinutes: 0,
+      balanceNegativeMinutes: 0,
+      balanceNetMinutes: 0,
+      balancePendingDays: 0,
       delayMinutes: 0,
       absenceDays: 0,
       incompleteDays: 0,
