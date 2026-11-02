@@ -29,63 +29,80 @@
       padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
     }
     .projects {
-      width: min(100%, 440px);
-      display: flex;
+      width: min(100%, 720px);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: clamp(20px, 5vw, 40px);
+      gap: 32px 48px;
     }
-    .projectBubble {
+    .projectLink {
       display: grid;
       place-items: center;
-      width: clamp(154px, 36vw, 190px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: #0a0a0a;
-      color: #fff;
+      min-width: 0;
+      min-height: 200px;
+      padding: 16px 8px;
+      border-radius: 12px;
+      color: #0a0a0a;
       text-decoration: none;
-      transition: transform .18s ease, background-color .18s ease;
+      transition: transform .18s ease;
       animation: arrive 600ms cubic-bezier(.22, 1, .36, 1) both;
       -webkit-tap-highlight-color: transparent;
     }
-    .projectLogo {
+    .projectLink img { display: block; max-width: 100%; height: auto; object-fit: contain; }
+    .blsLogo {
       font-family: "Poppins Local", "Arial Black", sans-serif;
-      font-size: clamp(28px, 7vw, 36px);
+      font-size: 64px;
       font-weight: 800;
       line-height: 1;
       letter-spacing: -.07em;
       white-space: nowrap;
-      transform: translateX(-.03em);
     }
-    .projectLogo--nosso { font-size: clamp(24px, 6vw, 30px); }
-    .projectLogo--politiques { font-size: clamp(21px, 5.2vw, 27px); }
-    .projectBubble:hover { background: #000; }
-    .projectBubble:active { transform: scale(.965); }
-    .projectBubble:focus-visible { outline: 3px solid #111; outline-offset: 8px; }
+    .junckesLogo { width: 164px; }
+    .nossoLogo { display: inline-flex; align-items: center; gap: 9px; }
+    .nossoLogo img { width: 56px; height: 56px; }
+    .nossoWordmark {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 40px;
+      font-weight: 750;
+      line-height: 1;
+      letter-spacing: -.065em;
+      color: #9f392d;
+      white-space: nowrap;
+    }
+    .politiquesLogo { width: 300px; }
+    .projectLink:active { transform: scale(.975); }
+    .projectLink:focus-visible { outline: 3px solid #111; outline-offset: 6px; }
+    @media (hover: hover) { .projectLink:hover { transform: scale(1.035); } }
+    @media (max-width: 600px) {
+      .projects { width: min(100%, 320px); grid-template-columns: minmax(0, 1fr); gap: 16px; }
+      .projectLink { min-height: 132px; padding: 8px; }
+      .junckesLogo { width: 144px; }
+      .politiquesLogo { width: min(300px, 100%); }
+    }
     @keyframes arrive {
       from { opacity: 0; transform: scale(.94); }
       to { opacity: 1; transform: scale(1); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .projectBubble { animation: none; transition: none; }
+      .projectLink { animation: none; transition: none; }
+      .projectLink:hover, .projectLink:active { transform: none; }
     }
   </style>
 </head>
 <body>
   <main>
     <nav class="projects" aria-label="Projetos de Radji">
-      <a class="projectBubble" href="/bolsa" aria-label="Abrir o projeto bls².i">
-        <span class="projectLogo" aria-hidden="true">bls².i</span>
+      <a class="projectLink" href="/bolsa" aria-label="Abrir o projeto bls².i">
+        <span class="blsLogo" aria-hidden="true">bls².i</span>
       </a>
-      <a class="projectBubble" href="https://junks-pedidos.radji-schucman.chatgpt.site" aria-label="Abrir o catálogo Junckes">
-        <span class="projectLogo" aria-hidden="true">Junckes</span>
+      <a class="projectLink" href="https://junks-pedidos.radji-schucman.chatgpt.site" aria-label="Abrir o catálogo Junckes">
+        <img class="junckesLogo" src="/project-logos/junckes.jpg" alt="" width="1536" height="1419" decoding="async">
       </a>
-      <a class="projectBubble" href="https://nosso-radji.radji-schucman.chatgpt.site" aria-label="Abrir o nosso.app">
-        <span class="projectLogo projectLogo--nosso" aria-hidden="true">nosso.app</span>
+      <a class="projectLink" href="https://nosso-radji.radji-schucman.chatgpt.site" aria-label="Abrir o nosso.app">
+        <span class="nossoLogo" aria-hidden="true"><img src="/project-logos/nosso.png" alt="" width="192" height="192" decoding="async"><span class="nossoWordmark">nosso.app</span></span>
       </a>
-      <a class="projectBubble" href="https://politilingo.radji-schucman.chatgpt.site" aria-label="Abrir o Politiquês, aprenda política com a Póli" title="Aprenda política com a Póli, em lições curtas.">
-        <span class="projectLogo projectLogo--politiques" aria-hidden="true">Politiquês</span>
+      <a class="projectLink" href="https://politilingo.radji-schucman.chatgpt.site" aria-label="Abrir o Politiquês, aprenda política com a Póli" title="Aprenda política com a Póli, em lições curtas.">
+        <img class="politiquesLogo" src="/project-logos/politiques.webp" alt="" width="1600" height="533" decoding="async">
       </a>
     </nav>
   </main>
