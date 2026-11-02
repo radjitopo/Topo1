@@ -401,6 +401,13 @@
       "dest": "/acoes-nz.html"
     },
     {
+      "src": "/politiques/?",
+      "status": 302,
+      "headers": {
+        "Location": "https://politilingo.radji-schucman.chatgpt.site"
+      }
+    },
+    {
       "src": "/projetos/?",
       "dest": "/radji-projects.html"
     },
