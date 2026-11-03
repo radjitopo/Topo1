@@ -191,6 +191,11 @@ function blankSummary(employee) {
   };
 }
 
+function employeeDailyMinutes(employee, fallback) {
+  const value = Number(employee.daily_work_minutes);
+  return Number.isInteger(value) && value >= 60 && value <= 720 && value % 15 === 0 ? value : fallback;
+}
+
 export function getMonthBounds(month) {
   const info = monthInfo(month);
   return { start: info.start, end: info.end };
@@ -214,11 +219,14 @@ export function buildMonthlyReport({
 
   for (const employee of employees) {
     const summary = blankSummary(employee);
+    const dailyMinutes = employeeDailyMinutes(employee, dailyLimitMinutes);
+    const personalDailyHours = employee.daily_work_minutes !== null && employee.daily_work_minutes !== undefined;
+    summary.dailyWorkMinutes = dailyMinutes;
     const employeePunches = punches.filter((item) => item.user_id === employee.id);
     const employeeCorrections = corrections.filter((item) => item.user_id === employee.id);
     const versions = scheduleVersions.filter((item) => item.user_id === employee.id);
     const overtimeByDate = calculateOvertimeForEmployee(
-      employeePunches, employeeCorrections, mondayOf(info.start), periodEnd, dailyLimitMinutes, weeklyLimitMinutes,
+      employeePunches, employeeCorrections, mondayOf(info.start), periodEnd, dailyMinutes, weeklyLimitMinutes,
     );
     const reportCorrections = employeeCorrections.filter((item) => item.work_date >= info.start && item.work_date <= periodEnd);
     const reportCorrectionKeys = new Set(reportCorrections.map((item) => item.request_group || item.id));
@@ -245,7 +253,7 @@ export function buildMonthlyReport({
         const worked = workedMinutes(times);
         const complete = worked !== null;
         const extra = overtimeByDate.get(date);
-        const expected = dailyReference ? dailyLimitMinutes : expectedMinutes(schedule);
+        const expected = dailyReference || (personalDailyHours && schedule) ? dailyMinutes : expectedMinutes(schedule);
         const arrival = timeMinutes(times.in);
         const scheduledArrival = schedule ? timeMinutes(schedule.startTime) : null;
         const delay = arrival !== null && scheduledArrival !== null ? Math.max(0, arrival - scheduledArrival) : 0;
@@ -293,8 +301,9 @@ export function buildMonthlyReport({
           unit: employee.unit,
           schedule: schedule
             ? `${schedule.startTime}–${schedule.breakStartTime} / ${schedule.breakEndTime}–${schedule.endTime}`
-            : dailyReference ? `Referência diária: ${Math.floor(dailyLimitMinutes / 60)}h${dailyLimitMinutes % 60 ? String(dailyLimitMinutes % 60).padStart(2, '0') : ''}` : 'Sem escala',
-          balanceReference: dailyReference ? 'daily-limit' : schedule ? 'schedule' : null,
+            : dailyReference ? `Referência diária: ${Math.floor(dailyMinutes / 60)}h${dailyMinutes % 60 ? String(dailyMinutes % 60).padStart(2, '0') : ''}` : 'Sem escala',
+          dailyWorkMinutes: dailyMinutes,
+          balanceReference: personalDailyHours && (dailyReference || schedule) ? 'employee' : dailyReference ? 'daily-limit' : schedule ? 'schedule' : null,
           punches: KINDS.map((kind) => times[kind]),
           expectedMinutes: expected,
           workedMinutes: worked,
@@ -364,4 +373,5 @@ export function buildMonthlyReport({
     rows,
   };
 }
+
 

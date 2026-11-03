@@ -64,7 +64,7 @@ test('gerar todos ignora o filtro individual e abre uma única janela antes de b
   const { context, node, events, popup } = setup();
   await context.generateAllMonthlyReports();
   assert.equal(events[0], 'open');
-  assert.deepEqual(events[1], { action: 'admin-monthly-report', method: 'GET', parameters: { month: '2026-10', employeeId: '', dailyHours: '8', weeklyHours: '44' } });
+  assert.deepEqual(events[1], { action: 'admin-monthly-report', method: 'GET', parameters: { month: '2026-10', employeeId: '', weeklyHours: '44' } });
   assert.equal(events.filter(event => event === 'open').length, 1);
   assert.equal(events.filter(event => event === 'print').length, 1);
   assert.equal((popup.documents.at(-1).match(/<section class="employee-sheet"/g) || []).length, 2);
@@ -105,3 +105,4 @@ test('CSV e TXT também incluem o saldo final com horas negativas descontadas', 
   assert.match(outputs[1].text, /Saldo final do mês: \+/);
   assert.match(outputs[1].text, / = −/);
 });
+

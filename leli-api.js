@@ -43,6 +43,7 @@ function activationCode(){return randomBytes(7).toString('base64url')}
 function setSessionCookie(res,token,rememberMe=true){res.setHeader('Set-Cookie',`${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax${rememberMe?'; Max-Age='+SESSION_MAX_AGE:''}`)}
 function clearSessionCookie(res){res.setHeader('Set-Cookie',[`${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,`${SESSION_COOKIE}=; Path=/pao-da-leli-ponto; HttpOnly; Secure; SameSite=Lax; Max-Age=0`])}
 function validPassword(p){return typeof p==='string'&&p.length>=8&&p.length<=100}
+function validDailyHours(value){const hours=Number(value);return(typeof value==='number'||typeof value==='string')&&String(value).trim()!==''&&Number.isFinite(hours)&&hours>=1&&hours<=12&&Number.isInteger(hours*4)}
 function recipeId(name){
   const base=String(name||'receita').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,54)||'receita';
   return `${base}-${randomBytes(3).toString('hex')}`;
@@ -166,6 +167,8 @@ async function ensureSchema(){
     updated_at timestamptz NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS phone text`;
+  await sql`ALTER TABLE leli_users ADD COLUMN IF NOT EXISTS daily_work_minutes integer NOT NULL DEFAULT 480
+    CONSTRAINT leli_users_daily_work_minutes_check CHECK (daily_work_minutes BETWEEN 60 AND 720 AND daily_work_minutes % 15 = 0)`;
   await sql`ALTER TABLE leli_users ALTER COLUMN email DROP NOT NULL`;
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS leli_users_phone_unique ON leli_users(phone) WHERE phone IS NOT NULL`;
   await sql`DO $$ BEGIN
@@ -927,7 +930,7 @@ export default async function handler(req,res){
 
     if(req.method==='GET'&&action==='admin-overview'){
       const date=localDate();
-      const users=await sql`SELECT id,email,phone,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at FROM leli_users ORDER BY role DESC,name ASC`;
+      const users=await sql`SELECT id,email,phone,name,role,position,unit,active,activation_hash IS NOT NULL AS pending_activation,activation_code,password_reset_requested_at,created_at,daily_work_minutes FROM leli_users ORDER BY role DESC,name ASC`;
       const originalPunches=await sql`SELECT p.user_id,p.kind,p.occurred_at,p.work_date::text,u.name,u.email,u.phone FROM leli_punches p JOIN leli_users u ON u.id=p.user_id WHERE p.work_date=${date} ORDER BY p.occurred_at`;
       const approvedCorrections=await sql`SELECT id,user_id,work_date::text AS work_date,kind,punch_id,status,requested_at,decided_at,created_at
         FROM leli_corrections WHERE work_date=${date} AND status='approved'`;
@@ -1033,7 +1036,7 @@ export default async function handler(req,res){
     if(req.method==='GET'&&action==='admin-employee-detail'){
       const id=String(req.query?.id||'');
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
-      const employees=await sql`SELECT id,email,phone,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at
+      const employees=await sql`SELECT id,email,phone,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at,daily_work_minutes
         FROM leli_users WHERE id=${id} AND role='employee' LIMIT 1`;
       if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
       const schedule=await sql`SELECT weekday,
@@ -1058,7 +1061,7 @@ export default async function handler(req,res){
       try{bounds=getMonthBounds(month)}catch{return json(res,400,{error:'Escolha um mês válido.'})}
       if(month>localDate().slice(0,7))return json(res,400,{error:'Escolha o mês atual ou um mês anterior.'});
       const employeeFilter=employeeId||null,coverage=getReportCoverageBounds(month);
-      const employees=await sql`SELECT id,name,email,phone,unit,active,created_at
+      const employees=await sql`SELECT id,name,email,phone,unit,active,created_at,daily_work_minutes
         FROM leli_users
         WHERE role='employee' AND (${employeeFilter}::uuid IS NULL OR id=${employeeFilter}::uuid)
         ORDER BY name`;
@@ -1081,6 +1084,16 @@ export default async function handler(req,res){
       const report=buildMonthlyReport({month,employees,punches,corrections,scheduleVersions,dailyLimitMinutes:dailyHours*60,weeklyLimitMinutes:weeklyHours*60});
       await audit(user.id,'view_monthly_report','month',month,{employeeId:employeeFilter,dailyHours,weeklyHours});
       return json(res,200,report);
+    }
+    if(req.method==='POST'&&action==='admin-save-daily-hours'){
+      const b=body(req),id=String(b.id||''),dailyHours=Number(b.dailyHours);
+      if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
+      if(!validDailyHours(b.dailyHours))return json(res,400,{error:'Informe uma jornada entre 1 e 12 horas, em intervalos de 15 minutos.'});
+      const rows=await sql`UPDATE leli_users SET daily_work_minutes=${dailyHours*60},updated_at=now()
+        WHERE id=${id} AND role='employee' RETURNING id,name,unit,daily_work_minutes`;
+      if(!rows[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      await audit(user.id,'save_daily_hours','user',id,{dailyHours});
+      return json(res,200,{ok:true,employee:rows[0]});
     }
     if(req.method==='POST'&&action==='admin-save-schedule'){
       const b=body(req),id=String(b.id||''),days=Array.isArray(b.days)?b.days:[];
@@ -1112,14 +1125,16 @@ export default async function handler(req,res){
     }
     if(req.method==='POST'&&action==='admin-create-user'){
       const b=body(req),phone=normPhone(b.phone),legacyEmail=normEmail(b.email),email=phone?null:(legacyEmail||null),name=String(b.name||'').trim(),role=b.role==='admin'?'admin':'employee',position=role==='admin'?'Administrador':'Colaborador',unit=role==='admin'?'Pão da Leli':String(b.unit||'').trim();
+      const dailyHours=role==='employee'?Number(b.dailyHours??8):8;
       if(!name||(!validPhone(phone)&&!email))return json(res,400,{error:'Informe nome e um telefone válido.'});
       if(role==='employee'&&!EMPLOYEE_UNITS.has(unit))return json(res,400,{error:'Escolha Pão da Leli Café ou Pão da Leli Produção.'});
+      if(!validDailyHours(role==='employee'?(b.dailyHours??8):8))return json(res,400,{error:'Informe uma jornada entre 1 e 12 horas, em intervalos de 15 minutos.'});
       if(role==='admin'){const c=await sql`SELECT count(*)::int AS n FROM leli_users WHERE role='admin' AND active=true`;if(c[0].n>=2)return json(res,409,{error:'O limite é de 2 administradores.'})}
       const code=activationCode(),codeHash=sha(code);
       try{
-        const rows=await sql`INSERT INTO leli_users(email,phone,name,role,position,unit,activation_hash,activation_code,activation_expires_at)
-          VALUES(${email},${phone||null},${name},${role},${position},${unit},${codeHash},${code},NULL)
-          RETURNING id,email,phone,name,role`;
+        const rows=await sql`INSERT INTO leli_users(email,phone,name,role,position,unit,activation_hash,activation_code,activation_expires_at,daily_work_minutes)
+          VALUES(${email},${phone||null},${name},${role},${position},${unit},${codeHash},${code},NULL,${dailyHours*60})
+          RETURNING id,email,phone,name,role,daily_work_minutes`;
         await audit(user.id,'create_user','user',rows[0].id,{phone:phone||null,email,role});return json(res,201,{user:rows[0],activationCode:code});
       }catch(e){if(String(e?.message||'').includes('unique'))return json(res,409,{error:phone?'Este telefone já está cadastrado.':'Este e-mail já está cadastrado.'});throw e}
     }
@@ -1214,3 +1229,4 @@ export default async function handler(req,res){
     return json(res,404,{error:'Operação não encontrada.'});
   }catch(e){console.error('leli-api',e);return json(res,500,{error:'Erro interno do sistema.'})}
 }
+
