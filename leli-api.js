@@ -484,8 +484,8 @@ function applyApprovedPunchCorrections(punches,corrections){
   });
   const present=new Set(punches.map(key));
   for(const correction of latest.values()){
-    if(correction.kind==='out'&&correction.punch_id===null&&!present.has(key(correction))){
-      result.push({id:correction.id,user_id:correction.user_id,work_date:correction.work_date,kind:'out',occurred_at:null,effective_at:correction.requested_at,corrected:true,added_later:true});
+    if(correction.punch_id===null&&!present.has(key(correction))){
+      result.push({id:correction.id,user_id:correction.user_id,work_date:correction.work_date,kind:correction.kind,occurred_at:null,effective_at:correction.requested_at,corrected:true,added_later:true});
     }
   }
   return result;
@@ -494,6 +494,49 @@ function validWorkDate(date){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
   const parsed=new Date(date+'T12:00:00Z');
   return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
+}
+const REVIEW_KINDS=['in','breakOut','breakIn','out'];
+function reviewClock(value){return value?new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(value)):''}
+function reviewWorkedMinutes(times){
+  const clocks=REVIEW_KINDS.map(kind=>times[kind]);
+  if(clocks.some(value=>!value))return null;
+  const minutes=clocks.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
+  if(minutes.some((value,index)=>index>0&&value<minutes[index-1]))return null;
+  return minutes[1]-minutes[0]+minutes[3]-minutes[2];
+}
+async function employeeMonthReview(userId,month){
+  const bounds=getMonthBounds(month);
+  const employees=await sql`SELECT id,name,unit,active,daily_work_minutes FROM leli_users WHERE id=${userId} AND role='employee' LIMIT 1`;
+  if(!employees[0])return null;
+  const [punches,corrections,versions]=await sql.transaction(txn=>[
+    txn`SELECT id,user_id,work_date::text AS work_date,kind,occurred_at FROM leli_punches
+      WHERE user_id=${userId} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date ORDER BY work_date,occurred_at`,
+    txn`SELECT id,user_id,work_date::text AS work_date,kind,punch_id,original_at,requested_at,status,decided_at,created_at,request_group
+      FROM leli_corrections WHERE user_id=${userId} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date ORDER BY work_date,created_at`,
+    txn`WITH days AS (
+        SELECT day::date AS work_date FROM generate_series(${bounds.start}::timestamp,${bounds.end}::timestamp,interval '1 day') day
+      ), punch_state AS (
+        SELECT work_date,jsonb_agg(jsonb_build_array(id,kind,extract(epoch FROM occurred_at)::text) ORDER BY id) AS entries
+        FROM leli_punches WHERE user_id=${userId} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date GROUP BY work_date
+      ), correction_state AS (
+        SELECT work_date,jsonb_agg(jsonb_build_array(id,kind,punch_id,status,extract(epoch FROM requested_at)::text,
+          extract(epoch FROM decided_at)::text,extract(epoch FROM created_at)::text,request_group) ORDER BY id) AS entries
+        FROM leli_corrections WHERE user_id=${userId} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date GROUP BY work_date
+      ) SELECT d.work_date::text AS work_date,
+        md5(jsonb_build_array(COALESCE(p.entries,'[]'::jsonb),COALESCE(c.entries,'[]'::jsonb))::text) AS version
+      FROM days d LEFT JOIN punch_state p USING(work_date) LEFT JOIN correction_state c USING(work_date) ORDER BY d.work_date`
+  ],{isolationLevel:'RepeatableRead',readOnly:true});
+  const effective=applyApprovedPunchCorrections(punches,corrections),today=localDate();
+  const days=versions.map(({work_date:date,version})=>{
+    const original=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,reviewClock(punches.find(p=>p.work_date===date&&p.kind===kind)?.occurred_at)]));
+    const times=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,reviewClock(effective.find(p=>p.work_date===date&&p.kind===kind)?.effective_at)]));
+    const corrected=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,Boolean(effective.find(p=>p.work_date===date&&p.kind===kind)?.corrected)]));
+    const dayCorrections=corrections.filter(c=>c.work_date===date),pending=dayCorrections.filter(c=>c.status==='pending');
+    return{date,version,times,original,corrected,workedMinutes:reviewWorkedMinutes(times),editable:date<=today,
+      pendingCorrections:new Set(pending.map(c=>c.request_group||c.id)).size,
+      hasRecords:REVIEW_KINDS.some(kind=>times[kind])||dayCorrections.length>0};
+  });
+  return{employee:employees[0],month,days};
 }
 function missingExitError(punches,requestedAt){
   if(!punches.some(p=>p.kind==='in'))return 'Não existe uma entrada registrada nesta data.';
@@ -1033,6 +1076,88 @@ export default async function handler(req,res){
       await audit(user.id,'resolve_missing_item','missing_item',itemKey,{unit,status,count:rows.length});
       return json(res,200,{ok:true,count:rows.length});
     }
+    if((req.method==='GET'&&action==='admin-monthly-times')||(req.method==='POST'&&action==='admin-save-monthly-times')){
+      const input=req.method==='GET'?req.query:body(req),id=String(input.id||''),month=String(input.month||'');
+      if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
+      let bounds;try{bounds=getMonthBounds(month)}catch{return json(res,400,{error:'Escolha um mês válido.'})}
+      if(!validWorkDate(bounds.start)||month>localDate().slice(0,7))return json(res,400,{error:'Escolha o mês atual ou um mês anterior.'});
+      const review=await employeeMonthReview(id,month);
+      if(!review)return json(res,404,{error:'Colaborador não encontrado.'});
+      if(req.method==='GET')return json(res,200,review);
+      const reason=String(input.reason||'').trim(),days=input.days;
+      if(reason.length<3||reason.length>1000)return json(res,400,{error:'Informe um motivo de 3 a 1000 caracteres.'});
+      if(!Array.isArray(days)||!days.length||days.length>31)return json(res,400,{error:'Escolha pelo menos um dia para corrigir.'});
+      const seen=new Set(),changes=[],targets=[],today=localDate(),nowClock=reviewClock(new Date());
+      for(const day of days){
+        const date=String(day?.date||''),current=review.days.find(row=>row.date===date);
+        if(!current||!validWorkDate(date)||!current.editable||seen.has(date))return json(res,400,{error:'Revise as datas: use dias diferentes do mês escolhido, até hoje.'});
+        seen.add(date);
+        if(String(day.version||'')!==current.version)return json(res,409,{error:'Os registros mudaram desde que você abriu o mês. Recarregue os horários antes de salvar.',staleReview:true});
+        const times=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,String(day.times?.[kind]??'')]));
+        for(const kind of REVIEW_KINDS){
+          if(times[kind]&&!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(times[kind]))return json(res,400,{error:'Use horários no formato HH:MM.'});
+          if(current.times[kind]&&!times[kind])return json(res,400,{error:'Preencha os horários já registrados. A revisão permite corrigir e completar as batidas.'});
+          if(date===today&&times[kind]>nowClock)return json(res,400,{error:'Não é possível registrar um horário futuro para hoje.'});
+        }
+        const filled=REVIEW_KINDS.map(kind=>times[kind]).filter(Boolean);
+        if(filled.some((value,index)=>index>0&&value<filled[index-1]))return json(res,400,{error:'Em '+date.split('-').reverse().join('/')+', confira a ordem: entrada, intervalo, volta e saída.'});
+        const dayChanges=REVIEW_KINDS.filter(kind=>times[kind]!==current.times[kind]).map(kind=>({work_date:date,kind,requested_time:times[kind]}));
+        if(dayChanges.length){targets.push({work_date:date,version:current.version});changes.push(...dayChanges)}
+      }
+      if(!changes.length)return json(res,400,{error:'Nenhum horário foi alterado.'});
+      const [,,rows]=await sql.transaction(txn=>[
+        txn`SELECT id FROM leli_users WHERE id=${id} AND role='employee' FOR UPDATE`,
+        txn`SELECT id FROM leli_corrections WHERE user_id=${id} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date FOR UPDATE`,
+        txn`WITH target_days AS (
+            SELECT work_date,version FROM jsonb_to_recordset(${JSON.stringify(targets)}::jsonb) AS x(work_date date,version text)
+          ), requested AS (
+            SELECT work_date,kind,requested_time FROM jsonb_to_recordset(${JSON.stringify(changes)}::jsonb) AS x(work_date date,kind text,requested_time text)
+          ), punch_state AS (
+            SELECT work_date,jsonb_agg(jsonb_build_array(id,kind,extract(epoch FROM occurred_at)::text) ORDER BY id) AS entries
+            FROM leli_punches WHERE user_id=${id} AND work_date IN (SELECT work_date FROM target_days) GROUP BY work_date
+          ), correction_state AS (
+            SELECT work_date,jsonb_agg(jsonb_build_array(id,kind,punch_id,status,extract(epoch FROM requested_at)::text,
+              extract(epoch FROM decided_at)::text,extract(epoch FROM created_at)::text,request_group) ORDER BY id) AS entries
+            FROM leli_corrections WHERE user_id=${id} AND work_date IN (SELECT work_date FROM target_days) GROUP BY work_date
+          ), guard AS (
+            SELECT EXISTS(SELECT 1 FROM leli_users WHERE id=${id} AND role='employee') AND NOT EXISTS(
+              SELECT 1 FROM target_days d LEFT JOIN punch_state p USING(work_date) LEFT JOIN correction_state c USING(work_date)
+              WHERE d.version<>md5(jsonb_build_array(COALESCE(p.entries,'[]'::jsonb),COALESCE(c.entries,'[]'::jsonb))::text)
+            ) AS valid
+          ), closed_pending AS (
+            UPDATE leli_corrections SET status='rejected',decided_by=${user.id},decided_at=clock_timestamp(),
+              decision_note=${'Substituída pela revisão mensal do ADM. '+reason}
+            WHERE user_id=${id} AND status='pending' AND work_date IN (SELECT work_date FROM target_days)
+              AND (SELECT valid FROM guard) RETURNING id
+          ), day_groups AS (
+            SELECT work_date,gen_random_uuid() AS group_id FROM target_days
+          ), saved AS (
+            INSERT INTO leli_corrections(user_id,punch_id,work_date,kind,original_at,requested_at,reason,status,decided_by,decided_at,decision_note,request_group)
+            SELECT ${id}::uuid,p.id,r.work_date,r.kind,COALESCE(a.requested_at,p.occurred_at),
+              ((r.work_date+r.requested_time::time) AT TIME ZONE ${TZ}),${reason},'approved',${user.id}::uuid,clock_timestamp(),
+              'Correção feita pelo ADM na revisão mensal.',g.group_id
+            FROM requested r JOIN day_groups g USING(work_date)
+            LEFT JOIN leli_punches p ON p.user_id=${id} AND p.work_date=r.work_date AND p.kind=r.kind
+            LEFT JOIN LATERAL (
+              SELECT requested_at FROM leli_corrections a
+              WHERE a.user_id=${id} AND a.work_date=r.work_date AND a.kind=r.kind AND a.status='approved'
+              ORDER BY COALESCE(a.decided_at,a.created_at) DESC,a.created_at DESC,a.id DESC LIMIT 1
+            ) a ON true
+            WHERE (SELECT valid FROM guard)
+            RETURNING id,work_date,kind,original_at,requested_at
+          ), logged AS (
+            INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details)
+            SELECT ${user.id}::uuid,'admin_monthly_time_correction','employee_month',${id+':'+month},
+              jsonb_build_object('month',${month}::text,'reason',${reason}::text,
+                'changes',jsonb_agg(to_jsonb(saved)),'supersededPending',(SELECT count(*) FROM closed_pending))
+            FROM saved HAVING count(*)>0 RETURNING id
+          )
+          SELECT (SELECT count(*)::int FROM saved) AS saved_count,(SELECT count(*)::int FROM closed_pending) AS superseded_pending,
+            (SELECT count(*)::int FROM logged) AS audit_count`
+      ],{isolationLevel:'ReadCommitted'});
+      if(rows[0]?.saved_count!==changes.length)return json(res,409,{error:'Os registros mudaram durante a gravação. Recarregue o mês e confira os horários.',staleReview:true});
+      return json(res,200,{ok:true,changedDays:targets.length,changedTimes:changes.length,supersededPending:rows[0].superseded_pending});
+    }
     if(req.method==='GET'&&action==='admin-employee-detail'){
       const id=String(req.query?.id||'');
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
@@ -1229,4 +1354,5 @@ export default async function handler(req,res){
     return json(res,404,{error:'Operação não encontrada.'});
   }catch(e){console.error('leli-api',e);return json(res,500,{error:'Erro interno do sistema.'})}
 }
+
 

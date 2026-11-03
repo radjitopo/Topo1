@@ -100,8 +100,8 @@ function effectiveTimes(punches, corrections) {
   for (const punch of punches) times[punch.kind] = localClock(punch.occurred_at);
   const approved = corrections
     .filter((item) => item.status === 'approved')
-    .sort((a, b) => String(b.decided_at || b.created_at || '').localeCompare(String(a.decided_at || a.created_at || ''))
-      || String(b.created_at || '').localeCompare(String(a.created_at || ''))
+    .sort((a, b) => new Date(b.decided_at || b.created_at || 0) - new Date(a.decided_at || a.created_at || 0)
+      || new Date(b.created_at || 0) - new Date(a.created_at || 0)
       || String(b.id).localeCompare(String(a.id)));
   for (const correction of approved) {
     if (!correction.kind || times[`corrected:${correction.kind}`]) continue;
@@ -264,7 +264,7 @@ export function buildMonthlyReport({
           nowMinutes,
           schedule,
           dailyReference,
-          hasPunches: dayPunches.length > 0,
+          hasPunches: dayPunches.length > 0 || KINDS.some((kind) => times[kind]),
           complete,
           delayMinutes: delay,
           pendingCorrections,
@@ -373,5 +373,6 @@ export function buildMonthlyReport({
     rows,
   };
 }
+
 
 

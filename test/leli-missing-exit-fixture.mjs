@@ -1,22 +1,23 @@
 import * as crypto from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { buildMonthlyReport, getMonthBounds } from '../leli-report.js';
+import { buildMonthlyReport, getMonthBounds, getReportCoverageBounds } from '../leli-report.js';
 
 export const employeeId = '00000000-0000-4000-8000-000000000001';
 export const otherEmployeeId = '00000000-0000-4000-8000-000000000002';
 export const adminId = '00000000-0000-4000-8000-000000000003';
 export const now = new Date('2026-10-02T12:00:00Z');
 
-export async function createMissingExitFixture() {
+export async function createMissingExitFixture(options = {}) {
+  const testNow=options.now||now;
   const { PGlite } = await import(process.env.LELI_PGLITE_MODULE || '@electric-sql/pglite');
   const db = new PGlite();
   const source = (await readFile(new URL('../leli-api.js', import.meta.url), 'utf8'))
     .replace(/^import .*;\r?\n/gm, '')
     .replace('export default async function handler', 'async function handler');
-  const factory = new Function('neon', 'createHash', 'randomBytes', 'scryptSync', 'timingSafeEqual', 'buildMonthlyReport', 'getMonthBounds', 'defaultRecipes', 'Date', source + '\nreturn handler;');
+  const factory = new Function('neon', 'createHash', 'randomBytes', 'scryptSync', 'timingSafeEqual', 'buildMonthlyReport', 'getMonthBounds', 'getReportCoverageBounds', 'defaultRecipes', 'Date', source + '\nreturn handler;');
   class TestDate extends Date {
-    constructor(...args) { super(...(args.length ? args : [now])); }
-    static now() { return now.getTime(); }
+    constructor(...args) { super(...(args.length ? args : [testNow])); }
+    static now() { return testNow.getTime(); }
   }
   function query(parts, values) { return { text: parts.map((part, i) => part + (i < values.length ? '$' + (i + 1) : '')).join(''), values }; }
   const sql = async (parts, ...values) => {
@@ -34,7 +35,7 @@ export async function createMissingExitFixture() {
     for (const command of createQueries(tag)) rows.push(await command);
     return rows;
   });
-  const handler = factory(() => sql, crypto.createHash, crypto.randomBytes, crypto.scryptSync, crypto.timingSafeEqual, input => buildMonthlyReport({ ...input, now }), getMonthBounds, [], TestDate);
+  const handler = factory(() => sql, crypto.createHash, crypto.randomBytes, crypto.scryptSync, crypto.timingSafeEqual, input => buildMonthlyReport({ ...input, now:testNow }), getMonthBounds, getReportCoverageBounds, [], TestDate);
   async function request(action, method = 'GET', body = {}, role = 'employee', query = {}) {
     const res = { headers: {}, setHeader(name, value) { this.headers[name] = value; }, status(code) { this.statusCode = code; return this; }, json(data) { this.data = data; return this; } };
     const token = role === 'admin' ? 'admin-session' : role === 'other' ? 'other-session' : role === 'anonymous' ? '' : 'employee-session';
@@ -58,3 +59,4 @@ export async function createMissingExitFixture() {
   await reset();
   return { db, request, reset, seedDay };
 }
+
