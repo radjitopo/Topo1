@@ -118,9 +118,13 @@ function workedMinutes(times) {
   return values[1] - values[0] + values[3] - values[2];
 }
 
-function statusForDay({ date, today, nowMinutes, schedule, hasPunches, complete, delayMinutes, pendingCorrections, missingExit, pendingExit }) {
+function statusForDay({ date, today, nowMinutes, schedule, dailyReference, hasPunches, complete, delayMinutes, pendingCorrections, missingExit, pendingExit }) {
   if (date < today && missingExit) return pendingExit ? 'Saída aguardando aprovação' : 'Saída não registrada';
-  if (!schedule) return complete ? 'Fora da escala' : 'Batidas incompletas';
+  if (!schedule) {
+    if (!complete) return 'Batidas incompletas';
+    if (pendingCorrections) return 'Correção pendente';
+    return dailyReference ? 'Completo' : 'Fora da escala';
+  }
   if (!hasPunches) {
     const shiftEnded = date < today || (date === today && nowMinutes > timeMinutes(schedule.endTime));
     return shiftEnded ? 'Falta' : 'Previsto hoje';
@@ -233,11 +237,15 @@ export function buildMonthlyReport({
         const dayCorrections = employeeCorrections.filter((item) => item.work_date === date);
         if (!schedule && dayPunches.length === 0 && dayCorrections.length === 0) continue;
 
+        // Registros anteriores à primeira escala usam a jornada diária escolhida.
+        // Uma folga de uma escala existente continua sendo um dia fora da escala.
+        const dailyReference = !versions.some((item) => item.effective_from <= date);
+
         const times = effectiveTimes(dayPunches, dayCorrections);
         const worked = workedMinutes(times);
         const complete = worked !== null;
         const extra = overtimeByDate.get(date);
-        const expected = expectedMinutes(schedule);
+        const expected = dailyReference ? dailyLimitMinutes : expectedMinutes(schedule);
         const arrival = timeMinutes(times.in);
         const scheduledArrival = schedule ? timeMinutes(schedule.startTime) : null;
         const delay = arrival !== null && scheduledArrival !== null ? Math.max(0, arrival - scheduledArrival) : 0;
@@ -247,6 +255,7 @@ export function buildMonthlyReport({
           today,
           nowMinutes,
           schedule,
+          dailyReference,
           hasPunches: dayPunches.length > 0,
           complete,
           delayMinutes: delay,
@@ -257,9 +266,9 @@ export function buildMonthlyReport({
 
         // Saldo da jornada é separado das horas extras: dias inconclusivos não geram débito automático.
         const validSchedule=Boolean(schedule&&[schedule.startTime,schedule.breakStartTime,schedule.breakEndTime,schedule.endTime].every(value=>timeMinutes(value)!==null));
-        const balanceEligible=validSchedule&&complete&&pendingCorrections===0;
+        const balanceEligible=(validSchedule||dailyReference)&&complete&&pendingCorrections===0;
         const balanceMinutes=balanceEligible?worked-expected:null;
-        const balancePending=Boolean(schedule&&expected>0&&!balanceEligible&&status!=='Previsto hoje'&&status!=='Em andamento');
+        const balancePending=Boolean(expected>0&&!balanceEligible&&status!=='Previsto hoje'&&status!=='Em andamento');
         if(balanceMinutes!==null){
           summary.balancePositiveMinutes+=Math.max(0,balanceMinutes);
           summary.balanceNegativeMinutes+=Math.max(0,-balanceMinutes);
@@ -284,7 +293,8 @@ export function buildMonthlyReport({
           unit: employee.unit,
           schedule: schedule
             ? `${schedule.startTime}–${schedule.breakStartTime} / ${schedule.breakEndTime}–${schedule.endTime}`
-            : 'Sem escala',
+            : dailyReference ? `Referência diária: ${Math.floor(dailyLimitMinutes / 60)}h${dailyLimitMinutes % 60 ? String(dailyLimitMinutes % 60).padStart(2, '0') : ''}` : 'Sem escala',
+          balanceReference: dailyReference ? 'daily-limit' : schedule ? 'schedule' : null,
           punches: KINDS.map((kind) => times[kind]),
           expectedMinutes: expected,
           workedMinutes: worked,
@@ -354,3 +364,4 @@ export function buildMonthlyReport({
     rows,
   };
 }
+

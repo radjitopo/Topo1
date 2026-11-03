@@ -67,3 +67,61 @@ test('batidas completas com a mesma carga horária têm saldo zero', () => {
   assert.equal(rowAt(report, '2026-10-05').balancePositiveMinutes, 0);
   assert.equal(rowAt(report, '2026-10-05').balanceNegativeMinutes, 0);
 });
+
+test('registros sem histórico de escala somam positivas e descontam negativas pela jornada diária', () => {
+  const report = buildMonthlyReport({
+    ...base, scheduleVersions: [], corrections: [], punches: [
+      ...punches('2026-10-05', ['08:00', '12:00', '13:00', '18:30']),
+      ...punches('2026-10-06', ['08:00', '12:00', '13:00', '16:30']),
+    ],
+  });
+  assert.equal(report.employees[0].balancePositiveMinutes, 90);
+  assert.equal(report.employees[0].balanceNegativeMinutes, 30);
+  assert.equal(report.employees[0].balanceNetMinutes, 60);
+  assert.equal(rowAt(report, '2026-10-05').balanceReference, 'daily-limit');
+  assert.equal(rowAt(report, '2026-10-05').status, 'Completo');
+  assert.equal(report.rows.length, 2); // dias sem registros não geram débito
+});
+
+test('saldo final pode ser negativo e respeita a jornada diária escolhida', () => {
+  const report = buildMonthlyReport({
+    ...base, scheduleVersions: [], dailyLimitMinutes: 420, corrections: [], punches: [
+      ...punches('2026-10-05', ['08:00', '12:00', '13:00', '16:30']),
+      ...punches('2026-10-06', ['08:00', '12:00', '13:00', '14:00']),
+    ],
+  });
+  assert.equal(report.totals.balancePositiveMinutes, 30);
+  assert.equal(report.totals.balanceNegativeMinutes, 120);
+  assert.equal(report.totals.balanceNetMinutes, -90);
+});
+
+test('batidas incompletas e correções pendentes sem escala não geram débito', () => {
+  const report = buildMonthlyReport({
+    ...base, scheduleVersions: [], punches: [
+      ...punches('2026-10-05', ['08:00', '12:00', '13:00', null]),
+      ...punches('2026-10-06', ['08:00', '12:00', '13:00', '16:00']),
+    ],
+    corrections: [{ id: 'pending', user_id: id, work_date: '2026-10-06', kind: 'out', status: 'pending' }],
+  });
+  assert.equal(report.totals.balanceNetMinutes, 0);
+  assert.equal(report.totals.balancePendingDays, 2);
+  assert.equal(rowAt(report, '2026-10-06').balanceMinutes, null);
+});
+
+test('a referência diária só vale antes da primeira escala, preservando folgas cadastradas', () => {
+  const report = buildMonthlyReport({
+    ...base,
+    scheduleVersions: [{ user_id: id, effective_from: '2026-10-06', schedule }],
+    corrections: [], punches: [
+      ...punches('2026-10-05', ['08:00', '12:00', '13:00', '18:00']),
+      ...punches('2026-10-06', ['08:00', '12:00', '13:00', '16:30']),
+      ...punches('2026-10-10', ['08:00', '12:00', '13:00', '18:00']),
+    ],
+  });
+  assert.equal(rowAt(report, '2026-10-05').balanceReference, 'daily-limit');
+  assert.equal(rowAt(report, '2026-10-06').balanceReference, 'schedule');
+  assert.equal(rowAt(report, '2026-10-10').balanceMinutes, null);
+  assert.equal(rowAt(report, '2026-10-10').balanceReference, null);
+  assert.equal(report.totals.balanceNetMinutes, 30);
+});
+
