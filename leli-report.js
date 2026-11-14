@@ -158,8 +158,9 @@ function calculateOvertimeForEmployee(punches, corrections, start, end, dailyLim
     const dailyCorrections = correctionDates.get(date) || [];
     const worked = workedMinutes(effectiveTimes(dailyPunches, dailyCorrections));
     if (worked === null) continue;
-    const dailyExtra = Math.max(0, worked - dailyLimitMinutes);
-    const regularToday = Math.min(worked, dailyLimitMinutes);
+    const dailyLimit = typeof dailyLimitMinutes === 'function' ? dailyLimitMinutes(date) : dailyLimitMinutes;
+    const dailyExtra = Math.max(0, worked - dailyLimit);
+    const regularToday = Math.min(worked, dailyLimit);
     const weeklyExtra = Math.max(0, countedRegularMinutes + regularToday - weeklyLimitMinutes)
       - Math.max(0, countedRegularMinutes - weeklyLimitMinutes);
     countedRegularMinutes += regularToday;
@@ -196,6 +197,13 @@ function employeeDailyMinutes(employee, fallback) {
   return Number.isInteger(value) && value >= 60 && value <= 720 && value % 15 === 0 ? value : fallback;
 }
 
+function dailyMinutesOnDate(employee, date, fallback) {
+  const version = (employee.daily_hours_versions || [])
+    .filter(item => item.effective_from <= date)
+    .sort((a, b) => b.effective_from.localeCompare(a.effective_from))[0];
+  return employeeDailyMinutes(version || employee, fallback);
+}
+
 export function getMonthBounds(month) {
   const info = monthInfo(month);
   return { start: info.start, end: info.end };
@@ -219,14 +227,19 @@ export function buildMonthlyReport({
 
   for (const employee of employees) {
     const summary = blankSummary(employee);
-    const dailyMinutes = employeeDailyMinutes(employee, dailyLimitMinutes);
+    const dailyMinutes = dailyMinutesOnDate(employee, periodEnd, dailyLimitMinutes);
     const personalDailyHours = employee.daily_work_minutes !== null && employee.daily_work_minutes !== undefined;
     summary.dailyWorkMinutes = dailyMinutes;
+    const history = (employee.daily_hours_versions || []).filter(item => item.effective_from <= periodEnd)
+      .sort((a, b) => a.effective_from.localeCompare(b.effective_from));
+    summary.dailyWorkHistory = history.filter((item, index) => item.effective_from >= info.start || !history[index + 1] || history[index + 1].effective_from > info.start);
+    summary.dailyWorkVaries = new Set(summary.dailyWorkHistory.map(item => item.daily_work_minutes)).size > 1;
     const employeePunches = punches.filter((item) => item.user_id === employee.id);
     const employeeCorrections = corrections.filter((item) => item.user_id === employee.id);
     const versions = scheduleVersions.filter((item) => item.user_id === employee.id);
     const overtimeByDate = calculateOvertimeForEmployee(
-      employeePunches, employeeCorrections, mondayOf(info.start), periodEnd, dailyMinutes, weeklyLimitMinutes,
+      employeePunches, employeeCorrections, mondayOf(info.start), periodEnd,
+      date => dailyMinutesOnDate(employee, date, dailyLimitMinutes), weeklyLimitMinutes,
     );
     const reportCorrections = employeeCorrections.filter((item) => item.work_date >= info.start && item.work_date <= periodEnd);
     const reportCorrectionKeys = new Set(reportCorrections.map((item) => item.request_group || item.id));
@@ -240,6 +253,7 @@ export function buildMonthlyReport({
       const lastDay = Number(periodEnd.slice(8, 10));
       for (let day = 1; day <= lastDay; day += 1) {
         const date = dateFromParts(info.year, info.monthNumber, day);
+        const dayDailyMinutes = dailyMinutesOnDate(employee, date, dailyLimitMinutes);
         const schedule = scheduleForDate(versions, date);
         const dayPunches = employeePunches.filter((item) => item.work_date === date);
         const dayCorrections = employeeCorrections.filter((item) => item.work_date === date);
@@ -253,7 +267,7 @@ export function buildMonthlyReport({
         const worked = workedMinutes(times);
         const complete = worked !== null;
         const extra = overtimeByDate.get(date);
-        const expected = dailyReference || (personalDailyHours && schedule) ? dailyMinutes : expectedMinutes(schedule);
+        const expected = dailyReference || (personalDailyHours && schedule) ? dayDailyMinutes : expectedMinutes(schedule);
         const arrival = timeMinutes(times.in);
         const scheduledArrival = schedule ? timeMinutes(schedule.startTime) : null;
         const delay = arrival !== null && scheduledArrival !== null ? Math.max(0, arrival - scheduledArrival) : 0;
@@ -301,8 +315,8 @@ export function buildMonthlyReport({
           unit: employee.unit,
           schedule: schedule
             ? `${schedule.startTime}–${schedule.breakStartTime} / ${schedule.breakEndTime}–${schedule.endTime}`
-            : dailyReference ? `Referência diária: ${Math.floor(dailyMinutes / 60)}h${dailyMinutes % 60 ? String(dailyMinutes % 60).padStart(2, '0') : ''}` : 'Sem escala',
-          dailyWorkMinutes: dailyMinutes,
+            : dailyReference ? `Referência diária: ${Math.floor(dayDailyMinutes / 60)}h${dayDailyMinutes % 60 ? String(dayDailyMinutes % 60).padStart(2, '0') : ''}` : 'Sem escala',
+          dailyWorkMinutes: dayDailyMinutes,
           balanceReference: personalDailyHours && (dailyReference || schedule) ? 'employee' : dailyReference ? 'daily-limit' : schedule ? 'schedule' : null,
           punches: KINDS.map((kind) => times[kind]),
           expectedMinutes: expected,

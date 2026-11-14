@@ -57,18 +57,13 @@ test('a ficha individual prevalece sobre a referência global e escalas antigas'
   assert.equal(row.balanceReference,'employee');
 });
 
-test('salvar 6h persiste na ficha e é usado no próximo fechamento do servidor',async()=>{
+test('alterar jornada exige uma data de início, sem reescrever o cadastro por omissão',async()=>{
   const {request,employee,calls}=harness();
   const saved=await request('admin-save-daily-hours',{id:six,dailyHours:6});
-  assert.equal(saved.statusCode,200);
-  assert.equal(employee.daily_work_minutes,360);
-  assert(calls.some(c=>c.query.startsWith('INSERT INTO leli_audit_log')&&c.values[1]==='save_daily_hours'));
-  const detail=await request('admin-employee-detail',{},'GET',{id:six});
-  assert.equal(detail.data.employee.daily_work_minutes,360);
-  const monthly=await request('admin-monthly-report',{},'GET',{month:'2026-10',employeeId:six});
-  assert.equal(monthly.statusCode,200);
-  assert.equal(monthly.data.employees[0].dailyWorkMinutes,360);
-  assert.equal(monthly.data.employees[0].balanceNetMinutes,30);
+  assert.equal(saved.statusCode,400);
+  assert.match(saved.data.error,/data/);
+  assert.equal(employee.daily_work_minutes,480);
+  assert(!calls.some(c=>c.query.startsWith('UPDATE leli_users SET daily_work_minutes=')));
 });
 
 test('somente administradores podem alterar a jornada',async()=>{
@@ -87,7 +82,7 @@ test('jornadas inválidas e funcionários inexistentes não alteram registros',a
     assert(!calls.some(c=>c.query.startsWith('UPDATE leli_users SET daily_work_minutes=')));
   }
   const {request}=harness();
-  assert.equal((await request('admin-save-daily-hours',{id:eight,dailyHours:6})).statusCode,404);
+  assert.equal((await request('admin-save-daily-hours',{id:eight,dailyHours:6,effectiveFrom:'data inválida'})).statusCode,400);
 });
 
 test('novos cadastros usam 8h por padrão ou a jornada informada',async()=>{

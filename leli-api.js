@@ -496,6 +496,19 @@ function validWorkDate(date){
   return Number.isFinite(parsed.getTime())&&parsed.toISOString().slice(0,10)===date;
 }
 const REVIEW_KINDS=['in','breakOut','breakIn','out'];
+async function attachDailyHoursVersions(employees){
+  if(!employees.length)return;
+  const ids=employees.map(employee=>employee.id);
+  const versions=await sql`WITH latest AS (
+      SELECT DISTINCT ON(target_id) target_id,details FROM leli_audit_log
+      WHERE action='save_daily_hours' AND target_type='user' AND target_id=ANY(${ids}::text[])
+        AND jsonb_typeof(details->'versions')='array'
+      ORDER BY target_id,created_at DESC,id DESC
+    ) SELECT latest.target_id::uuid AS user_id,v.effective_from,v.daily_work_minutes
+      FROM latest CROSS JOIN LATERAL jsonb_to_recordset(latest.details->'versions')
+      AS v(effective_from text,daily_work_minutes integer) ORDER BY v.effective_from`;
+  for(const employee of employees)employee.daily_hours_versions=versions.filter(version=>version.user_id===employee.id);
+}
 function reviewClock(value){return value?new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(value)):''}
 function reviewWorkedMinutes(times){
   const clocks=REVIEW_KINDS.map(kind=>times[kind]);
@@ -508,6 +521,7 @@ async function employeeMonthReview(userId,month){
   const bounds=getMonthBounds(month);
   const employees=await sql`SELECT id,name,unit,active,daily_work_minutes FROM leli_users WHERE id=${userId} AND role='employee' LIMIT 1`;
   if(!employees[0])return null;
+  await attachDailyHoursVersions(employees);
   const [punches,corrections,versions]=await sql.transaction(txn=>[
     txn`SELECT id,user_id,work_date::text AS work_date,kind,occurred_at FROM leli_punches
       WHERE user_id=${userId} AND work_date BETWEEN ${bounds.start}::date AND ${bounds.end}::date ORDER BY work_date,occurred_at`,
@@ -526,17 +540,26 @@ async function employeeMonthReview(userId,month){
         md5(jsonb_build_array(COALESCE(p.entries,'[]'::jsonb),COALESCE(c.entries,'[]'::jsonb))::text) AS version
       FROM days d LEFT JOIN punch_state p USING(work_date) LEFT JOIN correction_state c USING(work_date) ORDER BY d.work_date`
   ],{isolationLevel:'RepeatableRead',readOnly:true});
+  const scheduleVersions=await sql`SELECT user_id,effective_from::text AS effective_from,schedule
+    FROM leli_schedule_versions WHERE user_id=${userId} AND effective_from<=${bounds.end}::date ORDER BY effective_from`;
+  const report=buildMonthlyReport({month,employees,punches,corrections,scheduleVersions});
   const effective=applyApprovedPunchCorrections(punches,corrections),today=localDate();
   const days=versions.map(({work_date:date,version})=>{
     const original=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,reviewClock(punches.find(p=>p.work_date===date&&p.kind===kind)?.occurred_at)]));
     const times=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,reviewClock(effective.find(p=>p.work_date===date&&p.kind===kind)?.effective_at)]));
     const corrected=Object.fromEntries(REVIEW_KINDS.map(kind=>[kind,Boolean(effective.find(p=>p.work_date===date&&p.kind===kind)?.corrected)]));
     const dayCorrections=corrections.filter(c=>c.work_date===date),pending=dayCorrections.filter(c=>c.status==='pending');
+    const reportDay=report.rows.find(row=>row.date===date);
+    const dailyVersion=employees[0].daily_hours_versions.filter(row=>row.effective_from<=date).at(-1);
+    const dailyWorkMinutes=dailyVersion?.daily_work_minutes??employees[0].daily_work_minutes;
+    const expectedMinutes=reportDay?.expectedMinutes??(scheduleVersions.some(row=>row.effective_from<=date)?0:dailyWorkMinutes);
     return{date,version,times,original,corrected,workedMinutes:reviewWorkedMinutes(times),editable:date<=today,
+      dailyWorkMinutes,expectedMinutes,balanceMinutes:reportDay?.balanceMinutes??null,balancePending:reportDay?.balancePending??false,
       pendingCorrections:new Set(pending.map(c=>c.request_group||c.id)).size,
       hasRecords:REVIEW_KINDS.some(kind=>times[kind])||dayCorrections.length>0};
   });
-  return{employee:employees[0],month,days};
+  const summary=report.employees[0];
+  return{employee:{...employees[0],daily_work_minutes:summary.dailyWorkMinutes,dailyWorkHistory:summary.dailyWorkHistory,dailyWorkVaries:summary.dailyWorkVaries},month,days,totals:report.totals};
 }
 function missingExitError(punches,requestedAt){
   if(!punches.some(p=>p.kind==='in'))return 'Não existe uma entrada registrada nesta data.';
@@ -1100,7 +1123,7 @@ export default async function handler(req,res){
           if(date===today&&times[kind]>nowClock)return json(res,400,{error:'Não é possível registrar um horário futuro para hoje.'});
         }
         const filled=REVIEW_KINDS.map(kind=>times[kind]).filter(Boolean);
-        if(filled.some((value,index)=>index>0&&value<filled[index-1]))return json(res,400,{error:'Em '+date.split('-').reverse().join('/')+', confira a ordem: entrada, intervalo, volta e saída.'});
+        if(filled.some((value,index)=>index>0&&value<=filled[index-1]))return json(res,400,{error:'Em '+date.split('-').reverse().join('/')+', use horários diferentes, na ordem: entrada, intervalo, volta e saída.'});
         const dayChanges=REVIEW_KINDS.filter(kind=>times[kind]!==current.times[kind]).map(kind=>({work_date:date,kind,requested_time:times[kind]}));
         if(dayChanges.length){targets.push({work_date:date,version:current.version});changes.push(...dayChanges)}
       }
@@ -1164,6 +1187,7 @@ export default async function handler(req,res){
       const employees=await sql`SELECT id,email,phone,name,position,unit,active,activation_hash IS NOT NULL AS pending_activation,created_at,daily_work_minutes
         FROM leli_users WHERE id=${id} AND role='employee' LIMIT 1`;
       if(!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      await attachDailyHoursVersions(employees);
       const schedule=await sql`SELECT weekday,
           to_char(start_time,'HH24:MI') AS start_time,
           to_char(break_start_time,'HH24:MI') AS break_start_time,
@@ -1173,8 +1197,9 @@ export default async function handler(req,res){
         FROM leli_schedules WHERE user_id=${id} ORDER BY weekday`;
       const punches=await sql`SELECT work_date::text AS work_date,kind,occurred_at
         FROM leli_punches WHERE user_id=${id} ORDER BY work_date DESC,occurred_at ASC`;
-      const corrections=await sql`SELECT id,work_date::text AS work_date,kind,punch_id,status,requested_at,decided_at,created_at,request_group
-        FROM leli_corrections WHERE user_id=${id} ORDER BY decided_at DESC NULLS LAST,created_at DESC,id DESC`;
+      const corrections=await sql`SELECT c.id,c.work_date::text AS work_date,c.kind,c.punch_id,c.status,c.original_at,c.requested_at,c.reason,c.decision_note,c.decided_at,c.created_at,c.request_group,d.name AS decided_by_name
+        FROM leli_corrections c LEFT JOIN leli_users d ON d.id=c.decided_by
+        WHERE c.user_id=${id} ORDER BY c.decided_at DESC NULLS LAST,c.created_at DESC,c.id DESC`;
       return json(res,200,{employee:employees[0],schedule,punches,corrections});
     }
     if(req.method==='GET'&&action==='admin-monthly-report'){
@@ -1191,6 +1216,7 @@ export default async function handler(req,res){
         WHERE role='employee' AND (${employeeFilter}::uuid IS NULL OR id=${employeeFilter}::uuid)
         ORDER BY name`;
       if(employeeId&&!employees[0])return json(res,404,{error:'Colaborador não encontrado.'});
+      await attachDailyHoursVersions(employees);
       const punches=await sql`SELECT p.user_id,p.work_date::text AS work_date,p.kind,p.occurred_at
         FROM leli_punches p JOIN leli_users u ON u.id=p.user_id
         WHERE u.role='employee' AND p.work_date BETWEEN ${coverage.start}::date AND ${bounds.end}::date
@@ -1211,13 +1237,40 @@ export default async function handler(req,res){
       return json(res,200,report);
     }
     if(req.method==='POST'&&action==='admin-save-daily-hours'){
-      const b=body(req),id=String(b.id||''),dailyHours=Number(b.dailyHours);
+      const b=body(req),id=String(b.id||''),dailyHours=Number(b.dailyHours),effectiveFrom=String(b.effectiveFrom||'');
       if(!/^[0-9a-f-]{36}$/i.test(id))return json(res,400,{error:'Colaborador inválido.'});
       if(!validDailyHours(b.dailyHours))return json(res,400,{error:'Informe uma jornada entre 1 e 12 horas, em intervalos de 15 minutos.'});
-      const rows=await sql`UPDATE leli_users SET daily_work_minutes=${dailyHours*60},updated_at=now()
-        WHERE id=${id} AND role='employee' RETURNING id,name,unit,daily_work_minutes`;
+      if(!validWorkDate(effectiveFrom)||effectiveFrom>localDate())return json(res,400,{error:'Informe a data em que a jornada começou, até hoje. Os dias anteriores manterão a jornada antiga.'});
+      const [,rows]=await sql.transaction(txn=>[
+        txn`SELECT id FROM leli_users WHERE id=${id} AND role='employee' FOR UPDATE`,
+        txn`WITH current_history AS (
+            SELECT u.id,COALESCE((
+              SELECT a.details->'versions' FROM leli_audit_log a
+              WHERE a.action='save_daily_hours' AND a.target_type='user' AND a.target_id=u.id::text
+                AND jsonb_typeof(a.details->'versions')='array'
+              ORDER BY a.created_at DESC,a.id DESC LIMIT 1
+            ),jsonb_build_array(jsonb_build_object('effective_from','1900-01-01','daily_work_minutes',u.daily_work_minutes))) AS versions
+            FROM leli_users u WHERE u.id=${id} AND u.role='employee'
+          ), next_history AS (
+            SELECT id,(SELECT jsonb_agg(v ORDER BY v->>'effective_from') FROM (
+              SELECT value AS v FROM jsonb_array_elements(versions) WHERE value->>'effective_from'<>${effectiveFrom}
+              UNION ALL SELECT jsonb_build_object('effective_from',${effectiveFrom}::text,'daily_work_minutes',${dailyHours*60}::integer)
+            ) entries) AS versions FROM current_history
+          ), updated AS (
+            UPDATE leli_users u SET daily_work_minutes=(
+              SELECT (value->>'daily_work_minutes')::integer FROM next_history n,jsonb_array_elements(n.versions)
+              WHERE n.id=u.id AND value->>'effective_from'<=${localDate()} ORDER BY value->>'effective_from' DESC LIMIT 1
+            ),updated_at=now() WHERE u.id IN (SELECT id FROM next_history)
+            RETURNING u.id,u.name,u.unit,u.daily_work_minutes
+          ), logged AS (
+            INSERT INTO leli_audit_log(actor_user_id,action,target_type,target_id,details,created_at)
+            SELECT ${user.id}::uuid,'save_daily_hours','user',n.id::text,
+              jsonb_build_object('dailyHours',${dailyHours}::numeric,'effectiveFrom',${effectiveFrom}::text,'versions',n.versions),clock_timestamp()
+            FROM next_history n JOIN updated u ON u.id=n.id RETURNING id
+          ) SELECT * FROM updated WHERE EXISTS(SELECT 1 FROM logged)`
+      ]);
       if(!rows[0])return json(res,404,{error:'Colaborador não encontrado.'});
-      await audit(user.id,'save_daily_hours','user',id,{dailyHours});
+      await attachDailyHoursVersions(rows);
       return json(res,200,{ok:true,employee:rows[0]});
     }
     if(req.method==='POST'&&action==='admin-save-schedule'){

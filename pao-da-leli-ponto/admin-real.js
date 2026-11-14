@@ -243,6 +243,7 @@ function monthlyReportFileName(month,extension=''){
   return 'pao-da-leli-fechamento-'+name+'-'+year+(extension?'.'+extension:'');
 }
 function employeeDailyWorkMinutes(employee){const value=Number(employee?.daily_work_minutes??employee?.dailyWorkMinutes??480);return Number.isInteger(value)&&value>=60&&value<=720&&value%15===0?value:480}
+function employeeReferenceLabel(employee){return employee.dailyWorkVaries?'conforme a vigência':durationLabel(employeeDailyWorkMinutes(employee))+'/dia'}
 function durationLabel(value){if(value===null||value===undefined)return'—';const total=Math.max(0,Number(value)||0),hours=Math.floor(total/60),minutes=total%60;return hours?(hours+'h'+(minutes?' '+minutes+'min':'')):(minutes+'min')}
 function signedDurationLabel(value){if(value===null||value===undefined)return'—';return(value<0?'−':value>0?'+':'')+durationLabel(Math.abs(value))}
 function balanceClass(value){return value===null||value===undefined?'':value<0?'balance-negative':value>0?'balance-positive':''}
@@ -260,7 +261,7 @@ function renderMonthlyReport(report){
   monthlyReport=report;$('#reportContent').classList.remove('hidden');$('#reportStatus').textContent='Fechamento atualizado.';
   $('#reportPeriodLabel').textContent=monthLabel(report.month);
   const people=report.employees.length===1?report.employees[0].name:report.employees.length+' '+(report.employees.length===1?'funcionário':'funcionários');
-  $('#reportFilterLabel').textContent=people+' · período até '+report.periodEnd.split('-').reverse().join('/')+' · '+(report.employees.length===1?'jornada '+durationLabel(employeeDailyWorkMinutes(report.employees[0]))+'/dia':'jornada diária conforme cada ficha')+' · limite semanal '+durationLabel(report.overtimeRules.weeklyLimitMinutes);
+  $('#reportFilterLabel').textContent=people+' · período até '+report.periodEnd.split('-').reverse().join('/')+' · '+(report.employees.length===1?'jornada '+employeeReferenceLabel(report.employees[0]):'jornada diária conforme cada ficha')+' · limite semanal '+durationLabel(report.overtimeRules.weeklyLimitMinutes);
   $('#reportWorked').textContent=durationLabel(report.totals.workedMinutes);
   $('#reportExpected').textContent=durationLabel(report.totals.expectedMinutes);
   $('#reportOvertime').textContent=durationLabel(report.totals.overtimeMinutes);
@@ -272,7 +273,7 @@ function renderMonthlyReport(report){
   $('#reportDelays').textContent=durationLabel(report.totals.delayMinutes);
   $('#reportAbsences').textContent=report.totals.absenceDays;
   $('#reportCorrections').textContent=report.totals.correctionRequests;
-  $('#reportEmployeeSummary').innerHTML=report.employees.map(employee=>'<article class="report-person"><div class="report-person-head"><div><strong>'+esc(employee.name)+'</strong><div class="sub">'+esc(employee.unit)+' · '+durationLabel(employeeDailyWorkMinutes(employee))+'/dia</div></div>'+(employee.pendingCorrections?'<span class="badge pending">'+employee.pendingCorrections+' pendente'+(employee.pendingCorrections===1?'':'s')+'</span>':'')+'</div><div class="report-person-balance"><span>Saldo final do mês</span><b class="'+balanceClass(employee.balanceNetMinutes)+'">'+signedDurationLabel(employee.balanceNetMinutes)+'</b><small>'+reportBalanceFormula(employee)+'</small></div><div class="report-person-stats"><div class="report-person-stat"><span>Previsto</span><b>'+durationLabel(employee.expectedMinutes)+'</b></div><div class="report-person-stat"><span>Trabalhado</span><b>'+durationLabel(employee.workedMinutes)+'</b></div><div class="report-person-stat"><span>Horas extras</span><b>'+durationLabel(employee.overtimeMinutes)+'</b></div><div class="report-person-stat"><span>Horas positivas</span><b class="balance-positive">+'+durationLabel(employee.balancePositiveMinutes)+'</b></div><div class="report-person-stat"><span>Horas negativas</span><b class="balance-negative">−'+durationLabel(employee.balanceNegativeMinutes)+'</b></div><div class="report-person-stat"><span>Dias a conferir</span><b>'+employee.balancePendingDays+'</b></div><div class="report-person-stat"><span>Extras diárias</span><b>'+durationLabel(employee.overtimeDailyMinutes)+'</b></div><div class="report-person-stat"><span>Extras semanais</span><b>'+durationLabel(employee.overtimeWeeklyMinutes)+'</b></div><div class="report-person-stat"><span>Atraso</span><b>'+durationLabel(employee.delayMinutes)+'</b></div><div class="report-person-stat"><span>Faltas</span><b>'+employee.absenceDays+'</b></div><div class="report-person-stat"><span>Incompletas</span><b>'+employee.incompleteDays+'</b></div><div class="report-person-stat"><span>Correções</span><b>'+employee.correctionRequests+'</b></div></div><button class="btn small secondary review-employee-shortcut" type="button" data-review-employee="'+esc(employee.userId)+'" data-review-month="'+esc(report.month)+'">Revisar horários</button></article>').join('')||'<div class="empty">Nenhum funcionário encontrado.</div>';
+  $('#reportEmployeeSummary').innerHTML=report.employees.map(employee=>'<article class="report-person"><div class="report-person-head"><div><strong>'+esc(employee.name)+'</strong><div class="sub">'+esc(employee.unit)+' · '+employeeReferenceLabel(employee)+'</div></div>'+(employee.pendingCorrections?'<span class="badge pending">'+employee.pendingCorrections+' pendente'+(employee.pendingCorrections===1?'':'s')+'</span>':'')+'</div><div class="report-person-balance"><span>Saldo final do mês</span><b class="'+balanceClass(employee.balanceNetMinutes)+'">'+signedDurationLabel(employee.balanceNetMinutes)+'</b><small>'+reportBalanceFormula(employee)+'</small></div><div class="report-person-stats"><div class="report-person-stat"><span>Previsto</span><b>'+durationLabel(employee.expectedMinutes)+'</b></div><div class="report-person-stat"><span>Trabalhado</span><b>'+durationLabel(employee.workedMinutes)+'</b></div><div class="report-person-stat"><span>Horas extras</span><b>'+durationLabel(employee.overtimeMinutes)+'</b></div><div class="report-person-stat"><span>Horas positivas</span><b class="balance-positive">+'+durationLabel(employee.balancePositiveMinutes)+'</b></div><div class="report-person-stat"><span>Horas negativas</span><b class="balance-negative">−'+durationLabel(employee.balanceNegativeMinutes)+'</b></div><div class="report-person-stat"><span>Dias a conferir</span><b>'+employee.balancePendingDays+'</b></div><div class="report-person-stat"><span>Extras diárias</span><b>'+durationLabel(employee.overtimeDailyMinutes)+'</b></div><div class="report-person-stat"><span>Extras semanais</span><b>'+durationLabel(employee.overtimeWeeklyMinutes)+'</b></div><div class="report-person-stat"><span>Atraso</span><b>'+durationLabel(employee.delayMinutes)+'</b></div><div class="report-person-stat"><span>Faltas</span><b>'+employee.absenceDays+'</b></div><div class="report-person-stat"><span>Incompletas</span><b>'+employee.incompleteDays+'</b></div><div class="report-person-stat"><span>Correções</span><b>'+employee.correctionRequests+'</b></div></div><button class="btn small secondary review-employee-shortcut" type="button" data-review-employee="'+esc(employee.userId)+'" data-review-month="'+esc(report.month)+'">Revisar horários</button></article>').join('')||'<div class="empty">Nenhum funcionário encontrado.</div>';
   $('#reportRows').innerHTML=report.rows.map(row=>'<tr><td class="nowrap"><strong>'+esc(fullDateLabel(row.date))+'</strong></td><td><strong>'+esc(row.name)+'</strong><span class="sub">'+esc(row.unit)+'</span></td><td class="nowrap">'+esc(row.schedule)+'</td><td class="nowrap">'+row.punches.map(value=>esc(value||'—')).join(' · ')+'</td><td class="nowrap">'+durationLabel(row.workedMinutes)+'</td><td class="nowrap"><b>'+durationLabel(row.overtimeMinutes)+'</b></td><td class="nowrap balance-positive">'+(row.balanceMinutes===null?'—':'+'+durationLabel(row.balancePositiveMinutes))+'</td><td class="nowrap balance-negative">'+(row.balanceMinutes===null?'—':'−'+durationLabel(row.balanceNegativeMinutes))+'</td><td class="nowrap '+balanceClass(row.balanceMinutes)+'"><b>'+signedDurationLabel(row.balanceMinutes)+'</b></td><td class="nowrap">'+durationLabel(row.delayMinutes)+'</td><td>'+reportStatusBadge(row.status)+(row.exitAddedLater?'<span class="sub">Saída incluída depois</span>':'')+'</td><td>'+(row.correctionRequests?row.correctionRequests+(row.pendingCorrections?' · '+row.pendingCorrections+' pendente'+(row.pendingCorrections===1?'':'s'):''):'—')+'</td></tr>').join('')||'<tr><td colspan="12" class="empty">Nenhuma jornada encontrada neste período.</td></tr>';
 }
 
@@ -304,11 +305,11 @@ function downloadMonthlyReport(){
     [],
     ['Resumo por funcionário'],
     ['Funcionário','Área','Jornada diária','Horas previstas','Horas trabalhadas','Horas extras total','Extras diárias','Extras semanais','Horas positivas','Horas negativas','Saldo final do mês','Dias a conferir','Atrasos','Faltas','Jornadas incompletas','Correções','Correções pendentes'],
-    ...report.employees.map(e=>[e.name,e.unit,durationLabel(employeeDailyWorkMinutes(e)),durationLabel(e.expectedMinutes),durationLabel(e.workedMinutes),durationLabel(e.overtimeMinutes),durationLabel(e.overtimeDailyMinutes),durationLabel(e.overtimeWeeklyMinutes),durationLabel(e.balancePositiveMinutes),'-'+durationLabel(e.balanceNegativeMinutes),signedDurationLabel(e.balanceNetMinutes),e.balancePendingDays,durationLabel(e.delayMinutes),e.absenceDays,e.incompleteDays,e.correctionRequests,e.pendingCorrections]),
+    ...report.employees.map(e=>[e.name,e.unit,employeeReferenceLabel(e),durationLabel(e.expectedMinutes),durationLabel(e.workedMinutes),durationLabel(e.overtimeMinutes),durationLabel(e.overtimeDailyMinutes),durationLabel(e.overtimeWeeklyMinutes),durationLabel(e.balancePositiveMinutes),'-'+durationLabel(e.balanceNegativeMinutes),signedDurationLabel(e.balanceNetMinutes),e.balancePendingDays,durationLabel(e.delayMinutes),e.absenceDays,e.incompleteDays,e.correctionRequests,e.pendingCorrections]),
     [],
     ['Detalhamento diário'],
-    ['Data','Funcionário','Área','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Extras totais','Extras diárias','Extras semanais','Horas positivas','Horas negativas','Saldo final do mês','Atraso','Situação','Correções','Correções pendentes'],
-    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,row.schedule,...row.punches.map(v=>v||''),durationLabel(row.workedMinutes),durationLabel(row.overtimeMinutes),durationLabel(row.overtimeDailyMinutes),durationLabel(row.overtimeWeeklyMinutes),row.balancePositiveMinutes===null?'':durationLabel(row.balancePositiveMinutes),row.balanceNegativeMinutes===null?'':'-'+durationLabel(row.balanceNegativeMinutes),signedDurationLabel(row.balanceMinutes),durationLabel(row.delayMinutes),reportRowStatus(row),row.correctionRequests,row.pendingCorrections]),
+    ['Data','Funcionário','Área','Referência diária','Escala','Entrada','Saída para intervalo','Volta do intervalo','Saída','Horas trabalhadas','Extras totais','Extras diárias','Extras semanais','Horas positivas','Horas negativas','Saldo final do mês','Atraso','Situação','Correções','Correções pendentes'],
+    ...report.rows.map(row=>[row.date.split('-').reverse().join('/'),row.name,row.unit,durationLabel(row.expectedMinutes),row.schedule,...row.punches.map(v=>v||''),durationLabel(row.workedMinutes),durationLabel(row.overtimeMinutes),durationLabel(row.overtimeDailyMinutes),durationLabel(row.overtimeWeeklyMinutes),row.balancePositiveMinutes===null?'':durationLabel(row.balancePositiveMinutes),row.balanceNegativeMinutes===null?'':'-'+durationLabel(row.balanceNegativeMinutes),signedDurationLabel(row.balanceMinutes),durationLabel(row.delayMinutes),reportRowStatus(row),row.correctionRequests,row.pendingCorrections]),
     [],
     ['Observações','Saldo final = horas positivas - horas negativas. Referência: jornada diária cadastrada na ficha de cada funcionário. Dias incompletos e correções pendentes ficam para conferência. Horas extras estimadas separadamente.']
   ];
@@ -332,12 +333,12 @@ function downloadMonthlyReportTxt(){
     'RESUMO POR FUNCIONÁRIO',
   ];
   for(const e of report.employees){
-    lines.push('',e.name+' | '+e.unit,'Jornada diária: '+durationLabel(employeeDailyWorkMinutes(e)),'Trabalhado: '+durationLabel(e.workedMinutes)+' | Previsto: '+durationLabel(e.expectedMinutes),'Extras: '+durationLabel(e.overtimeMinutes)+' (diárias '+durationLabel(e.overtimeDailyMinutes)+'; semanais '+durationLabel(e.overtimeWeeklyMinutes)+')','Saldo final do mês: '+reportBalanceFormula(e)+' | '+e.balancePendingDays+' dia(s) a conferir','Atrasos: '+durationLabel(e.delayMinutes)+' | Faltas: '+e.absenceDays+' | Incompletas: '+e.incompleteDays+' | Correções: '+e.correctionRequests+' ('+e.pendingCorrections+' pendentes)');
+    lines.push('',e.name+' | '+e.unit,'Jornada diária: '+employeeReferenceLabel(e),'Trabalhado: '+durationLabel(e.workedMinutes)+' | Previsto: '+durationLabel(e.expectedMinutes),'Extras: '+durationLabel(e.overtimeMinutes)+' (diárias '+durationLabel(e.overtimeDailyMinutes)+'; semanais '+durationLabel(e.overtimeWeeklyMinutes)+')','Saldo final do mês: '+reportBalanceFormula(e)+' | '+e.balancePendingDays+' dia(s) a conferir','Atrasos: '+durationLabel(e.delayMinutes)+' | Faltas: '+e.absenceDays+' | Incompletas: '+e.incompleteDays+' | Correções: '+e.correctionRequests+' ('+e.pendingCorrections+' pendentes)');
   }
   lines.push('','DETALHAMENTO DIÁRIO');
   for(const row of report.rows){
     lines.push('',date(row.date)+' | '+row.name+' | '+row.unit,
-      'Escala: '+row.schedule,
+      'Escala: '+row.schedule+' | Referência diária: '+durationLabel(row.expectedMinutes),
       'Batidas: '+row.punches.map((value,index)=>['Entrada','Intervalo saída','Intervalo volta','Saída'][index]+' '+(value||'—')).join(' | '),
       'Trabalhado: '+durationLabel(row.workedMinutes)+' | Extras: '+durationLabel(row.overtimeMinutes)+' (diárias '+durationLabel(row.overtimeDailyMinutes)+'; semanais '+durationLabel(row.overtimeWeeklyMinutes)+')',
       'Saldo do dia: '+signedDurationLabel(row.balanceMinutes)+' | positivas '+durationLabel(row.balancePositiveMinutes)+' | negativas '+(row.balanceNegativeMinutes===null?'—':'−'+durationLabel(row.balanceNegativeMinutes)),
@@ -364,8 +365,8 @@ function buildMonthlyPrintHtml(report){
     const rows=report.rows.filter(row=>row.userId===employee.userId);
     const dailyRows=rows.map(row=>'<tr><td>'+esc(row.date.slice(8)+'/'+row.date.slice(5,7))+'</td>'+row.punches.map(value=>'<td>'+esc(value||'—')+'</td>').join('')+'<td>'+compactReportDuration(row.workedMinutes)+'</td><td class="'+balanceClass(row.balanceMinutes)+'">'+compactReportDuration(row.balanceMinutes,true)+'</td><td class="day-status">'+esc(printReportStatus(row))+'</td></tr>').join('')||'<tr><td colspan="8" class="empty-month">Sem registros neste mês.</td></tr>';
     const pending=employee.balancePendingDays||employee.incompleteDays||employee.pendingCorrections;
-    const reference='Jornada diária cadastrada: '+compactReportDuration(employeeDailyWorkMinutes(employee))+'.';
-    return '<section class="employee-sheet" data-employee-id="'+esc(employee.userId)+'"><header class="sheet-header"><div><strong>Pão da Leli</strong><span>Fechamento mensal</span></div><b>'+esc(monthLabel(report.month))+'</b></header><div class="employee-heading"><h1>'+esc(employee.name)+'</h1><p>'+esc(employee.unit)+' · jornada '+compactReportDuration(employeeDailyWorkMinutes(employee))+'/dia · '+esc(date(report.periodStart))+' a '+esc(date(report.periodEnd))+'</p></div><div class="balance-grid"><div><span>Horas positivas</span><strong class="balance-positive">+'+compactReportDuration(employee.balancePositiveMinutes)+'</strong></div><div><span>Horas negativas</span><strong class="balance-negative">−'+compactReportDuration(employee.balanceNegativeMinutes)+'</strong></div><div class="final-balance"><span>Saldo final do mês</span><strong class="'+balanceClass(employee.balanceNetMinutes)+'">'+compactReportDuration(employee.balanceNetMinutes,true)+'</strong></div></div><div class="balance-formula">'+reportBalanceFormula(employee)+'</div><div class="monthly-totals"><span>Trabalhadas: <b>'+compactReportDuration(employee.workedMinutes)+'</b></span><span>Referência: <b>'+compactReportDuration(employee.expectedMinutes)+'</b></span><span>Correções pendentes: <b>'+Number(employee.pendingCorrections||0)+'</b></span></div><table class="print-table"><colgroup><col style="width:10%"><col span="4" style="width:10%"><col style="width:14%"><col style="width:14%"><col style="width:22%"></colgroup><thead><tr><th>Dia</th><th>Entrada</th><th>Intervalo<br>saída</th><th>Intervalo<br>volta</th><th>Saída</th><th>Trabalhado</th><th>Saldo</th><th>Situação</th></tr></thead><tbody>'+dailyRows+'</tbody><tfoot><tr><th colspan="5">Total apurado no mês</th><th>'+compactReportDuration(employee.workedMinutes)+'</th><th class="'+balanceClass(employee.balanceNetMinutes)+'">'+compactReportDuration(employee.balanceNetMinutes,true)+'</th><th></th></tr></tfoot></table><footer class="sheet-footer"><p>Saldo final = horas positivas − horas negativas. '+esc(reference)+' Dias incompletos e correções pendentes ficam para conferência.</p>'+(pending?'<p class="pending-note">A conferir: '+Number(employee.balancePendingDays||0)+' dia(s) com saldo pendente · '+Number(employee.incompleteDays||0)+' jornada(s) incompleta(s) · '+Number(employee.pendingCorrections||0)+' correção(ões) pendente(s).</p>':'')+'<div class="signatures"><span>Funcionário(a)</span><span>Responsável</span></div><div class="sheet-meta"><span>Gerado em '+esc(dateTime(report.generatedAt))+'</span><span>Folha '+(index+1)+' de '+report.employees.length+'</span></div></footer></section>';
+    const reference=employee.dailyWorkVaries?'Jornadas do mês: '+employee.dailyWorkHistory.map(version=>compactReportDuration(version.daily_work_minutes)+(version.effective_from<report.periodStart?' no início do mês':' desde '+date(version.effective_from))).join('; ')+'.':'Jornada diária cadastrada: '+compactReportDuration(employeeDailyWorkMinutes(employee))+'.';
+    return '<section class="employee-sheet" data-employee-id="'+esc(employee.userId)+'"><header class="sheet-header"><div><strong>Pão da Leli</strong><span>Fechamento mensal</span></div><b>'+esc(monthLabel(report.month))+'</b></header><div class="employee-heading"><h1>'+esc(employee.name)+'</h1><p>'+esc(employee.unit)+' · jornada '+(employee.dailyWorkVaries?'conforme a vigência':compactReportDuration(employeeDailyWorkMinutes(employee))+'/dia')+' · '+esc(date(report.periodStart))+' a '+esc(date(report.periodEnd))+'</p></div><div class="balance-grid"><div><span>Horas positivas</span><strong class="balance-positive">+'+compactReportDuration(employee.balancePositiveMinutes)+'</strong></div><div><span>Horas negativas</span><strong class="balance-negative">−'+compactReportDuration(employee.balanceNegativeMinutes)+'</strong></div><div class="final-balance"><span>Saldo final do mês</span><strong class="'+balanceClass(employee.balanceNetMinutes)+'">'+compactReportDuration(employee.balanceNetMinutes,true)+'</strong></div></div><div class="balance-formula">'+reportBalanceFormula(employee)+'</div><div class="monthly-totals"><span>Trabalhadas: <b>'+compactReportDuration(employee.workedMinutes)+'</b></span><span>Referência: <b>'+compactReportDuration(employee.expectedMinutes)+'</b></span><span>Correções pendentes: <b>'+Number(employee.pendingCorrections||0)+'</b></span></div><table class="print-table"><colgroup><col style="width:10%"><col span="4" style="width:10%"><col style="width:14%"><col style="width:14%"><col style="width:22%"></colgroup><thead><tr><th>Dia</th><th>Entrada</th><th>Intervalo<br>saída</th><th>Intervalo<br>volta</th><th>Saída</th><th>Trabalhado</th><th>Saldo</th><th>Situação</th></tr></thead><tbody>'+dailyRows+'</tbody><tfoot><tr><th colspan="5">Total apurado no mês</th><th>'+compactReportDuration(employee.workedMinutes)+'</th><th class="'+balanceClass(employee.balanceNetMinutes)+'">'+compactReportDuration(employee.balanceNetMinutes,true)+'</th><th></th></tr></tfoot></table><footer class="sheet-footer"><p>Saldo final = horas positivas − horas negativas. '+esc(reference)+' Dias incompletos e correções pendentes ficam para conferência.</p>'+(pending?'<p class="pending-note">A conferir: '+Number(employee.balancePendingDays||0)+' dia(s) com saldo pendente · '+Number(employee.incompleteDays||0)+' jornada(s) incompleta(s) · '+Number(employee.pendingCorrections||0)+' correção(ões) pendente(s).</p>':'')+'<div class="signatures"><span>Funcionário(a)</span><span>Responsável</span></div><div class="sheet-meta"><span>Gerado em '+esc(dateTime(report.generatedAt))+'</span><span>Folha '+(index+1)+' de '+report.employees.length+'</span></div></footer></section>';
   }).join('');
   const employeeName=report.employees.length===1?'-'+String(report.employees[0].name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80):'-todos';
   return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(monthlyReportFileName(report.month)+employeeName)+'</title><style>@page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#31251f;margin:0;background:#fff;font-size:10px}.print-toolbar{max-width:190mm;margin:14px auto;display:flex;justify-content:space-between;align-items:center;gap:12px;color:#7d6d63}.print-toolbar button{border:0;border-radius:20px;background:#a71831;color:white;font-weight:bold;padding:10px 16px;cursor:pointer}.employee-sheet{width:190mm;margin:0 auto 16mm;break-after:page;page-break-after:always;break-inside:avoid;page-break-inside:avoid}.employee-sheet:last-child{break-after:auto;page-break-after:auto}.sheet-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #a71831;padding:0 0 3mm;gap:5mm}.sheet-header strong{display:block;font:italic 700 22px Georgia,serif;color:#a71831}.sheet-header span{display:block;margin-top:1mm;letter-spacing:1px;text-transform:uppercase;font-size:9px}.sheet-header>b{font-size:13px;text-align:right}.employee-heading{margin:3mm 0}.employee-heading h1{font:700 21px Georgia,serif;color:#a71831;margin:0;overflow-wrap:anywhere}.employee-heading p{margin:1mm 0 0;color:#7d6d63;font-size:10px}.balance-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;border:1px solid #dbcdbd;border-radius:7px;overflow:hidden}.balance-grid>div{padding:2.5mm 3mm}.balance-grid>div+div{border-left:1px solid #dbcdbd}.balance-grid span{display:block;text-transform:uppercase;font-size:9px;letter-spacing:.3px}.balance-grid strong{display:block;font:700 23px Georgia,serif;margin-top:1mm}.final-balance{background:#f6ead9}.balance-formula{text-align:right;color:#7d6d63;margin:1.5mm 0 2mm;font-size:10px}.monthly-totals{display:flex;justify-content:space-between;gap:3mm;margin:2mm 0 3mm;font-size:10px}.print-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px}.print-table th{background:#f2e5d3;color:#6f6259;font-size:9px;text-align:center;padding:1mm .6mm;line-height:1.15}.print-table td{height:5mm;padding:.7mm .5mm;border-bottom:1px solid #e5dace;text-align:center;white-space:nowrap;line-height:1.2}.print-table tbody tr{break-inside:avoid;page-break-inside:avoid}.print-table .day-status{font-size:9px;white-space:normal}.print-table tfoot th{padding:1.5mm .6mm;border-top:1px solid #dbcdbd}.print-table tfoot th:first-child{text-align:left}.print-table .empty-month{height:20mm;color:#7d6d63}.balance-positive{color:#2e6b2e!important}.balance-negative{color:#a71831!important}.sheet-footer{margin-top:2.5mm;color:#7d6d63;font-size:8px;line-height:1.4}.sheet-footer p{margin:1mm 0}.pending-note{color:#8a5b00}.signatures{display:flex;justify-content:space-between;gap:12mm;margin:9mm 0 2mm;text-align:center}.signatures span{width:45%;border-top:1px solid #b7a99c;padding-top:1mm}.sheet-meta{display:flex;justify-content:space-between;gap:5mm;border-top:1px solid #e5dace;padding-top:1.5mm}@media print{.print-toolbar{display:none}.employee-sheet{width:auto;margin:0}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body><div class="print-toolbar"><span>Uma página por funcionário</span><button type="button" onclick="window.print()">Salvar em PDF / imprimir</button></div>'+pages+'</body></html>';
@@ -426,8 +427,9 @@ function renderEmployeeHistory(detail){
   const dates=Object.keys(days).sort().reverse();
   $('#historyCount').textContent=dates.length+' '+(dates.length===1?'jornada':'jornadas');
   $('#employeeHistory').innerHTML=dates.map(date=>{
-    const row=days[date];
-    return '<article class="history-day"><div class="history-day-head"><strong>'+fullDateLabel(date)+'</strong>'+historyBadge(date,detail.corrections,row)+'</div><div class="history-times">'+Object.entries(punchLabels).map(([kind,label])=>'<div class="history-time"><span>'+label+'</span><b>'+time(row[kind])+'</b></div>').join('')+'</div></article>';
+    const row=days[date],changes=corrections.filter(item=>item.work_date===date);
+    const timeline=changes.length?'<details style="margin-top:10px;font-size:12px"><summary>Ver alterações ('+changes.length+')</summary>'+changes.map(item=>'<p><b>'+esc(punchLabels[item.kind])+'</b>: '+time(item.original_at)+' → '+time(item.requested_at)+' · '+esc(item.status==='approved'?'Aprovada':item.status==='pending'?'Pendente':'Recusada')+'<br>'+esc(item.reason||'')+(item.decided_by_name?'<br>'+esc(item.decided_by_name)+' · '+esc(dateTime(item.decided_at)):'')+'</p>').join('')+'</details>':'';
+    return '<article class="history-day"><div class="history-day-head"><strong>'+fullDateLabel(date)+'</strong>'+historyBadge(date,detail.corrections,row)+'</div><div class="history-times">'+Object.entries(punchLabels).map(([kind,label])=>'<div class="history-time"><span>'+label+'</span><b>'+time(row[kind])+'</b></div>').join('')+'</div>'+timeline+'</article>';
   }).join('')||'<div class="empty">Nenhuma jornada registrada ainda.</div>';
 }
 function renderTodaySummary(users,punches){
@@ -442,39 +444,59 @@ function renderTodaySummary(users,punches){
   }).join('')||'<p class="muted">Nenhum funcionário cadastrado.</p>';
 }
 const REVIEW_TIME_LABELS={in:'Entrada',breakOut:'Intervalo: saída',breakIn:'Intervalo: volta',out:'Saída'};
+function monthlyReviewTimes(row){return Object.fromEntries(Object.keys(REVIEW_TIME_LABELS).map(kind=>[kind,leliClock.normalize(row.querySelector('[data-review-kind="'+kind+'"]').value)]))}
 function monthlyReviewChanges(){
   if(!monthlyTimeReview)return[];
   return monthlyTimeReview.days.filter(day=>day.editable).flatMap(day=>{
     const row=$('#employeeReviewDays').querySelector('[data-review-date="'+day.date+'"]');if(!row)return[];
-    const times=Object.fromEntries(Object.keys(REVIEW_TIME_LABELS).map(kind=>[kind,row.querySelector('[data-review-kind="'+kind+'"]').value]));
+    const times=monthlyReviewTimes(row);
     return Object.keys(times).some(kind=>times[kind]!==day.times[kind])?[{date:day.date,version:day.version,times}]:[];
   });
 }
 function monthlyReviewWorked(times){
   const values=Object.keys(REVIEW_TIME_LABELS).map(kind=>times[kind]);
-  if(values.some(value=>!value))return null;
+  if(values.some(value=>!leliClock.valid(value)))return null;
   const minutes=values.map(value=>Number(value.slice(0,2))*60+Number(value.slice(3)));
-  if(minutes.some((value,index)=>index>0&&value<minutes[index-1]))return null;
+  if(minutes.some((value,index)=>index>0&&value<=minutes[index-1]))return null;
   return minutes[1]-minutes[0]+minutes[3]-minutes[2];
+}
+function monthlyReviewDayState(times,day){
+  const values=Object.values(times),filled=values.filter(Boolean),changed=Object.keys(times).some(kind=>times[kind]!==day.times[kind]);
+  let error='';
+  if(filled.some(value=>!leliClock.valid(value)))error='Use horários válidos no formato HH:mm.';
+  else if(Object.keys(times).some(kind=>day.times[kind]&&!times[kind]))error='Preencha as batidas já registradas; elas podem ser corrigidas.';
+  else if(filled.some((value,index)=>index>0&&value<=filled[index-1]))error='Use horários diferentes, na ordem: entrada, intervalo, volta e saída.';
+  const worked=error?null:monthlyReviewWorked(times);
+  const balance=worked!==null&&day.expectedMinutes>0&&(!day.pendingCorrections||changed)?worked-day.expectedMinutes:null;
+  const message=error||(!filled.length?'':worked===null?'Jornada incompleta: saldo pendente.':day.pendingCorrections&&!changed?'Correção pendente: saldo a conferir.':!day.expectedMinutes?'Fora da escala: saldo a conferir.':changed?'Prévia dos horários alterados.':'');
+  return{error,worked,balance,message,changed};
 }
 function updateMonthlyReviewEdits(event){
   if(event)$('#employeeReviewStatus').textContent='';
+  let invalid=false,positive=0,negative=0,workedTotal=0,pending=0;
   if(monthlyTimeReview){
     for(const day of monthlyTimeReview.days){
       const row=$('#employeeReviewDays').querySelector('[data-review-date="'+day.date+'"]');if(!row)continue;
-      const times={};
+      const times=monthlyReviewTimes(row),state=monthlyReviewDayState(times,day);invalid||=Boolean(state.error&&day.editable);
       row.querySelectorAll('[data-review-kind]').forEach(input=>{
-        const kind=input.dataset.reviewKind,changed=input.value!==day.times[kind];times[kind]=input.value;
+        const kind=input.dataset.reviewKind,changed=times[kind]!==day.times[kind];
+        input.setCustomValidity(state.error);
         input.classList.toggle('review-changed',changed);
         input.parentElement.querySelector('.review-original').classList.toggle('hidden',!changed&&!day.corrected[kind]);
       });
-      row.classList.toggle('review-day-changed',Object.keys(times).some(kind=>times[kind]!==day.times[kind]));
-      row.querySelector('[data-review-worked]').textContent=compactReportDuration(monthlyReviewWorked(times));
+      row.classList.toggle('review-day-changed',state.changed);
+      row.classList.toggle('review-day-invalid',Boolean(state.error));
+      if(state.changed){const badge=row.querySelector('.review-day-heading .badge');badge.textContent=state.error?'Revise os horários':state.worked===null?'Incompleto':'Alterado';badge.className='badge pending'}
+      row.querySelector('[data-review-worked]').textContent=compactReportDuration(state.worked);
+      const balance=row.querySelector('[data-review-balance]');balance.textContent='Saldo '+signedDurationLabel(state.balance);balance.className=balanceClass(state.balance);
+      row.querySelector('[data-review-message]').textContent=state.message;
+      if(day.editable){workedTotal+=state.worked||0;if(state.balance!==null){positive+=Math.max(0,state.balance);negative+=Math.max(0,-state.balance)}else if(day.hasRecords||state.changed||day.balancePending)pending++}
     }
   }
   const count=monthlyReviewChanges().length;
+  $('#employeeReviewTotals').textContent=(count?'Prévia · ':'Totais dos horários exibidos · ')+'Trabalhado: '+durationLabel(workedTotal)+' · Positivas: +'+durationLabel(positive)+' · Negativas: −'+durationLabel(negative)+' · Saldo: '+signedDurationLabel(positive-negative)+(pending?' · '+pending+' dia(s) a conferir':'');
   $('#employeeReviewChanges').textContent=count?count+' '+(count===1?'dia alterado':'dias alterados')+' para salvar.':'Nenhuma alteração para salvar.';
-  $('#employeeReviewSave').disabled=monthlyTimeReviewBusy||!count;
+  $('#employeeReviewSave').disabled=monthlyTimeReviewBusy||!count||invalid;
   $('#employeeReviewUndo').disabled=monthlyTimeReviewBusy||!count;
 }
 function setMonthlyReviewBusy(busy){
@@ -488,11 +510,12 @@ function canDiscardMonthlyReview(){
 }
 function renderMonthlyTimeReview(review){
   monthlyTimeReview=review;
-  $('#employeeReviewHeading').textContent=monthLabel(review.month)+' · jornada de '+durationLabel(employeeDailyWorkMinutes(review.employee))+' por dia';
+  $('#employeeReviewHeading').textContent=monthLabel(review.month)+' · jornada '+employeeReferenceLabel(review.employee);
   $('#employeeReviewDays').innerHTML=review.days.map(day=>{
     const date=day.date.split('-').reverse().join('/'),label=day.pendingCorrections?'<span class="badge pending">'+day.pendingCorrections+' pendente(s)</span>':!day.editable?'<span class="badge">Data futura</span>':day.hasRecords?'<span class="badge '+(day.workedMinutes===null?'pending':'approved')+'">'+(day.workedMinutes===null?'Incompleto':'Completo')+'</span>':'<span class="badge">Sem registros</span>';
-    return '<article class="month-review-day '+(!day.editable?'review-future':'')+'" data-review-date="'+esc(day.date)+'"><div class="review-day-heading"><strong>'+esc(date.slice(0,5))+'</strong><small>'+esc(new Date(day.date+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short'}))+'</small>'+label+'</div>'+Object.entries(REVIEW_TIME_LABELS).map(([kind,text])=>'<label class="review-time-field"><span>'+text+'</span><input type="time" step="60" aria-label="'+esc(text+' em '+date)+'" value="'+esc(day.times[kind]||'')+'" data-review-kind="'+kind+'" data-review-editable="'+day.editable+'"'+(!day.editable||monthlyTimeReviewBusy?' disabled':'')+'><small class="review-original '+(day.corrected[kind]?'':'hidden')+'">Original: '+esc(day.original[kind]||'sem batida')+'</small></label>').join('')+'<div class="review-day-total"><span>Trabalhado</span><b data-review-worked>'+compactReportDuration(day.workedMinutes)+'</b></div></article>';
+    return '<article class="month-review-day '+(!day.editable?'review-future':'')+'" data-review-date="'+esc(day.date)+'"><div class="review-day-heading"><strong>'+esc(date.slice(0,5))+'</strong><small>'+esc(new Date(day.date+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short'}))+'</small>'+label+'</div>'+Object.entries(REVIEW_TIME_LABELS).map(([kind,text])=>'<label class="review-time-field"><span>'+text+'</span><input type="time" step="60" aria-label="'+esc(text+' em '+date)+'" value="'+esc(day.times[kind]||'')+'" data-review-kind="'+kind+'" data-review-editable="'+day.editable+'"'+(!day.editable||monthlyTimeReviewBusy?' disabled':'')+'><small class="review-original '+(day.corrected[kind]?'':'hidden')+'">Original: '+esc(day.original[kind]||'sem batida')+'</small></label>').join('')+'<div class="review-day-total"><span>Trabalhado</span><b data-review-worked>'+compactReportDuration(day.workedMinutes)+'</b><small>Referência '+durationLabel(day.expectedMinutes)+'</small><small data-review-balance></small></div><p class="review-day-message" data-review-message role="status"></p></article>';
   }).join('');
+  leliClock.prepare(document);
   updateMonthlyReviewEdits();
 }
 async function loadMonthlyTimeReview(){
@@ -514,16 +537,20 @@ async function saveMonthlyTimeReview(event){
   if(monthlyTimeReviewBusy||!monthlyTimeReview||!$('#employeeReviewForm').reportValidity())return;
   const days=monthlyReviewChanges();if(!days.length)return;
   const id=selectedEmployeeId,month=monthlyTimeReview.month,reason=$('#employeeReviewReason').value.trim();
+  const refreshParameters=monthlyReport?.month===month?monthlyReportParameters():null;
   let saved=false;setMonthlyReviewBusy(true);$('#employeeReviewStatus').textContent='Salvando as correções do mês...';
   try{
     const result=await api('admin-save-monthly-times','POST',{id,month,reason,days});saved=true;
-    invalidateMonthlyReport('Horários corrigidos. Gere o fechamento novamente para atualizar os totais e os arquivos.');
+    invalidateMonthlyReport('Horários corrigidos. Atualizando o fechamento...');
     const review=await api('admin-monthly-times','GET',{id,month});
     if(selectedEmployeeId!==id)return;
     renderMonthlyTimeReview(review);
     const detail=await api('admin-employee-detail','GET',{id});renderEmployeeHistory(detail);
     await render();
-    $('#employeeReviewStatus').textContent='Correções salvas: '+result.changedDays+' dia(s), '+result.changedTimes+' horário(s). Gere o fechamento novamente.';
+    let reportWarning='';
+    if(refreshParameters){try{const refreshed=await api('admin-monthly-report','GET',refreshParameters);if(JSON.stringify(monthlyReportParameters())===JSON.stringify(refreshParameters)){renderMonthlyReport(refreshed);$('#reportStatus').textContent='Fechamento recalculado após a correção. Gere novamente os arquivos baixados anteriormente.'}}catch{invalidateMonthlyReport('Correções salvas. Gere o fechamento para atualizar os arquivos.');reportWarning=' Não foi possível atualizar o fechamento; gere-o novamente.'}}
+    else invalidateMonthlyReport('Horários e saldo da revisão atualizados. Gere o fechamento para baixar novos arquivos.');
+    $('#employeeReviewStatus').textContent='Correções salvas: '+result.changedDays+' dia(s), '+result.changedTimes+' horário(s). Horários e saldo atualizados.'+reportWarning;
   }catch(error){
     if(saved)monthlyTimeReview=null;
     $('#employeeReviewStatus').textContent=saved?'As correções foram salvas. Recarregue o mês para conferir os horários atualizados.':error.message;
@@ -547,6 +574,8 @@ window.openEmployee=async(id,reviewMonth)=>{
     $('#employeeDetailMeta').textContent=[contactLabel(employee),employee.unit,durationLabel(employeeDailyWorkMinutes(employee))+'/dia'].filter(Boolean).join(' · ');
     $('#employeeDetailStatus').innerHTML=employee.pending_activation?'<span class="badge pending">aguardando ativação</span>':employee.active?'<span class="badge approved">ativo</span>':'<span class="badge rejected">desativado</span>';
     $('#employeeDailyHours').value=employeeDailyWorkMinutes(employee)/60;$('#employeeDailyHoursStatus').textContent='';
+    $('#employeeDailyHoursFrom').value='';$('#employeeDailyHoursFrom').max=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    renderDailyHoursHistory(employee);
     renderEmployeeHistory(detail);$('#employeeDetailBody').classList.remove('hidden');
     $('#employeeReviewMonth').max=currentMonth();$('#employeeReviewMonth').value=reviewMonth||$('#reportMonth').value||currentMonth();
     $('#employeeReviewReason').value='Conferência do fechamento mensal';await loadMonthlyTimeReview();
@@ -555,15 +584,19 @@ window.openEmployee=async(id,reviewMonth)=>{
 };
 async function saveEmployeeDailyHours(event){
   event.preventDefault();const form=event.currentTarget,id=selectedEmployeeId,button=form.querySelector('button[type="submit"]'),input=$('#employeeDailyHours');
-  if(!id||button.disabled||!form.reportValidity())return;
-  const dailyHours=Number(input.value);button.disabled=true;input.disabled=true;$('#employeeDailyHoursStatus').textContent='Salvando jornada...';
+  if(!id||button.disabled||monthlyTimeReviewBusy||!form.reportValidity())return;
+  if(monthlyReviewChanges().length){$('#employeeDailyHoursStatus').textContent='Salve ou desfaça os horários alterados antes de mudar a jornada.';return}
+  const dailyHours=Number(input.value),effectiveFrom=$('#employeeDailyHoursFrom').value;button.disabled=true;input.disabled=true;$('#employeeDailyHoursFrom').disabled=true;$('#employeeDailyHoursStatus').textContent='Salvando jornada...';
   try{
-    const result=await api('admin-save-daily-hours','POST',{id,dailyHours});
+    const result=await api('admin-save-daily-hours','POST',{id,dailyHours,effectiveFrom});
     invalidateMonthlyReport('Jornada atualizada. Gere o fechamento novamente.');
     await render();
-    if(selectedEmployeeId===id){input.value=employeeDailyWorkMinutes(result.employee)/60;$('#employeeDailyHoursStatus').textContent='Jornada salva: '+durationLabel(employeeDailyWorkMinutes(result.employee))+' por dia. Os próximos fechamentos usarão esse valor.';$('#employeeDetailMeta').textContent=[contactLabel(overview?.users?.find(user=>user.id===id)||result.employee),result.employee.unit,durationLabel(employeeDailyWorkMinutes(result.employee))+'/dia'].filter(Boolean).join(' · ')}
+    if(selectedEmployeeId===id){input.value=employeeDailyWorkMinutes(result.employee)/60;$('#employeeDailyHoursStatus').textContent='Jornada salva desde '+effectiveFrom.split('-').reverse().join('/')+'. Os dias anteriores mantêm a referência antiga.';renderDailyHoursHistory(result.employee);$('#employeeDetailMeta').textContent=[contactLabel(overview?.users?.find(user=>user.id===id)||result.employee),result.employee.unit,durationLabel(employeeDailyWorkMinutes(result.employee))+'/dia'].filter(Boolean).join(' · ');await loadMonthlyTimeReview()}
   }catch(error){if(selectedEmployeeId===id)$('#employeeDailyHoursStatus').textContent=error.message}
-  finally{button.disabled=false;input.disabled=false}
+  finally{button.disabled=false;input.disabled=false;$('#employeeDailyHoursFrom').disabled=false}
+}
+function renderDailyHoursHistory(employee){
+  $('#employeeDailyHoursHistory').textContent=(employee.daily_hours_versions||[]).map(version=>(version.effective_from==='1900-01-01'?'Jornada anterior':version.effective_from.split('-').reverse().join('/'))+': '+durationLabel(version.daily_work_minutes)+'/dia').join(' · ');
 }
 function closeEmployeeDetail(){if(monthlyTimeReviewBusy||!canDiscardMonthlyReview())return;monthlyTimeReviewSequence+=1;monthlyTimeReview=null;selectedEmployeeId=null;$('#employeeDetail').classList.add('hidden');$('#employeeGrid').classList.remove('hidden')}
 async function activateAdminTab(name){

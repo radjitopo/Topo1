@@ -420,6 +420,13 @@ test('monthly closing calculates hours, absences and approved corrections from s
   assert.deepEqual(report.totals, {
     expectedMinutes: 960,
     workedMinutes: 480,
+    overtimeDailyMinutes: 0,
+    overtimeWeeklyMinutes: 0,
+    overtimeMinutes: 0,
+    balancePositiveMinutes: 0,
+    balanceNegativeMinutes: 0,
+    balanceNetMinutes: 0,
+    balancePendingDays: 1,
     delayMinutes: 0,
     absenceDays: 1,
     incompleteDays: 0,
@@ -444,7 +451,8 @@ test('the admin monthly closing can filter employees and export spreadsheet or P
   assert.match(html, /id="downloadReportCsv"/);
   assert.match(html, /id="printReport"/);
   assert.match(admin, /admin-monthly-report/);
-  assert.match(admin, /text\/csv;charset=utf-8/);
+  assert.match(admin, /'text\/csv'/);
+  assert.match(admin, /charset=utf-8/);
   assert.match(admin, /popup\.print\(\)/);
 });
 

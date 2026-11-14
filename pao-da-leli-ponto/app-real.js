@@ -93,6 +93,11 @@ function showConfirmation(title,text,rows){
 function greeting(){const h=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',hour:'2-digit',hour12:false}).format(new Date()));return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function event(kind){return todayData?.punches?.find(p=>p.kind===kind)}
 function effective(kind){return time(event(kind)?.effective_at)}
+function rememberSavedPunch(result){
+  const punch=result.punch;
+  todayData={...todayData,state:result.state,punches:[...(todayData?.punches||[]).filter(row=>row.kind!==punch.kind),{...punch,effective_at:punch.occurred_at}]};
+  return punch;
+}
 function statusBadge(date,corr,row={}){
   const xs=corr.filter(c=>c.work_date===date);
   if(xs.some(c=>c.kind==='out'&&c.punch_id===null&&c.status==='pending'))return'<span class="pending">saída aguardando aprovação</span>';
@@ -165,12 +170,14 @@ async function loadToday(){
     if(state==='afterbreak'){html='<div class="statusline"><span class="dot"></span><b>Você voltou ao trabalho</b></div><div class="big">Retorno '+effective('breakIn')+'</div>';label='ENCERRAR JORNADA'}
     if(state==='out'){html='<div class="label">Jornada encerrada</div><div class="big">Saída '+effective('out')+'</div>';label='JORNADA ENCERRADA';disabled=true}
     $('#workCard').innerHTML=html;$('#mainAction').textContent=label;$('#mainAction').disabled=disabled;
+    $('#todayPunches').innerHTML=[['Entrada','in'],['Intervalo','breakOut'],['Retorno','breakIn'],['Saída','out']].map(([label,kind])=>'<div><span>'+label+'</span><b>'+effective(kind)+'</b></div>').join('');
     renderMissingExits();
   }catch(e){if(e.status===401){currentUser=null;show('login')}else alert(e.message)}
 }
 async function punch(){
   if(punchInProgress)return;
   punchInProgress=true;
+  $('#punchStatus').textContent='';
   const button=$('#mainAction'),label=button.textContent;button.disabled=true;button.textContent='VERIFICANDO...';
   try{
     todayData=await api('today');
@@ -179,9 +186,7 @@ async function punch(){
     if(missed){openMissingExit(missed.work_date);return}
     if(before==='afterbreak'){await openChecklist();return}
     const access=await punchAccessPayload();
-    await api('punch','POST',access);
-    todayData=await api('today');
-    const p=todayData.punches.at(-1),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
+    const p=rememberSavedPunch(await api('punch','POST',access)),titles={in:['Jornada iniciada.','Entrada registrada com sucesso.'],breakOut:['Intervalo iniciado.','Saída para intervalo registrada.'],breakIn:['De volta!','Retorno do intervalo registrado.']};
     const t=titles[p.kind]||['Ponto registrado.','Registro feito com sucesso.'];
     lastConfirmReturn='ponto';showConfirmation(t[0],t[1],[['Horário',time(p.occurred_at)],['Data',new Date(p.occurred_at).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})]]);
   }catch(e){
@@ -191,7 +196,7 @@ async function punch(){
       if(missed)openMissingExit(missed.work_date);
       else{alert(e.message);await loadToday()}
     }else if(e.data?.needsChecklist)await openChecklist();
-    else{alert(e.message);await loadToday()}
+    else{$('#punchStatus').textContent=e.message+' Confira as marcações antes de tentar novamente.';alert(e.message);await loadToday()}
   }finally{punchInProgress=false;button.disabled=todayData?.state==='out';if(button.textContent==='VERIFICANDO...')button.textContent=label}
 }
 function renderReview(){
@@ -266,8 +271,8 @@ $('#checklistForm').addEventListener('submit',async e=>{
   try{
     todayData=await api('today');
     const access=await punchAccessPayload();
-    await api('checkout','POST',{answers,missingItemIds,nothingMissing,message,messageAudience,recipientId,...access});
-    todayData=await api('today');show('review');
+    rememberSavedPunch(await api('checkout','POST',{answers,missingItemIds,nothingMissing,message,messageAudience,recipientId,...access}));
+    show('review');
   }catch(err){
     if(err.data?.checklistChanged){alert(err.message);await openChecklist()}else alert(err.message)
   }finally{button.disabled=false;button.textContent='CONCLUIR E REGISTRAR SAÍDA'}

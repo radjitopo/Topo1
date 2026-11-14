@@ -30,6 +30,7 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 @media(max-width:390px){h1{font-size:34px}.clock{font-size:49px}.screen{padding-left:16px;padding-right:16px}.top img{width:78px;height:auto;max-height:74px}}@media(max-height:700px){.quote{display:none}h1{font-size:32px}.clock{font-size:47px}.top img{width:70px;height:auto;max-height:66px}.card{padding:10px 12px}}
 .remember-login{display:flex;align-items:center;gap:9px;min-height:40px;margin:3px 0 9px;color:var(--muted);font-size:14px;line-height:1.35;cursor:pointer}.remember-login input{width:18px;height:18px;flex:0 0 auto;margin:0;accent-color:var(--wine)}
 .missed-exit{margin-top:16px;border-color:var(--yellow);text-align:left}.missed-exit h3{font:700 20px Georgia,serif;margin:7px 0;color:var(--wine)}.missed-exit p{color:var(--muted);font-size:14px;line-height:1.45;margin:7px 0 12px}.missed-exit .btn{font-size:13px;min-height:44px}.missing-exit-time{display:block;margin-bottom:6px;color:var(--muted);font-size:14px}
+.today-punches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:12px 0;text-align:center}.today-punches span{display:block;font-size:10px;color:var(--muted)}.today-punches b{display:block;font-size:16px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -81,6 +82,8 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
   <div id="workCard" class="card"></div>
   <div id="missingExitCards" aria-live="polite"></div>
   <button id="mainAction" class="btn">INICIAR JORNADA</button>
+  <p id="punchStatus" role="status" aria-live="polite" style="font-size:13px;color:var(--wine)"></p>
+  <div id="todayPunches" class="today-punches" aria-label="Marcações de hoje"></div>
   <p class="quote">Pão com tempo <span style="color:var(--yellow)">•</span> Café com calma</p>
 </section>
 
@@ -169,5 +172,6 @@ h1,h2{font-family:Georgia,serif;font-style:italic;color:var(--wine);margin:0}h1{
 <nav id="bottom" class="bottom"><button class="nav active" data-screen="ponto"><span>◷</span>Ponto</button><button class="nav" data-screen="history"><span>▤</span>Histórico</button><button class="nav" data-screen="profile"><span>♙</span>Perfil</button></nav>
 </main>
 <script src="./api-client.js?v=1"></script>
-<script src="./app-real.js?v=29"></script>
+<script src="./clock-inputs.js?v=1"></script>
+<script src="./app-real.js?v=30"></script>
 </body></html>
